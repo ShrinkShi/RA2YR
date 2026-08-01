@@ -1,0 +1,62 @@
+# Unity-generated directories
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/MemoryCaptures/
+/Recordings/
+
+# IDE and generated project files
+/.vs/
+/.vscode/
+/.idea/
+/*.csproj
+/*.sln
+/*.suo
+/*.user
+/*.userprefs
+/*.pidb
+/*.booproj
+/*.svd
+/*.pdb
+/*.mdb
+/*.opendb
+/*.VC.db
+
+# Local external content and tools must stay outside the repository. These
+# rules are a defensive fallback if a directory is accidentally created here.
+/ExternalContent/
+/ExternalTools/
+/Reference/
+/YR1001_Clean/
+/YR1001_Unpacked/
+/YR1001_Patched/
+/FinalAlert2/
+/OriginalContent/
+/LocalContent/
+/.git.backup-*/
+/.git.empty-backup-*/
+
+# Local content configuration and derived caches
+/ExternalContent.local.xml
+/external-content.local.xml
+/Config/ExternalContent.local.xml
+/Config/external-content.local.xml
+/Config/ExternalContent.*.local.xml
+/.ra2yr-cache/
+/ContentCache/
+/Cache/RA2YR/
+
+# Test and coverage output
+/TestResults/
+/CoverageResults/
+/*.coverage
+/*.coveragexml
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
