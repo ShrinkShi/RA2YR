@@ -1,0 +1,56 @@
+* text=auto
+
+*.cs text eol=lf diff=csharp
+*.asmdef text eol=lf
+*.asmref text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.ps1 text eol=lf
+*.ini text eol=lf
+*.editorconfig text eol=lf
+*.gitignore text eol=lf
+*.gitattributes text eol=lf
+/LICENSE text eol=lf
+/NOTICE text eol=lf
+
+# Preserve intentional Markdown hard breaks in the exact requirements copy.
+/docs/requirements/三阶段开发需求分析.md whitespace=-blank-at-eol
+
+*.meta text eol=lf whitespace=-blank-at-eol
+*.unity text eol=lf merge=unityyamlmerge whitespace=-blank-at-eol
+*.prefab text eol=lf merge=unityyamlmerge whitespace=-blank-at-eol
+*.asset text eol=lf merge=unityyamlmerge whitespace=-blank-at-eol
+
+# Binary fixture types must never be normalized. Repository policy separately
+# verifies that only independently generated synthetic fixtures are tracked.
+*.pal binary
+*.shp binary
+*.vxl binary
+*.hva binary
+*.tmp binary
+*.tem binary
+*.sno binary
+*.urb binary
+*.ubn binary
+*.des binary
+*.lun binary
+*.pcx binary
+*.wav binary
+*.csf binary
+*.mix binary
+*.map binary
+*.mpr binary
+*.yrm binary
+*.yro binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+
+# A fixture whose bytes must remain exact must be listed after broad text
+# rules, or generated at test runtime outside the working tree.
+/Assets/RA2YR/Tests/Fixtures/Synthetic/** binary -eol

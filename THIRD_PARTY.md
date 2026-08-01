@@ -1,0 +1,33 @@
+# Third-party sources
+
+`docs/third-party/sources.yml` is the authoritative, machine-readable ledger.
+This file summarizes the review rules and the currently known sources.
+
+No source code from the external reference projects listed below has been
+copied into this repository. A `reference-only` entry permits observation of
+public formats or behavior; it does not permit code import.
+
+| Source | License | Use | Code in repository | Approval |
+|---|---|---|---:|---|
+| actions/checkout 11bd719 (v4.2.2) | MIT | CI dependency pinned to a full commit | Referenced action; not vendored | Approved CI dependency |
+| Unity 2022.3 package set | Unity Companion License expected; per-package verification pending | Build dependency | No vendored source | Pending per-package audit |
+| RedAlertCSF2JSON | GPL-3.0-only | External format/behavior reference only | No | Reference only |
+| Ra2-Map-TriggerNetwork | MIT | External trigger-structure reference only | No | Reference only |
+| VoxelShop | Apache-2.0 | External voxel behavior/tool reference only | No | Reference only |
+| FinalAlert 2 YR 1.01 | Proprietary | External interoperability baseline only | No | Reference only |
+
+## Import gate
+
+Before any external code, generated source, binary library, or substantial
+documentation enters the repository, add or update a ledger entry with:
+
+- the canonical upstream source;
+- the exact release, commit, and SHA-256 where applicable;
+- the governing license and required notices;
+- whether the source contains code;
+- the intended use and integration method;
+- an explicit approval decision.
+
+GPL-licensed code is not eligible for import under the current Apache-2.0
+repository policy. Publicly documented facts and independently observed
+behavior must be reimplemented without copying protected implementation text.

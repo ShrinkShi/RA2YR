@@ -1,0 +1,28 @@
+name: Repository safety
+
+"on":
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  copyright-gate:
+    runs-on: windows-2022
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 1
+
+      - name: Run scanner regression tests
+        shell: powershell
+        run: ./Tools/Repository/Tests/Invoke-CopyrightScan.Tests.ps1
+
+      - name: Scan repository candidates
+        shell: powershell
+        run: ./Tools/Repository/Invoke-CopyrightScan.ps1

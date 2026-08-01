@@ -1,0 +1,53 @@
+schema_version: 1
+evidence_id: "wp01-synthetic-20260801"
+recorded_at_utc: "2026-08-01T11:59:28Z"
+scope: "WP-00/WP-01 synthetic and boundary verification only"
+environment:
+  unity_editor: "2022.3.60f1c1"
+  unity_test_framework: "1.1.33"
+  host: "Windows"
+  authoritative_content_read: false
+  original_content_body_in_report: false
+
+unity_test_run:
+  result_directory: "TestResults/20260801T115803405Z-90f3eda2e0594e0faaff1d31fd831c89 (local and ignored)"
+  edit_mode: { result: "Passed", executed: 25, passed: 25, failed: 0 }
+  play_mode: { result: "Passed", executed: 1, passed: 1, failed: 0 }
+  compilation_errors: 0
+  runner_note: "Both headless Editor children required the wrapper's 30-second post-result shutdown; completed NUnit XML was validated before acceptance."
+
+external_paths:
+  configuration_schema: 1
+  synthetic_checks:
+    - "relative path resolution"
+    - "repository/cache/source overlap refusal"
+    - "DTD and external entity refusal"
+    - "unknown schema-one data refusal"
+    - "duplicate source and invalid value diagnostics"
+    - "at least one enabled source invariant"
+  local_configuration_probe:
+    source_count: 3
+    enabled_source_count: 1
+    diagnostics: 0
+    enabled_source_role: "yr1001-baseline"
+    enabled_source_directory_exists: true
+    indexed_or_hashed_original_content: false
+
+discovery_index:
+  synthetic_checks:
+    - "ordinal relative-path ordering"
+    - "read-only file access and unchanged timestamp/attribute"
+    - "SHA-256 per-file digest"
+    - "source provenance fingerprint"
+    - "file mutation rejection"
+    - "tree addition rejection through a second metadata snapshot"
+    - "reparse and path identity fail-closed boundaries"
+
+manifest_hash:
+  schema_version: 1
+  synthetic_source_fingerprint: "f580fa149f3abdf4af5c3b2d7779376406689d6d00bb1a706cfb2a064f79cd28"
+  synthetic_manifest_sha256: "26e1d490e0c0a1888e93768132217c169b8324ebb211beb7c2147a19188e858d"
+  absolute_paths_present: false
+  source_file_bodies_present: false
+  incomplete_index_serialization_rejected: true
+  public_forgery_constructors_exposed: false

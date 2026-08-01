@@ -1,0 +1,28 @@
+RA2YR Unity Compatibility Engine
+Copyright 2026 RA2YR Unity Contributors
+
+This repository is licensed under the Apache License, Version 2.0.
+
+This is an independent compatibility-engine project. It is not affiliated
+with, endorsed by, sponsored by, or an official product of Electronic Arts
+Inc. or any other owner of the original game.
+
+Command & Conquer, Red Alert, Yuri's Revenge, Electronic Arts, and all other
+product names, trademarks, copyrighted game data, art, audio, text, maps,
+executables, and related materials remain the property of their respective
+rights holders. Their names are used only to describe compatibility targets.
+
+The repository does not distribute original game content, unpacked game
+assets, FinalAlert 2, or proprietary reference tools. Users must supply any
+required content through external, read-only content locations and must have
+the right to use that content. Generated caches and local golden-test data
+must remain outside the repository.
+
+GPL-licensed projects may be studied only as external references for publicly
+documented file formats and observable behavior. GPL source code must not be
+copied, translated, adapted, or otherwise incorporated into this repository.
+Any third-party code considered for inclusion requires a recorded source,
+exact version or hash, license review, usage classification, and approval in
+the third-party source ledger before import.
+
+See THIRD_PARTY.md and docs/third-party/sources.yml for the current ledger.
