@@ -12,7 +12,11 @@ local file is ignored by Git because it can contain machine-specific paths.
 
 Paths are resolved relative to the configuration file. Source and cache paths
 must be outside the formal repository, must not contain the repository, and
-must not traverse an existing reparse point. Source IDs are stable provenance
+must not traverse an existing reparse point. The supplied formal repository
+root must already exist as a directory; a missing or file-valued root fails
+before configuration content is read. Existing path ancestors are inspected
+one by one, and metadata access failures are rejected rather than treated as
+missing paths. Source IDs are stable provenance
 identifiers. Priority records the intended future override order; WP-01 sorts
 sources deterministically but does not yet resolve duplicate logical files.
 

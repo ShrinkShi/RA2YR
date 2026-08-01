@@ -44,4 +44,20 @@ Unity Test Framework 1.1.33 需要在 Editor update 中调度测试；通用 `-q
 - 强制收尾仅删除该子进程留下的零字节、非 reparse `Temp/UnityLockfile`；异常锁对象拒绝清理。
 
 ### 验证方式
-同一入口连续执行 EditMode 和 PlayMode，结果分别为 25/25 与 1/1 通过，编译错误为零，结束后无 Unity 进程和锁文件残留。
+最新同一入口连续执行 EditMode 和 PlayMode，结果分别为 29/29 与 1/1 通过，编译错误为零，结束后无 Unity 进程和锁文件残留。
+
+## 2026-08-01 - 路径元数据检查必须 fail-closed
+
+### 现象
+独立审计发现 `Directory.Exists`、`File.Exists` 和 `FileSystemInfo.Exists` 会将部分权限或元数据检查错误折叠为 `false`，路径祖先可能因此被误判为不存在。
+
+### 根因
+ReparsePoint 检查依赖 `.Exists` 决定是否读取属性，上层异常处理无法看到被 API 吞掉的访问错误。
+
+### 解决方案
+- 逐级调用 `File.GetAttributes` 检查候选路径及其祖先。
+- 仅捕获 `FileNotFoundException` 和 `DirectoryNotFoundException` 并退到父级。
+- 让权限、I/O 和安全异常向上传播，由 Loader/Indexer 转换为拒绝诊断。
+
+### 验证方式
+注入合成元数据访问拒绝，确认异常不会返回“无 ReparsePoint”；该回归包含在最新 EditMode 29/29 结果中。

@@ -228,6 +228,18 @@ namespace RA2YR.Core.Content
             ICollection<ContentDiagnostic> diagnostics,
             string configurationPath)
         {
+            if (!Directory.Exists(repositoryRoot))
+            {
+                diagnostics.Add(new ContentDiagnostic(
+                    ContentDiagnosticSeverity.Error,
+                    ContentDiagnosticCode.RepositoryRootNotDirectory,
+                    "The formal repository root must exist and be a directory.",
+                    path: repositoryRoot));
+                throw new ContentConfigurationException(
+                    "Repository root validation failed before configuration loading.",
+                    diagnostics);
+            }
+
             string aliasReason;
             if (RepositoryPathPolicy.TryFindUnsupportedAlias(repositoryRoot, out aliasReason))
             {

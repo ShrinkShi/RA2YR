@@ -19,6 +19,13 @@ namespace RA2YR.Core.Content
                 throw new ArgumentException("A non-empty path is required.", nameof(path));
             }
 
+            if (IsWindowsDriveRelativePath(path))
+            {
+                throw new ArgumentException(
+                    "Windows drive-relative paths are not accepted; use an absolute path or a path relative to the configuration directory.",
+                    nameof(path));
+            }
+
             string combined = Path.IsPathRooted(path)
                 ? path
                 : Path.Combine(
@@ -132,32 +139,50 @@ namespace RA2YR.Core.Content
 
         public static bool ContainsExistingReparsePoint(string path, out string reparsePointPath)
         {
-            string fullPath = NormalizeAbsolutePath(path);
-            FileSystemInfo current;
-            if (Directory.Exists(fullPath))
+            return ContainsExistingReparsePoint(
+                path,
+                File.GetAttributes,
+                out reparsePointPath);
+        }
+
+        internal static bool ContainsExistingReparsePoint(
+            string path,
+            Func<string, FileAttributes> getAttributes,
+            out string reparsePointPath)
+        {
+            if (getAttributes == null)
             {
-                current = new DirectoryInfo(fullPath);
-            }
-            else if (File.Exists(fullPath))
-            {
-                current = new FileInfo(fullPath);
-            }
-            else
-            {
-                current = new DirectoryInfo(Path.GetDirectoryName(fullPath) ?? fullPath);
+                throw new ArgumentNullException(nameof(getAttributes));
             }
 
-            while (current != null)
+            string currentPath = NormalizeAbsolutePath(path);
+            while (!string.IsNullOrEmpty(currentPath))
             {
-                if (current.Exists && (current.Attributes & FileAttributes.ReparsePoint) != 0)
+                try
                 {
-                    reparsePointPath = current.FullName;
-                    return true;
+                    if ((getAttributes(currentPath) & FileAttributes.ReparsePoint) != 0)
+                    {
+                        reparsePointPath = currentPath;
+                        return true;
+                    }
+                }
+                catch (FileNotFoundException)
+                {
+                    // A missing leaf is allowed; existing ancestors still need inspection.
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    // Walk upward until an existing ancestor is found.
                 }
 
-                current = current is DirectoryInfo directory
-                    ? directory.Parent
-                    : (current as FileInfo)?.Directory;
+                string parentPath = Path.GetDirectoryName(currentPath);
+                if (string.IsNullOrEmpty(parentPath) ||
+                    string.Equals(parentPath, currentPath, PathComparison))
+                {
+                    break;
+                }
+
+                currentPath = parentPath;
             }
 
             reparsePointPath = null;
@@ -219,6 +244,16 @@ namespace RA2YR.Core.Content
             return path.StartsWith("\\\\?\\", StringComparison.Ordinal) ||
                    path.StartsWith("\\\\.\\", StringComparison.Ordinal) ||
                    path.StartsWith("\\??\\", StringComparison.Ordinal);
+        }
+
+        private static bool IsWindowsDriveRelativePath(string path)
+        {
+            return Path.DirectorySeparatorChar == '\\' &&
+                   path.Length >= 2 &&
+                   path[1] == ':' &&
+                   ((path[0] >= 'A' && path[0] <= 'Z') ||
+                    (path[0] >= 'a' && path[0] <= 'z')) &&
+                   (path.Length == 2 || (path[2] != '\\' && path[2] != '/'));
         }
 
         private static bool ContainsPotentialShortNameSegment(string path)

@@ -13,17 +13,17 @@
 - 建立 Unity 批处理测试入口，拒绝锁冲突、错误版本、缺失/空/零测试 XML 和超时假成功。
 - 实现 schema 1 外部内容配置、只读文件发现、SHA-256、来源指纹和规范 manifest。
 - 对 repository/cache/source 重叠、Windows 路径别名、reparse point、扫描中内容变化和不完整索引采取 fail-closed。
+- 要求正式仓库根在配置加载和索引时均为现存目录，并拒绝 Windows 驱动器相对路径。
 - 将测试哈希注入及索引结果构造限制为 EditMode 友元，阻止公开 API 伪造完整 manifest。
 - 建立双 PowerShell 版本版权扫描回归、Git index/worktree 分离扫描和 CI 安全门禁。
 - 建立本机忽略配置并只验证指定 YR 基线目录存在，未索引、哈希或报告原版文件正文。
 
 ### 验证情况
 - Unity Core 与 EditMode 程序集使用 Unity 自带 Mono 编译器编译成功。
-- Unity EditMode：25/25 通过；PlayMode：1/1 通过；零编译错误。
-- 补充 Mono/NUnit 合成执行：25/25 通过。
+- Unity EditMode：29/29 通过；PlayMode：1/1 通过；零编译错误。
 - 版权扫描回归：Windows PowerShell 5.1 和 PowerShell 7 合计 20/20 通过。
 - 当前仓库版权扫描：零违规；外部目录和本机配置 ignore probes 全部通过。
-- `Assets/RA2YR` 31 个资源/目录均有匹配 `.meta`，无孤立 `.meta`。
+- `Assets` 34 个资源/目录均有匹配 `.meta`，无孤立 `.meta` 或重复 GUID。
 
 ### 风险
 - GitHub 远程仓库尚未配置，推送和首个草稿 PR 需要确定远程 URL 与可见性。

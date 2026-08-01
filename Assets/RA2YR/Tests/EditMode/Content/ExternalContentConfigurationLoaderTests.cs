@@ -245,6 +245,41 @@ namespace RA2YR.Tests.EditMode.Content
         }
 
         [Test]
+        public void LoadRejectsMissingOrFileValuedRepositoryRootBeforeReadingConfiguration()
+        {
+            using (var temporary = new TemporaryContentTestDirectory())
+            {
+                temporary.CreateDirectory("Repository");
+                temporary.CreateDirectory("External");
+                temporary.CreateDirectory("Cache");
+                string configurationPath = WriteConfiguration(
+                    temporary,
+                    "<Source id=\"source-one\" kind=\"Clean\" path=\"../../External\" priority=\"1\" version=\"one\" />");
+                string missingRepositoryRoot = temporary.GetPath("MissingRepository");
+                string fileValuedRepositoryRoot = temporary.WriteText(
+                    "RepositoryRootFile",
+                    "synthetic");
+
+                foreach (string invalidRepositoryRoot in new[]
+                         {
+                             missingRepositoryRoot,
+                             fileValuedRepositoryRoot
+                         })
+                {
+                    ContentConfigurationException exception =
+                        Assert.Throws<ContentConfigurationException>(
+                            () => new ExternalContentConfigurationLoader().Load(
+                                configurationPath,
+                                invalidRepositoryRoot));
+
+                    Assert.That(exception.Diagnostics.Any(item =>
+                        item.Code == ContentDiagnosticCode.RepositoryRootNotDirectory &&
+                        item.Path == invalidRepositoryRoot), Is.True);
+                }
+            }
+        }
+
+        [Test]
         public void LoadRejectsConfigurationWithoutAnEnabledSource()
         {
             using (var temporary = new TemporaryContentTestDirectory())

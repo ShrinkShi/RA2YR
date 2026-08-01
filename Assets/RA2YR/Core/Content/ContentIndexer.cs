@@ -59,6 +59,16 @@ namespace RA2YR.Core.Content
             ExternalContentConfiguration configuration,
             ICollection<ContentDiagnostic> diagnostics)
         {
+            if (!Directory.Exists(configuration.RepositoryRoot))
+            {
+                diagnostics.Add(new ContentDiagnostic(
+                    ContentDiagnosticSeverity.Error,
+                    ContentDiagnosticCode.RepositoryRootNotDirectory,
+                    "The formal repository root no longer exists as a directory.",
+                    path: configuration.RepositoryRoot));
+                return false;
+            }
+
             string aliasReason;
             if (RepositoryPathPolicy.TryFindUnsupportedAlias(
                 configuration.RepositoryRoot,

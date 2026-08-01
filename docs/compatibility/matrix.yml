@@ -49,6 +49,8 @@ entries:
     tests:
       - "RA2YR.Tests.EditMode.Content.ExternalContentConfigurationLoaderTests"
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ConfigurationModelRejectsUnsafeCacheAndDisabledOnlySources"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.NormalizeRejectsWindowsDriveRelativePaths"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ReparseInspectionPropagatesMetadataAccessFailure"
     evidence:
       - "docs/compatibility/evidence/wp01-synthetic-20260801.yml#external_paths"
     limitations:
@@ -64,6 +66,7 @@ entries:
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildCanReadAReadOnlySyntheticFileWithoutModifyingIt"
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildReportsFileChangedDuringHashAndOmitsUnstableRecord"
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildRejectsAFileAddedDuringIndexing"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildRejectsRepositoryRootRemovedAfterConfigurationCreation"
     evidence:
       - "docs/compatibility/evidence/wp01-synthetic-20260801.yml#discovery_index"
     limitations:

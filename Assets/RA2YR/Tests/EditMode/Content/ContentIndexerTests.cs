@@ -249,6 +249,69 @@ namespace RA2YR.Tests.EditMode.Content
                     repository,
                     cache,
                     new[] { disabledSource }));
+                Assert.Throws<ArgumentException>(() => new ExternalContentConfiguration(
+                    1,
+                    temporary.GetPath("Repository/Config/ExternalContent.xml"),
+                    temporary.GetPath("MissingRepository"),
+                    cache,
+                    new[] { enabledSource }));
+            }
+        }
+
+        [Test]
+        public void BuildRejectsRepositoryRootRemovedAfterConfigurationCreation()
+        {
+            using (var temporary = new TemporaryContentTestDirectory())
+            {
+                string repository = temporary.CreateDirectory("Repository");
+                temporary.CreateDirectory("Cache");
+                temporary.CreateDirectory("External");
+                ExternalContentConfiguration configuration = CreateConfiguration(temporary);
+                Directory.Delete(repository, false);
+
+                ContentIndexResult result = new ContentIndexer().Build(configuration);
+
+                Assert.That(result.HasErrors, Is.True);
+                Assert.That(result.IsComplete, Is.False);
+                Assert.That(result.Sources, Is.Empty);
+                Assert.That(result.Diagnostics.Any(item =>
+                    item.Code == ContentDiagnosticCode.RepositoryRootNotDirectory &&
+                    item.Path == repository), Is.True);
+                Assert.Throws<InvalidOperationException>(
+                    () => ContentManifestSerializer.SerializeCanonicalJson(result));
+            }
+        }
+
+        [Test]
+        public void NormalizeRejectsWindowsDriveRelativePaths()
+        {
+            if (Path.DirectorySeparatorChar != '\\')
+            {
+                Assert.Ignore("Windows drive-relative path syntax only applies on Windows.");
+            }
+
+            Assert.Throws<ArgumentException>(() =>
+                RepositoryPathPolicy.NormalizeAbsolutePath(
+                    "C:relative",
+                    Directory.GetCurrentDirectory()));
+            Assert.Throws<ArgumentException>(() =>
+                RepositoryPathPolicy.NormalizeAbsolutePath(
+                    "C:",
+                    Directory.GetCurrentDirectory()));
+        }
+
+        [Test]
+        public void ReparseInspectionPropagatesMetadataAccessFailure()
+        {
+            using (var temporary = new TemporaryContentTestDirectory())
+            {
+                string inaccessibleAncestor = temporary.CreateDirectory("External");
+                string missingLeaf = temporary.GetPath("External/Missing/Leaf");
+
+                Assert.Throws<UnauthorizedAccessException>(() =>
+                    InspectWithSyntheticAccessFailure(
+                        missingLeaf,
+                        inaccessibleAncestor));
             }
         }
 
@@ -295,6 +358,29 @@ namespace RA2YR.Tests.EditMode.Content
                 temporary.GetPath("Repository"),
                 temporary.GetPath("Cache"),
                 new[] { source });
+        }
+
+        private static void InspectWithSyntheticAccessFailure(
+            string path,
+            string inaccessiblePath)
+        {
+            StringComparison comparison = Path.DirectorySeparatorChar == '\\'
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+            string ignored;
+            RepositoryPathPolicy.ContainsExistingReparsePoint(
+                path,
+                currentPath =>
+                {
+                    if (string.Equals(currentPath, inaccessiblePath, comparison))
+                    {
+                        throw new UnauthorizedAccessException(
+                            "Synthetic metadata access refusal.");
+                    }
+
+                    return File.GetAttributes(currentPath);
+                },
+                out ignored);
         }
 
         private sealed class MutatingDigestProvider : IContentFileDigestProvider

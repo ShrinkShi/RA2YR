@@ -28,6 +28,7 @@ namespace RA2YR.Core.Content
         UnknownConfigurationAttribute,
         UnknownConfigurationContent,
         NoEnabledSource,
+        RepositoryRootNotDirectory,
         MissingVersion,
         InvalidVersion,
         PathInsideRepository,

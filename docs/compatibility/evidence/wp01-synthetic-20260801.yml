@@ -1,6 +1,6 @@
 schema_version: 1
 evidence_id: "wp01-synthetic-20260801"
-recorded_at_utc: "2026-08-01T11:59:28Z"
+recorded_at_utc: "2026-08-01T12:43:06Z"
 scope: "WP-00/WP-01 synthetic and boundary verification only"
 environment:
   unity_editor: "2022.3.60f1c1"
@@ -10,8 +10,8 @@ environment:
   original_content_body_in_report: false
 
 unity_test_run:
-  result_directory: "TestResults/20260801T115803405Z-90f3eda2e0594e0faaff1d31fd831c89 (local and ignored)"
-  edit_mode: { result: "Passed", executed: 25, passed: 25, failed: 0 }
+  result_directory: "TestResults/20260801T124057804Z-84af2b85291d464484d5fab9a0b71f88 (local and ignored)"
+  edit_mode: { result: "Passed", executed: 29, passed: 29, failed: 0 }
   play_mode: { result: "Passed", executed: 1, passed: 1, failed: 0 }
   compilation_errors: 0
   runner_note: "Both headless Editor children required the wrapper's 30-second post-result shutdown; completed NUnit XML was validated before acceptance."
@@ -21,6 +21,9 @@ external_paths:
   synthetic_checks:
     - "relative path resolution"
     - "repository/cache/source overlap refusal"
+    - "missing or file-valued formal repository root refusal before configuration read"
+    - "Windows drive-relative path refusal"
+    - "metadata access failure propagation instead of safe-path misclassification"
     - "DTD and external entity refusal"
     - "unknown schema-one data refusal"
     - "duplicate source and invalid value diagnostics"
@@ -41,6 +44,7 @@ discovery_index:
     - "source provenance fingerprint"
     - "file mutation rejection"
     - "tree addition rejection through a second metadata snapshot"
+    - "repository root disappearance rejection before indexing"
     - "reparse and path identity fail-closed boundaries"
 
 manifest_hash:

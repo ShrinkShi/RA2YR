@@ -114,6 +114,13 @@ namespace RA2YR.Core.Content
                 RepositoryPathPolicy.NormalizeAbsolutePath(repositoryRoot);
             string normalizedCachePath =
                 RepositoryPathPolicy.NormalizeAbsolutePath(cachePath);
+            if (!Directory.Exists(normalizedRepositoryRoot))
+            {
+                throw new ArgumentException(
+                    "The repository root must exist and be a directory.",
+                    nameof(repositoryRoot));
+            }
+
             if (RepositoryPathPolicy.OverlapsRepository(
                 normalizedCachePath,
                 normalizedRepositoryRoot))
