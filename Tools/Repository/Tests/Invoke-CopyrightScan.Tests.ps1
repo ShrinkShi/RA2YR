@@ -134,9 +134,16 @@ function Assert-Scan {
         [Parameter()][string[]] $RequiredRules = @()
     )
 
-    $actualPass = $Scan.ExitCode -eq 0 -and [bool]$Scan.Result.Passed
-    if ($actualPass -ne $ShouldPass) {
-        throw "Expected pass=$ShouldPass, got exit=$($Scan.ExitCode), result=$($Scan.Result.Passed)."
+    $resultPassed = [bool]$Scan.Result.Passed
+    $violationSummary = @($Scan.Result.Violations | ForEach-Object {
+        "{0}:{1}:{2}" -f $_.Rule, $_.Path, $_.Detail
+    }) -join '; '
+    if ($ShouldPass) {
+        if ($Scan.ExitCode -ne 0 -or -not $resultPassed) {
+            throw "Expected exit=0 and result=true, got exit=$($Scan.ExitCode), result=$resultPassed. Violations: $violationSummary"
+        }
+    } elseif ($Scan.ExitCode -eq 0 -or $resultPassed) {
+        throw "Expected nonzero exit and result=false, got exit=$($Scan.ExitCode), result=$resultPassed. Violations: $violationSummary"
     }
     foreach ($requiredRule in $RequiredRules) {
         if (@($Scan.Result.Violations | ForEach-Object { $_.Rule }) -notcontains $requiredRule) {
