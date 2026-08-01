@@ -1,0 +1,930 @@
+schema_version: 1
+last_updated: "2026-08-01"
+baseline:
+  game: "Command & Conquer: Yuri's Revenge 1.001"
+  content_role: "YR1001_ProjectBaseline patched development content source; not a clean YR 1.001 golden baseline"
+  content_path_role: "ExternalContent/YR1001_ProjectBaseline"
+  observed_workspace_path: "../尤里的复仇-1.001-原版（已加官方地图增补包、音乐包、win10兼容补丁）"
+  content_manifest: null
+  finalalert2:
+    executable: "FinalAlert2.exe"
+    version: "SZL 1.01 localized build"
+    sha256: "BE939988780428271377C7592E0552E405C5982BA6BB7F468DE76CE5117F619D"
+
+status_vocabulary:
+  implementation:
+    - "未实现"
+    - "可解析"
+    - "可显示"
+    - "可执行"
+    - "行为近似"
+  original_comparison:
+    - "未实现"
+    - "原版对照通过"
+  roundtrip:
+    - "未实现"
+    - "往返通过"
+  limitation_flag: "已知限制"
+
+entry_schema:
+  required:
+    - id
+    - domain
+    - feature
+    - status
+    - tests
+    - evidence
+    - limitations
+  status_fields:
+    - implementation
+    - original_comparison
+    - roundtrip
+
+entries:
+  # Content and binary foundations
+  - id: content.external-paths
+    domain: content
+    feature: "Read-only external content path configuration"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.ExternalContentConfigurationLoaderTests"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ConfigurationModelRejectsUnsafeCacheAndDisabledOnlySources"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.NormalizeRejectsWindowsDriveRelativePaths"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ReparseInspectionPropagatesMetadataAccessFailure"
+    evidence:
+      - "docs/compatibility/evidence/wp01-synthetic-20260801.yml#external_paths"
+    limitations:
+      - id: content.external-paths.non-windows-identity
+        status: "已知限制"
+        description: "Non-Windows physical path identity currently uses normalized lexical comparison; platform realpath/device verification remains required."
+  - id: content.discovery-index
+    domain: content
+    feature: "File discovery, indexing, and source provenance"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildUsesStableRelativePathOrderSha256AndFingerprint"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildCanReadAReadOnlySyntheticFileWithoutModifyingIt"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildReportsFileChangedDuringHashAndOmitsUnstableRecord"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildRejectsAFileAddedDuringIndexing"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildRejectsRepositoryRootRemovedAfterConfigurationCreation"
+    evidence:
+      - "docs/compatibility/evidence/wp01-synthetic-20260801.yml#discovery_index"
+    limitations:
+      - id: content.discovery-index.stationary-source
+        status: "已知限制"
+        description: "The portable scanner detects ordinary concurrent metadata changes but cannot create an atomic snapshot against adversarial same-size, timestamp-preserving mutation."
+  - id: content.precedence
+    domain: content
+    feature: "Explicit source mount and override precedence"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: content.manifest-hash
+    domain: content
+    feature: "Versioned SHA-256 content manifest"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ManifestIsCanonicalAndDoesNotContainAbsolutePathsOrFileContent"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ManifestSha256ChangesWhenIndexedContentChanges"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ProductionManifestInputsCannotBeForgedThroughPublicConstructors"
+    evidence:
+      - "docs/compatibility/evidence/wp01-synthetic-20260801.yml#manifest_hash"
+    limitations:
+      - id: content.manifest-hash.original-baseline-pending
+        status: "已知限制"
+        description: "No clean original YR 1.001 content manifest is recorded in public evidence; local golden indexing remains a later approved operation."
+  - id: content.cache
+    domain: content
+    feature: "Repository-external dependency cache and invalidation"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: content.mix-source-interface
+    domain: content
+    feature: "MIX content-source extension boundary"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.bounded-reader
+    domain: format
+    feature: "Bounded binary reader, resource budgets, offsets, and trailing-data diagnostics"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.pal
+    domain: format
+    feature: "PAL palettes"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.shp
+    domain: format
+    feature: "SHP frames, compression, offsets, shadows, and remap indices"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.vxl
+    domain: format
+    feature: "VXL sections, voxels, bounds, colors, and normals"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.hva
+    domain: format
+    feature: "HVA section binding and transformation matrices"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.tmp-theaters
+    domain: format
+    feature: "TMP plus TEM/SNO/URB/UBN/DES/LUN theater variants"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.pcx
+    domain: format
+    feature: "PCX images and indexed palettes"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.wav
+    domain: format
+    feature: "WAV PCM and IMA ADPCM audio"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.csf
+    domain: format
+    feature: "CSF labels, strings, code pages, and language metadata"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.map-pack-codec
+    domain: format
+    feature: "Map pack Base64, block framing, compression, and bounds"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: format.yro-wrapper
+    domain: format
+    feature: "YRO opaque prefix, INI body, digest, and trailing-data preservation"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+
+  # INI document and typed configuration layers
+  - id: ini.lossless-document
+    domain: ini
+    feature: "Encoding, line endings, comments, order, duplicate keys/sections, empty values, and unknown tags"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.override-source-tracking
+    domain: ini
+    feature: "Configuration override semantics and per-value source tracking"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.typed-views
+    domain: ini
+    feature: "Strongly typed views coexisting with preserved raw nodes"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.rules
+    domain: ini
+    feature: "rules.ini and rulesmd.ini"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.art
+    domain: ini
+    feature: "art.ini and artmd.ini"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.ai
+    domain: ini
+    feature: "ai.ini and map AI definitions"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.theaters
+    domain: ini
+    feature: "temperat.ini, snow.ini, urban.ini, urbann.ini, desert.ini, and lunar.ini"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.ui
+    domain: ini
+    feature: "uimd.ini"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.sound-eva
+    domain: ini
+    feature: "soundmd.ini and evamd.ini"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.mission
+    domain: ini
+    feature: "missionmd.ini and campaign configuration"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ini.map-overrides
+    domain: ini
+    feature: "Map-embedded rules, art, AI, and unknown configuration"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+
+  # Map model and map sections
+  - id: map.file-containers
+    domain: map
+    feature: ".map, .mpr, .yrm, and .yro container handling"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.isomappack5
+    domain: map
+    feature: "IsoMapPack5 cells, height, tile, and sub-tile indices"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.overlay-pack
+    domain: map
+    feature: "OverlayPack"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.overlay-data-pack
+    domain: map
+    feature: "OverlayDataPack"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.preview-pack
+    domain: map
+    feature: "PreviewPack and preview metadata"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.terrain-semantics
+    domain: map
+    feature: "Height, ramps, cliffs, water, bridges, overlays, and resources"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.objects
+    domain: map
+    feature: "Infantry, units, aircraft, structures, terrain, smudges, and ownership"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.waypoints-celltags
+    domain: map
+    feature: "Waypoints and CellTags"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.triggers
+    domain: map
+    feature: "Triggers, Events, Actions, and Tags"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.ai-sections
+    domain: map
+    feature: "TaskForces, Scripts, TeamTypes, and AITriggerTypes"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.houses-countries
+    domain: map
+    feature: "Houses, Countries, alliances, and starting state"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.unknown-data-preservation
+    domain: map
+    feature: "Unknown sections, keys, ordering, and opaque byte preservation"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: map.semantic-writeback
+    domain: map
+    feature: "Lossless or proven semantic-safe map writeback"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+
+  # Deterministic simulation, movement, commands, combat, and economy
+  - id: simulation.tick-clock
+    domain: gameplay
+    feature: "15 ticks/second clock independent of Unity frame rate"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: simulation.integer-space
+    domain: gameplay
+    feature: "Integer cells/leptons, 256 leptons per cell, and 208 leptons per height level"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: simulation.rng-order
+    domain: gameplay
+    feature: "Versioned deterministic RNG, IDs, update order, and state hashes"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: movement.occupancy-foundation
+    domain: gameplay
+    feature: "Cell occupancy, Foundation, reservations, and building exits"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: movement.locomotors
+    domain: gameplay
+    feature: "Ground, water, amphibious, hover, flight, subterranean, and naval movement"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: movement.layers
+    domain: gameplay
+    feature: "Ramps, cliffs, water boundaries, and upper/lower bridge layers"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: movement.pathfinding
+    domain: gameplay
+    feature: "Stable pathfinding, avoidance, formation, rerouting, and destination adjustment"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: command.selection-groups
+    domain: gameplay
+    feature: "Selection, box selection, control groups, and formations"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: command.order-set
+    domain: gameplay
+    feature: "Move, attack, force attack/move, waypoints, stop, guard, area guard, and deploy"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: command.interaction-set
+    domain: gameplay
+    feature: "Transport, capture, repair, sell, rally, harvest, load/unload, auto-target, and chase"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: combat.weapons-warheads
+    domain: gameplay
+    feature: "Weapons, warheads, armor, Verses, range damage, and falloff"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: combat.projectiles-timing
+    domain: gameplay
+    feature: "Projectiles, Burst, ROF, trajectories, and deterministic impact ordering"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: combat.targeting
+    domain: gameplay
+    feature: "Target selection, ground/air/sea legality, turret, and firing FLH"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: combat.veterancy-death
+    domain: gameplay
+    feature: "Experience, veterancy, hit reactions, death results, and remains"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: economy.resources-harvest
+    domain: gameplay
+    feature: "Ore, gems, drills, harvesters, cargo, refineries, and funds"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: economy.production
+    domain: gameplay
+    feature: "Production queues, build time, multiple factories, exits, airports, and docks"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: base.placement-tech-power
+    domain: gameplay
+    feature: "Building placement, tech tree, prerequisites, owners, countries, and power"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: base.building-interactions
+    domain: gameplay
+    feature: "Repair, sell, capture, infiltration, damage states, walls, and gates"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: base.superweapon-charge
+    domain: gameplay
+    feature: "Superweapon ownership, charge, hold, reset, and launch availability"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+
+  # Stock special mechanisms: each remains independently auditable
+  - id: special.garrison
+    domain: special-mechanism
+    feature: "Garrison and building firing"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.engineer
+    domain: special-mechanism
+    feature: "Engineer capture, repair, bridge, and special interactions"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.spy-disguise
+    domain: special-mechanism
+    feature: "Spy infiltration, disguise, and detection response"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.cloak-detection
+    domain: special-mechanism
+    feature: "Cloak, uncloak, detection, and targeting"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.mind-control
+    domain: special-mechanism
+    feature: "Mind control, controller capacity, release, and ownership changes"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.parasite-terror-drone
+    domain: special-mechanism
+    feature: "Parasites, terror drones, removal, and host death"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.magnetism
+    domain: special-mechanism
+    feature: "Magnetism, lifting, dragging, target loss, and fall results"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.radiation-toxin
+    domain: special-mechanism
+    feature: "Radiation fields, toxins, persistence, and periodic damage"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.emp
+    domain: special-mechanism
+    feature: "EMP disable, immunity, duration, and recovery"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.iron-curtain
+    domain: special-mechanism
+    feature: "Iron Curtain eligibility, invulnerability, effects, and expiration"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.chrono
+    domain: special-mechanism
+    feature: "Chrono movement, delay, destination legality, and destruction cases"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.deploy-transform
+    domain: special-mechanism
+    feature: "Deploy, undeploy, transformation, Foundation, and state transfer"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.transport-paradrop
+    domain: special-mechanism
+    feature: "Transport capacity, load/unload, paradrops, passengers, and loss"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.aircraft-airfield
+    domain: special-mechanism
+    feature: "Aircraft airfield slots, ammo, takeoff, landing, and rearming"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.naval-submarine
+    domain: special-mechanism
+    feature: "Naval combat, submarines, surfacing, detection, and docks"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.dolphin-squid
+    domain: special-mechanism
+    feature: "Dolphin sonic attacks, squid attachment, control, and removal"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.cloning-vats
+    domain: special-mechanism
+    feature: "Cloning Vats production duplication and ownership rules"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.neutral-tech
+    domain: special-mechanism
+    feature: "Neutral technology buildings, capture benefits, and loss"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.crates
+    domain: special-mechanism
+    feature: "Crate spawn, collection, random effects, and persistence"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.stock-superweapons
+    domain: special-mechanism
+    feature: "All stock YR superweapon targeting and effects"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: special.mission-only
+    domain: special-mechanism
+    feature: "Mission-specific objects, logic, scripted effects, and edge cases"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+
+  # AI, triggers, missions, and campaigns
+  - id: ai.taskforce-script-team
+    domain: ai
+    feature: "TaskForces, Scripts, TeamTypes, and deterministic script execution"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ai.trigger-types
+    domain: ai
+    feature: "AITriggerTypes, conditions, weights, cooldowns, and difficulty"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ai.skirmish-economy-base
+    domain: ai
+    feature: "Base construction, resource management, production, repair, and rebuilding"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ai.attack-defense-superweapon
+    domain: ai
+    feature: "Attack waves, defense, targeting, and superweapon use"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: scenario.trigger-vm
+    domain: ai
+    feature: "Trigger/Event/Action/Tag VM and map variables"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: scenario.mission-flow
+    domain: ai
+    feature: "Objectives, voice, camera, victory, failure, and mission state"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: campaign.progression
+    domain: ai
+    feature: "Campaign selection, progression, unlocks, and restored progress"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+
+  # Visual, audio, text, UI, and input
+  - id: visual.isometric-terrain
+    domain: visual
+    feature: "Isometric TMP terrain, height, ramps, cliffs, water, and bridges"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: visual.depth-sorting
+    domain: visual
+    feature: "Original depth sorting, YSortAdjust, ZAdjust, bridge layers, and occlusion"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: visual.shp-remap-animation
+    domain: visual
+    feature: "SHP palette rendering, player remap, animation, and shadows"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: visual.vxl-hva
+    domain: visual
+    feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: visual.effects
+    domain: visual
+    feature: "Explosions, fire, smoke, splashes, wakes, and damage effects"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: visual.state-effects
+    domain: visual
+    feature: "Cloak, Iron Curtain, EMP, mind control, hit flash, and building damage states"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: visual.scale-performance
+    domain: visual
+    feature: "Large-map and high-unit-count rendering performance"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: audio.wav-voices-sfx
+    domain: audio
+    feature: "WAV playback, unit voices, effects, concurrency, priority, and attenuation"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: audio.music
+    domain: audio
+    feature: "Music discovery, playlist, transitions, and volume control"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: text.csf-localization
+    domain: ui
+    feature: "CSF text resolution, multiple languages, missing-label diagnostics, and fonts"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ui.frontend
+    domain: ui
+    feature: "Main menu, campaign, skirmish, room settings, and loading flow"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ui.sidebar-economy
+    domain: ui
+    feature: "Sidebar, tabs, production icons, funds, power, queue, and tooltips"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ui.radar-objectives
+    domain: ui
+    feature: "Radar, shroud, alerts, mission objectives, and status messages"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: ui.cursor-commands
+    domain: ui
+    feature: "Context cursors, command feedback, force modifiers, and waypoint mode"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: input.hotkeys-remap
+    domain: ui
+    feature: "Original commands, hotkeys, key remapping, pause, save, and load inputs"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+
+  # Inspection and deterministic diagnostics
+  - id: tools.content-inspector
+    domain: diagnostics
+    feature: "Content discovery, precedence, hash, cache, and missing-file inspector"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: tools.asset-viewers
+    domain: diagnostics
+    feature: "PAL, SHP, VXL/HVA, and TMP viewers"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: tools.ini-map-viewers
+    domain: diagnostics
+    feature: "Lossless INI and map-structure viewers with source offsets"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: tools.tick-trigger-rng
+    domain: diagnostics
+    feature: "Tick stepping, trigger trace, update-order trace, and RNG-call trace"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: tools.path-depth-ai
+    domain: diagnostics
+    feature: "Path, occupancy, depth-sorting, visibility, and AI state visualization"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: tools.save-replay-diff
+    domain: diagnostics
+    feature: "Save-state diff and replay desynchronization localization"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: tools.structured-errors
+    domain: diagnostics
+    feature: "Errors localized to file, section, key, offset, object, and tick"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+
+  # Persistence, replay, multiplayer, and FA2 interoperability
+  - id: save.complete-state
+    domain: save
+    feature: "Complete engine state including RNG, AI, triggers, visibility, and pending commands"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: save.version-migration
+    domain: save
+    feature: "Version identification, chunk schemas, compatibility checks, and migration"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations:
+      - id: save.original-sav-research
+        status: "已知限制"
+        description: "Original YR binary .sav read/write is explicitly outside phase-one scope."
+  - id: replay.deterministic-command-stream
+    domain: replay
+    feature: "Versioned command stream, checkpoints, state hashes, seek, and playback"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: replay.desync-diagnostics
+    domain: replay
+    feature: "First divergent tick, object field, update phase, and RNG-call diagnostics"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: multiplayer.room-content-validation
+    domain: multiplayer
+    feature: "Room settings consistency, content manifest validation, and protocol versioning"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: multiplayer.input-sync
+    domain: multiplayer
+    feature: "Tick command synchronization, acknowledgements, recovery, and state hashing"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: multiplayer.lan-entry
+    domain: multiplayer
+    feature: "LAN or modern replacement discovery and session entry"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations:
+      - id: multiplayer.official-service
+        status: "已知限制"
+        description: "Closed official online services are not reproduced."
+  - id: fa2.open-read
+    domain: finalalert2
+    feature: "Read maps saved by the fixed FinalAlert 2 baseline"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: fa2.semantic-roundtrip
+    domain: finalalert2
+    feature: "FA2 save -> engine read/write -> FA2 reopen/save semantic round trip"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []
+  - id: fa2.unknown-data-safety
+    domain: finalalert2
+    feature: "Unknown section, key, ordering, digest, and opaque data preservation or safe refusal"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests: []
+    evidence: []
+    limitations: []

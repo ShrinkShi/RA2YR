@@ -1,0 +1,21 @@
+{
+    "name": "RA2YR.Tests.PlayMode",
+    "rootNamespace": "RA2YR.Tests.PlayMode",
+    "references": [
+        "RA2YR.UnityIntegration"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

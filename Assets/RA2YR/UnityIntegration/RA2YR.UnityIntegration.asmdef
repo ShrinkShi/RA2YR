@@ -1,0 +1,16 @@
+{
+    "name": "RA2YR.UnityIntegration",
+    "rootNamespace": "RA2YR.UnityIntegration",
+    "references": [
+        "RA2YR.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

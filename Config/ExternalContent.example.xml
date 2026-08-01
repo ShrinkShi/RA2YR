@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExternalContent schemaVersion="1" cachePath="../../ExternalContent/Cache/RA2YR">
+  <Sources>
+    <Source
+      id="yr1001-clean"
+      kind="Clean"
+      path="../../ExternalContent/YR1001_Clean"
+      priority="100"
+      version="YR 1.001 clean"
+      enabled="false" />
+    <Source
+      id="yr1001-unpacked"
+      kind="Unpacked"
+      path="../../ExternalContent/YR1001_Unpacked"
+      priority="200"
+      version="YR 1.001 unpacked"
+      enabled="false" />
+    <Source
+      id="YR1001_ProjectBaseline"
+      kind="Patched"
+      path="../../ExternalContent/YR1001_ProjectBaseline"
+      priority="300"
+      version="YR1001_ProjectBaseline: official map add-on, music pack, and Windows compatibility patch; not clean YR 1.001"
+      enabled="true" />
+  </Sources>
+</ExternalContent>

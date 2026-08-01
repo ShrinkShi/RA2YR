@@ -1,0 +1,155 @@
+schema_version: 1
+last_reviewed: "2026-08-01"
+repository_license: "Apache-2.0"
+policy:
+  default_approval: "not-approved"
+  code_import_requires_review: true
+  gpl_code_import_allowed: false
+  reference_only_means_code_import_allowed: false
+  required_fields:
+    - id
+    - name
+    - source
+    - version_or_hash
+    - license
+    - purpose
+    - contains_code
+    - repository_use
+    - approval_status
+
+sources:
+  - id: github-actions-checkout-11bd719
+    name: "actions/checkout"
+    source:
+      type: "GitHub Action"
+      canonical_upstream: "https://github.com/actions/checkout"
+      workflow: ".github/workflows/repository-safety.yml"
+    version_or_hash:
+      commit: "11bd71901bbe5b1630ceea73d27597364c9af683"
+      release: "v4.2.2"
+    license:
+      spdx: "MIT"
+      verification: "upstream LICENSE; pinned action commit"
+    purpose: "Checkout repository content for the license-free repository safety gate"
+    contains_code: true
+    repository_use: "CI action referenced by immutable full commit SHA; source not vendored"
+    approval_status: "approved-ci-build-dependency"
+
+  - id: unity-package-set-2022.3.60f1c1
+    name: "Unity 2022.3 package set"
+    source:
+      type: "Unity Package Manager"
+      registry: "https://packages.unity.cn"
+      manifest: "Packages/manifest.json"
+      lock_file: "Packages/packages-lock.json"
+    version_or_hash:
+      unity_editor: "2022.3.60f1c1"
+      manifest_sha256: "1FB58FEDCBFF2F558021DC9B79A39BAF4663C1FD98F25FE07F3C3F48F2471152"
+      lock_file_sha256: "FBE619B165F9D00C0E19D8D2535CC87D61240ECBE261AE49894CB23BDAB1C427"
+      direct_feature_and_tool_packages:
+        com.unity.collab-proxy: "2.12.4"
+        com.unity.feature.2d: "2.0.1"
+        com.unity.ide.rider: "3.0.34"
+        com.unity.ide.visualstudio: "2.0.22"
+        com.unity.test-framework: "1.1.33"
+        com.unity.textmeshpro: "3.0.7"
+        com.unity.timeline: "1.7.6"
+        com.unity.ugui: "1.0.0"
+        com.unity.visualscripting: "1.9.4"
+      direct_builtin_modules: "See Packages/manifest.json"
+      transitive_versions: "See Packages/packages-lock.json"
+    license:
+      spdx: "LicenseRef-Unity-Companion-License"
+      conclusion: "Unity Companion License expected; verify each package and bundled notice"
+      verification: "pending-per-package"
+    purpose: "Unity editor/runtime and test build dependencies"
+    contains_code: true
+    repository_use: "package-reference-only; no package source vendored"
+    approval_status: "approved-build-dependency-pending-license-audit"
+    notes:
+      - "Built-in modules are resolved with the editor and remain subject to Unity terms."
+      - "A lock-file change requires ledger hash and license review updates."
+
+  - id: redalert-csf2json-local-snapshot
+    name: "RedAlertCSF2JSON"
+    source:
+      type: "external-local-reference"
+      canonical_upstream: "unknown; must be identified before any use beyond reference"
+      observed_location: "../Reference/RedAlertCSF2JSON (logical external location)"
+      observed_snapshot_location: "../参考资料/红警2modder工具箱 v1.2.0/美工类/其他/RedAlertCSF2JSON"
+    version_or_hash:
+      version: "unversioned snapshot in tool bundle v1.2.0"
+      csf2json_py_sha256: "F94BBF0E88BB2DCF406D651CDA76093B0D0582CF1677C0E7265F6CC8131B9133"
+      readme_sha256: "8974D9F00FA1833221A369E34474CDE09878C0E95E0DDA2803A2C3150BBD387E"
+      license_sha256: "3972DC9744F6499F0F9B2DBF76696F2AE7AD8AF9B23DDE66D6AF86C9DFB36986"
+    license:
+      spdx: "GPL-3.0-only"
+      verification: "observed-license-file"
+    purpose: "External CSF format and observable behavior research"
+    contains_code: true
+    repository_use: "reference-only; no source, translation, or derived implementation copied"
+    approval_status: "approved-reference-only"
+
+  - id: ra2-map-trigger-network-local-snapshot
+    name: "Ra2-Map-TriggerNetwork (trigger network viewer)"
+    source:
+      type: "external-local-reference"
+      canonical_upstream: "https://github.com/FrozenFog/Ra2-Map-TriggerNetwork"
+      observed_location: "../Reference/Ra2-Map-TriggerNetwork (logical external location)"
+      observed_snapshot_location: "../参考资料/红警2modder工具箱 v1.2.0/其他/触发网络查看工具"
+    version_or_hash:
+      version: "unversioned snapshot in tool bundle v1.2.0"
+      main_py_sha256: "23FF8F19760D87EEC4ABF7FAB45C999EF9F85EB0718208FF1BB0AFE3F58FC4DE"
+      readme_sha256: "89F100932259109EECF7100FB586673D9A11E3EA2D1197156092AD6EEF99A3AF"
+      license_sha256: "F93557A141555B129B619F77B48EC6803B16A952FFB38301C7730BE45E75CB97"
+    license:
+      spdx: "MIT"
+      verification: "observed-license-file"
+    purpose: "External map-trigger graph and behavior reference"
+    contains_code: true
+    repository_use: "reference-only; no code imported"
+    approval_status: "approved-reference-only"
+
+  - id: voxelshop-local-snapshot
+    name: "VoxelShop"
+    source:
+      type: "external-local-reference"
+      canonical_upstream: "https://github.com/simlu/voxelshop"
+      documentation: "https://simlu.github.io/voxelshop"
+      observed_location: "../Reference/VoxelShop (logical external location)"
+      observed_snapshot_location: "../参考资料/红警2modder工具箱 v1.2.0/美工类/VXL/VXL/voxelshop"
+    version_or_hash:
+      version: "unversioned packaged snapshot"
+      launcher_jar_sha256: "E1ABFDB93F935BD64D55902B553F17330BA88628AE6516B84AD06306D1F45AE7"
+      readme_sha256: "024B6F56FA3E69AD1478CCD90A944A0833D3176AEF036F7F781A8BD17B66D82E"
+      license_sha256: "2514772E5475F208616174F81B67168179A7C51BDCB9570A96A9DC5962B83116"
+    license:
+      spdx: "Apache-2.0"
+      verification: "observed-license-file; bundled dependency licenses not audited"
+    purpose: "External voxel visualization and tool behavior reference"
+    contains_code: true
+    repository_use: "reference-only; no code or binary imported"
+    approval_status: "approved-reference-only"
+
+  - id: finalalert2-yr-1.01-baseline
+    name: "FinalAlert 2 Yuri's Revenge"
+    source:
+      type: "external-proprietary-tool"
+      canonical_upstream: "proprietary distribution; canonical download not recorded"
+      observed_location: "../ExternalTools/FinalAlert2/FinalAlert2.exe (logical external location)"
+      observed_snapshot_location: "../FinalAlert 2 Yuri's Revenge/FinalAlert2.exe"
+    version_or_hash:
+      version: "SZL 1.01 localized build"
+      executable_sha256: "BE939988780428271377C7592E0552E405C5982BA6BB7F468DE76CE5117F619D"
+    license:
+      spdx: "LicenseRef-Proprietary-FinalAlert2"
+      verification: "redistribution not approved"
+    purpose: "External, manual map interoperability and round-trip baseline"
+    contains_code: true
+    code_form: "proprietary executable only; no source code supplied or imported"
+    repository_use: "reference-only; executable and data remain outside repository"
+    approval_status: "approved-reference-only-no-redistribution"
+    handling:
+      launch_requires_explicit_purpose: true
+      test_only_on_copies: true
+      overwrite_original_maps: false
