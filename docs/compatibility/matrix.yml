@@ -2,8 +2,8 @@ schema_version: 1
 last_updated: "2026-08-01"
 baseline:
   game: "Command & Conquer: Yuri's Revenge 1.001"
-  content_role: "user-designated external patched baseline"
-  content_path_role: "ExternalContent/YR1001_Patched"
+  content_role: "YR1001_ProjectBaseline patched development content source; not a clean YR 1.001 golden baseline"
+  content_path_role: "ExternalContent/YR1001_ProjectBaseline"
   observed_workspace_path: "../尤里的复仇-1.001-原版（已加官方地图增补包、音乐包、win10兼容补丁）"
   content_manifest: null
   finalalert2:
@@ -93,7 +93,7 @@ entries:
     limitations:
       - id: content.manifest-hash.original-baseline-pending
         status: "已知限制"
-        description: "No original YR content manifest is recorded in public evidence; local golden indexing remains a later approved operation."
+        description: "No clean original YR 1.001 content manifest is recorded in public evidence; local golden indexing remains a later approved operation."
   - id: content.cache
     domain: content
     feature: "Repository-external dependency cache and invalidation"

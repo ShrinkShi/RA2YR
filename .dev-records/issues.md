@@ -61,3 +61,27 @@ ReparsePoint 检查依赖 `.Exists` 决定是否读取属性，上层异常处�
 
 ### 验证方式
 注入合成元数据访问拒绝，确认异常不会返回“无 ReparsePoint”；该回归包含在最新 EditMode 29/29 结果中。
+
+## 2026-08-01 - GitHub 默认分支错误
+
+### 现象
+远程最初只有 `feature/wp00-wp01-foundation`，GitHub 将它设为默认分支；远程没有 `main`、PR 或 Actions 运行。
+
+### 初步判断
+远程仓库是在 feature 已存在而 main 尚未发布的状态下建立。
+
+### 排查过程
+- 验证 origin 精确为 `https://github.com/ShrinkShi/RA2YR.git`。
+- 验证本地 `main` 指向 `1caf8a8`，feature 指向 `e5c39af`，工作树干净。
+- 验证远程只存在 feature，默认分支确为 feature。
+
+### 根因
+远程缺少 `main`，导致 GitHub 以当时唯一的 feature 分支作为默认分支。
+
+### 解决方案
+- 以普通非强制推送发布本地 `main`。
+- 将 GitHub 默认分支改为 `main`。
+- 不删除分支、不重写三个现有提交。
+
+### 验证方式
+远程 `main` 为 `1caf8a801de64e68db201279ab93a0dd3137be2f`，feature 为 `e5c39af30a79b6b877a29591afe6338abee4dbe7`，GitHub `defaultBranchRef.name` 为 `main`。

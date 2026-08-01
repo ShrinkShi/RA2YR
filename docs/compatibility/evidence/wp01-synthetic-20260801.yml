@@ -1,6 +1,6 @@
 schema_version: 1
 evidence_id: "wp01-synthetic-20260801"
-recorded_at_utc: "2026-08-01T12:43:06Z"
+recorded_at_utc: "2026-08-01T14:47:14Z"
 scope: "WP-00/WP-01 synthetic and boundary verification only"
 environment:
   unity_editor: "2022.3.60f1c1"
@@ -10,11 +10,28 @@ environment:
   original_content_body_in_report: false
 
 unity_test_run:
-  result_directory: "TestResults/20260801T124057804Z-84af2b85291d464484d5fab9a0b71f88 (local and ignored)"
+  result_directory: "TestResults/20260801T140949670Z-77ee8570a04b4b1d95a823661fd38f45 (local and ignored)"
   edit_mode: { result: "Passed", executed: 29, passed: 29, failed: 0 }
   play_mode: { result: "Passed", executed: 1, passed: 1, failed: 0 }
   compilation_errors: 0
   runner_note: "Both headless Editor children required the wrapper's 30-second post-result shutdown; completed NUnit XML was validated before acceptance."
+
+repository_validation:
+  result: "Passed"
+  windows_powershell_5_1: { asset_entries: 34, meta_files: 34, matrix_entries: 120, evidence_references: 3, violations: 0 }
+  powershell_7: { asset_entries: 34, meta_files: 34, matrix_entries: 120, evidence_references: 3, violations: 0 }
+  synthetic_regression_cases: { executed: 46, passed: 46, failed: 0 }
+  fail_closed_checks: ["nonzero exit on negative cases", "unknown or repeated top-level matrix keys", "empty promoted test item"]
+  network_dependencies_added: false
+  compatibility_status_promotions: 0
+  scope_note: "Repository integrity gate only; this is not evidence of PAL, SHP, VXL, TMP, map, or gameplay compatibility."
+
+project_baseline:
+  name: "YR1001_ProjectBaseline"
+  source_kind: "Patched"
+  includes: ["official map add-on", "music pack", "Windows compatibility patch"]
+  clean_yr_1001_golden_baseline: false
+  original_content_body_in_report: false
 
 external_paths:
   configuration_schema: 1
@@ -32,7 +49,7 @@ external_paths:
     source_count: 3
     enabled_source_count: 1
     diagnostics: 0
-    enabled_source_role: "yr1001-baseline"
+    enabled_source_role: "YR1001_ProjectBaseline"
     enabled_source_directory_exists: true
     indexed_or_hashed_original_content: false
 

@@ -22,8 +22,15 @@ function Invoke-GitChecked {
         [Parameter(Mandatory)][string[]] $Arguments
     )
 
-    $output = @(& git -C $Repository @Arguments 2>&1)
-    if ($LASTEXITCODE -ne 0) {
+    $previousErrorActionPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = 'Continue'
+        $output = @(& git -C $Repository @Arguments 2>&1)
+        $exitCode = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+    if ($exitCode -ne 0) {
         throw "git $($Arguments -join ' ') failed: $($output -join [Environment]::NewLine)"
     }
     ($output -join "`n").Trim()

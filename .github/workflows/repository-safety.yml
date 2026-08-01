@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  copyright-gate:
+  repository-safety:
     runs-on: windows-2022
     timeout-minutes: 10
     steps:
@@ -23,6 +23,18 @@ jobs:
         shell: powershell
         run: ./Tools/Repository/Tests/Invoke-CopyrightScan.Tests.ps1
 
+      - name: Run repository validation regression tests
+        shell: powershell
+        run: ./Tools/Repository/Tests/Invoke-RepositoryValidation.Tests.ps1
+
       - name: Scan repository candidates
         shell: powershell
         run: ./Tools/Repository/Invoke-CopyrightScan.ps1
+
+      - name: Validate repository with Windows PowerShell 5.1
+        shell: powershell
+        run: ./Tools/Repository/Invoke-RepositoryValidation.ps1
+
+      - name: Validate repository with PowerShell 7
+        shell: pwsh
+        run: ./Tools/Repository/Invoke-RepositoryValidation.ps1

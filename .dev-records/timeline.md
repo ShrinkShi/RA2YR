@@ -63,3 +63,35 @@
 - 执行版权扫描、元数据、兼容矩阵和 Git 边界最终复核。
 - 以追加提交保留既有本地提交历史。
 - 获取正式远程 URL/可见性后推送并创建首个草稿 PR。
+
+## 2026-08-01 22:14 - WP-00/WP-01 远程交付收口
+
+### 用户目标
+- 修正远程 `main + feature + Draft PR` 结构。
+- 补齐根 README、开发基线命名和可重复静态门禁。
+- 不开始格式、地图或游戏逻辑开发。
+
+### 本轮处理
+- 以非强制推送发布 `main` 到初始 Unity 提交，并将 GitHub 默认分支改为 `main`。
+- 保持 `feature/wp00-wp01-foundation` 和原三个提交不变。
+- 将当前 patched 开发内容源统一命名为 `YR1001_ProjectBaseline`，明确它不是纯净 YR 1.001 黄金基线。
+- 新增根 README、仓库验证器及双 PowerShell 合成回归，并接入 `repository-safety.yml`。
+- 重新跑通 Unity EditMode 29 项、PlayMode 1 项和仓库验证回归 46 项；矩阵顶层未知键、重复键、游离内容和空测试项均按 fail-closed 拒绝。
+
+### 关键结论
+- 远程 `main` 指向 `1caf8a8`，默认分支为 `main`；feature 仍指向 `e5c39af`，提交历史未重写。
+- 静态门禁只证明仓库结构、Unity 元数据、Core 边界和兼容矩阵结构，不提升任何格式兼容状态。
+- 本机配置加载只验证路径和来源角色，未索引、哈希或读取原版内容正文。
+
+### 影响文件
+- `README.md`
+- `Config/ExternalContent.example.xml`
+- `Tools/Repository/Invoke-RepositoryValidation.ps1`
+- `Tools/Repository/Tests/Invoke-RepositoryValidation.Tests.ps1`
+- `.github/workflows/repository-safety.yml`
+- 相关需求、架构、兼容证据、策略和开发记录文件
+
+### 后续事项
+- 完成 staged-blob 版权扫描和最终本地门禁。
+- 创建单一远程收口提交，推送 feature，并创建首个 Draft PR。
+- 观察并如实记录 GitHub Actions 是否触发及其结果。

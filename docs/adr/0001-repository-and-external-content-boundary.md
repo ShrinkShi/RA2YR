@@ -22,14 +22,17 @@ external roles are:
 
 - `ExternalContent/YR1001_Clean`
 - `ExternalContent/YR1001_Unpacked`
-- `ExternalContent/YR1001_Patched`
+- `ExternalContent/YR1001_ProjectBaseline`
 - `ExternalTools/FinalAlert2`
 - `Reference`
 
-The current user-designated YR baseline is the external directory
+The current patched development source is named `YR1001_ProjectBaseline` and
+maps to the external directory
 `../尤里的复仇-1.001-原版（已加官方地图增补包、音乐包、win10兼容补丁）`.
-It is identified through a read-only source configuration and future SHA-256
-manifest. Its files must not be copied into `Assets` or committed.
+It includes the official map add-on, music pack, and Windows compatibility
+patch, so it is not a clean YR 1.001 golden baseline. It is identified through
+a read-only source configuration and future SHA-256 manifest. Its files must
+not be copied into `Assets` or committed.
 
 The content layer must expose source identity and precedence. Caches use a
 dedicated repository-external location and contain no source-of-truth data.

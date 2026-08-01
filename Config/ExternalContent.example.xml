@@ -16,11 +16,11 @@
       version="YR 1.001 unpacked"
       enabled="false" />
     <Source
-      id="yr1001-baseline"
+      id="YR1001_ProjectBaseline"
       kind="Patched"
-      path="../../ExternalContent/YR1001_Patched"
+      path="../../ExternalContent/YR1001_ProjectBaseline"
       priority="300"
-      version="YR 1.001 user-designated patched baseline"
+      version="YR1001_ProjectBaseline: official map add-on, music pack, and Windows compatibility patch; not clean YR 1.001"
       enabled="true" />
   </Sources>
 </ExternalContent>

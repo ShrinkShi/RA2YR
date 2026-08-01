@@ -12,6 +12,7 @@
         "YR1001_Clean",
         "YR1001_Unpacked",
         "YR1001_Patched",
+        "YR1001_ProjectBaseline",
         "FinalAlert2",
         ".git.backup-20260801-162014",
         ".git.empty-backup-20260801-171609"
@@ -76,6 +77,7 @@
         "YR1001_Clean",
         "YR1001_Unpacked",
         "YR1001_Patched",
+        "YR1001_ProjectBaseline",
         "FinalAlert2",
         "Library",
         "Temp",
@@ -142,6 +144,7 @@
         "ExternalContent/YR1001_Clean/probe.mix",
         "ExternalContent/YR1001_Unpacked/probe.shp",
         "ExternalContent/YR1001_Patched/probe.map",
+        "ExternalContent/YR1001_ProjectBaseline/probe.map",
         "ExternalTools/FinalAlert2/FinalAlert2.exe",
         "Reference/probe.zip",
         "ContentCache/probe.bin",

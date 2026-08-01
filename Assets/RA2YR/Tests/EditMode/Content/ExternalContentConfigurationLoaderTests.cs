@@ -18,7 +18,7 @@ namespace RA2YR.Tests.EditMode.Content
                 string expectedCachePath = temporary.CreateDirectory("Cache");
                 string configurationPath = WriteConfiguration(
                     temporary,
-                    "<Source id=\"yr1001-baseline\" kind=\"Patched\" path=\"../../External\" priority=\"300\" version=\"YR 1.001 baseline\" enabled=\"true\" />");
+                    "<Source id=\"YR1001_ProjectBaseline\" kind=\"Patched\" path=\"../../External\" priority=\"300\" version=\"YR1001_ProjectBaseline patched development source\" enabled=\"true\" />");
 
                 ExternalContentConfigurationLoadResult result =
                     new ExternalContentConfigurationLoader().Load(
@@ -31,7 +31,9 @@ namespace RA2YR.Tests.EditMode.Content
                 Assert.That(result.Configuration.Sources[0].RootPath, Is.EqualTo(expectedSourcePath));
                 Assert.That(result.Configuration.Sources[0].Kind, Is.EqualTo(ContentSourceKind.Patched));
                 Assert.That(result.Configuration.Sources[0].Priority, Is.EqualTo(300));
-                Assert.That(result.Configuration.Sources[0].Version, Is.EqualTo("YR 1.001 baseline"));
+                Assert.That(
+                    result.Configuration.Sources[0].Version,
+                    Is.EqualTo("YR1001_ProjectBaseline patched development source"));
             }
         }
 

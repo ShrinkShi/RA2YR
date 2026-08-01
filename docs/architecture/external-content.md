@@ -26,11 +26,14 @@ Non-Windows identity currently falls back to normalized lexical comparison and
 is a known WP-01 limitation until a platform realpath/device implementation is
 added. This does not permit repository-internal content on those platforms.
 
-The user-designated patched YR 1.001 baseline currently maps to the external
-workspace directory
+The current development content source is named `YR1001_ProjectBaseline` and
+retains `ContentSourceKind.Patched`. It maps to the external workspace directory
 `../../尤里的复仇-1.001-原版（已加官方地图增补包、音乐包、win10兼容补丁）`
 when referenced from a configuration under `RA2YR/Config`. The path is local
-configuration data, not repository content.
+configuration data, not repository content. Because this source contains the
+official map add-on, music pack, and Windows compatibility patch, it is not a
+clean YR 1.001 golden baseline and cannot by itself support a clean-original
+compatibility claim.
 
 ## Index and manifest
 

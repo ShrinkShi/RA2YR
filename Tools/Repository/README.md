@@ -37,3 +37,34 @@ both exercised when installed):
 ```powershell
 ./Tools/Repository/Tests/Invoke-CopyrightScan.Tests.ps1
 ```
+
+`Invoke-RepositoryValidation.ps1` enforces repository structure that was
+previously checked by hand. It verifies:
+
+- one matching `.meta` for every Unity resource and directory below `Assets`;
+- no orphan `.meta`, malformed GUID, duplicate GUID, or reparse point below
+  `Assets`;
+- the exact Unity Editor version in `ProjectVersion.txt`;
+- `RA2YR.Core.asmdef` has Boolean `noEngineReferences: true` and Core text does
+  not reference `UnityEngine` or `UnityEditor`;
+- the canonical compatibility-matrix schema-v1 subset, unique entry IDs,
+  declared status vocabulary, required list fields, and repository evidence
+  paths/fragments.
+
+The matrix reader intentionally accepts only the repository's canonical YAML
+schema-v1 subset. Unsupported YAML syntax fails closed and requires a reviewed
+schema or validator change. No YAML module or network dependency is used.
+
+Run validation from either Windows PowerShell 5.1 or PowerShell 7:
+
+```powershell
+./Tools/Repository/Invoke-RepositoryValidation.ps1
+```
+
+Machine-readable output is available with `-Json`. The regression suite
+launches both PowerShell hosts when installed and exercises passing and
+failing synthetic repositories:
+
+```powershell
+./Tools/Repository/Tests/Invoke-RepositoryValidation.Tests.ps1
+```
