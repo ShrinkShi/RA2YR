@@ -221,6 +221,14 @@ try {
             Assert-Scan -Scan (Invoke-TestScanner -Repository $repo -Executable $executable) -ShouldPass $false -RequiredRules @('forbidden-physical-root')
         }
 
+        Invoke-Case -Name 'Every required ignore probe is checked' -Body {
+            $repo = New-TestRepository -Name 'missing-ignore-probe'
+            $ignorePath = Join-Path $repo '.gitignore'
+            $ignoreText = [IO.File]::ReadAllText($ignorePath, $script:utf8NoBom)
+            [IO.File]::WriteAllText($ignorePath, $ignoreText.Replace("/ExternalContent/`n", ''), $script:utf8NoBom)
+            Assert-Scan -Scan (Invoke-TestScanner -Repository $repo -Executable $executable) -ShouldPass $false -RequiredRules @('required-ignore-missing')
+        }
+
         Invoke-Case -Name 'Index symlink and gitlink modes' -Body {
             $repo = New-TestRepository -Name 'index-modes'
             $target = Write-TestText -Repository $repo -RelativePath 'generated-target.txt' -Text 'generated target'

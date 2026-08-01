@@ -601,27 +601,17 @@ try {
         }
     }
 
-    $probeBytes = New-Object System.Collections.Generic.List[byte]
-    $utf8NoBom = New-Object System.Text.UTF8Encoding($false, $true)
-    foreach ($probeValue in @($policy.requiredIgnoredProbes)) {
-        $probePath = Normalize-RepositoryPath -Path ([string]$probeValue) -Purpose 'required ignore probe'
-        $probeBytes.AddRange($utf8NoBom.GetBytes($probePath))
-        $probeBytes.Add(0)
-    }
-    $ignoreResult = Invoke-GitRaw -WorkingDirectory $gitRoot -Arguments 'check-ignore --no-index -z --stdin' -InputBytes $probeBytes.ToArray()
-    if (@(0, 1) -notcontains $ignoreResult.ExitCode) {
-        throw 'Git failed while evaluating required ignore probes.'
-    }
-    $ignoredPaths = @(ConvertFrom-NulList -Bytes $ignoreResult.Bytes -Purpose 'ignored probe paths')
-    $ignoredSet = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
-    foreach ($ignoredPath in $ignoredPaths) {
-        $ignoredSet.Add($ignoredPath.Replace('\', '/')) | Out-Null
-    }
-
     $ignoredProbeResults = New-Object System.Collections.Generic.List[object]
     foreach ($probeValue in @($policy.requiredIgnoredProbes)) {
-        $probePath = ([string]$probeValue).Replace('\', '/')
-        $isIgnored = $ignoredSet.Contains($probePath)
+        $probePath = Normalize-RepositoryPath -Path ([string]$probeValue) -Purpose 'required ignore probe'
+        if ($probePath -notmatch '^[A-Za-z0-9._/-]+$') {
+            throw 'Required ignore probes must use command-safe ASCII repository paths.'
+        }
+        $ignoreResult = Invoke-GitRaw -WorkingDirectory $gitRoot -Arguments ("check-ignore --no-index -- " + $probePath)
+        if (@(0, 1) -notcontains $ignoreResult.ExitCode) {
+            throw 'Git failed while evaluating a required ignore probe.'
+        }
+        $isIgnored = $ignoreResult.ExitCode -eq 0
         $ignoredProbeResults.Add([pscustomobject]@{ Path = $probePath; Ignored = $isIgnored })
         if (-not $isIgnored) {
             Add-Violation -List $violations -Path $probePath -Source 'policy' -Rule 'required-ignore-missing' -Detail 'Defensive ignore rule did not match.'

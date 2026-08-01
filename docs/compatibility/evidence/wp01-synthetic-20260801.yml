@@ -1,6 +1,6 @@
 schema_version: 1
 evidence_id: "wp01-synthetic-20260801"
-recorded_at_utc: "2026-08-01T14:47:14Z"
+recorded_at_utc: "2026-08-01T15:20:04Z"
 scope: "WP-00/WP-01 synthetic and boundary verification only"
 environment:
   unity_editor: "2022.3.60f1c1"
@@ -25,6 +25,17 @@ repository_validation:
   network_dependencies_added: false
   compatibility_status_promotions: 0
   scope_note: "Repository integrity gate only; this is not evidence of PAL, SHP, VXL, TMP, map, or gameplay compatibility."
+
+copyright_scan:
+  result: "Passed locally"
+  synthetic_regression_cases: { executed: 22, passed: 22, failed: 0 }
+  staged_candidates: 121
+  required_ignore_probes: { executed: 13, passed: 13, failed: 0 }
+  violations: 0
+  forbidden_physical_roots: 0
+  original_content_body_read: false
+  compatibility_status_promotions: 0
+  scope_note: "Repository safety evidence only; it is not evidence of game-format compatibility."
 
 project_baseline:
   name: "YR1001_ProjectBaseline"

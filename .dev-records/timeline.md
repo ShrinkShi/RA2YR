@@ -95,3 +95,15 @@
 - 完成 staged-blob 版权扫描和最终本地门禁。
 - 创建单一远程收口提交，推送 feature，并创建首个 Draft PR。
 - 观察并如实记录 GitHub Actions 是否触发及其结果。
+
+## 2026-08-01 23:20 - GitHub Actions ignore probe 兼容性修复
+
+### 远程证据
+- Draft PR #1 已触发 `Repository safety`。
+- GitHub runner 使用 Git 2.55.0.windows.3；前两次运行均在首个 required ignore probe 处失败，第二次运行输出了确切相对路径规则。
+- 本机 Git 2.45.1 的同一批 NUL 输入为 13/13 通过，因此没有把失败误写为版权违规或工作流成功。
+
+### 修复
+- 将批量 NUL `check-ignore` 改为逐探针、退出码驱动的检查，避免跨版本首记录差异。
+- 版权扫描负例现在同时锁定非零退出码和 `Passed=false`，断言输出相对路径违规摘要。
+- 本机双 PowerShell 回归更新为 22/22；未读取或报告原版素材正文，未提升兼容矩阵状态。

@@ -85,3 +85,19 @@ ReparsePoint 检查依赖 `.Exists` 决定是否读取属性，上层异常处�
 
 ### 验证方式
 远程 `main` 为 `1caf8a801de64e68db201279ab93a0dd3137be2f`，feature 为 `e5c39af30a79b6b877a29591afe6338abee4dbe7`，GitHub `defaultBranchRef.name` 为 `main`。
+
+## 2026-08-01 - GitHub Actions 的首个 ignore probe 不一致
+
+### 现象
+本机 Git 2.45.1 下，版权扫描器通过一次 NUL 分隔的 `git check-ignore --stdin -z` 调用验证 13 个探针；GitHub Actions 的 Git 2.55.0.windows.3 环境仅漏报输入列表第一项，导致 PR 的前两次安全工作流失败。
+
+### 证据边界
+Git 官方文档仍规定 `--stdin -z` 使用 NUL 分隔输入。本轮只能确认两个 Git for Windows 版本的实测结果不同，未将其未经上游确认地归因为 Git 缺陷。
+
+### 解决方案
+- 每个受策略约束、仅含命令安全 ASCII 字符的探针单独调用 `git check-ignore --no-index -- <path>`。
+- 只接受 Git 文档定义的退出码 0（已忽略）和 1（未忽略），其他退出码 fail-closed。
+- 新增“每个 required ignore probe 都被检查”的合成负例。
+
+### 验证方式
+本机 Windows PowerShell 5.1 与 PowerShell 7 合计 22/22 回归通过；真实暂存区仍为 121 个候选、13/13 探针、0 违规和 0 个禁止物理根。修复后的远程工作流结论在 PR 交付报告中记录。

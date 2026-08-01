@@ -21,7 +21,7 @@
 ### 验证情况
 - Unity Core 与 EditMode 程序集使用 Unity 自带 Mono 编译器编译成功。
 - Unity EditMode：29/29 通过；PlayMode：1/1 通过；零编译错误。
-- 版权扫描回归：Windows PowerShell 5.1 和 PowerShell 7 合计 20/20 通过。
+- 版权扫描回归：Windows PowerShell 5.1 和 PowerShell 7 合计 22/22 通过。
 - 当前仓库版权扫描：零违规；外部目录和本机配置 ignore probes 全部通过。
 - `Assets` 34 个资源/目录均有匹配 `.meta`，无孤立 `.meta` 或重复 GUID。
 
