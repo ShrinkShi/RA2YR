@@ -5,6 +5,11 @@ to `未实现`; an entry advances only when its linked test and evidence meet th
 definition below. A successful parse, display, or launch never implies
 behavioral compatibility.
 
+`format.bounded-reader` is a format-neutral safety foundation. Its `可解析`
+status means synthetic bounded-input, budget, diagnostic, and tail tests pass;
+it does not promote PAL, SHP, VXL/HVA, TMP, CSF, MIX, INI, map Pack, or any
+runtime behavior.
+
 ## Status vocabulary
 
 | Status | Required evidence |

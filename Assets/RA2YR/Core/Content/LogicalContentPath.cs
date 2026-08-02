@@ -136,15 +136,15 @@ namespace RA2YR.Core.Content
 
         public override int GetHashCode()
         {
-            // FNV-1a avoids the process-randomized string hash while retaining
-            // the invariant case folding required by OrdinalIgnoreCase identity.
+            // Fold the complete string so supplementary-plane case pairs are
+            // handled before applying a deterministic, non-randomized hash.
+            string folded = Value.ToUpperInvariant();
             unchecked
             {
                 uint hash = 2166136261;
-                foreach (char character in Value)
+                foreach (char character in folded)
                 {
-                    char folded = char.ToUpperInvariant(character);
-                    hash ^= folded;
+                    hash ^= character;
                     hash *= 16777619;
                 }
 

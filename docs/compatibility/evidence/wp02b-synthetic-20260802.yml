@@ -1,0 +1,170 @@
+schema_version: 1
+evidence_id: "wp02b-synthetic-20260802"
+recorded_at_utc: "2026-08-02T08:26:00Z"
+scope: "WP-02B format-neutral bounded binary input, budgets, diagnostics, tail handling, and required WP-02A regressions"
+environment:
+  unity_editor: "2022.3.60f1c1"
+  unity_test_framework: "1.1.33"
+  host: "Windows"
+  original_content_used: false
+  original_content_body_read: false
+  network_dependencies_added: false
+
+unity_test_run:
+  edit_mode_result_directory: "TestResults/20260802T082351565Z-de19491ee64149f68732af7316e706b8/EditMode (local and ignored)"
+  play_mode_result_directory: "TestResults/20260802T082521396Z-8cc84dfc01ed4dec885b55f0938de7bf/PlayMode (local and ignored)"
+  edit_mode: { result_xml: "Passed", executed: 152, passed: 152, failed: 0, skipped: 0 }
+  play_mode: { result_xml: "Passed", executed: 1, passed: 1, failed: 0, skipped: 0 }
+  wp02a_edit_mode_baseline: 73
+  new_nunit_cases: 79
+  binary_namespace_cases: 64
+  compilation_errors: 0
+  runner_note: "Both result XML documents passed and logs ended without a residual Unity process or lock, but Unity returned no process exit code; the fail-closed wrapper reported both invocations unsuccessful and the All invocation stopped before PlayMode. PlayMode was therefore run separately."
+
+bounded_binary_reader:
+  unity_engine_dependency: false
+  host_byte_order_used: false
+  inputs:
+    - "ReadOnlyMemory<byte>"
+    - "seekable Stream with inferred remaining bound"
+    - "non-seekable Stream with caller-declared bound and logical origin"
+  integer_reads:
+    - "UInt8"
+    - "Int8"
+    - "UInt16 little-endian"
+    - "Int16 little-endian"
+    - "UInt32 little-endian"
+    - "Int32 little-endian"
+    - "UInt64 little-endian"
+    - "Int64 little-endian"
+  range_operations:
+    - "relative position and exact logical absolute offset"
+    - "remaining length and explicit end-of-input"
+    - "exact read and skip"
+    - "peek without advancing"
+    - "parent-bounded nested subranges"
+  resource_budgets:
+    max_input_bytes: "Passed"
+    max_single_read_bytes: "Passed"
+    max_cumulative_allocated_bytes: "Passed"
+    max_record_count: "Passed"
+    max_string_length: "Passed"
+    max_nesting_depth: "Passed"
+    max_subrange_count: "Passed"
+    one_session_shared_ledger: true
+    checked_arithmetic: true
+    negative_lengths_rejected_before_allocation: true
+  diagnostic_codes:
+    - "UnexpectedEndOfInput"
+    - "InvalidOffset"
+    - "InvalidLength"
+    - "ArithmeticOverflow"
+    - "InputBudgetExceeded"
+    - "ReadBudgetExceeded"
+    - "AllocationBudgetExceeded"
+    - "RecordBudgetExceeded"
+    - "StringBudgetExceeded"
+    - "NestingBudgetExceeded"
+    - "SubrangeBudgetExceeded"
+    - "InvalidSubrange"
+    - "UnsupportedSeekOperation"
+    - "TrailingData"
+    - "ReadFailure"
+  diagnostic_context:
+    - "parser logical name"
+    - "logical source id"
+    - "logical content path"
+    - "absolute byte offset"
+    - "requested and remaining lengths"
+    - "field or section"
+  physical_paths_present: false
+  source_bodies_present: false
+  raw_io_messages_present: false
+  stream_short_reads_loop_until_complete: true
+  zero_read_is_eof: true
+  stream_ownership_success_and_failure_tested: true
+  owned_seekable_failure_dispose_count: 1
+  completion_types_public: false
+  incomplete_child_blocks_parent_completion: true
+  completed_reader_rejects_mutation: true
+  diagnostic_history_growth: "linear"
+  tail_policies:
+    require_full_consumption: "Passed"
+    allow_with_warning: "Passed"
+    preserve_opaque_within_allocation_budget: "Passed"
+    defer_to_format_without_complete_status: "Passed"
+  original_yr_1001_comparison_performed: false
+
+requested_case_coverage:
+  empty_input: "Passed"
+  single_byte_boundary: "Passed"
+  integer_minimum_and_maximum: "Passed"
+  little_endian_order: "Passed"
+  exact_consumption: "Passed"
+  one_byte_short: "Passed"
+  multiple_short_reads: "Passed"
+  non_seekable_stream: "Passed"
+  io_exception_mid_read: "Passed"
+  negative_length: "Passed"
+  offset_overflow: "Passed"
+  offset_plus_length_overflow: "Passed"
+  invalid_subrange: "Passed"
+  nested_subranges: "Passed"
+  child_cannot_cross_parent: "Passed"
+  single_read_budget: "Passed"
+  cumulative_allocation_budget: "Passed"
+  record_budget: "Passed"
+  string_budget: "Passed"
+  trailing_data_error: "Passed"
+  trailing_data_warning: "Passed"
+  opaque_trailing_data: "Passed"
+  memory_stream_equivalence: "Passed"
+  stream_chunking_equivalence: "Passed"
+  exact_diagnostic_offset: "Passed"
+  complete_state_not_publicly_forgeable: "Passed"
+  damaged_input_no_infinite_loop: "Passed"
+  damaged_input_no_unbounded_allocation: "Passed"
+
+wp02a_regressions:
+  logical_path_identity: "OrdinalIgnoreCase"
+  deterministic_hash_algorithm: "whole-string invariant uppercase then FNV-1a over UTF-16"
+  fixed_ascii_hash_tested: true
+  unicode_bmp_cases: 9
+  unicode_supplementary_cases: 4
+  equality_implies_equal_hash: true
+  source_total_bytes_checked: true
+  source_total_bytes_overflow_result: "controlled incomplete resolution with SourceTotalBytesOverflow"
+  priority_or_ambiguity_semantics_changed: false
+
+scope_exclusions:
+  - "MIX directory or payload reading and Blowfish"
+  - "PAL, SHP, VXL/HVA, TMP, CSF, INI, and map Pack"
+  - "Texture2D, shaders, rendering, maps, units, and gameplay logic"
+
+repository_gates:
+  windows_powershell_5_1: "Passed"
+  powershell_7: "Passed"
+  repository_validation:
+    asset_entries: 51
+    meta_files: 51
+    duplicate_guids: 0
+    matrix_entries: 120
+    evidence_references: 11
+    violations: 0
+  repository_validation_regressions: { executed: 46, passed: 46, failed: 0 }
+  copyright_scan:
+    staged_candidates: 163
+    untracked_candidates: 0
+    ignored_external_probes: "13/13"
+    forbidden_physical_roots: 0
+    violations: 0
+    original_content_body_read: false
+  copyright_scan_regressions: { executed: 22, passed: 22, failed: 0 }
+  github_actions_first_pr_head:
+    workflow: "Repository safety"
+    run_id: 30739931593
+    result: "Passed"
+    head_sha: "d127ce665112f978b128672a6c8d467c42bb14a1"
+    note: "All scanner, repository-validation, copyright, Windows PowerShell 5.1, and PowerShell 7 steps passed."
+  compatibility_status_promotions:
+    - "format.bounded-reader: 未实现 -> 可解析"

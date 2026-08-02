@@ -48,6 +48,7 @@ namespace RA2YR.Core.Content
         SourceTreeChangedDuringIndex,
         InvalidLogicalPath,
         SourceLogicalPathConflict,
+        SourceTotalBytesOverflow,
         ResolutionInputIncomplete,
         AmbiguousContentResolution,
         ContentManifestWriteFailed

@@ -19,7 +19,13 @@ namespace RA2YR.Core.Content
             Version = index.Source.Version;
             Fingerprint = index.Fingerprint;
             FileCount = index.Files.Count;
-            TotalBytes = index.Files.Sum(file => file.Length);
+            long totalBytes = 0;
+            foreach (ContentFileRecord file in index.Files)
+            {
+                totalBytes = checked(totalBytes + file.Length);
+            }
+
+            TotalBytes = totalBytes;
             RootPath = index.Source.RootPath;
         }
 
@@ -201,15 +207,32 @@ namespace RA2YR.Core.Content
                 throw new ArgumentNullException(nameof(index));
             }
 
-            ContentResolutionSource[] sources = index.Sources
-                .Select(source => new ContentResolutionSource(source))
-                .OrderByDescending(source => source.Priority)
-                .ThenBy(source => source.Id, StringComparer.Ordinal)
-                .ToArray();
+            var diagnostics = new List<ContentDiagnostic>(index.Diagnostics);
+            var sourceList = new List<ContentResolutionSource>();
+            var failedSourceIds = new HashSet<string>(StringComparer.Ordinal);
+            foreach (ContentSourceIndex sourceIndex in index.Sources
+                         .OrderByDescending(source => source.Source.Priority)
+                         .ThenBy(source => source.Source.Id, StringComparer.Ordinal))
+            {
+                try
+                {
+                    sourceList.Add(new ContentResolutionSource(sourceIndex));
+                }
+                catch (OverflowException)
+                {
+                    failedSourceIds.Add(sourceIndex.Source.Id);
+                    diagnostics.Add(new ContentDiagnostic(
+                        ContentDiagnosticSeverity.Error,
+                        ContentDiagnosticCode.SourceTotalBytesOverflow,
+                        "The source byte total exceeds the supported Int64 range.",
+                        sourceIndex.Source.Id));
+                }
+            }
+
+            ContentResolutionSource[] sources = sourceList.ToArray();
             var sourcesById = sources.ToDictionary(
                 source => source.Id,
                 StringComparer.Ordinal);
-            var diagnostics = new List<ContentDiagnostic>(index.Diagnostics);
 
             if (!index.IsComplete)
             {
@@ -249,6 +272,11 @@ namespace RA2YR.Core.Content
             var candidates = new List<ContentProvenanceCandidate>();
             foreach (ContentSourceIndex sourceIndex in index.Sources)
             {
+                if (failedSourceIds.Contains(sourceIndex.Source.Id))
+                {
+                    continue;
+                }
+
                 ContentResolutionSource safeSource = sourcesById[sourceIndex.Source.Id];
                 candidates.AddRange(sourceIndex.Files.Select(
                     file => new ContentProvenanceCandidate(safeSource, file)));
@@ -326,7 +354,7 @@ namespace RA2YR.Core.Content
                     entry => entry.LogicalPath,
                     LogicalContentPathReportComparer.Instance),
                 diagnostics,
-                index.IsComplete);
+                index.IsComplete && failedSourceIds.Count == 0);
         }
     }
 }

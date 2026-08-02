@@ -71,9 +71,13 @@ entries:
       - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.ParseRejectsUnsafeOrNonCanonicalPaths"
       - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.EqualityOrderingAndHashAreOrdinalIgnoreCase"
       - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.BehaviorDoesNotDependOnCurrentCulture"
+      - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.AsciiCollectionHashUsesDeterministicWholeStringFolding"
+      - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.OrdinalIgnoreCaseEqualityAndHashContractCoversUnicodeBmpPairs"
+      - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.OrdinalIgnoreCaseEqualityAndHashContractCoversSupplementaryPairs"
     evidence:
       - "docs/compatibility/evidence/wp01-synthetic-20260801.yml#discovery_index"
       - "docs/compatibility/evidence/wp02a-synthetic-20260802.yml#logical_paths"
+      - "docs/compatibility/evidence/wp02b-synthetic-20260802.yml#wp02a_regressions"
     limitations:
       - id: content.discovery-index.stationary-source
         status: "已知限制"
@@ -95,9 +99,11 @@ entries:
       - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.SourceIdDoesNotBreakEqualPriorityTie"
       - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.EmptyEnabledSourceResolvesToCompleteEmptyResult"
       - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.AllDisabledConfigurationIsRejectedBeforeIndexing"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.SourceTotalBytesOverflowProducesControlledIncompleteResolution"
     evidence:
       - "docs/compatibility/evidence/wp02a-synthetic-20260802.yml#content_resolution"
       - "docs/compatibility/evidence/wp02a-project-baseline-20260802.yml#project_baseline_manifest"
+      - "docs/compatibility/evidence/wp02b-synthetic-20260802.yml#wp02a_regressions"
     limitations:
       - id: content.precedence.directory-sources-only
         status: "已知限制"
@@ -150,10 +156,35 @@ entries:
   - id: format.bounded-reader
     domain: format
     feature: "Bounded binary reader, resource budgets, offsets, and trailing-data diagnostics"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.EmptyInputIsAtEndAndCompletesExactly"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.IntegerReadsAlwaysUseLittleEndianOrder"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.StreamSnapshotCompletesAfterMultipleShortReads"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.NonSeekableStreamUsesCallerDeclaredBoundWithoutPositionOrLength"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.NestedSubrangesRetainAbsoluteOffsetsAndSharedUsage"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.PerReadBudgetIsIndependentFromEof"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.AllocationBudgetIsCumulativeAcrossOperations"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.RecordBudgetIsCumulativeAcrossSubranges"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.StringLengthBudgetIsValidatedBeforeDecodeOrAllocation"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.TrailingDataCanBeRejectedAsError"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.TrailingDataCanBeAllowedWithWarning"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.TrailingDataCanBePreservedAsOpaqueBytes"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.FormatDefinedTrailingDataRequiresAnExplicitLaterDecision"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.MemoryAndStreamInputsProduceTheSameValuesAndOffsets"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.DiagnosticOffsetUsesLogicalAbsoluteOriginAndCurrentPosition"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.CompletionAndDiagnosticsCannotBeForgedByPublicConstructors"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.ChildCompletionsDoNotCopyTheGrowingSessionDiagnosticHistory"
+      - "RA2YR.Tests.EditMode.Binary.BoundedBinaryReaderTests.SeekableFactoryFailureDisposesOwnedStreamExactlyOnce"
+    evidence:
+      - "docs/compatibility/evidence/wp02b-synthetic-20260802.yml#bounded_binary_reader"
+    limitations:
+      - id: format.bounded-reader.synthetic-only
+        status: "已知限制"
+        description: "WP-02B verifies the format-agnostic reader with synthetic inputs only; no original YR 1.001 format or behavior comparison has been performed."
+      - id: format.bounded-reader.stream-snapshot
+        status: "已知限制"
+        description: "Stream inputs are copied into one bounded session snapshot; incremental format parsing without a full snapshot is not implemented."
   - id: format.pal
     domain: format
     feature: "PAL palettes"

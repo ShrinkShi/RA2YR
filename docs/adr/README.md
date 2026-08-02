@@ -11,3 +11,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0004 | FinalAlert 2 interoperability baseline | Accepted |
 | 0005 | Outer Git recovery backups | Accepted |
 | 0006 | Logical content resolution and baseline evidence | Accepted |
+| 0007 | Bounded binary reading and parse budgets | Accepted |
+| 0008 | Logical content path hash contract | Accepted |
