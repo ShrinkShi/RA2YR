@@ -106,5 +106,11 @@ repository_gates:
     violations: 0
     original_content_body_read: false
   copyright_scan_regressions: { executed: 22, passed: 22, failed: 0 }
+  github_actions:
+    workflow: "Repository safety"
+    run_id: 30736714207
+    result: "Passed"
+    head_sha: "806335f78b6fc3b8fc026c582999c12f888a7def"
+    note: "Node.js 20 deprecation annotation from actions/checkout; no failed step."
   compatibility_status_promotions:
     - "content.precedence: 未实现 -> 可解析"

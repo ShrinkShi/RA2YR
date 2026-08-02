@@ -83,3 +83,8 @@
 ### 风险
 - 便携扫描无法对抗同大小、同时间戳的恶意并发变更；来源和 cache 需在受控运行期间保持静止。
 - 非 Windows 物理路径 identity 限制仍在；本轮逻辑路径语义本身固定为 YR/Windows `OrdinalIgnoreCase`。
+
+### 远程交付
+- 实现提交：`806335f78b6fc3b8fc026c582999c12f888a7def`。
+- Draft PR：`https://github.com/ShrinkShi/RA2YR/pull/2`，base `main`，未自动合并。
+- GitHub Actions 首轮 `Repository safety`：通过；运行 ID `30736714207`。
