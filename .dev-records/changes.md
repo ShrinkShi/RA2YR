@@ -51,3 +51,40 @@
 ### 风险
 - Draft PR 和 GitHub Actions 只能在本提交推送后创建/触发，结果需在远程交付报告中记录。
 - Unity headless 退出和非 Windows path identity 限制保持不变。
+
+## 2026-08-02 - WP-02A 内容解析优先级与基线清单
+
+### 变更范围
+- 仅包含目录型来源逻辑路径、确定性优先级、provenance、仓库外完整 manifest、脱敏基线证据、测试和文档。
+
+### 具体改动
+- 新增与 Unity 无关的逻辑路径类型，拒绝绝对路径、穿越、空段、无效 UTF-16、Windows 不安全名称和当前文化大小写行为。
+- 建立内部内容源抽象及目录型实现边界，为后续 MIX、地图内嵌、模组和合成来源预留接口，但不读取 MIX。
+- 实现 enabled-only、多来源高 priority 胜出、同源大小写冲突拒绝、最高 priority 并列歧义和稳定完整 provenance chain。
+- 解析和 manifest 结果保持不可公开伪造；不完整、歧义或冲突结果拒绝序列化。
+- 实现仓库外内容寻址 resolved manifest 写入、既有字节一致性验证和来源存储 identity 绑定。
+- 新增受控 ProjectBaseline Unity/PowerShell 命令和脱敏汇总模型。
+- 新增逻辑路径、20 项解析场景、manifest 安全及基线摘要测试。
+- 更新外部内容架构、ADR、兼容矩阵和两份 WP-02A 证据。
+
+### 本机基线结果
+- `YR1001_ProjectBaseline`：157 个目录文件、683,178,144 字节、0 诊断、扫描期间未发现变化。
+- 仓库外完整 manifest schema 1，SHA-256 `1443736cb554e4f2c96423e4a2d01368fc6b66fb75669682463bb1ebb8a65e68`，哈希复核通过。
+- 目录内容以 MIX 容量为主；未解析 MIX 内部内容，也未进行纯净 YR 1.001 或行为对照。
+- 仓库内未提交完整文件级 manifest、原版正文或本机绝对路径。
+
+### 验证状态
+- 最终 Unity EditMode 73/73、PlayMode 1/1 通过；零失败、零跳过、零残留 Unity 进程或锁文件。
+- 最终两个 headless Editor 均正常退出；同一分支的较早通过轮次曾触发已记录的 30 秒收尾警告，因此该问题仍视为间歇性已知限制。
+- Windows PowerShell 5.1 与 PowerShell 7 的受控基线命令均通过并得到相同 manifest SHA-256。
+- 双 PowerShell 仓库验证均通过：44 个 Assets 条目、44 个 `.meta`、120 个矩阵条目、8 个证据引用、0 违规；合成回归 46/46。
+- 暂存态版权扫描在两个主机下均为 147 个候选、13/13 ignore probes、0 违规；合成回归 22/22。
+
+### 风险
+- 便携扫描无法对抗同大小、同时间戳的恶意并发变更；来源和 cache 需在受控运行期间保持静止。
+- 非 Windows 物理路径 identity 限制仍在；本轮逻辑路径语义本身固定为 YR/Windows `OrdinalIgnoreCase`。
+
+### 远程交付
+- 实现提交：`806335f78b6fc3b8fc026c582999c12f888a7def`。
+- Draft PR：`https://github.com/ShrinkShi/RA2YR/pull/2`，base `main`，未自动合并。
+- GitHub Actions 首轮 `Repository safety`：通过；运行 ID `30736714207`。

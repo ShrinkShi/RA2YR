@@ -1,0 +1,116 @@
+schema_version: 1
+evidence_id: "wp02a-synthetic-20260802"
+recorded_at_utc: "2026-08-02T06:44:00Z"
+scope: "WP-02A logical directory-source resolution and repository-external manifest controls"
+environment:
+  unity_editor: "2022.3.60f1c1"
+  unity_test_framework: "1.1.33"
+  host: "Windows"
+  original_content_used_by_synthetic_tests: false
+  network_dependencies_added: false
+
+unity_test_run:
+  result_directory: "TestResults/20260802T064318737Z-2fd1db34c00e4b769ab5da501fa11502 (local and ignored)"
+  edit_mode: { result: "Passed", executed: 73, passed: 73, failed: 0 }
+  play_mode: { result: "Passed", executed: 1, passed: 1, failed: 0 }
+  compilation_errors: 0
+  runner_note: "The final EditMode and PlayMode children exited normally; an earlier passing rerun required the wrapper's documented post-result shutdown, so the known behavior remains intermittent."
+
+logical_paths:
+  separator: "/"
+  identity: "OrdinalIgnoreCase"
+  selected_actual_case_preserved: true
+  current_culture_used: false
+  rejected_inputs:
+    - "absolute paths"
+    - "backslash separators"
+    - "empty, dot, and parent segments"
+    - "NUL, invalid UTF-16, control, and Windows-unsafe characters"
+    - "reserved Windows device names and unstable trailing dots/spaces"
+  stable_comparison_sort_and_hash_tested: true
+  machine_absolute_paths_exposed: false
+
+content_resolution:
+  higher_numeric_priority_wins: true
+  enabled_sources_only: true
+  single_source_resolution_tested: true
+  three_layer_provenance_tested: true
+  overridden_candidates_retained: true
+  source_internal_case_collision_rejected: true
+  cross_source_case_variants_grouped: true
+  equal_highest_priority_ambiguous: true
+  source_id_used_as_winner_tiebreaker: false
+  randomized_enumeration_result_stable: true
+  empty_enabled_source_tested: true
+  all_disabled_configuration_rejected: true
+  original_yr_1001_comparison_performed: false
+
+resolved_manifest:
+  schema_version: 1
+  deterministic_json_tested: true
+  complete_provenance_serialized: true
+  repository_external_content_addressed_write_tested: true
+  idempotent_existing_manifest_tested: true
+  mismatching_existing_bytes_rejected: true
+  different_source_storage_identity_rejected: true
+  cache_file_failure_structured_diagnostic_tested: true
+  embedded_absolute_path_in_public_version_rejected: true
+  incomplete_ambiguous_or_conflicted_result_rejected: true
+  public_result_constructors_exposed: false
+  absolute_paths_present: false
+  source_file_bodies_present: false
+  full_file_manifest_committed: false
+  concurrent_adversarial_cache_reparse_protection: false
+
+requested_case_coverage:
+  single_source: "Passed"
+  priority_override: "Passed"
+  three_layer_provenance: "Passed"
+  top_priority_ambiguity: "Passed"
+  source_case_collision: "Passed"
+  cross_source_case_variant: "Passed"
+  randomized_enumeration: "Passed"
+  disabled_source: "Passed"
+  traversal_rejection: "Passed"
+  absolute_path_rejection: "Passed"
+  file_changed_during_hash: "Passed"
+  file_disappeared_during_hash: "Passed"
+  file_added_during_scan: "Passed"
+  public_manifest_no_absolute_path: "Passed"
+  public_manifest_no_body: "Passed"
+  stable_provenance_order: "Passed"
+  source_id_no_hidden_priority: "Passed"
+  empty_and_all_disabled_sources: "Passed"
+  stream_or_file_error_diagnostic: "Passed"
+  incomplete_result_not_serializable: "Passed"
+
+scope_exclusions:
+  - "PAL, SHP, VXL/HVA, TMP, MIX payload, INI semantic, and map Pack parsing"
+  - "Unity Texture2D, shaders, rendering, maps, units, and gameplay logic"
+
+repository_gates:
+  windows_powershell_5_1: "Passed"
+  powershell_7: "Passed"
+  repository_validation:
+    asset_entries: 44
+    meta_files: 44
+    duplicate_guids: 0
+    matrix_entries: 120
+    evidence_references: 8
+    violations: 0
+  repository_validation_regressions: { executed: 46, passed: 46, failed: 0 }
+  copyright_scan:
+    staged_candidates: 147
+    untracked_candidates: 0
+    ignored_external_probes: "13/13"
+    violations: 0
+    original_content_body_read: false
+  copyright_scan_regressions: { executed: 22, passed: 22, failed: 0 }
+  github_actions:
+    workflow: "Repository safety"
+    run_id: 30736714207
+    result: "Passed"
+    head_sha: "806335f78b6fc3b8fc026c582999c12f888a7def"
+    note: "Node.js 20 deprecation annotation from actions/checkout; no failed step."
+  compatibility_status_promotions:
+    - "content.precedence: 未实现 -> 可解析"

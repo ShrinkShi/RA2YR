@@ -1,0 +1,77 @@
+schema_version: 1
+evidence_id: "wp02a-project-baseline-20260802"
+recorded_at_utc: "2026-08-02T05:49:28Z"
+scope: "Sanitized directory-level YR1001_ProjectBaseline index summary"
+
+project_baseline_manifest:
+  baseline_logical_name: "YR1001_ProjectBaseline"
+  source_kind: "Patched"
+  source_version: "YR1001_ProjectBaseline: official map add-on, music pack, and Windows compatibility patch; not clean YR 1.001"
+  manifest_schema_version: 1
+  manifest_sha256: "1443736cb554e4f2c96423e4a2d01368fc6b66fb75669682463bb1ebb8a65e68"
+  full_external_manifest_bytes: 116328
+  full_external_manifest_hash_verified: true
+  full_external_manifest_file_count: 157
+  total_file_count: 157
+  total_bytes: 683178144
+  index_started_utc: "2026-08-02T05:49:13.2652818Z"
+  index_completed_utc: "2026-08-02T05:49:28.4319289Z"
+  diagnostic_count: 0
+  changes_detected: false
+  authoritative_content_read_for_sha256: true
+  original_content_body_in_report: false
+  absolute_path_in_report: false
+  full_manifest_committed: false
+  clean_yr_1001_golden_baseline: false
+  original_comparison_performed: false
+  mix_payloads_parsed: false
+  controlled_command_verification:
+    windows_powershell_5_1:
+      result: "Passed after final code changes"
+      manifest_sha256: "1443736cb554e4f2c96423e4a2d01368fc6b66fb75669682463bb1ebb8a65e68"
+      summary: "TestResults/20260802T064517375Z-5f5a1c91f7524f6d89727a597e2c030e (local and ignored)"
+    powershell_7:
+      result: "Passed after final code changes"
+      manifest_sha256: "1443736cb554e4f2c96423e4a2d01368fc6b66fb75669682463bb1ebb8a65e68"
+      summary: "TestResults/20260802T064437801Z-d6493537a8304b3daa6d3081e0704c56 (local and ignored)"
+  known_composition:
+    - "official map add-on"
+    - "music pack"
+    - "Windows compatibility patch"
+  directory_visibility_statement: "未在当前已挂载的目录型内容源中发现；MIX 内容尚未解析。"
+
+extension_aggregates:
+  - { extension: ".bat", file_count: 1, total_bytes: 737 }
+  - { extension: ".bmp", file_count: 1, total_bytes: 39606 }
+  - { extension: ".dat", file_count: 2, total_bytes: 184339 }
+  - { extension: ".dll", file_count: 5, total_bytes: 940083 }
+  - { extension: ".doc", file_count: 2, total_bytes: 192512 }
+  - { extension: ".exe", file_count: 7, total_bytes: 10663697 }
+  - { extension: ".fnt", file_count: 1, total_bytes: 1792690 }
+  - { extension: ".gif", file_count: 4, total_bytes: 9121 }
+  - { extension: ".glsl", file_count: 9, total_bytes: 71064 }
+  - { extension: ".htm", file_count: 4, total_bytes: 8497 }
+  - { extension: ".ico", file_count: 2, total_bytes: 9420 }
+  - { extension: ".ini", file_count: 3, total_bytes: 18940 }
+  - { extension: ".jpg", file_count: 9, total_bytes: 77383 }
+  - { extension: ".lcf", file_count: 2, total_bytes: 380 }
+  - { extension: ".mix", file_count: 8, total_bytes: 664471054 }
+  - { extension: ".tlb", file_count: 1, total_bytes: 2348 }
+  - { extension: ".txt", file_count: 2, total_bytes: 106918 }
+  - { extension: ".wav", file_count: 80, total_bytes: 2271300 }
+  - { extension: ".yro", file_count: 13, total_bytes: 2037944 }
+  - { extension: ".zip", file_count: 1, total_bytes: 280111 }
+
+representatives:
+  - { logical_path: "ddraw.dll", file_size: 359424, sha256: "344e921f35a5b103d6d95fde01f0e8762f3aad94eb7ba3f6978d4d10b1071a0a" }
+  - { logical_path: "expandmd01.mix", file_size: 4813968, sha256: "0c0a64e741bdecdc3843a0beb6bb1f58aa2df5b86eb3bc4a953821ec98f3d6ec" }
+  - { logical_path: "langmd.mix", file_size: 84643206, sha256: "0290bc3e40c38406e2ec6805dc18ef6c3a9b6feee6db42df717ac920e93294c8" }
+  - { logical_path: "MAPSMD03.MIX", file_size: 4419780, sha256: "6c36a0af05e2e9f86967308c77cf90fae9976d920e320aad8b9e4aa2e99e86a3" }
+  - { logical_path: "ra2md.mix", file_size: 204527696, sha256: "69d886defad9114dd440a013b364c8c004e369b5221d1889957b49d00058559d" }
+
+compatibility_boundary:
+  directory_source_index_complete: true
+  mix_internal_content_unparsed: true
+  yr_1001_original_comparison_incomplete: true
+  format_compatibility_claimed: false
+  gameplay_compatibility_claimed: false

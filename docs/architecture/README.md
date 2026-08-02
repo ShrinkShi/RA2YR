@@ -32,6 +32,11 @@ Core assemblies use `noEngineReferences: true` and must not reference
 The rule is enforced by assembly definitions, dependency tests, and a
 headless test path that can execute core behavior without loading a scene.
 
+Content names are also independent of host file-system enumeration. Logical
+paths use `/`, `OrdinalIgnoreCase` identity, preserved physical filename case,
+explicit stable ordering, and fail-closed priority ambiguity. Source IDs are
+identities for provenance reports; they never act as an implicit tie-breaker.
+
 `MonoBehaviour`, Rigidbody, NavMesh, Animator, Renderer, and GameObject state
 must never be authoritative simulation state. Unity components consume state;
 they do not define it.
@@ -67,5 +72,6 @@ be replayed or suppressed without changing simulation results.
 
 See the ADR directory for accepted scope and boundary decisions.
 
-Implementation notes for the WP-01 content foundation are documented in
-[`external-content.md`](external-content.md).
+Implementation notes for the WP-01/WP-02A content foundation are documented in
+[`external-content.md`](external-content.md) and
+[`content-resolution.md`](content-resolution.md).

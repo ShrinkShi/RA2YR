@@ -85,6 +85,26 @@ namespace RA2YR.Core.Content
             return true;
         }
 
+        internal static bool TryDetermineSameIdentity(
+            string firstPath,
+            string secondPath,
+            out bool sameIdentity,
+            out string failureReason)
+        {
+            string firstIdentity;
+            string secondIdentity;
+            if (!TryGetComparableIdentity(firstPath, out firstIdentity, out failureReason) ||
+                !TryGetComparableIdentity(secondPath, out secondIdentity, out failureReason))
+            {
+                sameIdentity = false;
+                return false;
+            }
+
+            sameIdentity = string.Equals(firstIdentity, secondIdentity, PathComparison);
+            failureReason = null;
+            return true;
+        }
+
         public static bool TryFindUnsupportedAlias(string path, out string reason)
         {
             string fullPath = NormalizeAbsolutePath(path);

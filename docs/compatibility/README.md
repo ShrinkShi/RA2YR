@@ -36,6 +36,13 @@ original asset bodies, decoded original images/audio, reconstructable binary
 payloads, or proprietary tools. Public CI uses synthetic fixtures only; local
 golden evidence identifies user-supplied files by hash.
 
+The recorded `YR1001_ProjectBaseline` directory manifest identifies patched
+development content containing the official map add-on, music pack, and
+compatibility patch. Its complete file-level manifest remains outside the
+repository; public evidence contains only its manifest SHA-256, aggregates,
+scan facts, and approved representative metadata. This does not constitute a
+clean YR 1.001 manifest, MIX payload parse, or original behavior comparison.
+
 ## Update procedure
 
 1. Add or update a focused matrix entry; do not use a broad feature to hide an
