@@ -396,6 +396,9 @@ function Assert-NoAbsolutePathInJsonValue {
         }
         return
     }
+    if ($Value -is [System.ValueType]) {
+        return
+    }
     if ($Value -is [System.Collections.IEnumerable] -and
         -not ($Value -is [pscustomobject])) {
         $index = 0
@@ -404,6 +407,9 @@ function Assert-NoAbsolutePathInJsonValue {
             $index++
         }
         return
+    }
+    if (-not ($Value -is [pscustomobject])) {
+        throw "The $Context JSON value has an unsupported object type."
     }
     foreach ($property in $Value.PSObject.Properties) {
         Assert-NoAbsolutePathInJsonValue `
