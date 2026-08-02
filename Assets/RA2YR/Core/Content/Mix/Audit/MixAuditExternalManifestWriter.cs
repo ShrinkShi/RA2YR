@@ -71,7 +71,9 @@ namespace RA2YR.Core.Content.Mix.Audit
                 string manifestSha256 = ComputeSha256(manifestBytes);
                 string relativeDirectory =
                     "wp02c/mix-audits/" + sourceId + "/" + directoryFingerprint;
-                string relativePath = relativeDirectory + "/" + manifestSha256 + ".json";
+                string manifestFileName =
+                    manifestSha256.Substring(0, 16) + ".json";
+                string relativePath = relativeDirectory + "/" + manifestFileName;
                 string targetDirectory = Path.Combine(
                     configuration.CachePath,
                     "wp02c",
@@ -89,7 +91,7 @@ namespace RA2YR.Core.Content.Mix.Audit
                     sourceId));
                 CreateVerifiedDirectory(targetDirectory);
 
-                string targetPath = Path.Combine(targetDirectory, manifestSha256 + ".json");
+                string targetPath = Path.Combine(targetDirectory, manifestFileName);
                 if (!RepositoryPathPolicy.IsInsideOrEqual(targetPath, configuration.CachePath) ||
                     string.Equals(
                         RepositoryPathPolicy.NormalizeAbsolutePath(targetPath),
@@ -110,8 +112,7 @@ namespace RA2YR.Core.Content.Mix.Audit
 
                 string temporaryPath = Path.Combine(
                     targetDirectory,
-                    "." + manifestSha256 + "." +
-                    Guid.NewGuid().ToString("N") + ".tmp");
+                    "." + Guid.NewGuid().ToString("N") + ".tmp");
                 try
                 {
                     EnsureRegularDirectory(targetDirectory);

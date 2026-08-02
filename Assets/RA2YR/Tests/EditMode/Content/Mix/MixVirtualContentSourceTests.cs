@@ -23,7 +23,7 @@ namespace RA2YR.Tests.EditMode.Content.Mix
                 Entry("final.bin", finalPayload));
             byte[] outer = BuildClassicMix(
                 Entry("inner.mix", inner));
-            using (var fixture = Fixture.Create("source-a", 10, File("outer.mix", outer)))
+            using (var fixture = Fixture.Create("source-a", 10, File("root.mix", outer)))
             using (MixVirtualContentMountResult mount = Mount(
                        fixture,
                        new[] { "inner.mix", "final.bin" },
@@ -45,12 +45,12 @@ namespace RA2YR.Tests.EditMode.Content.Mix
                     entry => entry.LogicalName.Value == "final.bin");
                 Assert.That(nestedArchive.IsMountedArchive, Is.True);
                 Assert.That(final.Provenance.Source.Id, Is.EqualTo("source-a"));
-                Assert.That(final.Provenance.RootArchivePath.Value, Is.EqualTo("outer.mix"));
+                Assert.That(final.Provenance.RootArchivePath.Value, Is.EqualTo("root.mix"));
                 Assert.That(final.Provenance.Steps.Count, Is.EqualTo(2));
-                Assert.That(final.Provenance.Steps[0].ArchivePath.Value, Is.EqualTo("outer.mix"));
+                Assert.That(final.Provenance.Steps[0].ArchivePath.Value, Is.EqualTo("root.mix"));
                 Assert.That(
                     final.Provenance.Steps[1].ArchivePath.Value,
-                    Is.EqualTo("outer.mix/inner.mix"));
+                    Is.EqualTo("root.mix/inner.mix"));
                 Assert.That(final.HasSha256, Is.False);
 
                 var observed = new byte[finalPayload.Length];

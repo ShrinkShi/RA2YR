@@ -293,8 +293,7 @@ namespace RA2YR.Core.Formats.Mix.Writing
             string directory = Path.GetDirectoryName(fullPath);
             string temporaryPath = Path.Combine(
                 directory,
-                "." + Path.GetFileName(fullPath) + "." +
-                Guid.NewGuid().ToString("N") + ".ra2yr-mix.tmp");
+                "." + Guid.NewGuid().ToString("N") + ".ra2yr-mix.tmp");
             try
             {
                 using (var stream = new FileStream(
