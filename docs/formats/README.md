@@ -6,3 +6,4 @@ promoted only by the tests and local comparisons required for that entry.
 
 - [Westwood MIX containers](mix.md)
 - [Westwood PAL palettes](pal.md)
+- [Westwood CSF string tables](csf.md)

@@ -190,7 +190,7 @@ sources:
     license:
       spdx: "GPL-2.0-only"
       verification: "SourceForge project metadata; snapshot contains no LICENSE or COPYING file"
-    purpose: "Later XCC MIX behavior plus PAL layout, strict range validation, and floor-scaled display conversion reference"
+    purpose: "Later XCC MIX behavior, PAL behavior, and CSF header, record-layout, and text-transform reference"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -210,7 +210,7 @@ sources:
     license:
       spdx: "GPL-2.0-only"
       verification: "Upstream lineage and SourceForge project metadata; clone contains no LICENSE or COPYING file"
-    purpose: "Pinned MIX comparison plus PAL layout, validation, and floor-scaled display conversion observation"
+    purpose: "Pinned MIX and PAL comparison plus CSF header, record-layout, and text-transform observation"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -303,9 +303,11 @@ sources:
     code_imported: false
     repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
     approval_status: "approved-reference-only"
+    notes:
+      - "The pinned tree contains no CSF implementation or CSF format documentation and is not WP-02E evidence."
 
   - id: iron-curtain-cnc-formats-pal-77da596
-    name: "iron-curtain-engine/cnc-formats PAL implementation"
+    name: "iron-curtain-engine/cnc-formats PAL and CSF implementation"
     source:
       type: "external-git-reference"
       canonical_upstream: "https://github.com/iron-curtain-engine/cnc-formats"
@@ -317,7 +319,29 @@ sources:
     license:
       spdx: "MIT OR Apache-2.0"
       verification: "pinned Cargo.toml plus upstream LICENSE-MIT and LICENSE-APACHE"
-    purpose: "Independent PAL size, RGB layout, six-bit range, and shift-left display-conversion cross-check"
+    purpose: "Independent PAL cross-check plus CSF header, value-count, inverted UTF-16LE, and extended-field cross-check"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only despite compatible licensing; no source, translation, or mechanical rewrite imported"
+    approval_status: "approved-reference-only"
+
+  - id: lewisxy-csftool-ba6046f
+    name: "LewisXY CSF JSON conversion tool"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://gist.github.com/lewisxy/1f96e60119f29b3b98cf6d7f234a870e"
+      revision: "https://gist.github.com/lewisxy/1f96e60119f29b3b98cf6d7f234a870e/ba6046f6aa031a1bbab0a56c8e8bc7625ab5604f"
+      observed_location: "canonical GitHub Gist at the pinned revision; no repository-local clone"
+    version_or_hash:
+      revision: "ba6046f6aa031a1bbab0a56c8e8bc7625ab5604f"
+      source_file: "csftool.py"
+      source_file_size: 7913
+      source_file_sha256: "1280081D99D76859914EDE8C710D3E991F1FE5A10430BE3AF7D133CFC136956D"
+    license:
+      spdx: "MIT"
+      verification: "MIT license text embedded in the pinned source file"
+    purpose: "Independent CSF exact-marker, little-endian length, ASCII-field, and inverted UTF-16LE cross-check"
     contains_code: true
     reference_only: true
     code_imported: false

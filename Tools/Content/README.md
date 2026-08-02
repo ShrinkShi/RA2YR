@@ -114,6 +114,47 @@ pwsh.exe -NoProfile -File `
     ./Tools/Content/Tests/Invoke-PaletteProjectBaselineAudit.Tests.ps1
 ```
 
+## WP-02E CSF ProjectBaseline audit
+
+`Invoke-CsfProjectBaselineAudit.ps1` invokes
+`RA2YR.Editor.CsfProjectBaselineAuditCommand.Run`. It mounts only
+`langmd.mix`, resolves the fixed `ra2md.csf` entry, validates its ID, length,
+SHA-256 and provenance, then applies the strict bounded CSF v3 reader.
+
+The wrapper supports Windows PowerShell 5.1 and PowerShell 7 on Windows. It:
+
+- requires Unity 2022.3.60f1c1 and a closed Unity project;
+- read-locks the ignored local configuration during the audit;
+- rejects observed reparse points and verifies Git ignore/cache boundaries;
+- rejects a loose `ra2md.csf` and any changed payload, provenance, or model hash;
+- validates the exact sanitized-summary schema without reading text into the
+  PowerShell process;
+- independently verifies the repository-external manifest length and SHA-256;
+- reports Unity's actual process exit code; and
+- does not require, start, or automate XCC Mixer.
+
+Run from the repository root:
+
+```powershell
+./Tools/Content/Invoke-CsfProjectBaselineAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+The complete ordered record audit remains below the configured external Cache.
+The ignored JSON summary below `TestResults` contains only the logical identity,
+MIX provenance, file and model hashes, record counts, length ranges, language
+code, diagnostics, and limitations. It contains no label list or string body.
+
+Run the wrapper contract tests once in each supported host:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
+    ./Tools/Content/Tests/Invoke-CsfProjectBaselineAudit.Tests.ps1
+
+pwsh.exe -NoProfile -File `
+    ./Tools/Content/Tests/Invoke-CsfProjectBaselineAudit.Tests.ps1
+```
+
 ## WP-02C XCC synthetic interoperability
 
 `Invoke-XccSyntheticInterop.ps1` provides three operator-facing modes around

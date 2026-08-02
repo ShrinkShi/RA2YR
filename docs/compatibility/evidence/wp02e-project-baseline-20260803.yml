@@ -1,0 +1,97 @@
+schema_version: 1
+evidence_id: "wp02e-project-baseline-20260803"
+recorded_at_utc: "2026-08-02T18:13:21.0543468Z"
+scope: "Strict read-only CSF parsing of fixed ra2md.csf through the YR1001_ProjectBaseline MIX virtual content source"
+
+project_baseline_csf:
+  baseline:
+    logical_name: "YR1001_ProjectBaseline"
+    description: "Patched development baseline with official map add-on, music pack, and Windows compatibility patch; not clean YR 1.001"
+    directory_fingerprint: "481E4AE76662001008EEF8105CC749B29B958C9C5D39D0DFE889F47A046D1E6E"
+    started_utc: "2026-08-02T18:13:00.1754772Z"
+    completed_utc: "2026-08-02T18:13:21.0543468Z"
+    audit_read_only: true
+    source_modified: false
+    loose_csf_used: false
+    hand_extracted_csf_used: false
+    reference_tool_csf_used: false
+  external_manifest:
+    schema_version: 1
+    length: 870794
+    sha256: "84DA14CFA5F26333CFE8C137453B2176B2B5A4E32E4911E1D6B2507264B77F71"
+    repository_external_cache_only: true
+    contains_complete_per_record_audit: true
+    committed_to_repository: false
+  sanitized_summary:
+    schema_version: 1
+    manifest_type: "RA2YR.CsfProjectBaselineAuditSanitized"
+    length: 1936
+    sha256: "B61DE8EF31202DDA669D5107DD70A3ABDEE1C453E69181738E7819A60FAED1BD"
+    contains_absolute_paths: false
+    contains_label_list: false
+    contains_original_string_body: false
+    contains_translation_text: false
+    contains_base64: false
+    contains_per_record_hash_list: false
+  validation:
+    audit_status: "Complete"
+    unity_process_exit_code: 0
+    fixed_identity_verified: true
+    fixed_provenance_verified: true
+    fixed_payload_hash_verified: true
+    fixed_canonical_model_hash_verified: true
+    baseline_changed_during_audit: false
+    diagnostic_count: 0
+  csf:
+    logical_name: "ra2md.csf"
+    mix_id: "0xBD835079"
+    provenance:
+      source_id: "YR1001_ProjectBaseline"
+      chain: ["langmd.mix", "ra2md.csf"]
+      root_archive: "langmd.mix"
+      entry_id: "0xBD835079"
+      resolved_name: "ra2md.csf"
+    length: 332973
+    sha256: "1B90BB0756137F46FF529AF043FE798D7F1F9FA1713A4110F17E1D674DE81F1C"
+    format_version: 3
+    raw_language_code: 9
+    language_handling: "Raw numeric language code preserved; no runtime language selection or fallback is applied."
+    label_record_count: 5211
+    total_value_count: 5211
+    normal_value_count: 4007
+    extended_value_count: 1204
+    empty_main_value_count: 4
+    duplicate_label_count: 0
+    maximum_values_per_label: 1
+    label_name_length:
+      minimum: 6
+      maximum: 31
+      unit: "ascii-bytes"
+    main_text_length:
+      minimum: 0
+      maximum: 187
+      unit: "utf16-code-units"
+    extended_text_length:
+      minimum: 7
+      maximum: 8
+      unit: "ascii-bytes"
+    canonical_model_schema: "RA2YR.CSF.RAW.V1"
+    normalized_model_sha256: "F9018758F35A351F2316A78DB99F40141641050C9253D2F6AB7961C24C19201E"
+    diagnostic_count: 0
+
+compatibility_boundary:
+  strict_project_baseline_sample_validation: true
+  content_obtained_through_mix_virtual_source: true
+  clean_yr_1001_original_comparison: false
+  csf_write_or_roundtrip: false
+  runtime_localization: false
+  original_label_lookup_case_rule: false
+  original_duplicate_label_precedence: false
+  missing_label_fallback: false
+  language_pack_override: false
+  current_language_selection: false
+  ui_formatting_and_rendering: false
+  dynamic_placeholder_replacement: false
+  font_and_glyph_handling: false
+  final_repository_gate_run: true
+  limitation: "The fixed patched ProjectBaseline payload proves strict parsing through the MIX source; it does not prove clean YR 1.001 runtime localization, original lookup behavior, writing, or roundtrip compatibility."

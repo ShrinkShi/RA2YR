@@ -197,3 +197,25 @@
 ### 风险
 - ProjectBaseline 包含地图、音乐和兼容补丁，不是 clean YR 1.001。
 - 当前没有视觉对照，`format.pal` 只能提升到可解析；写回、Texture2D、Shader、玩家色和剧院选择仍未实现。
+
+## 2026-08-03 - WP-02E CSF 严格解析与黄金验证
+
+### 变更范围
+- 仅实现 CSF v3 只读格式层、受控黄金审计和交付证据；不实现 writer、运行时本地化、UI 或游戏逻辑。
+
+### 具体改动
+- 新增精确 marker/version/count/tail 校验、独立资源预算、结构化诊断和 Memory/Stream/MIX window 输入。
+- 新增不可变有序模型，保留标签大小写、重复标签、多值顺序、原始 UTF-16 code units、普通/扩展类别和独立 ASCII extra。
+- 新增 `RA2YR.CSF.RAW.V1` 规范化模型哈希及固定合成向量。
+- 新增固定 `langmd.mix -> ra2md.csf` 审计、仓库外完整逐记录 manifest、脱敏摘要、Editor 命令和 PS5.1/7 包装器。
+- 新增 66 个格式合成用例、10 个黄金审计用例和双 PowerShell 10 项包装器回归。
+
+### 验证状态
+- EditMode XML 489/489、PlayMode XML 1/1；黄金审计 Unity 进程退出码 0。
+- 两个 Unity 测试包装器均因空 `Process.ExitCode` fail-closed 返回 1，完整 XML 分别为 Passed。
+- 固定 payload 和模型 SHA 命中，5211 标签/值完整消费且诊断为 0。
+- 双 PowerShell 仓库验证为 149 Assets/149 meta、129 个矩阵项、44 个证据引用、0 违规；最终版权扫描为 359 个暂存候选、0 个未跟踪候选、13/13 ignore probes、0 违规。
+
+### 风险
+- 黄金样本来自 patched ProjectBaseline，不是 clean YR 1.001。
+- 原版运行时查找、重复项胜出、语言回退、写回和 UI 表现均未验证。

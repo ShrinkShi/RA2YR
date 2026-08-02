@@ -1,0 +1,184 @@
+schema_version: 1
+evidence_id: "wp02e-csf-synthetic-20260803"
+recorded_at_utc: "2026-08-02T18:12:21Z"
+scope: "WP-02E strict read-only Westwood CSF parsing, ordered immutable raw model, bounded failures, and controlled audit contracts"
+
+environment:
+  unity_editor: "2022.3.60f1c1"
+  unity_test_framework: "1.1.33"
+  host: "Windows"
+  unity_engine_dependency: false
+  system_drawing_dependency: false
+  original_content_used_by_synthetic_tests: false
+  network_dependencies_added: false
+
+synthetic_validation:
+  format_contract:
+    header_bytes: 24
+    byte_order: "little-endian"
+    file_marker: "20 46 53 43"
+    label_marker: "20 4C 42 4C"
+    normal_value_marker: "20 52 54 53"
+    extended_value_marker: "57 52 54 53"
+    supported_version: 3
+    label_length_unit: "ascii-bytes"
+    main_text_length_unit: "utf16-code-units"
+    main_text_storage: "per-code-unit bitwise-NOT, decoded as explicit UTF-16LE code units"
+    extended_text_length_unit: "ascii-bytes"
+    trailing_policy: "RequireFullyConsumed"
+    partial_success_allowed: false
+  model_contract:
+    label_order_preserved: "Passed"
+    value_order_preserved: "Passed"
+    duplicate_labels_preserved: "Passed"
+    label_case_preserved: "Passed"
+    normal_and_extended_values_distinct: "Passed"
+    extended_text_kept_separate: "Passed"
+    unknown_language_code_preserved: "Passed"
+    unicode_normalization_performed: false
+    decoder_replacement_fallback_used: false
+    immutable_collections: "Passed"
+    public_success_model_cannot_be_forged: "Passed"
+  unicode_cases:
+    empty_main_text: "Passed"
+    empty_extended_text: "Passed"
+    ascii_main_text: "Passed"
+    chinese_bmp_code_units: "Passed"
+    surrogate_pair: "Passed"
+    unpaired_surrogate: "Passed"
+    raw_code_unit_order: "Passed"
+    normalization_distinction: "Passed"
+  input_forms:
+    readonly_memory: "Passed"
+    seekable_stream: "Passed"
+    repeated_short_read_stream: "Passed"
+    nonseekable_stream_with_declared_bound: "Passed"
+    bounded_mix_entry_window: "Passed"
+    memory_stream_window_equivalence: "Passed"
+    nonzero_window_absolute_diagnostic_offset: "Passed"
+  strict_failures:
+    wrong_signature: "Passed"
+    unsupported_version: "Passed"
+    truncated_header: "Passed"
+    truncated_label_name: "Passed"
+    truncated_normal_text: "Passed"
+    truncated_extended_text: "Passed"
+    invalid_label_marker: "Passed"
+    invalid_value_marker: "Passed"
+    invalid_ascii_label: "Passed"
+    invalid_ascii_extended_text: "Passed"
+    declared_label_count_above_actual: "Passed"
+    declared_label_count_below_actual: "Passed"
+    declared_total_value_count_above_actual: "Passed"
+    declared_total_value_count_below_actual: "Passed"
+    trailing_data: "Passed"
+    stream_read_failure_sanitized: "Passed"
+    every_truncation_no_partial_model: "Passed"
+  budget_contract:
+    maximum_input_bytes: "Passed"
+    maximum_single_read_bytes: "Passed"
+    maximum_label_count: "Passed"
+    maximum_total_value_count: "Passed"
+    maximum_values_per_label: "Passed"
+    maximum_label_name_bytes: "Passed"
+    maximum_main_text_code_units: "Passed"
+    maximum_extended_text_bytes: "Passed"
+    maximum_cumulative_code_units: "Passed"
+    maximum_cumulative_allocation: "Passed"
+    field_payload_checked_before_model_allocation: "Passed"
+    checked_absolute_offset_arithmetic: "Passed"
+    damaged_input_no_unbounded_allocation: "Passed"
+    damaged_input_no_infinite_loop: "Passed"
+  canonical_model:
+    schema: "RA2YR.CSF.RAW.V1"
+    fixed_synthetic_vector: "Passed"
+    includes_header_fields: "Passed"
+    includes_label_bytes_and_order: "Passed"
+    includes_duplicate_cardinality: "Passed"
+    includes_value_kind_and_order: "Passed"
+    includes_raw_utf16_code_units: "Passed"
+    includes_extended_text_bytes: "Passed"
+  audit_contract:
+    fixed_target_identity: "Passed"
+    fixed_mix_provenance: "Passed"
+    payload_hash_change_fails_closed: "Passed"
+    canonical_model_hash_change_fails_closed: "Passed"
+    invalid_matching_hash_payload_fails_closed: "Passed"
+    missing_target_fails_closed: "Passed"
+    loose_candidate_fails_closed: "Passed"
+    source_fingerprint_change_fails_closed: "Passed"
+    manifest_budget_failure_has_no_partial_publish: "Passed"
+    exactly_one_project_baseline_required: "Passed"
+    sanitized_summary_excludes_string_body_and_absolute_paths: "Passed"
+
+unity_test_run:
+  edit_mode_result:
+    result_xml: "Passed"
+    executed: 489
+    passed: 489
+    failed: 0
+    skipped: 0
+  play_mode_result:
+    result_xml: "Passed"
+    executed: 1
+    passed: 1
+    failed: 0
+    skipped: 0
+  wp02d_edit_mode_baseline: 413
+  new_wp02e_cases: 76
+  csf_format_synthetic_cases: 66
+  project_baseline_audit_cases: 10
+  compilation_errors: 0
+  edit_mode_wrapper:
+    shell_exit_code: 1
+    unity_process_exit_code_observed: false
+    note: "The XML passed 489/489, but Unity Process.ExitCode was empty and the wrapper failed closed."
+  play_mode_wrapper:
+    shell_exit_code: 1
+    unity_process_exit_code_observed: false
+    note: "The XML passed 1/1, but Unity Process.ExitCode was empty and the wrapper failed closed."
+
+csf_wrapper_regressions:
+  windows_powershell_5_1: { shell_exit_code: 0, executed: 10, passed: 10, failed: 0 }
+  powershell_7: { shell_exit_code: 0, executed: 10, passed: 10, failed: 0 }
+
+repository_gates:
+  windows_powershell_5_1: "Passed"
+  powershell_7: "Passed"
+  repository_validation:
+    asset_entries: 149
+    meta_files: 149
+    duplicate_guids: 0
+    matrix_entries: 129
+    evidence_references: 44
+    violations: 0
+  repository_validation_regressions: { executed: 46, passed: 46, failed: 0 }
+  copyright_scan:
+    status: "Passed"
+    staged_index_candidates: 359
+    untracked_candidates: 0
+    ignored_external_probes: "13/13"
+    violations: 0
+  copyright_scan_regressions: { executed: 22, passed: 22, failed: 0 }
+
+repository_boundaries:
+  core_no_engine_references: true
+  unityengine_references_in_csf_core: 0
+  unityeditor_references_in_csf_core: 0
+  system_drawing_references_in_csf_core: 0
+  original_payloads_committed: false
+  label_lists_committed: false
+  original_string_bodies_committed: false
+  base64_original_content_committed: false
+  absolute_content_paths_published: false
+  final_repository_gate_run: true
+
+compatibility_boundary:
+  synthetic_csf_structure_validation: true
+  project_baseline_golden_recorded_separately: true
+  clean_yr_1001_original_comparison: false
+  csf_write_or_roundtrip: false
+  runtime_localization: false
+  language_fallback: false
+  ui_rendering: false
+  limitation: "Synthetic parsing proves strict bounded structural behavior; it does not establish original runtime lookup, localization, rendering, or roundtrip compatibility."

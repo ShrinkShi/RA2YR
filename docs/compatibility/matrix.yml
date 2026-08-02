@@ -428,11 +428,38 @@ entries:
     limitations: []
   - id: format.csf
     domain: format
-    feature: "CSF labels, strings, code pages, and language metadata"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    feature: "Strict ordered CSF v3 labels, normal and extended strings, raw UTF-16 code units, and language metadata"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Csf.WestwoodCsfReaderTests.ConfirmedMarkersUseTheirExactOnDiskLittleEndianBytes"
+      - "RA2YR.Tests.EditMode.Formats.Csf.WestwoodCsfReaderTests.DuplicateLabelsArePreservedAndExactQueryReturnsAllCandidates"
+      - "RA2YR.Tests.EditMode.Formats.Csf.WestwoodCsfReaderTests.SurrogatePairIsPreservedAsTwoCodeUnits"
+      - "RA2YR.Tests.EditMode.Formats.Csf.WestwoodCsfReaderTests.UnpairedSurrogateCodeUnitIsPreservedWithoutDecoderFallback"
+      - "RA2YR.Tests.EditMode.Formats.Csf.WestwoodCsfReaderTests.DeclaredLabelCountBelowActualHasExplicitMismatchDiagnostic"
+      - "RA2YR.Tests.EditMode.Formats.Csf.WestwoodCsfReaderTests.MixEntryWindowAddsNonzeroBaseToCorruptMarkerDiagnostic"
+      - "RA2YR.Tests.EditMode.Formats.Csf.WestwoodCsfReaderTests.CanonicalHashMatchesFixedSchemaAndChangesForEveryKeyField"
+      - "RA2YR.Tests.EditMode.Formats.Csf.WestwoodCsfReaderBudgetTests.TruncatedHugeMainTextReportsEofBeforeAllocationBudget"
+      - "RA2YR.Tests.EditMode.Formats.Csf.WestwoodCsfReaderBudgetTests.DamagedHugeDeclarationsDoNotCauseUnboundedAllocation"
+      - "RA2YR.Tests.EditMode.Content.Csf.Audit.CsfProjectBaselineAuditServiceTests.FixedChainPublishesExternalRecordsAndSanitizedSummary"
+      - "RA2YR.Tests.EditMode.Content.Csf.Audit.CsfProjectBaselineAuditServiceTests.ChangedPayloadHashFailsBeforePublishingCache"
+      - "RA2YR.Tests.EditMode.Content.Csf.Audit.CsfProjectBaselineAuditServiceTests.ChangedCanonicalModelFailsBeforePublishingCache"
+    evidence:
+      - "docs/compatibility/evidence/wp02e-csf-research-20260803.yml#format_facts"
+      - "docs/compatibility/evidence/wp02e-csf-synthetic-20260803.yml#synthetic_validation"
+      - "docs/compatibility/evidence/wp02e-project-baseline-20260803.yml#project_baseline_csf"
+    limitations:
+      - id: format.csf.patched-project-baseline
+        status: "已知限制"
+        description: "The local golden sample comes from the patched YR1001_ProjectBaseline, not a clean YR 1.001 corpus."
+      - id: format.csf.read-only
+        status: "已知限制"
+        description: "CSF writing, byte or semantic roundtrip, and original executable behavior comparison are not implemented."
+      - id: format.csf.runtime-lookup-unresolved
+        status: "已知限制"
+        description: "Original case sensitivity, duplicate-label winner rules, language-pack precedence, and missing-label fallback remain unimplemented."
+      - id: format.csf.presentation-unimplemented
+        status: "已知限制"
+        description: "Runtime localization, placeholder formatting, fonts, glyph handling, and UI rendering remain unimplemented."
   - id: format.map-pack-codec
     domain: format
     feature: "Map pack Base64, block framing, compression, and bounds"
