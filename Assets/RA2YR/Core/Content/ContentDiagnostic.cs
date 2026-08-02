@@ -45,7 +45,12 @@ namespace RA2YR.Core.Content
         FileMetadataReadFailed,
         FileHashFailed,
         FileChangedDuringHash,
-        SourceTreeChangedDuringIndex
+        SourceTreeChangedDuringIndex,
+        InvalidLogicalPath,
+        SourceLogicalPathConflict,
+        ResolutionInputIncomplete,
+        AmbiguousContentResolution,
+        ContentManifestWriteFailed
     }
 
     public sealed class ContentDiagnostic

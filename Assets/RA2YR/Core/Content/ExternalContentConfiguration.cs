@@ -237,7 +237,8 @@ namespace RA2YR.Core.Content
             return value != null &&
                    value.Length <= 256 &&
                    !value.Any(char.IsControl) &&
-                   !Path.IsPathRooted(value);
+                   !Path.IsPathRooted(value) &&
+                   !ContentPublicValueRules.ContainsAbsolutePathFragment(value);
         }
 
         private static bool IsAsciiLetterOrDigit(char value)
@@ -245,6 +246,64 @@ namespace RA2YR.Core.Content
             return (value >= 'A' && value <= 'Z') ||
                    (value >= 'a' && value <= 'z') ||
                    (value >= '0' && value <= '9');
+        }
+    }
+
+    internal static class ContentPublicValueRules
+    {
+        public static bool IsSafePublicText(string value, int maximumLength)
+        {
+            return !string.IsNullOrWhiteSpace(value) &&
+                   value.Length <= maximumLength &&
+                   !value.Any(char.IsControl) &&
+                   !Path.IsPathRooted(value) &&
+                   !ContainsAbsolutePathFragment(value);
+        }
+
+        public static bool ContainsAbsolutePathFragment(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+
+            if (value.IndexOf('\\') >= 0)
+            {
+                return true;
+            }
+
+            for (int index = 0; index < value.Length; index++)
+            {
+                char character = value[index];
+                if (index + 2 < value.Length &&
+                    IsAsciiLetter(character) &&
+                    value[index + 1] == ':' &&
+                    (value[index + 2] == '/' || value[index + 2] == '\\'))
+                {
+                    return true;
+                }
+
+                if (character == '/' &&
+                    (index == 0 || IsAbsolutePathBoundary(value[index - 1])))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsAbsolutePathBoundary(char value)
+        {
+            return !IsAsciiLetter(value) &&
+                   (value < '0' || value > '9') &&
+                   value != '_' && value != '-' && value != '.';
+        }
+
+        private static bool IsAsciiLetter(char value)
+        {
+            return (value >= 'A' && value <= 'Z') ||
+                   (value >= 'a' && value <= 'z');
         }
     }
 }

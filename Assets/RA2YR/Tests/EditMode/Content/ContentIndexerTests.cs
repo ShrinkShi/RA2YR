@@ -154,6 +154,28 @@ namespace RA2YR.Tests.EditMode.Content
         }
 
         [Test]
+        public void BuildRejectsAFileThatDisappearsDuringIndexing()
+        {
+            using (var temporary = new TemporaryContentTestDirectory())
+            {
+                temporary.CreateDirectory("Repository");
+                temporary.CreateDirectory("Cache");
+                temporary.CreateDirectory("External");
+                temporary.WriteBytes("External/disappearing.bin", new byte[] { 1, 2, 3 });
+
+                ContentIndexResult result = new ContentIndexer(
+                    new DeletingDigestProvider()).Build(CreateConfiguration(temporary));
+
+                Assert.That(result.HasErrors, Is.True);
+                Assert.That(result.IsComplete, Is.False);
+                Assert.That(result.Diagnostics.Any(item =>
+                    item.Code == ContentDiagnosticCode.FileChangedDuringHash), Is.True);
+                Assert.Throws<InvalidOperationException>(() =>
+                    ContentManifestSerializer.SerializeCanonicalJson(result));
+            }
+        }
+
+        [Test]
         public void ManifestIsCanonicalAndDoesNotContainAbsolutePathsOrFileContent()
         {
             using (var temporary = new TemporaryContentTestDirectory())
@@ -424,6 +446,15 @@ namespace RA2YR.Tests.EditMode.Content
                 {
                     return string.Concat(sha256.ComputeHash(stream).Select(value => value.ToString("x2")));
                 }
+            }
+        }
+
+        private sealed class DeletingDigestProvider : IContentFileDigestProvider
+        {
+            public string ComputeSha256(string absolutePath)
+            {
+                File.Delete(absolutePath);
+                return new string('0', 64);
             }
         }
     }

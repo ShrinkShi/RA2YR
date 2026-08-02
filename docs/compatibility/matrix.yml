@@ -1,5 +1,5 @@
 schema_version: 1
-last_updated: "2026-08-01"
+last_updated: "2026-08-02"
 baseline:
   game: "Command & Conquer: Yuri's Revenge 1.001"
   content_role: "YR1001_ProjectBaseline patched development content source; not a clean YR 1.001 golden baseline"
@@ -66,9 +66,14 @@ entries:
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildCanReadAReadOnlySyntheticFileWithoutModifyingIt"
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildReportsFileChangedDuringHashAndOmitsUnstableRecord"
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildRejectsAFileAddedDuringIndexing"
+      - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildRejectsAFileThatDisappearsDuringIndexing"
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.BuildRejectsRepositoryRootRemovedAfterConfigurationCreation"
+      - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.ParseRejectsUnsafeOrNonCanonicalPaths"
+      - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.EqualityOrderingAndHashAreOrdinalIgnoreCase"
+      - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.BehaviorDoesNotDependOnCurrentCulture"
     evidence:
       - "docs/compatibility/evidence/wp01-synthetic-20260801.yml#discovery_index"
+      - "docs/compatibility/evidence/wp02a-synthetic-20260802.yml#logical_paths"
     limitations:
       - id: content.discovery-index.stationary-source
         status: "已知限制"
@@ -76,10 +81,30 @@ entries:
   - id: content.precedence
     domain: content
     feature: "Explicit source mount and override precedence"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.SingleSourceResolvesEveryLogicalFile"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.HigherPriorityOverridesLowerPriority"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.ThreeLayerOverrideRetainsCompleteProvenanceChain"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.EqualHighestPriorityProducesExplicitAmbiguity"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.SameSourceCaseCollisionIsRejected"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.CrossSourceCaseVariantsResolveAsOneLogicalPath"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.SourceAndFileEnumerationOrderDoNotChangeManifest"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.DisabledSourceDoesNotParticipateInResolution"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.ProvenanceOrderIsStableIncludingLowerEqualPriorities"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.SourceIdDoesNotBreakEqualPriorityTie"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.EmptyEnabledSourceResolvesToCompleteEmptyResult"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.AllDisabledConfigurationIsRejectedBeforeIndexing"
+    evidence:
+      - "docs/compatibility/evidence/wp02a-synthetic-20260802.yml#content_resolution"
+      - "docs/compatibility/evidence/wp02a-project-baseline-20260802.yml#project_baseline_manifest"
+    limitations:
+      - id: content.precedence.directory-sources-only
+        status: "已知限制"
+        description: "WP-02A resolves mounted directory sources only; MIX payloads and other future source providers are not implemented."
+      - id: content.precedence.original-comparison-pending
+        status: "已知限制"
+        description: "Synthetic precedence behavior is verified, but YR 1.001 original override behavior has not been compared."
   - id: content.manifest-hash
     domain: content
     feature: "Versioned SHA-256 content manifest"
@@ -88,12 +113,26 @@ entries:
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ManifestIsCanonicalAndDoesNotContainAbsolutePathsOrFileContent"
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ManifestSha256ChangesWhenIndexedContentChanges"
       - "RA2YR.Tests.EditMode.Content.ContentIndexerTests.ProductionManifestInputsCannotBeForgedThroughPublicConstructors"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.PublicManifestContainsNoAbsolutePathOrFileBody"
+      - "RA2YR.Tests.EditMode.Content.ContentResolutionTests.AmbiguousAndSourceConflictResultsCannotBeSerialized"
+      - "RA2YR.Tests.EditMode.Content.ExternalContentManifestWriterTests.WriteCreatesContentAddressedManifestOutsideRepository"
+      - "RA2YR.Tests.EditMode.Content.ExternalContentManifestWriterTests.RepeatedWriteIsIdempotentAndReturnsSameIdentity"
+      - "RA2YR.Tests.EditMode.Content.ExternalContentManifestWriterTests.WriteRejectsResolutionFromDifferentSourceRootWithSameMetadata"
+      - "RA2YR.Tests.EditMode.Content.ExternalContentManifestWriterTests.ExistingContentAddressedFileWithDifferentBytesIsRejected"
+      - "RA2YR.Tests.EditMode.Content.ExternalContentManifestWriterTests.CacheDirectoryOccupiedByFileProducesStructuredDiagnostic"
+      - "RA2YR.Tests.EditMode.Content.ExternalContentManifestWriterTests.PublicSummaryContainsOnlyAggregatesAndApprovedRepresentatives"
+      - "RA2YR.Tests.EditMode.Content.LogicalContentPathTests.PublicSourceVersionRejectsEmbeddedAbsolutePaths"
     evidence:
       - "docs/compatibility/evidence/wp01-synthetic-20260801.yml#manifest_hash"
+      - "docs/compatibility/evidence/wp02a-synthetic-20260802.yml#resolved_manifest"
+      - "docs/compatibility/evidence/wp02a-project-baseline-20260802.yml#project_baseline_manifest"
     limitations:
       - id: content.manifest-hash.original-baseline-pending
         status: "已知限制"
-        description: "No clean original YR 1.001 content manifest is recorded in public evidence; local golden indexing remains a later approved operation."
+        description: "The recorded YR1001_ProjectBaseline manifest identifies patched development content only; no clean original YR 1.001 manifest or original-behavior comparison is recorded."
+      - id: content.manifest-hash.stationary-cache-boundary
+        status: "已知限制"
+        description: "Reparse points are rejected before and after ordinary cache operations, but the portable path-based writer assumes the operator-controlled cache ancestry is not concurrently replaced by an adversary."
   - id: content.cache
     domain: content
     feature: "Repository-external dependency cache and invalidation"

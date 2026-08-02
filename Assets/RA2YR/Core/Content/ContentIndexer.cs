@@ -42,8 +42,10 @@ namespace RA2YR.Core.Content
 
             foreach (ExternalContentSourceDescriptor source in enabledSources)
             {
-                ContentSourceIndex sourceIndex = IndexSource(
+                IContentSource contentSource = new DirectoryContentSource(
                     source,
+                    IndexDirectorySource);
+                ContentSourceIndex sourceIndex = contentSource.BuildIndex(
                     configuration.RepositoryRoot,
                     diagnostics);
                 if (sourceIndex != null)
@@ -242,7 +244,7 @@ namespace RA2YR.Core.Content
             return true;
         }
 
-        private ContentSourceIndex IndexSource(
+        private ContentSourceIndex IndexDirectorySource(
             ExternalContentSourceDescriptor source,
             string repositoryRoot,
             ICollection<ContentDiagnostic> diagnostics)
@@ -467,6 +469,25 @@ namespace RA2YR.Core.Content
                 }
             }
 
+            foreach (IGrouping<LogicalContentPath, ContentFileRecord> collision in files
+                         .GroupBy(file => file.LogicalPath)
+                         .Where(group => group.Count() > 1)
+                         .OrderBy(group => group.Key, LogicalContentPathReportComparer.Instance))
+            {
+                string[] actualPaths = collision
+                    .Select(file => file.RelativePath)
+                    .OrderBy(path => path, StringComparer.Ordinal)
+                    .ToArray();
+                diagnostics.Add(new ContentDiagnostic(
+                    ContentDiagnosticSeverity.Error,
+                    ContentDiagnosticCode.SourceLogicalPathConflict,
+                    "The directory source contains multiple case variants for one logical " +
+                    "path and no candidate was selected: " + string.Join(", ", actualPaths),
+                    source.Id,
+                    collision.Key.Value));
+                isComplete = false;
+            }
+
             if (isComplete && !VerifySourceTreeSnapshot(
                     source,
                     observations,
@@ -488,6 +509,20 @@ namespace RA2YR.Core.Content
             string relativePath,
             ICollection<ContentDiagnostic> diagnostics)
         {
+            LogicalContentPath logicalPath;
+            string pathFailure;
+            if (!LogicalContentPath.TryParse(relativePath, out logicalPath, out pathFailure))
+            {
+                diagnostics.Add(new ContentDiagnostic(
+                    ContentDiagnosticSeverity.Error,
+                    ContentDiagnosticCode.InvalidLogicalPath,
+                    "The directory entry cannot be represented as a logical content path: " +
+                    pathFailure,
+                    source.Id,
+                    relativePath));
+                return null;
+            }
+
             long lengthBefore;
             DateTime lastWriteBefore;
             try
@@ -569,7 +604,7 @@ namespace RA2YR.Core.Content
             return new IndexedFileObservation(
                 new ContentFileRecord(
                     source.Id,
-                    relativePath,
+                    logicalPath,
                     lengthBefore,
                     digest),
                 lastWriteBefore);

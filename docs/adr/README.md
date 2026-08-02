@@ -10,3 +10,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0003 | Save and replay scope | Accepted |
 | 0004 | FinalAlert 2 interoperability baseline | Accepted |
 | 0005 | Outer Git recovery backups | Accepted |
+| 0006 | Logical content resolution and baseline evidence | Accepted |

@@ -11,18 +11,22 @@ namespace RA2YR.Core.Content
             string relativePath,
             long length,
             string sha256)
+            : this(sourceId, LogicalContentPath.Parse(relativePath), length, sha256)
+        {
+        }
+
+        internal ContentFileRecord(
+            string sourceId,
+            LogicalContentPath logicalPath,
+            long length,
+            string sha256)
         {
             if (!ContentConfigurationValueRules.IsValidSourceId(sourceId))
             {
                 throw new ArgumentException("A valid source id is required.", nameof(sourceId));
             }
 
-            if (!ContentManifestValueRules.IsCanonicalRelativePath(relativePath))
-            {
-                throw new ArgumentException(
-                    "A canonical, non-rooted manifest path without dot segments is required.",
-                    nameof(relativePath));
-            }
+            LogicalPath = logicalPath ?? throw new ArgumentNullException(nameof(logicalPath));
 
             if (length < 0)
             {
@@ -37,7 +41,7 @@ namespace RA2YR.Core.Content
             }
 
             SourceId = sourceId;
-            RelativePath = relativePath;
+            RelativePath = logicalPath.Value;
             Length = length;
             Sha256 = sha256;
         }
@@ -45,6 +49,8 @@ namespace RA2YR.Core.Content
         public string SourceId { get; }
 
         public string RelativePath { get; }
+
+        public LogicalContentPath LogicalPath { get; }
 
         public long Length { get; }
 
@@ -166,23 +172,4 @@ namespace RA2YR.Core.Content
         public bool IsComplete { get; }
     }
 
-    internal static class ContentManifestValueRules
-    {
-        public static bool IsCanonicalRelativePath(string value)
-        {
-            if (string.IsNullOrEmpty(value) ||
-                value[0] == '/' ||
-                value[value.Length - 1] == '/' ||
-                value.IndexOf('\\') >= 0 ||
-                value.IndexOf(':') >= 0 ||
-                value.Any(char.IsControl))
-            {
-                return false;
-            }
-
-            string[] segments = value.Split('/');
-            return segments.All(segment =>
-                segment.Length > 0 && segment != "." && segment != "..");
-        }
-    }
 }
