@@ -71,6 +71,49 @@ Unity log and sanitized summary remain ignored local artifacts. Review the
 summary before manually transcribing only approved aggregates and hashes into
 delivery evidence.
 
+## WP-02D PAL ProjectBaseline audit
+
+`Invoke-PaletteProjectBaselineAudit.ps1` invokes
+`RA2YR.Editor.PaletteProjectBaselineAuditCommand.Run`. It resolves
+`isotem.pal`, `temperat.pal`, and `unittem.pal` through the merged MIX virtual
+content source, parses each bounded entry, and validates its fixed ProjectBaseline
+length, SHA-256, and provenance chain.
+
+The wrapper supports Windows PowerShell 5.1 and PowerShell 7 on Windows. It:
+
+- requires Unity 2022.3.60f1c1 and a closed Unity project;
+- requires the ignored configuration to remain inside the formal Git root;
+- read-locks the configuration while Unity performs the audit;
+- rejects observed reparse points and verifies Git ignore/cache boundaries;
+- accepts only the three fixed PAL identities and their sanitized statistics;
+- independently verifies the repository-external manifest length and SHA-256;
+- reports Unity's actual process exit code; and
+- does not require or start XCC Mixer.
+
+Run from the repository root:
+
+```powershell
+./Tools/Content/Invoke-PaletteProjectBaselineAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+The complete per-index raw-color manifest remains below the configured external
+Cache. The ignored JSON summary below `TestResults` contains only logical names,
+MIX IDs, provenance, lengths, hashes, aggregate channel statistics, model hashes,
+the explicitly named XCC reference conversion strategy, diagnostics, and
+limitations. That strategy is not evidence of original YR rendering behavior and
+is not a global compatibility default.
+
+Run the wrapper contract tests once in each supported host:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
+    ./Tools/Content/Tests/Invoke-PaletteProjectBaselineAudit.Tests.ps1
+
+pwsh.exe -NoProfile -File `
+    ./Tools/Content/Tests/Invoke-PaletteProjectBaselineAudit.Tests.ps1
+```
+
 ## WP-02C XCC synthetic interoperability
 
 `Invoke-XccSyntheticInterop.ps1` provides three operator-facing modes around
