@@ -373,16 +373,6 @@ namespace RA2YR.Core.Formats.Mix.Writing
                     "Checksum and encrypted directories require the extended MIX header.");
             }
 
-            if (options.HeaderKind == MixWriteHeaderKind.Extended &&
-                !options.IncludeChecksum && !options.IsEncrypted)
-            {
-                return Failure(
-                    MixWriteDiagnosticCode.InvalidOptionCombination,
-                    -1,
-                    null,
-                    "An extended MIX header requires at least one supported flag.");
-            }
-
             return null;
         }
 

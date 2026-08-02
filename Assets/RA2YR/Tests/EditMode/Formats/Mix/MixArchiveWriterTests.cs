@@ -198,13 +198,29 @@ namespace RA2YR.Tests.EditMode.Formats.Mix
         }
 
         [Test]
-        public void UnflaggedExtendedHeaderIsRejectedAsAmbiguous()
+        public void UnflaggedExtendedHeaderMatchesTheXccZeroFlagForm()
         {
             MixWriteResult result = MixArchiveWriter.Build(
-                Array.Empty<MixWriteEntry>(),
+                new[] { Entry(0x11223344u, 7, 8, 9) },
                 Extended(false, null));
 
-            AssertFailure(result, MixWriteDiagnosticCode.InvalidOptionCombination);
+            Assert.That(result.IsSuccess, Is.True);
+            byte[] archive = result.GetArchiveBytes();
+            Assert.That(ReadUInt32(archive, 0), Is.Zero);
+            Assert.That(archive.Length, Is.EqualTo(25));
+            var source = new BinarySourceContext(
+                "MIX writer test",
+                "synthetic",
+                LogicalContentPath.Parse("synthetic-zero-flags.mix"));
+            MixArchiveReadResult read = MixArchiveReader.Read(archive, source);
+            Assert.That(read.IsSuccess, Is.True,
+                read.Diagnostics.Count == 0 ? null : read.Diagnostics[0].Message);
+            using (read.Archive)
+            {
+                Assert.That(read.Archive.HeaderKind, Is.EqualTo(MixArchiveHeaderKind.Extended));
+                Assert.That(read.Archive.Flags, Is.EqualTo(MixArchiveFlags.None));
+                Assert.That(read.Archive.Entries.Single().Id.Value, Is.EqualTo(0x11223344u));
+            }
         }
 
         [Test]
@@ -287,6 +303,7 @@ namespace RA2YR.Tests.EditMode.Formats.Mix
             var options = new[]
             {
                 Classic(),
+                Extended(false, null),
                 Extended(true, null),
                 Extended(false, SyntheticKeySource),
                 Extended(true, SyntheticKeySource)

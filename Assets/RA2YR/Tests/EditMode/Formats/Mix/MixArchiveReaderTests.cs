@@ -30,6 +30,54 @@ namespace RA2YR.Tests.EditMode.Formats.Mix
             }
         }
 
+        [TestCase(7)]
+        [TestCase(8)]
+        [TestCase(9)]
+        public void ShortZeroPaddedClassicEmptyIsNotPromotedToExtended(int length)
+        {
+            MixArchiveReadResult result = Read(new byte[length]);
+
+            AssertFailure(result, MixDiagnosticCode.UnexpectedTrailingData);
+            Assert.That(
+                result.Diagnostics.Single().FieldOrSection,
+                Is.EqualTo("mix-trailing-data"));
+        }
+
+        [Test]
+        public void TenByteZeroHeaderIsAnXccCompatibleExtendedEmptyArchive()
+        {
+            MixArchiveReadResult result = Read(new byte[10]);
+
+            AssertSuccess(result);
+            using (result.Archive)
+            {
+                Assert.That(result.Archive.HeaderKind, Is.EqualTo(MixArchiveHeaderKind.Extended));
+                Assert.That(result.Archive.Flags, Is.EqualTo(MixArchiveFlags.None));
+                Assert.That(result.Archive.Entries, Is.Empty);
+                Assert.That(result.Archive.PayloadRelativeOffset, Is.EqualTo(10));
+            }
+        }
+
+        [Test]
+        public void ZeroFlagExtendedEntryUsesThePostFlagDirectory()
+        {
+            byte[] input = BuildPlainExtended(
+                MixArchiveFlags.None,
+                new[] { Entry(0x11223344, 0, 3) },
+                new byte[] { 7, 8, 9 });
+
+            MixArchiveReadResult result = Read(input);
+
+            AssertSuccess(result);
+            using (result.Archive)
+            {
+                Assert.That(result.Archive.HeaderKind, Is.EqualTo(MixArchiveHeaderKind.Extended));
+                Assert.That(result.Archive.Flags, Is.EqualTo(MixArchiveFlags.None));
+                Assert.That(result.Archive.Entries.Single().Id.Value, Is.EqualTo(0x11223344u));
+                Assert.That(result.Archive.PayloadRelativeOffset, Is.EqualTo(22));
+            }
+        }
+
         [Test]
         public void ClassicSingleEntryExposesBoundedPayloadWithoutNameFabrication()
         {

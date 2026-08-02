@@ -289,7 +289,11 @@ namespace RA2YR.Core.Formats.Mix
                 source,
                 allocations);
             uint firstWord = ReadUInt32(discriminator, 0);
-            bool isExtended = firstWord != 0 && (firstWord & 0xffffu) == 0;
+            // XCC writes the extended RA2 header even when no flag bits are set.
+            // Six zero bytes remain the canonical classic empty archive; ten or
+            // more bytes provide the otherwise ambiguous extended header body.
+            bool isExtended = (firstWord & 0xffffu) == 0 &&
+                              (firstWord != 0 || root.Length >= 10);
 
             MixArchiveHeaderKind headerKind = isExtended
                 ? MixArchiveHeaderKind.Extended
