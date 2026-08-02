@@ -53,6 +53,15 @@ extended archive stores the same 6-byte count/data-size header and 12-byte
 entries immediately after the flags word. Payload-relative offsets remain
 relative to the first payload byte.
 
+Controlled XCC Mixer 1.47 output established that the extended flags word may
+be zero. XCC then emits the count/data-size header at offset 4. The parser uses
+an explicit ambiguity rule: six zero bytes are the classic empty archive;
+seven through nine zero bytes are malformed classic input; ten or more bytes
+with a zero first word select the XCC extended form. This rule cannot prove the
+intent of an artificial zero-count classic archive that also carries unused
+data, so that construction remains an acknowledged ambiguity rather than a
+hidden heuristic.
+
 An encrypted extended archive stores an 80-byte key-source block after the
 flags. The encrypted header/directory span is
 `roundUp(6 + 12 * fileCount, 8)`. Only that span is encrypted; entry payloads
@@ -93,9 +102,10 @@ Candidate fixed vectors include:
 | `foo/bar.bin` | `0x153A4115` |
 | `foo\\bar.bin` | `0x153A4115` |
 
-The `ra2md.csf` vector is present in the unencrypted `langmd.mix` directory in
-the controlled baseline. All vectors still require synthetic tests and XCC
-black-box confirmation before `format.mix-filename-id` is promoted.
+The vectors pass independent C# tests. The seven target IDs resolve entries in
+the controlled baseline, and the XCC-created synthetic archive resolves its
+three supplied names plus `local mix database.dat` to the same IDs. The latter
+database has ID `0x366E051F`.
 
 The pinned OmniBlade `encoding` commit contains a relevant evidence conflict:
 its uppercase helper returns a new string, while the MIX call site does not
@@ -136,17 +146,51 @@ These XCC behaviors cannot be used as checksum correctness evidence. The Core
 implementation must calculate and compare SHA-1 itself and the writer must
 calculate a fresh trailer from bytes it emitted.
 
-## Baseline pre-implementation observation
+## Controlled baseline audit
 
-The root of `YR1001_ProjectBaseline` contains eight `.mix` files totaling
-664,471,054 bytes. Seven use the extended form: one declares checksum only,
-two declare encrypted directories only, and four declare both. The eighth is
-a zero-byte file and is classified as truncated/placeholder input, not a legal
-empty archive. No classic root archive was observed.
+The read-only `YR1001_ProjectBaseline` audit found eight root MIX files totaling
+664,471,054 bytes. Seven parsed and one zero-byte `movmd03.mix` failed with a
+truncated-header diagnostic. Recursive bounded mounting observed 55 archives:
+2 classic, 53 extended, 23 with encrypted directories, 46 with checksums, and
+48 nested archives at maximum depth 1. The mounted catalogs contain 13,281
+entries; five IDs remained unnamed by the controlled candidate catalog.
 
-This is a root-level structural observation, not a completed MIX parse. Entry
-counts, target locations, nested archives, checksum results, and compatibility
-status remain pending the bounded implementation and local audit.
+All seven required target names were located. `isotem.pal`, `temperat.pal`,
+and `unittem.pal` resolve through `ra2.mix/cache.mix`; `ai.ini` resolves through
+`ra2.mix/local.mix`; `artmd.ini` resolves through `ra2md.mix/localmd.mix`;
+`ra2md.csf` is in root `langmd.mix`. `rulesmd.ini` has two distinct candidates,
+one in `expandmd01.mix` and one in `ra2md.mix/localmd.mix`. The audit reports
+that ambiguity and does not invent unverified archive-layer precedence.
+
+The complete 7,683,713-byte audit manifest remains in the repository-external
+cache. Its SHA-256 is
+`d2ca24651d68fa1ae1df90b366cd20f07d67889d5f0b9f5ccc7f9278ba8321d4`.
+Only aggregates, target IDs, sizes, hashes, container chains, and diagnostics
+are published. This patched baseline audit is not a clean YR 1.001 original
+comparison and does not interpret any payload format.
+
+## Controlled XCC observations
+
+XCC operations used only a copied tool, a copied baseline archive, or
+autonomous synthetic payloads outside the repository.
+
+- XCC opened a copy of baseline `langmd.mix`, displayed 10 entries, and
+  extracted `ra2md.csf` with the same length and SHA-256 as the bounded mount.
+- XCC created a zero-flag extended archive from three nonempty synthetic files
+  and added `local mix database.dat`. The project parsed all four entries.
+- `PreserveEntryOrder` retained the observed four-entry order and payload
+  hashes. Its bytes differed from the XCC archive, so byte identity is false.
+- XCC opened and extracted project-generated classic, checksum, encrypted-
+  directory, inner, and outer nested archives. Thirteen extracted files,
+  including three zero-byte entries, matched the autonomous inputs byte for
+  byte.
+- XCC ignored a zero-byte file during archive creation. The controlled create
+  contract therefore uses a one-byte file, while project writer and XCC
+  extraction coverage for zero-byte entries remain separate.
+
+These observations establish semantic interoperability for the tested
+synthetic contracts. They do not establish byte-for-byte XCC writer cloning,
+clean original-game behavior, or general acceptance of malformed archives.
 
 ## Required strictness
 
@@ -163,4 +207,3 @@ provenance.
 
 The writer always performs a complete rebuild to an approved external test or
 cache location. It never modifies `YR1001_ProjectBaseline` in place.
-

@@ -231,3 +231,35 @@
 ### 后续事项
 - 先提交 Research/ADR，再实现共享预算的 seekable file window。
 - 逐提交实现 reader、writer、嵌套挂载和 XCC/基线交付证据。
+
+## 2026-08-02 22:45 - WP-02C MIX 实现与 XCC A-D 验证收口
+
+### 用户目标
+- 将 WP-02C 从 PAL 预检切换为 MIX 读取、完整重建写入、加密/校验、嵌套挂载、ProjectBaseline 目标定位和固定 XCC Mixer 双向往返。
+- 严格保持 Apache-2.0/GPLv2 reference-only 边界，所有原版内容、XCC 工具和完整 manifest 留在仓库外。
+
+### 本轮处理
+- 独立实现 seekable file window、经典/扩展 MIX、文件名 ID、Westwood key envelope、Blowfish、payload-only SHA-1、确定性与保持顺序写入器。
+- 建立目录到外层 MIX、内层 MIX、最终条目的有界虚拟挂载，保留每层 provenance、显式 priority 和未知数字 ID。
+- 只读审计 ProjectBaseline 的全部根 MIX，递归挂载并定位七个批准目标；完整文件级结果写入仓库外 cache。
+- 使用固定 XCC Mixer 1.47 完成 A-D：读取基线副本、生成合成 MIX、本工具输出由 XCC 打开/提取、XCC 输出经 PreserveEntryOrder 重建后再次由 XCC 提取。
+- 依据真实 XCC 零 flags 输出补充扩展头兼容；把语义往返与字节一致分开记录。
+
+### 关键结论
+- 8 个根 MIX 中 7 个可解析，零字节 `movmd03.mix` 受控失败；共挂载 55 个归档、13,281 个条目，最大嵌套深度 1。
+- 七个目标均定位；`rulesmd.ini` 有两条不同来源链，因未验证原版归档层优先级而明确保持歧义。
+- XCC 可提取项目生成的 classic、checksum、encrypted 和 nested 合成归档；12 个 C 类输出和 4 个 D 类输出哈希全部一致。
+- XCC 生成归档与本项目 PreserveEntryOrder 重建归档字节不同，但条目顺序、集合和负载一致；只提升语义往返。
+
+### 影响文件
+- `Assets/RA2YR/Core/Binary/Seekable/`
+- `Assets/RA2YR/Core/Formats/Mix/`
+- `Assets/RA2YR/Core/Content/Mix/`
+- `Assets/RA2YR/Tests/EditMode/`
+- `Tools/Content/`
+- `docs/architecture/`、`docs/formats/`、`docs/compatibility/`、`docs/third-party/`
+- `README.md`
+
+### 后续事项
+- 完成远程 Draft PR 和 Actions 实际状态验证，不自动合并。
+- PAL 解释继续保持未实现，下一工作包使用已定位的三个 768 字节条目做本地黄金样本。

@@ -242,6 +242,27 @@ sources:
     repository_use: "reference-only; executable remains outside repository; tests use copies and synthetic payloads"
     approval_status: "approved-reference-only-no-redistribution"
 
+  - id: xcc-global-mix-database-local-toolbox
+    name: "XCC global MIX name database"
+    source:
+      type: "external-reference-data"
+      canonical_upstream: "https://sourceforge.net/projects/xccu/"
+      observed_location: "../Reference/Toolbox/global mix database.dat (logical external location)"
+    version_or_hash:
+      file_size: 408131
+      sha256: "C76F529AF17CBE516E85AA4DDDCE614CF0AD98A8590208C71FBE3A047FB77AB8"
+      bundled_with: "xcc-mixer-local-toolbox-147"
+    license:
+      spdx: "GPL-2.0-only"
+      verification: "XCC SourceForge project metadata; no separate data license observed"
+    purpose: "Repository-external candidate-name catalog for controlled MIX ID resolution"
+    contains_code: false
+    reference_only: true
+    code_imported: false
+    data_imported: false
+    repository_use: "reference-only; database remains outside repository and only sanitized ID resolution results are recorded"
+    approval_status: "approved-reference-only-no-redistribution"
+
   - id: bruce-schneier-blowfish-definition
     name: "Bruce Schneier Blowfish algorithm definition and vectors"
     source:

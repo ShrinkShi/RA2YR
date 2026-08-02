@@ -6,9 +6,11 @@ definition below. A successful parse, display, or launch never implies
 behavioral compatibility.
 
 `format.bounded-reader` is a format-neutral safety foundation. Its `可解析`
-status means synthetic bounded-input, budget, diagnostic, and tail tests pass;
-it does not promote PAL, SHP, VXL/HVA, TMP, CSF, MIX, INI, map Pack, or any
-runtime behavior.
+status means synthetic bounded-input, budget, diagnostic, and tail tests pass.
+WP-02C separately promotes only the tested MIX container, ID, encryption,
+checksum, virtual-source, nesting, and XCC interoperability entries. It does
+not promote PAL, SHP, VXL/HVA, TMP, CSF, INI, map Pack, rendering, or runtime
+game behavior.
 
 ## Status vocabulary
 
@@ -43,10 +45,18 @@ golden evidence identifies user-supplied files by hash.
 
 The recorded `YR1001_ProjectBaseline` directory manifest identifies patched
 development content containing the official map add-on, music pack, and
-compatibility patch. Its complete file-level manifest remains outside the
-repository; public evidence contains only its manifest SHA-256, aggregates,
-scan facts, and approved representative metadata. This does not constitute a
-clean YR 1.001 manifest, MIX payload parse, or original behavior comparison.
+compatibility patch. Its complete directory and MIX audit manifests remain
+outside the repository; public evidence contains only manifest SHA-256 values,
+aggregates, target IDs/sizes/hashes, container chains, scan facts, and approved
+representative metadata. MIX structure is now parsed, but payload formats are
+not interpreted. This still does not constitute a clean YR 1.001 manifest or
+original behavior comparison.
+
+For XCC, `往返通过` means the specifically recorded synthetic semantic
+contract passed: entry sets/order where required and extracted payload hashes
+were preserved. It does not imply byte-identical archive reconstruction. The
+XCC-created input and project PreserveEntryOrder rebuild have different hashes,
+and that result is retained as an explicit limitation.
 
 ## Update procedure
 

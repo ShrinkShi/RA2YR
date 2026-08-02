@@ -131,3 +131,30 @@
 ### 验证情况
 - 双 PowerShell 仓库验证均通过：129 个矩阵条目、21 个证据引用、0 违规。
 - ProjectBaseline 研究前后元数据指纹一致；未启动 XCC，未修改或复制权威内容。
+
+## 2026-08-02 - WP-02C MIX 读写、加密、嵌套与 XCC 互操作
+
+### 变更范围
+- 只实现 MIX 容器基础、外部内容挂载、ProjectBaseline 审计、XCC 合成互操作、文档和测试；不解释 PAL 或其他 payload，不实现游戏逻辑。
+
+### 具体改动
+- 新增 64 位有界 seekable window 会话，子窗口共享读/分配/范围预算并受父区间限制。
+- 新增经典、扩展、零 flags 扩展、加密目录和 checksum MIX reader，损坏输入无部分成功。
+- 新增 ASCII invariant 文件名 ID、未知数字 ID、XCC 名称数据库受控候选解析。
+- 新增 DeterministicRebuild/PreserveEntryOrder writer、0 字节条目、显式 key source 加密、checksum 写入、外部临时文件与原子发布。
+- 新增嵌套挂载、循环/深度/归档/条目预算、混合 loose/MIX priority 和完整 provenance。
+- 新增基线审计与 XCC 三阶段受控入口；完整 manifest、工具副本和提取物全部留在仓库外。
+- 新增 MIX 架构、格式说明、ADR 0010、三份交付证据、来源台账和兼容矩阵状态。
+
+### 验证情况
+- Unity EditMode 343/343、PlayMode 1/1；相对 WP-02B 新增 191 个 NUnit case，编译错误 0。
+- Unity 测试包装器退出码 0；两个 Editor 子进程均在结果写出后由包装器执行 30 秒收尾。
+- Windows PowerShell 5.1/PowerShell 7 仓库门禁通过：107 Assets/107 meta、129 矩阵项、38 证据引用、0 duplicate GUID/违规；回归 46/46。
+- 双 PowerShell 版权扫描 0 违规、13/13 ignore probes；回归 22/22。
+- ProjectBaseline 完整外部 MIX manifest SHA-256 `D2CA24651D68FA1AE1DF90B366CD20F07D67889D5F0B9F5CCC7F9278BA8321D4`。
+- XCC A-D 语义往返通过；XCC archive 与 PreserveEntryOrder rebuild 字节不一致，未宣称 byte identity。
+
+### 风险
+- ProjectBaseline 含增补包和兼容补丁，不构成 clean YR 1.001 原版对照。
+- XCC GUI 无稳定 CLI，真实执行留作受控本地门禁，CI 只能验证合成合约。
+- 新 key source 生成、完整嵌套树重写和 PAL payload 解释仍未实现。
