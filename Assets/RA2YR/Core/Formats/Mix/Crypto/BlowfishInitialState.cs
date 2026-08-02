@@ -109,4 +109,3 @@ namespace RA2YR.Core.Formats.Mix.Crypto
         }
     }
 }
-

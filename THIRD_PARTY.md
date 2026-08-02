@@ -18,7 +18,7 @@ public formats or behavior; it does not permit code import.
 | XCC SourceForge original source and SVN r1201 | GPL-2.0-only | MIX format and historical behavior reference | No | Reference only |
 | OmniBlade/xcc encoding commit `62bb770` | GPL-2.0-only | Pinned MIX behavior comparison | No | Reference only |
 | XCC Mixer toolbox redistribution | GPL-2.0-only | External black-box interoperability tool | No | Reference only |
-| Bruce Schneier Blowfish definition | License-free | Algorithm facts and public vectors | No | Reference only |
+| Bruce Schneier Blowfish definition | License-free | Standard initial-state constants and public vectors; independent implementation | No code; constants only | Approved data |
 | OpenRA commit `a520984` | GPL-3.0-or-later | Independent MIX/encryption behavior cross-check | No | Reference only |
 
 ## Import gate

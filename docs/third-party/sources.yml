@@ -248,17 +248,20 @@ sources:
       type: "public-algorithm-reference"
       canonical_upstream: "https://www.schneier.com/academic/blowfish/"
       vectors: "https://www.schneier.com/academic/blowfish/"
+      initial_state_constants: "https://www.schneier.com/wp-content/uploads/2015/12/constants-2.txt"
     version_or_hash:
       algorithm: "Blowfish, 16 rounds, 64-bit block, 32-448-bit key"
+      initial_state_constants_sha256: "AB6368F5F8F8648DCC2BE58A2806C804959E4963B733E7B76DACAD85A82C8BFB"
     license:
       spdx: "LicenseRef-Schneier-Blowfish-License-Free"
       verification: "Author page states unpatented, license-free, and available free for all uses"
     purpose: "Independent generic Blowfish implementation constants and public test vectors"
     contains_code: false
-    reference_only: true
+    reference_only: false
     code_imported: false
-    repository_use: "algorithm facts and vectors only; implementation independently authored"
-    approval_status: "approved-reference-only"
+    data_imported: true
+    repository_use: "license-free standard initial-state constants and public vectors; implementation independently authored"
+    approval_status: "approved-license-free-data"
 
   - id: openra-mix-reference-a520984
     name: "OpenRA MIX and Westwood key-envelope reference"
