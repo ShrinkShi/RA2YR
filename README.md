@@ -2,7 +2,7 @@
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
-> 项目目前处于 WP-02A 内容解析基础设施阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
+> 项目目前处于 WP-02B 安全二进制读取基础设施阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
 ## 项目定位
 
@@ -15,6 +15,7 @@ RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项�
 - 只读外部内容配置、目录文件发现、SHA-256 和版本化 manifest；
 - `OrdinalIgnoreCase` 逻辑路径、显式来源优先级和完整 provenance chain；
 - 仓库外完整 manifest 与仓库内脱敏目录级基线证据；
+- 与 Unity 无关的有界二进制读取、统一资源预算、结构化诊断和尾部策略；
 - EditMode、PlayMode、仓库静态验证和 CI 入口；
 - 明确区分“未实现”“可解析”和原版对照等兼容状态。
 
@@ -44,7 +45,7 @@ Windows 是当前优先平台。核心格式、内容和确定性逻辑的设计
 2. 将 source 和 cache 路径改为仓库外的本机目录。
 3. 不要移动、重命名或写入原版内容；本机配置和缓存已被 Git 忽略。
 
-WP-02A 只建立目录型内容源的逻辑路径、显式优先级解析、来源链和仓库外 manifest。它尚未解析 MIX 载荷，也不证明 PAL、SHP、VXL/HVA、TMP、INI、地图、视觉或行为兼容。受控基线命令会只读读取文件字节以计算 SHA-256，但公开摘要不包含文件正文、绝对路径或完整文件级清单。
+WP-02A 只建立目录型内容源的逻辑路径、显式优先级解析、来源链和仓库外 manifest。WP-02B 只增加通用、合成测试验证的有界二进制输入、资源预算、诊断和尾部处理基础。二者都尚未解析 MIX 载荷，也不证明 PAL、SHP、VXL/HVA、TMP、CSF、INI、地图、视觉或行为兼容。受控基线命令会只读读取文件字节以计算 SHA-256，但公开摘要不包含文件正文、绝对路径或完整文件级清单。
 
 ## 本地验证
 
@@ -103,6 +104,7 @@ Tools/Testing/                  Unity 命令行测试入口
 - [架构边界](docs/architecture/README.md)
 - [外部内容系统](docs/architecture/external-content.md)
 - [逻辑内容解析与来源优先级](docs/architecture/content-resolution.md)
+- [安全有界二进制读取基础](docs/architecture/bounded-binary-reading.md)
 - [兼容矩阵说明](docs/compatibility/README.md)
 - [机器可读兼容矩阵](docs/compatibility/matrix.yml)
 - [架构决策记录](docs/adr/README.md)

@@ -88,3 +88,29 @@
 - 实现提交：`806335f78b6fc3b8fc026c582999c12f888a7def`。
 - Draft PR：`https://github.com/ShrinkShi/RA2YR/pull/2`，base `main`，未自动合并。
 - GitHub Actions 首轮 `Repository safety`：通过；运行 ID `30736714207`。
+
+## 2026-08-02 - WP-02B 安全有界二进制读取基础
+
+### 变更范围
+- 仅包含 Core 有界二进制输入、资源预算、诊断、尾部策略、合成测试及 WP-02A 指定回归。
+
+### 具体改动
+- 新增明确 little-endian 的 8/16/32/64 位有符号与无符号读取、精确读取、跳过、窥视、绝对偏移和有界子区间。
+- Stream 快照循环支持短读、零读 EOF、不可 seek 输入的调用方声明边界、可 seek 输入的剩余范围推断和 `leaveOpen` 所有权。
+- 所有子 reader 共用七类有限预算；文件驱动长度和数量先校验，再以 checked arithmetic 转换、累计或分配。
+- 新增 15 类结构化诊断码和四种显式尾部策略，不复制物理路径、正文或原始 I/O 错误消息。
+- session、reader、尾部策略和完成证明保持 Core internal；根或子完成后封闭，未决子区间阻止父完成。
+- 修复 `LogicalContentPath` 补充平面大小写散列契约，并为 `ContentResolutionSource.TotalBytes` 提供受控溢出诊断。
+- 新增架构文档、ADR、兼容证据和矩阵状态更新；未提升任何具体文件格式。
+
+### 审查加固
+- 子完成只携带本次诊断，最终 root 复用封存的只读会话视图，避免诊断历史 O(N²) 复制。
+- `childDepth` checked 溢出映射到 `ArithmeticOverflow`，负 allocation reservation 映射到 `InvalidLength`。
+- seekable 工厂委托快照后不再重复 Dispose，并结构化处理 `CanSeek` 的 `NotSupportedException`。
+
+### 验证状态
+- 当前 EditMode 结果 XML：152/152 通过；二进制测试 64 项，WP-02A 新回归 15 项，共新增 79 个 NUnit case。
+- PlayMode 结果 XML：1/1 通过；两次 Unity 调用均在日志结束后未提供进程退出码，严格封装器按失败关闭返回非零，且无残留进程或锁。
+- 双 PowerShell 仓库验证通过：51 个 Assets 条目、51 个 `.meta`、120 个矩阵条目、11 个证据引用、0 违规；合成回归 46/46。
+- 双 PowerShell 暂存态版权扫描一致：163 个候选、13/13 ignore probes、0 个禁止物理根、0 违规；合成回归 22/22。
+- 远程提交、Draft PR 和 GitHub Actions 实际结果将在推送后补录。

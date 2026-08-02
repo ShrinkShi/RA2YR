@@ -4,6 +4,13 @@ WP-02A resolves logical files across directory sources without depending on
 Unity, the host culture, file enumeration order, thread scheduling, or
 dictionary iteration order.
 
+WP-02B additionally makes `ContentResolutionSource.TotalBytes` an explicit
+checked accumulation. A source whose synthetic metadata cannot fit in Int64 is
+omitted from candidates, reported with `SourceTotalBytesOverflow`, and makes
+the result incomplete. It cannot leak an unexplained `OverflowException` or be
+serialized as a complete manifest. This does not change priority or ambiguity
+semantics.
+
 ## Logical path identity
 
 - `/` is the only logical separator.

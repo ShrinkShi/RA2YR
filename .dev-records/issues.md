@@ -104,3 +104,34 @@ Git 官方文档仍规定 `--stdin -z` 使用 NUL 分隔输入。本轮只能确
 
 ### 后续远程发现
 第三次工作流中 22 个扫描回归均明确输出 `PASS`，但最后一个预期失败用例留下 `$LASTEXITCODE=1`。GitHub Actions 的 PowerShell 调用方式据此将整个步骤判为失败。两个回归入口现均在完成安全清理后显式 `exit 0`；任何断言或清理异常仍会在到达该语句前失败。
+
+## 2026-08-02 - 逻辑路径补充平面散列契约缺陷
+
+### 现象
+WP-02A 的 `Equals` 使用 `OrdinalIgnoreCase`，旧哈希却逐 UTF-16 code unit 大写。若大小写映射跨 surrogate pair，两个相等逻辑路径可能产生不同哈希。
+
+### 根因
+逐 `char` 处理看不到完整 Unicode scalar，无法复现字符串级大小写映射。
+
+### 解决方案
+- 对完整路径字符串执行 invariant uppercase，再执行确定性 FNV-1a。
+- 增加 BMP、补充平面和固定 ASCII 数值回归；不改变 priority 或歧义语义。
+
+### 验证方式
+当前 Unity EditMode 运行覆盖 9 个 BMP case、4 个补充平面 case、固定哈希和集合分组契约，全部通过。
+
+## 2026-08-02 - 子区间完成诊断历史二次复制
+
+### 现象
+早期 WP-02B 实现让每个 child completion 多次复制全会话诊断。重复允许尾部警告时，累计引用数组可达到 O(N²)，且不受数据分配预算约束。
+
+### 根因
+完成对象被设计成携带全会话历史，而会话 `Diagnostics` getter 和完成构造器又分别复制数组。
+
+### 解决方案
+- 会话维护单一只读诊断视图，完成或故障后禁止追加。
+- child completion 仅携带本次完成诊断；finalized root 复用封存会话视图。
+- 增加 256 个连续 child warning 回归，断言每个 child 仅一项且 root 汇总 257 项。
+
+### 验证方式
+对应 EditMode 回归通过；独立代码审查未发现剩余中高严重度问题。

@@ -320,6 +320,53 @@ namespace RA2YR.Tests.EditMode.Content
             Assert.That(typeof(ContentResolutionResult).GetConstructors(), Is.Empty);
         }
 
+        [Test]
+        public void SourceTotalBytesOverflowProducesControlledIncompleteResolution()
+        {
+            using (var temporary = new TemporaryContentTestDirectory())
+            {
+                string root = temporary.CreateDirectory("Sources/overflow");
+                var descriptor = new ExternalContentSourceDescriptor(
+                    "overflow",
+                    ContentSourceKind.Unpacked,
+                    root,
+                    100,
+                    "synthetic-v1",
+                    true);
+                ContentFileRecord[] records =
+                {
+                    new ContentFileRecord(
+                        "overflow",
+                        "first.bin",
+                        long.MaxValue,
+                        new string('0', 64)),
+                    new ContentFileRecord(
+                        "overflow",
+                        "second.bin",
+                        1,
+                        new string('1', 64))
+                };
+                var source = new ContentSourceIndex(
+                    descriptor,
+                    records,
+                    ContentSourceFingerprint.Compute(descriptor, records),
+                    true);
+
+                ContentResolutionResult result = null;
+                Assert.DoesNotThrow(() => result = Resolve(source));
+
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.IsComplete, Is.False);
+                Assert.That(result.HasErrors, Is.True);
+                Assert.That(result.Sources, Is.Empty);
+                Assert.That(result.Entries, Is.Empty);
+                Assert.That(result.Diagnostics.Count(item =>
+                    item.Code == ContentDiagnosticCode.SourceTotalBytesOverflow), Is.EqualTo(1));
+                Assert.Throws<InvalidOperationException>(() =>
+                    ContentResolutionManifestSerializer.SerializeCanonicalJson(result));
+            }
+        }
+
         private static ContentResolutionResult Resolve(params ContentSourceIndex[] sources)
         {
             return new ContentResolver().Resolve(new ContentIndexResult(
