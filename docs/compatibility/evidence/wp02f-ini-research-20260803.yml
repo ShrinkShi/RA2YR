@@ -1,0 +1,157 @@
+schema_version: 1
+evidence_id: "wp02f-ini-research-20260803"
+recorded_at_utc: "2026-08-02T19:02:02Z"
+scope: "Reference-only RA2/YR INI physical syntax and encoding-boundary research before compatibility promotion"
+
+project_baseline_read_only_observation:
+  source_id: "YR1001_ProjectBaseline"
+  mounted_through_existing_mix_virtual_source: true
+  repository_external_content_modified: false
+  samples:
+    - logical_name: "artmd.ini"
+      provenance: ["ra2md.mix", "localmd.mix", "artmd.ini"]
+      length: 336535
+      sha256: "E1F0378394313C04EBBD5073F47785EE3E46F1B3C62D65724E8F3C310EE7BA31"
+      bom: "none"
+      byte_observation: "7-bit ASCII only; this does not prove UTF-8"
+      crlf_count: 19604
+      lone_lf_count: 0
+      lone_cr_count: 0
+      nul_count: 0
+      unsupported_c0_control_count: 0
+    - logical_name: "ai.ini"
+      provenance: ["ra2.mix", "local.mix", "ai.ini"]
+      length: 84972
+      sha256: "1FEAC6DDEA6886B177DDF7E5F8580B7A99A63F12684F2CBB42831671BB7A8A79"
+      bom: "none"
+      byte_observation: "7-bit ASCII only; this does not prove UTF-8"
+      crlf_count: 4501
+      lone_lf_count: 0
+      lone_cr_count: 0
+      nul_count: 0
+      unsupported_c0_control_count: 0
+    - logical_name: "rulesmd.ini"
+      candidate_identity: "expandmd01"
+      provenance: ["expandmd01.mix", "rulesmd.ini"]
+      length: 743215
+      sha256: "3D341EF8A13A4B5AB24AF2EEF48AC94931AC2BB87D950FE3330A07E2D25672EF"
+      bom: "none"
+      byte_observation: "7-bit ASCII only; this does not prove UTF-8"
+      crlf_count: 31071
+      lone_lf_count: 0
+      lone_cr_count: 0
+      nul_count: 0
+      unsupported_c0_control_count: 0
+    - logical_name: "rulesmd.ini"
+      candidate_identity: "localmd"
+      provenance: ["ra2md.mix", "localmd.mix", "rulesmd.ini"]
+      length: 742958
+      sha256: "06761DD7F714E7D9400216EC3C06109EC5C1461F6A0727BE7401EB9D8B0F6D05"
+      bom: "none"
+      byte_observation: "7-bit ASCII only; this does not prove UTF-8"
+      crlf_count: 31061
+      lone_lf_count: 0
+      lone_cr_count: 0
+      nul_count: 0
+      unsupported_c0_control_count: 0
+  rulesmd_candidates_are_distinct: true
+  rulesmd_winner_selected: false
+  runtime_precedence_inferred: false
+
+source_reviews:
+  ea_mission_editor:
+    repository: "https://github.com/electronicarts/CNC_TS_and_RA2_Mission_Editor"
+    commit: "6abf0f557469baea73079c6bf6550709e2e3584e"
+    license: "GPL-3.0-or-later"
+    reference_only: true
+    code_imported: false
+    reference_files:
+      - "MissionEditor/IniFile.cpp"
+      - "MissionEditor/IniFile.h"
+      - "MissionEditor/Loading.cpp"
+      - "MissionEditor/MapData.cpp"
+    observations:
+      - "The reader truncates its semantic view at the first semicolon and uses the first equals separator."
+      - "RA2/YR and map load paths request trimming of key and value views."
+      - "Repeated sections merge and repeated keys overwrite in the editor map model."
+      - "Its writer sorts and reformats data, so it is not an identity-writer model."
+  openra:
+    repository: "https://github.com/OpenRA/OpenRA"
+    commit: "a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+    license: "GPL-3.0-or-later"
+    reference_only: true
+    code_imported: false
+    reference_file: "OpenRA.Mods.Common/FileFormats/IniFile.cs"
+    observations:
+      - "The reader recognizes leading-bracket sections, truncates entries at the first semicolon, trims fields, and uses the first equals separator."
+      - "It treats a no-equals line as an empty-valued key, merges case-folded sections, and keeps the first repeated key."
+  xcc_fixed_references:
+    sourceforge_revision: "r1201"
+    sourceforge_archive_sha256: "82B699522282404A32FF33F816D2B8B4219CE8363F09075F1DDDC3ADA94270CF"
+    omniblade_commit: "62bb77080f13bdf65c79c84837b7cc264bdd432d"
+    license: "GPL-2.0-only"
+    reference_only: true
+    code_imported: false
+    ini_grammar_conclusion: "No additional byte-preserving RA2/YR INI grammar was established from the pinned XCC references."
+
+conservative_structure_policy:
+  punctuation_basis: "ASCII bytes or BOM-selected UTF-16 code units"
+  blank: "empty or ASCII-space/tab-only physical content"
+  full_line_comment: "first non-space unit is semicolon"
+  section: "leading bracket after ASCII space/tab, closing bracket, and only whitespace or semicolon tail"
+  key_value: "nonempty key and first equals inside a current nonempty section"
+  inline_semicolon_removed: false
+  inline_semicolon_semantics_confirmed_for_original_yr: false
+  inline_semicolon_diagnostic: "AmbiguousInlineSemicolon"
+  opaque_cases:
+    - "key outside section"
+    - "line without equals"
+    - "unterminated section"
+    - "empty section"
+    - "unresolved section trailing content"
+    - "unsupported control character"
+    - "nonstandard MOD extension"
+  duplicate_sections_preserved: true
+  duplicate_keys_preserved: true
+  duplicate_winner_selected: false
+
+evidence_conflicts:
+  no_equals_line: "FA2 ignores; OpenRA models an empty-valued key"
+  duplicate_key: "FA2 map overwrites; OpenRA keeps the first"
+  section_position: "FA2 searches for brackets; OpenRA requires bracket at character zero"
+  case_and_lookup: "Observed implementations differ and do not establish original YR runtime behavior"
+  consequence: "Preserve bytes and classify unresolved forms as opaque or ambiguous"
+
+encoding_policy:
+  bomless: "RawSingleByte; no UTF-8 or host-code-page inference"
+  utf8_bom: "preserve BOM and validate with strict no-replacement UTF-8"
+  utf16le_bom: "preserve BOM, require complete little-endian code units, and scan syntax as code units"
+  utf16be_bom: "preserve BOM, require complete big-endian code units, and scan syntax as code units"
+  encoding_default_allowed: false
+  windows_acp_allowed: false
+  current_culture_allowed: false
+  decoder_replacement_allowed: false
+  unicode_normalization_performed: false
+  runtime_code_page_selected: false
+
+unresolved_runtime_semantics:
+  - "empty section and empty key acceptance"
+  - "first-wins or last-wins duplicate rules"
+  - "line continuation"
+  - "quotation and escaping"
+  - "hash-sign comments"
+  - "inline semicolon behavior in original YR"
+  - "BOM-marked Unicode acceptance by original YR"
+  - "legacy single-byte code-page selection"
+  - "cross-file and MIX precedence"
+
+research_controls:
+  xcc_or_finalalert_gui_started: false
+  external_source_code_committed: false
+  external_code_imported: false
+  original_ini_body_committed: false
+  section_or_key_list_committed: false
+  value_or_comment_body_committed: false
+  complete_line_hash_list_committed: false
+  absolute_paths_published: false
+  compatibility_status_promoted_by_research_alone: false

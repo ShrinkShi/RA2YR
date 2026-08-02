@@ -154,6 +154,26 @@ sources:
       test_only_on_copies: true
       overwrite_original_maps: false
 
+  - id: ea-finalalert2-mission-editor-6abf0f5
+    name: "Electronic Arts FinalSun / FinalAlert 2 Mission Editor source"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/electronicarts/CNC_TS_and_RA2_Mission_Editor"
+      commit: "https://github.com/electronicarts/CNC_TS_and_RA2_Mission_Editor/commit/6abf0f557469baea73079c6bf6550709e2e3584e"
+      observed_location: "canonical GitHub source at the pinned commit; no repository-local source"
+    version_or_hash:
+      commit: "6abf0f557469baea73079c6bf6550709e2e3584e"
+      commit_date: "2024-03-18T15:40:55Z"
+    license:
+      spdx: "GPL-3.0-or-later"
+      verification: "upstream LICENSE.md, README license section, and MissionEditor source headers"
+    purpose: "FinalAlert 2 RA2/YR INI parsing, trimming, duplicate, and normalized-writer behavior reference"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
+    approval_status: "approved-reference-only"
+
   - id: xcc-sourceforge-original-20011021
     name: "XCC Utilities original SourceForge source archive"
     source:
@@ -285,7 +305,7 @@ sources:
     approval_status: "approved-license-free-data"
 
   - id: openra-mix-reference-a520984
-    name: "OpenRA MIX, key-envelope, and PAL conversion reference"
+    name: "OpenRA MIX, key-envelope, PAL, and legacy INI reference"
     source:
       type: "external-git-reference"
       canonical_upstream: "https://github.com/OpenRA/OpenRA"
@@ -297,7 +317,7 @@ sources:
     license:
       spdx: "GPL-3.0-or-later"
       verification: "upstream COPYING and source headers"
-    purpose: "Independent observable cross-check of MIX behavior and PAL high-bit-replication display conversion"
+    purpose: "Independent observable cross-check of MIX behavior, PAL high-bit-replication display conversion, and legacy INI parsing"
     contains_code: true
     reference_only: true
     code_imported: false
