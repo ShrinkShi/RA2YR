@@ -22,6 +22,7 @@ namespace RA2YR.Core.Binary.Seekable
         private long windowsCreated;
         private int deepestWindow;
         private bool disposed;
+        private bool disposeFailed;
         private bool faulted;
 
         private ReadOnlyDataWindowSession(
@@ -266,11 +267,16 @@ namespace RA2YR.Core.Binary.Seekable
                 return;
             }
 
-            disposed = true;
-            if (!leaveOpen)
+            if (leaveOpen)
             {
-                backingStream.Dispose();
+                disposed = true;
+                return;
             }
+
+            disposeFailed = true;
+            backingStream.Dispose();
+            disposeFailed = false;
+            disposed = true;
         }
 
         internal ReadOnlyDataWindow CreateChild(
@@ -815,6 +821,12 @@ namespace RA2YR.Core.Binary.Seekable
             if (disposed)
             {
                 throw new ObjectDisposedException(nameof(ReadOnlyDataWindowSession));
+            }
+
+            if (disposeFailed)
+            {
+                throw new InvalidOperationException(
+                    "The read-only window session is awaiting disposal retry.");
             }
 
             if (faulted)
