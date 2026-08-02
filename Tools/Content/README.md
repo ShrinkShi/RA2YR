@@ -70,3 +70,63 @@ paths, the complete external manifest, or original asset previews. Both the
 Unity log and sanitized summary remain ignored local artifacts. Review the
 summary before manually transcribing only approved aggregates and hashes into
 delivery evidence.
+
+## WP-02C XCC synthetic interoperability
+
+`Invoke-XccSyntheticInterop.ps1` provides three operator-facing modes around
+the repository's autonomous synthetic MIX fixtures:
+
+- `Prepare` publishes the internal deterministic contract: classic, checksum,
+  encrypted, and nested MIX cases plus fixed synthetic candidate inputs;
+- `VerifyXccCreated` validates a staged archive candidate and publishes a
+  preserve-entry-order rebuild; and
+- `VerifyXccExtractions` validates staged extraction candidates against the
+  fixed autonomous payload contract.
+
+The wrapper validates Unity 2022.3.60f1c1 and the approved `XCC Mixer.exe`
+SHA-256, but never starts XCC. All cases, Unity logs, command results, and
+verification artifacts stay below the configured repository-external Cache.
+Console output contains only cache-relative paths, sizes, hashes, roles, and
+sanitized diagnostics. The wrapper independently verifies every reported
+artifact against its length and SHA-256 before accepting a stage.
+
+Prepare a new case:
+
+```powershell
+./Tools/Content/Invoke-XccSyntheticInterop.ps1 `
+    -Mode Prepare `
+    -CaseId 'manual-roundtrip-01' `
+    -UnityEditorPath 'C:\Path\To\Unity.exe' `
+    -XccMixerPath 'C:\Path\To\XCC Mixer.exe'
+```
+
+After the operator uses XCC Mixer on copies of the generated synthetic files,
+place the created archive at
+`wp02c/xcc-interop/<case-id>/incoming-from-xcc/xcc-created.mix`. Place the
+manual extraction candidates below the fixed
+`wp02c/xcc-interop/<case-id>/extracted-candidates` subtree, using the six
+directories `ra2yr-classic`, `ra2yr-checksum`, `ra2yr-encrypted`,
+`ra2yr-inner`, `ra2yr-nested`, and `xcc-created-rebuild`. Then run the
+remaining modes with the same case ID:
+
+```powershell
+./Tools/Content/Invoke-XccSyntheticInterop.ps1 `
+    -Mode VerifyXccCreated `
+    -CaseId 'manual-roundtrip-01' `
+    -UnityEditorPath 'C:\Path\To\Unity.exe' `
+    -XccMixerPath 'C:\Path\To\XCC Mixer.exe'
+
+./Tools/Content/Invoke-XccSyntheticInterop.ps1 `
+    -Mode VerifyXccExtractions `
+    -CaseId 'manual-roundtrip-01' `
+    -UnityEditorPath 'C:\Path\To\Unity.exe' `
+    -XccMixerPath 'C:\Path\To\XCC Mixer.exe'
+```
+
+The stages are deliberately non-destructive and non-idempotent: an existing
+case or verification publication is rejected. Use a new case ID instead of
+overwriting prior evidence. Only autonomous synthetic content may be used in
+this workflow; do not point it at the authoritative game baseline. These
+commands validate staged files and always report
+`realXccExecutionEvidence: false`; separate controlled human records are
+required to prove that the staged files were actually produced by XCC Mixer.
