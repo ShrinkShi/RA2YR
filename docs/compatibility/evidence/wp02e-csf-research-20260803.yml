@@ -1,0 +1,134 @@
+schema_version: 1
+evidence_id: "wp02e-csf-research-20260803"
+recorded_at_utc: "2026-08-02T17:38:34Z"
+scope: "Reference-only Westwood CSF layout, text representation, and strict read-policy research before implementation"
+
+fixed_project_baseline_identity:
+  logical_name: "ra2md.csf"
+  mix_id: "0xBD835079"
+  provenance: ["langmd.mix", "ra2md.csf"]
+  length: 332973
+  sha256: "1B90BB0756137F46FF529AF043FE798D7F1F9FA1713A4110F17E1D674DE81F1C"
+  prior_bounded_mix_evidence: "docs/compatibility/evidence/wp02c-project-baseline-20260802.yml"
+
+research_only_structural_scan:
+  input: "repository-external XCC extract with the exact fixed length and SHA-256"
+  substitutes_for_wp02e_mix_window_golden: false
+  format_version: 3
+  raw_language_code: 9
+  reserved_value: 0
+  declared_label_count: 5211
+  parsed_label_count: 5211
+  declared_value_count: 5211
+  parsed_value_count: 5211
+  normal_value_count: 4007
+  extended_value_count: 1204
+  empty_main_value_count: 4
+  empty_extended_extra_count: 0
+  duplicate_label_occurrences_ordinal: 0
+  duplicate_label_occurrences_ordinal_ignore_case: 0
+  maximum_values_per_label: 1
+  label_length_range_bytes: [6, 31]
+  main_text_length_range_code_units: [0, 187]
+  extended_text_length_range_bytes: [7, 8]
+  non_ascii_label_record_count: 0
+  non_ascii_extended_byte_count: 0
+  surrogate_pair_count: 0
+  unpaired_surrogate_count: 0
+  consumed_bytes: 332973
+  trailing_bytes: 0
+
+format_facts:
+  header_size: 24
+  byte_order: "little-endian"
+  file_marker: "20 46 53 43"
+  label_marker: "20 4C 42 4C"
+  normal_value_marker: "20 52 54 53"
+  extended_value_marker: "57 52 54 53"
+  supported_yr_version: 3
+  label_length_unit: "bytes"
+  main_text_length_unit: "UTF-16 code units"
+  main_text_storage: "bitwise-NOT bytes interpreted as explicit UTF-16LE code units"
+  extended_text_length_unit: "bytes"
+  label_encoding: "7-bit ASCII"
+  extended_text_encoding: "7-bit ASCII"
+  multiple_values_structurally_representable: true
+  duplicate_labels_preserved_by_model: true
+  trailing_data_allowed_by_wp02e: false
+
+source_reviews:
+  xcc_sourceforge_r1201:
+    source_url: "https://sourceforge.net/code-snapshots/svn/x/xc/xccu/code/xccu-code-r1201-trunk.zip"
+    revision: "r1201"
+    archive_sha256: "82B699522282404A32FF33F816D2B8B4219CE8363F09075F1DDDC3ADA94270CF"
+    license: "GPL-2.0-only"
+    reference_only: true
+    code_imported: false
+    reference_files:
+      - "xcc/misc/cc_structures.h"
+      - "xcc/misc/csf_file.h"
+      - "xcc/misc/csf_file.cpp"
+    observations:
+      - "The fixed header fields and structural identifiers match the controlled bytes."
+      - "The main text transform is per-code-unit bitwise inversion."
+      - "Its map, case-folding, and one-value behavior are negative evidence and are not reproduced."
+  omniblade_xcc:
+    repository: "https://github.com/OmniBlade/xcc"
+    branch_observed: "encoding"
+    commit: "62bb77080f13bdf65c79c84837b7cc264bdd432d"
+    license: "GPL-2.0-only"
+    reference_only: true
+    code_imported: false
+    reference_files:
+      - "xcc/misc/cc_structures.h"
+      - "xcc/misc/csf_file.h"
+      - "xcc/misc/csf_file.cpp"
+    observations:
+      - "The CSF header, identifiers, length fields, and main-text inversion agree with r1201."
+      - "The reader does not provide strict count, marker, ordering, duplicate, or tail semantics."
+  independent_cnc_formats:
+    repository: "https://github.com/iron-curtain-engine/cnc-formats"
+    commit: "77da596ed72a1201740e054855bf2ff60640bfa9"
+    release: "0.1.0-alpha.5"
+    license: "MIT OR Apache-2.0"
+    reference_only: true
+    code_imported: false
+    reference_file: "src/csf/mod.rs"
+    observations:
+      - "The 24-byte header, per-label value counts, inverted UTF-16LE main text, and separate extra field are independently implemented."
+      - "Its lossy decoding, dictionary model, ignored total count, and broader marker aliases are not adopted."
+  independent_lewisxy_csftool:
+    source_url: "https://gist.github.com/lewisxy/1f96e60119f29b3b98cf6d7f234a870e"
+    revision: "ba6046f6aa031a1bbab0a56c8e8bc7625ab5604f"
+    source_file_sha256: "1280081D99D76859914EDE8C710D3E991F1FE5A10430BE3AF7D133CFC136956D"
+    license: "MIT"
+    reference_only: true
+    code_imported: false
+    reference_file: "csftool.py"
+    observations:
+      - "The exact on-disk markers, little-endian lengths, ASCII fields, and inverted UTF-16LE payload agree with the controlled sample."
+      - "Its one-value and warning-only limitations are not adopted."
+  openra_review:
+    repository: "https://github.com/OpenRA/OpenRA"
+    commit: "a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+    license: "GPL-3.0-or-later"
+    csf_related_source_or_documentation_hits: 0
+    used_as_wp02e_csf_evidence: false
+
+strict_policy:
+  unsupported_version_is_error: true
+  unknown_record_marker_is_error: true
+  declared_and_parsed_counts_must_match: true
+  full_consumption_required: true
+  decoder_fallback_allowed: false
+  unicode_normalization_performed: false
+  partial_success_allowed: false
+
+research_controls:
+  xcc_gui_started: false
+  external_source_code_committed: false
+  original_string_body_committed: false
+  label_list_committed: false
+  translation_text_committed: false
+  absolute_paths_published: false
+  compatibility_status_promoted_by_research_alone: false

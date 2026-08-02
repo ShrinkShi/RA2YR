@@ -16,3 +16,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0009 | Independent MIX implementation and container boundaries | Accepted |
 | 0010 | XCC zero-flag headers and semantic round trips | Accepted |
 | 0011 | PAL raw model and explicit display conversion | Accepted |
+| 0012 | CSF ordered raw document model | Accepted |
