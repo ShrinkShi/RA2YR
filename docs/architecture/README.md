@@ -76,4 +76,6 @@ Implementation notes for the WP-01/WP-02A content foundation are documented in
 [`external-content.md`](external-content.md) and
 [`content-resolution.md`](content-resolution.md). The format-neutral WP-02B
 input, budget, diagnostic, and tail boundary is documented in
-[`bounded-binary-reading.md`](bounded-binary-reading.md).
+[`bounded-binary-reading.md`](bounded-binary-reading.md). The bounded archive,
+mount, provenance, and rebuilding boundaries are documented in
+[`mix-content.md`](mix-content.md).

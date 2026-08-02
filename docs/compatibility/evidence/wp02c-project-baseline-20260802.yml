@@ -1,0 +1,115 @@
+schema_version: 1
+evidence_id: "wp02c-project-baseline-20260802"
+recorded_at_utc: "2026-08-02T13:07:35Z"
+scope: "Read-only bounded MIX audit of YR1001_ProjectBaseline"
+baseline:
+  logical_name: "YR1001_ProjectBaseline"
+  description: "Patched development baseline with official map add-on, music pack, and Windows compatibility patch; not clean YR 1.001"
+  absolute_path_published: false
+  source_body_published: false
+  complete_manifest_committed: false
+  audit_status: "CompleteWithArchiveFailures"
+  started_utc: "2026-08-02T13:07:09.0236701Z"
+  completed_utc: "2026-08-02T13:07:34.6107261Z"
+  directory_fingerprint: "481e4ae76662001008eef8105cc749b29b958c9c5d39d0dfe889f47a046d1e6e"
+
+external_manifest:
+  schema_version: 1
+  length: 7683713
+  sha256: "D2CA24651D68FA1AE1DF90B366CD20F07D67889D5F0B9F5CCC7F9278BA8321D4"
+  repository_external_cache_only: true
+
+xcc_name_database:
+  length: 408131
+  sha256: "C76F529AF17CBE516E85AA4DDDCE614CF0AD98A8590208C71FBE3A047FB77AB8"
+  repository_external_reference_only: true
+
+archive_aggregate:
+  root_mix_count: 8
+  root_mix_total_bytes: 664471054
+  root_parsed: 7
+  root_failed: 1
+  mounted_archives: 55
+  classic_headers: 2
+  extended_headers: 53
+  encrypted_directories: 23
+  checksum_archives: 46
+  nested_archives: 48
+  maximum_nested_depth: 1
+  total_entries: 13281
+  unresolved_numeric_ids: 5
+  diagnostic_counts:
+    MixFormat.TruncatedHeader: 1
+    MixMount.ArchiveIncomplete: 1
+  failed_root_observation: "movmd03.mix is zero bytes and was diagnosed as a truncated header."
+
+targets:
+  - logical_name: "ai.ini"
+    mix_id: "0x9E11E49A"
+    status: "found"
+    chain: ["ra2.mix", "local.mix", "ai.ini"]
+    length: 84972
+    sha256: "1FEAC6DDEA6886B177DDF7E5F8580B7A99A63F12684F2CBB42831671BB7A8A79"
+    encrypted_directory_chain: true
+    diagnostic_count: 0
+  - logical_name: "artmd.ini"
+    mix_id: "0x5B47D8D5"
+    status: "found"
+    chain: ["ra2md.mix", "localmd.mix", "artmd.ini"]
+    length: 336535
+    sha256: "E1F0378394313C04EBBD5073F47785EE3E46F1B3C62D65724E8F3C310EE7BA31"
+    encrypted_directory_chain: true
+    diagnostic_count: 0
+  - logical_name: "isotem.pal"
+    mix_id: "0x5F9D97B9"
+    status: "found"
+    chain: ["ra2.mix", "cache.mix", "isotem.pal"]
+    length: 768
+    sha256: "5D6E40FCD11A592A31494C635D93C21796CFE86A2743F0258B1F7D0AFF850795"
+    encrypted_directory_chain: true
+    diagnostic_count: 0
+  - logical_name: "ra2md.csf"
+    mix_id: "0xBD835079"
+    status: "found"
+    chain: ["langmd.mix", "ra2md.csf"]
+    length: 332973
+    sha256: "1B90BB0756137F46FF529AF043FE798D7F1F9FA1713A4110F17E1D674DE81F1C"
+    encrypted_directory_chain: false
+    diagnostic_count: 0
+  - logical_name: "rulesmd.ini"
+    mix_id: "0x8218F9F4"
+    status: "ambiguous"
+    diagnostic_count: 1
+    matches:
+      - chain: ["expandmd01.mix", "rulesmd.ini"]
+        length: 743215
+        sha256: "3D341EF8A13A4B5AB24AF2EEF48AC94931AC2BB87D950FE3330A07E2D25672EF"
+        encrypted_directory_chain: true
+      - chain: ["ra2md.mix", "localmd.mix", "rulesmd.ini"]
+        length: 742958
+        sha256: "06761DD7F714E7D9400216EC3C06109EC5C1461F6A0727BE7401EB9D8B0F6D05"
+        encrypted_directory_chain: true
+  - logical_name: "temperat.pal"
+    mix_id: "0x9C58DE40"
+    status: "found"
+    chain: ["ra2.mix", "cache.mix", "temperat.pal"]
+    length: 768
+    sha256: "5903B69868B84F494CFBB4E7100398015EF9775B37726019A0D7B5FB6CB33B55"
+    encrypted_directory_chain: true
+    diagnostic_count: 0
+  - logical_name: "unittem.pal"
+    mix_id: "0x63DA7359"
+    status: "found"
+    chain: ["ra2.mix", "cache.mix", "unittem.pal"]
+    length: 768
+    sha256: "ED785E62EED291480F3198DD44F6B656EBE3A9B75E9F641944D710ABC6BDE3E3"
+    encrypted_directory_chain: true
+    diagnostic_count: 0
+
+compatibility_boundary:
+  directory_and_mix_inventory_completed: true
+  payload_formats_interpreted: false
+  clean_yr_1001_original_comparison: false
+  original_behavior_comparison: false
+  baseline_modified: false
+  limitation: "Multiple matches are retained because archive-layer precedence has not yet been proven from original behavior."

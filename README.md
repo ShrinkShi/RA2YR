@@ -2,7 +2,7 @@
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
-> 项目目前处于 WP-02B 安全二进制读取基础设施阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
+> 项目目前处于 WP-02C 内容容器基础设施阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
 ## 项目定位
 
@@ -16,6 +16,10 @@ RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项�
 - `OrdinalIgnoreCase` 逻辑路径、显式来源优先级和完整 provenance chain；
 - 仓库外完整 manifest 与仓库内脱敏目录级基线证据；
 - 与 Unity 无关的有界二进制读取、统一资源预算、结构化诊断和尾部策略；
+- seekable 文件窗口、Westwood MIX 经典/扩展头、文件名 ID、加密目录和 payload-only SHA-1 校验；
+- 确定性/保持条目顺序的完整重建式 MIX 写入，以及有界嵌套挂载和逐层 provenance；
+- `YR1001_ProjectBaseline` 的只读 MIX 聚合审计和仓库外完整 audit manifest；
+- 固定 XCC Mixer 1.47 的合成归档双向语义往返记录；
 - EditMode、PlayMode、仓库静态验证和 CI 入口；
 - 明确区分“未实现”“可解析”和原版对照等兼容状态。
 
@@ -45,7 +49,9 @@ Windows 是当前优先平台。核心格式、内容和确定性逻辑的设计
 2. 将 source 和 cache 路径改为仓库外的本机目录。
 3. 不要移动、重命名或写入原版内容；本机配置和缓存已被 Git 忽略。
 
-WP-02A 只建立目录型内容源的逻辑路径、显式优先级解析、来源链和仓库外 manifest。WP-02B 只增加通用、合成测试验证的有界二进制输入、资源预算、诊断和尾部处理基础。二者都尚未解析 MIX 载荷，也不证明 PAL、SHP、VXL/HVA、TMP、CSF、INI、地图、视觉或行为兼容。受控基线命令会只读读取文件字节以计算 SHA-256，但公开摘要不包含文件正文、绝对路径或完整文件级清单。
+WP-02A 建立目录型来源、显式优先级、来源链和仓库外 manifest；WP-02B 建立有界二进制输入、预算和诊断；WP-02C 在这些边界上增加 MIX 容器读写、加密目录、校验、嵌套挂载及 XCC 合成互操作。当前只解释容器结构，不解释其中的 PAL、SHP、VXL/HVA、TMP、CSF、INI 或地图 Pack，也不证明视觉或游戏行为兼容。受控基线命令只读访问必要字节并计算摘要；公开证据不包含文件正文、绝对路径或完整文件级清单。
+
+本轮的 XCC `往返通过` 是明确的语义结果：条目集合、要求保留的顺序和提取负载 SHA-256 一致。XCC 生成归档与本项目重建归档的文件字节并不相同，因此不宣称字节级复原。
 
 ## 本地验证
 
@@ -65,6 +71,17 @@ WP-02A 只建立目录型内容源的逻辑路径、显式优先级解析、来�
 ```
 
 该命令读取被 Git 忽略的 `Config/ExternalContent.local.xml`。完整 resolved manifest 只写入配置指定的仓库外 cache；脱敏摘要只写入被忽略的 `TestResults`，经人工核验后才可转录到公开兼容证据。
+
+生成本机 ProjectBaseline 的只读 MIX 结构审计：
+
+```powershell
+./Tools/Content/Invoke-MixBaselineAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+完整归档/条目 audit manifest 只写入仓库外 cache。仓库证据仅转录归档聚合、七个批准目标的逻辑名称、ID、大小、SHA-256、容器链和诊断。
+
+XCC 合成互操作使用 `Prepare`、`VerifyXccCreated` 和 `VerifyXccExtractions` 三个受控阶段。包装器不会启动或证明 XCC 进程；操作员必须只使用外部 cache 中的自主合成文件，并以固定工具哈希另行记录真实 GUI 操作。命令和固定目录契约见 [Tools/Content/README.md](Tools/Content/README.md)。
 
 运行版权扫描及其双 PowerShell 回归：
 
@@ -94,7 +111,7 @@ Assets/RA2YR/Tests/             EditMode 与 PlayMode 测试
 Config/                         外部内容配置示例；本机配置不跟踪
 docs/                           需求、架构、兼容矩阵、ADR 和第三方台账
 Tools/Repository/               版权扫描与仓库静态门禁
-Tools/Content/                  受控本机目录级 manifest 入口
+Tools/Content/                  受控目录/MIX manifest 与 XCC 合成互操作入口
 Tools/Testing/                  Unity 命令行测试入口
 ```
 
@@ -105,6 +122,8 @@ Tools/Testing/                  Unity 命令行测试入口
 - [外部内容系统](docs/architecture/external-content.md)
 - [逻辑内容解析与来源优先级](docs/architecture/content-resolution.md)
 - [安全有界二进制读取基础](docs/architecture/bounded-binary-reading.md)
+- [MIX 内容架构](docs/architecture/mix-content.md)
+- [Westwood MIX 格式研究与验证](docs/formats/mix.md)
 - [兼容矩阵说明](docs/compatibility/README.md)
 - [机器可读兼容矩阵](docs/compatibility/matrix.yml)
 - [架构决策记录](docs/adr/README.md)

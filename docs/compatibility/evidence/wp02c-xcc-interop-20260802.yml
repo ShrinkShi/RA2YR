@@ -1,0 +1,97 @@
+schema_version: 1
+evidence_id: "wp02c-xcc-interop-20260802"
+recorded_at_utc: "2026-08-02T14:45:00Z"
+scope: "Controlled XCC Mixer A-D black-box interoperability using copies and autonomous synthetic payloads"
+
+tool:
+  logical_name: "XCC Mixer.exe"
+  embedded_ui_version: "XCC Mixer 1.47"
+  file_version_resource: null
+  product_version_resource: null
+  size: 2680832
+  sha256: "DD4E54956874BE8B995BE9B046B7302BF0F40B86A7C8BEED4A94165C6B50E7ED"
+  pe_timestamp_utc: "2012-01-04T18:57:28Z"
+  authenticode: "NotSigned"
+  distribution_observation: "Toolbox redistribution; byte identity with an upstream 1.47 release remains unproven."
+  repository_external_copy_only: true
+
+execution_controls:
+  authoritative_baseline_written: false
+  baseline_operation_used_copy: true
+  synthetic_only_for_create_and_roundtrip: true
+  original_body_committed: false
+  tool_binary_committed: false
+  absolute_path_published: false
+  gui_process_closed_normally: true
+  registry_snapshot_sha256_before: "18E412C7E982C62F81B7E9AF576926CC6D9E8BB770098B5D0AF350D738D6F388"
+  registry_snapshot_sha256_after_restore: "18E412C7E982C62F81B7E9AF576926CC6D9E8BB770098B5D0AF350D738D6F388"
+  screenshot_committed: false
+
+case_a_xcc_reads_baseline_copy:
+  input_logical_name: "langmd.mix copy"
+  input_length: 84643206
+  input_sha256: "0290BC3E40C38406E2EC6805DC18EF6C3A9B6FEEE6DB42DF717AC920E93294C8"
+  xcc_opened: true
+  visible_entry_count: 10
+  sampled_target: "ra2md.csf"
+  extracted_length: 332973
+  extracted_sha256: "1B90BB0756137F46FF529AF043FE798D7F1F9FA1713A4110F17E1D674DE81F1C"
+  bounded_mount_hash_matched: true
+
+case_b_project_reads_xcc_created:
+  autonomous_input_count: 3
+  xcc_inserted_local_mix_database: true
+  archive_header: "Extended with zero flags"
+  archive_entry_count: 4
+  archive_length: 451
+  archive_sha256: "D8038DC11844F3B7E79D6B28ED1625966E2909AD7AE04AA99F9614B1EBE0FA86"
+  project_parse: "Passed"
+  entry_ids_lengths_payload_hashes: "Passed"
+  observed_entry_order_recorded: true
+  diagnostic_count: 0
+  zero_byte_create_observation:
+    first_attempt_archive_length: 426
+    first_attempt_archive_sha256: "81D0770ABB25ED36A127B0C7BF7ACD5C7DEF0B151A3A171B77829DB365D724E9"
+    result: "XCC ignored the zero-byte dropped input; the final create contract uses a one-byte input."
+
+case_c_xcc_reads_project_archives:
+  classic: { xcc_opened: true, extracted_payloads: 3, payload_hashes_matched: true }
+  checksum: { xcc_opened: true, extracted_payloads: 3, payload_hashes_matched: true }
+  encrypted_directory: { xcc_opened: true, extracted_payloads: 3, payload_hashes_matched: true }
+  nested_outer: { xcc_opened: true, extracted_payloads: 2, payload_hashes_matched: true }
+  nested_inner: { xcc_opened: true, extracted_payloads: 1, payload_hashes_matched: true }
+  zero_byte_entries_extracted: 3
+  total_extracted_outputs: 12
+  all_payload_hashes_matched: true
+
+case_d_semantic_rebuild:
+  input_xcc_archive_sha256: "D8038DC11844F3B7E79D6B28ED1625966E2909AD7AE04AA99F9614B1EBE0FA86"
+  preserve_entry_order_rebuild_length: 435
+  preserve_entry_order_rebuild_sha256: "283F4DFB69B1F9F9FF6050214EE828BD494B894474C5FEB0F7312CC090454A32"
+  entry_order_preserved: true
+  entry_set_preserved: true
+  payload_hashes_preserved: true
+  xcc_reopened_rebuild: true
+  xcc_extracted_outputs: 4
+  xcc_extracted_payload_hashes_matched: true
+  archive_byte_identical: false
+  conclusion: "Semantic round trip passed; byte-identical writer reproduction did not pass and is not claimed."
+
+bounded_secondary_validation:
+  prepare_manifest_length: 3500
+  prepare_manifest_sha256: "CA68937E38AFE07950CDA7B216AB6408559158C22E7B3CBCD656E70B02BCC196"
+  xcc_created_validation_manifest_length: 977
+  xcc_created_validation_manifest_sha256: "FEDB0D69CD38AB29E6B8416946AE7AEC0F25F428BC60E22278C144217AA8AD01"
+  extraction_validation_manifest_length: 4023
+  extraction_validation_manifest_sha256: "86875924B8D79FC30F4A08796E5FB1505076988C5F229361C572F3224EFEA66E"
+  extraction_artifact_count: 23
+  diagnostic_count: 0
+  unity_process_exit_code: 0
+  wrapper_attests_real_xcc_execution: false
+  note: "The wrapper validates staged bytes only; this controlled operation record binds the real GUI steps to the fixed tool and artifact hashes."
+
+limitations:
+  - "The XCC GUI workflow is controlled manual automation, not a CI-capable command-line interface."
+  - "XCC can open a checksum archive but the inspected XCC implementation does not independently validate its digest."
+  - "XCC-generated and project-rebuilt archive bytes differ despite equal entry semantics and payloads."
+  - "The tested baseline is patched and does not establish a clean YR 1.001 original comparison."

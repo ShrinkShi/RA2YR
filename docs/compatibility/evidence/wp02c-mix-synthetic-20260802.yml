@@ -1,0 +1,139 @@
+schema_version: 1
+evidence_id: "wp02c-mix-synthetic-20260802"
+recorded_at_utc: "2026-08-02T14:45:00Z"
+scope: "WP-02C independent bounded MIX reader, rebuilding writer, encryption, checksum, file windows, virtual mounting, and synthetic contracts"
+environment:
+  unity_editor: "2022.3.60f1c1"
+  unity_test_framework: "1.1.33"
+  host: "Windows"
+  unity_engine_dependency: false
+  original_content_used: false
+  network_dependencies_added: false
+
+unity_test_run:
+  result_directory: "TestResults/20260802T145639200Z-6fbc9fa766e1484091b29a7cc835465b (local and ignored)"
+  final_edit_mode: { result_xml: "Passed", executed: 343, passed: 343, failed: 0, skipped: 0 }
+  final_play_mode: { result_xml: "Passed", executed: 1, passed: 1, failed: 0, skipped: 0 }
+  wp02b_edit_mode_baseline: 152
+  new_nunit_cases: 191
+  wp02c_fixture_cases: 191
+  compilation_errors: 0
+  wrapper_exit_code: 0
+  runner_note: "Both result XML documents passed. Each launched headless Unity process remained alive for 30 seconds after its complete result, so the wrapper performed post-result shutdown and emitted a warning before returning success."
+
+implementation:
+  classic_header_read: "Passed"
+  extended_header_read: "Passed"
+  zero_flag_xcc_extended_header: "Passed"
+  deterministic_rebuild: "Passed"
+  preserve_entry_order: "Passed"
+  unknown_numeric_ids: "Passed"
+  filename_id_ascii_invariant: "Passed"
+  encrypted_directory_read: "Passed"
+  encrypted_directory_write_with_explicit_key_source: "Passed"
+  checksum_read_and_verify: "Passed"
+  checksum_write_and_reparse: "Passed"
+  seekable_file_windows: "Passed"
+  parent_window_isolation: "Passed"
+  nested_virtual_mount: "Passed"
+  explicit_layer_precedence: "Passed"
+  full_container_provenance: "Passed"
+  output_absolute_paths_published: false
+  payload_bodies_published: false
+
+writer_safety:
+  full_rebuild_only: true
+  approved_external_output_root_required: true
+  authoritative_baseline_output_rejected: true
+  checked_layout_arithmetic: true
+  entry_and_archive_budgets: true
+  temporary_write_flush_verify_atomic_publish: true
+  deterministic_bytes_for_same_input: true
+  nested_child_bytes_can_be_built_independently: true
+  automatic_nested_tree_rewrite: false
+
+requested_case_coverage:
+  minimal_empty_mix: "Passed"
+  single_entry: "Passed"
+  multiple_entries: "Passed"
+  zero_byte_entry: "Passed"
+  fixed_filename_id: "Passed"
+  filename_id_case_semantics: "Passed"
+  filename_id_separator_semantics: "Passed"
+  unknown_id: "Passed"
+  classic_header: "Passed"
+  flagged_header: "Passed"
+  encrypted_directory: "Passed"
+  damaged_encrypted_header: "Passed"
+  valid_checksum: "Passed"
+  checksum_mismatch: "Passed"
+  truncated_header: "Passed"
+  truncated_directory: "Passed"
+  truncated_data: "Passed"
+  count_overflow: "Passed"
+  directory_size_overflow: "Passed"
+  entry_offset_overflow: "Passed"
+  entry_out_of_bounds: "Passed"
+  duplicate_id: "Passed"
+  overlapping_entries: "Passed"
+  one_level_nesting: "Passed"
+  multi_level_nesting: "Passed"
+  nesting_depth_limit: "Passed"
+  parent_window_isolation: "Passed"
+  randomized_input_order_deterministic_rebuild: "Passed"
+  preserve_entry_order: "Passed"
+  same_input_same_bytes: "Passed"
+  write_then_reparse: "Passed"
+  memory_file_window_equivalence: "Passed"
+  xcc_created_synthetic_contract: "Passed by bounded staged validation; real XCC execution is recorded separately"
+  project_archive_xcc_contract: "Passed by bounded staged validation; real XCC execution is recorded separately"
+  damaged_input_no_infinite_loop: "Passed"
+  damaged_input_no_unbounded_allocation: "Passed"
+  public_output_has_no_absolute_path: "Passed"
+  repository_has_no_original_body: "Passed"
+
+diagnostic_classes:
+  - "TruncatedHeader"
+  - "UnsupportedFlags"
+  - "TruncatedDirectory"
+  - "TruncatedDataRegion"
+  - "TruncatedChecksum"
+  - "UnexpectedTrailingData"
+  - "ChecksumMismatch"
+  - "DecryptionFailed"
+  - "EntryCountBudgetExceeded"
+  - "DirectorySizeOverflow"
+  - "DirectoryBudgetExceeded"
+  - "DuplicateEntryId"
+  - "EntryRangeOverflow"
+  - "EntryOutsideDataRegion"
+  - "OverlappingEntries"
+  - "AllocationBudgetExceeded"
+  - "BinaryReadFailure"
+
+limitations:
+  - "Extended zero flags and a zero-count classic archive with extra unused data are structurally ambiguous; the accepted length policy is documented in ADR 0010."
+  - "Encrypted writing reuses a caller-supplied 80-byte key source; generation of new Westwood key material is not implemented."
+  - "Automatic rewriting of a complete nested mount tree is not implemented."
+  - "No PAL or other payload interpretation is performed."
+  - "No clean YR 1.001 original behavior comparison is recorded."
+
+repository_gates:
+  windows_powershell_5_1: "Passed"
+  powershell_7: "Passed"
+  repository_validation:
+    asset_entries: 107
+    meta_files: 107
+    duplicate_guids: 0
+    matrix_entries: 129
+    evidence_references: 38
+    violations: 0
+  repository_validation_regressions: { executed: 46, passed: 46, failed: 0 }
+  copyright_scan:
+    staged_index_candidates: 273
+    untracked_candidates: 0
+    ignored_external_probes: "13/13"
+    violations: 0
+  copyright_scan_regressions: { executed: 22, passed: 22, failed: 0 }
+  core_no_engine_references: true
+  project_version: "2022.3.60f1c1"

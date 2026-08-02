@@ -5,9 +5,10 @@
 - [ ] 获取并登记干净、解包的 YR 1.001 内容基线。
 - [ ] 建立 FinalAlert 2 A/B/C/D 往返黄金样本。
 - [ ] 后续研究原版 YR `.sav` 二进制格式，不纳入第一阶段当前实现。
-- [ ] 实现 MIX 与加密 MIX 内容源；WP-02A 仅建立抽象边界。
 - [ ] 对 YR 1.001 原版内容覆盖行为建立可复现对照。
-- [ ] 等待审查并批准 WP-02B Draft PR；不得自动合并。
+- [ ] 实现 PAL 原始数据解释与已定位的三个 ProjectBaseline 黄金样本验证。
+- [ ] 研究新 Westwood 加密 key source 的生成；当前只支持显式复用 80 字节 key source。
+- [ ] 实现完整嵌套 MIX 树的语义重写；当前只支持读取树和独立生成子 MIX 字节。
 - [ ] 为非 Windows 平台实现并验证 realpath/device 路径 identity。
 - [ ] 调查 Unity 2022.3.60f1c1 中国版 headless 测试完成后的退出异常。
 
@@ -27,3 +28,7 @@
 - [x] 完成 `YR1001_ProjectBaseline` 目录级清单与仓库外完整 manifest。
 - [x] 推送 WP-02A 实现并创建、验证独立 Draft PR #2。
 - [x] 合并并以最新 `main` 作为 WP-02B 分支基线。
+- [x] 合并并远程验证 WP-02B Draft PR #3。
+- [x] 实现 MIX、加密 MIX、校验、文件名 ID 和有界虚拟内容源。
+- [x] 完成 ProjectBaseline 根级/嵌套 MIX 审计和七个目标定位。
+- [x] 完成固定 XCC Mixer 的 A-D 合成语义往返验证。

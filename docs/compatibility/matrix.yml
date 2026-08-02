@@ -105,9 +105,9 @@ entries:
       - "docs/compatibility/evidence/wp02a-project-baseline-20260802.yml#project_baseline_manifest"
       - "docs/compatibility/evidence/wp02b-synthetic-20260802.yml#wp02a_regressions"
     limitations:
-      - id: content.precedence.directory-sources-only
+      - id: content.precedence.explicit-mix-layer-policy
         status: "已知限制"
-        description: "WP-02A resolves mounted directory sources only; MIX payloads and other future source providers are not implemented."
+        description: "Directory and MIX candidates now share deterministic provenance, but same-source archive layers require an explicit priority policy; original YR archive search order remains unverified."
       - id: content.precedence.original-comparison-pending
         status: "已知限制"
         description: "Synthetic precedence behavior is verified, but YR 1.001 original override behavior has not been compared."
@@ -149,10 +149,38 @@ entries:
   - id: content.mix-source-interface
     domain: content
     feature: "MIX content-source extension boundary"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.StructureOnlyMountDoesNotPrehashEntryPayloads"
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.ManifestAuditHashesPayloadsWithoutPublishingBodiesOrPhysicalPaths"
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.UnknownNumericIdRemainsAccessibleWithoutInventedName"
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.ExternalSourcePrioritySelectsHighAndRetainsLowProvenance"
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.SameSourceLooseAndMixCandidatesRequireExplicitLayerPriority"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-mix-synthetic-20260802.yml#implementation"
+      - "docs/compatibility/evidence/wp02c-project-baseline-20260802.yml#archive_aggregate"
+    limitations:
+      - id: content.mix-source-interface.layer-precedence-original-pending
+        status: "已知限制"
+        description: "Loose/MIX and nested MIX layer priority is explicit, but original YR archive-layer precedence has not been behaviorally compared; rulesmd.ini therefore remains an unresolved baseline ambiguity."
+  - id: content.nested-mix
+    domain: content
+    feature: "Bounded nested MIX mounting with complete container provenance"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.CoreReaderMountsNestedArchiveWithinParentWindows"
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.EntryCrossingParentWindowFailsClosed"
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.ArchiveEntryAndDepthBudgetsFailClosed"
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.RepeatedPhysicalArchiveRangeCannotRecurseForever"
+      - "RA2YR.Tests.EditMode.Content.Mix.MixVirtualContentSourceTests.DisposingMountInvalidatesEntryWindows"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-mix-synthetic-20260802.yml#implementation"
+      - "docs/compatibility/evidence/wp02c-project-baseline-20260802.yml#archive_aggregate"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_c_xcc_reads_project_archives"
+    limitations:
+      - id: content.nested-mix.tree-rewrite
+        status: "已知限制"
+        description: "Nested reads and independent child archive creation pass; automatic semantic rewriting of a complete mounted archive tree is not implemented."
   - id: format.bounded-reader
     domain: format
     feature: "Bounded binary reader, resource budgets, offsets, and trailing-data diagnostics"
@@ -192,6 +220,148 @@ entries:
     tests: []
     evidence: []
     limitations: []
+  - id: format.mix-container-read
+    domain: format
+    feature: "Classic and extended Westwood MIX structural reader"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "往返通过" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.SixByteZeroHeaderIsAnExplicitClassicEmptyArchive"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.TenByteZeroHeaderIsAnXccCompatibleExtendedEmptyArchive"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.MultipleEntriesAndZeroByteEntryPreserveDirectoryOrder"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.TruncatedDirectoryIsRejectedBeforeEntryAccess"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.EntryOffsetPlusLengthOverflowIsDistinctFromOutOfBounds"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.DuplicateNumericIdsAreRejected"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.NonEmptyOverlappingEntriesAreRejected"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.BytesAfterDeclaredArchiveEndAreRejected"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-mix-synthetic-20260802.yml#requested_case_coverage"
+      - "docs/compatibility/evidence/wp02c-project-baseline-20260802.yml#archive_aggregate"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_d_semantic_rebuild"
+    limitations:
+      - id: format.mix-container-read.patched-baseline
+        status: "已知限制"
+        description: "The local audit uses the patched YR1001_ProjectBaseline, not a clean YR 1.001 original corpus; the zero-byte movmd03.mix is correctly retained as a failed archive."
+      - id: format.mix-container-read.zero-count-header-ambiguity
+        status: "已知限制"
+        description: "A zero-count classic archive with extra unused data is indistinguishable from XCC's zero-flag extended form; ADR 0010 defines the deterministic length policy."
+  - id: format.mix-container-write
+    domain: format
+    feature: "Deterministic and preserve-entry-order MIX rebuilding writer"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "往返通过" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.DeterministicRebuildSortsEntriesByUnsignedId"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.PreserveEntryOrderKeepsObservedDirectoryOrder"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.InputPermutationDoesNotChangeDeterministicRebuild"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.SameInputProducesIdenticalBytesAndHash"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.EverySupportedWriterModeReparsesWithTheBoundedMixReader"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.ExplicitTemporaryTargetIsFlushedVerifiedAndCommitted"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.ApprovedRootRejectsTraversalAndSamePrefixSibling"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-mix-synthetic-20260802.yml#writer_safety"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_c_xcc_reads_project_archives"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_d_semantic_rebuild"
+    limitations:
+      - id: format.mix-container-write.no-in-place-edit
+        status: "已知限制"
+        description: "Only complete rebuilding is supported; in-place archive editing and byte-identical XCC writer reproduction are not claimed."
+  - id: format.mix-filename-id
+    domain: format
+    feature: "YR/TS filename-to-MIX-ID calculation and numeric unknown IDs"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixFileIdTests.CandidateNamesMatchFixedXccAndBaselineVectors"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixFileIdTests.AsciiCaseIsInvariantUnderTurkishCulture"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixFileIdTests.FullArchiveNameIsNotImplicitlyReducedToBasename"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixFileIdTests.UnsafeOrNonAsciiCandidateNamesAreRejected"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixFileIdTests.NumericUnknownIdDoesNotInventAName"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-mix-synthetic-20260802.yml#implementation"
+      - "docs/compatibility/evidence/wp02c-project-baseline-20260802.yml#targets"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_b_project_reads_xcc_created"
+    limitations:
+      - id: format.mix-filename-id.ascii-only
+        status: "已知限制"
+        description: "The confirmed YR/XCC contract accepts safe ASCII candidate names; host-codepage and non-ASCII filename-ID behavior is intentionally not guessed."
+  - id: format.mix-encrypted-directory-read
+    domain: format
+    feature: "Westwood key-envelope and Blowfish encrypted MIX directory reading"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "往返通过" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixCryptoTests.StandardBigEndianBlocksMatchSchneierVectors"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixCryptoTests.KeySourceVectorDerivesExpectedFiftySixByteKey"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixCryptoTests.DerivedKeyEncryptsWestwoodDirectoryVector"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.EncryptedDirectoryVectorParsesAndPreservesKeySource"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.CorruptedEncryptedDirectoryCannotReturnPartialSuccess"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-mix-synthetic-20260802.yml#implementation"
+      - "docs/compatibility/evidence/wp02c-project-baseline-20260802.yml#archive_aggregate"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_c_xcc_reads_project_archives"
+    limitations:
+      - id: format.mix-encrypted-directory-read.patched-baseline
+        status: "已知限制"
+        description: "Synthetic and patched-baseline encrypted directories parse, but no clean YR 1.001 original corpus comparison has passed."
+  - id: format.mix-encrypted-directory-write
+    domain: format
+    feature: "Encrypted MIX directory rebuilding with an explicit reusable key source"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "往返通过" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.EncryptedDirectoryMatchesIndependentSyntheticVector"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.EncryptedChecksumArchiveMatchesIndependentSyntheticVector"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.InvalidEncryptionKeySourceHasControlledDiagnostic"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-mix-synthetic-20260802.yml#writer_safety"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_c_xcc_reads_project_archives"
+    limitations:
+      - id: format.mix-encrypted-directory-write.key-source
+        status: "已知限制"
+        description: "Writing requires a caller-supplied 80-byte key source; generation of a new Westwood key source is not implemented or claimed."
+  - id: format.mix-checksum
+    domain: format
+    feature: "MIX payload SHA-1 checksum verification and emission"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "往返通过" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.ExtendedChecksumArchiveValidatesPayloadOnly"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveReaderTests.ExtendedChecksumMismatchFailsWithoutPartialArchive"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.ChecksumHeaderHashesOnlyContinuousPayloadRegion"
+      - "RA2YR.Tests.EditMode.Formats.Mix.MixArchiveWriterTests.EncryptedChecksumArchiveMatchesIndependentSyntheticVector"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-mix-research-20260802.yml#checksum_observation"
+      - "docs/compatibility/evidence/wp02c-mix-synthetic-20260802.yml#implementation"
+      - "docs/compatibility/evidence/wp02c-project-baseline-20260802.yml#archive_aggregate"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_c_xcc_reads_project_archives"
+    limitations:
+      - id: format.mix-checksum.xcc-does-not-validate
+        status: "已知限制"
+        description: "The project verifies and emits payload-only SHA-1; XCC opening/extraction is not independent digest-validation evidence because the inspected XCC implementation does not validate it."
+  - id: interoperability.xcc-mix-read
+    domain: interoperability
+    feature: "This engine reads MIX archives generated by the controlled XCC Mixer"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "往返通过" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Mix.Interop.XccSyntheticInteropServiceTests.EmulatedXccCandidateWithLocalDatabaseValidatesPayloadSetAndPreservesObservedOrder"
+      - "RA2YR.Tests.EditMode.Formats.Mix.Interop.XccSyntheticInteropServiceTests.MissingOrUnexpectedXccArchiveFailsClosedWithoutRebuild"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_b_project_reads_xcc_created"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_d_semantic_rebuild"
+    limitations:
+      - id: interoperability.xcc-mix-read.synthetic-scope
+        status: "已知限制"
+        description: "The controlled XCC create/rebuild contract uses a small autonomous synthetic corpus; byte-identical archive reconstruction did not pass and is not claimed."
+  - id: interoperability.xcc-mix-write
+    domain: interoperability
+    feature: "Controlled XCC Mixer opens and extracts MIX archives generated by this engine"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "往返通过" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Mix.Interop.XccSyntheticInteropServiceTests.PrepareInternalContractPublishesDeterministicSyntheticModesOutsideRepository"
+      - "RA2YR.Tests.EditMode.Formats.Mix.Interop.XccSyntheticInteropServiceTests.ValidateStagedExtractionCandidatesRequiresEveryIndependentFixedGroup"
+      - "RA2YR.Tests.EditMode.Formats.Mix.Interop.XccSyntheticInteropServiceTests.ExtractionEnumerationBudgetFailsClosedWithoutPublishedResult"
+    evidence:
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_c_xcc_reads_project_archives"
+      - "docs/compatibility/evidence/wp02c-xcc-interop-20260802.yml#case_d_semantic_rebuild"
+    limitations:
+      - id: interoperability.xcc-mix-write.gui-manual
+        status: "已知限制"
+        description: "XCC 1.47 is a GUI-only controlled manual gate; CI validates the synthetic contract but cannot execute or attest the external XCC process."
   - id: format.shp
     domain: format
     feature: "SHP frames, compression, offsets, shadows, and remap indices"

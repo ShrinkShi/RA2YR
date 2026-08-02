@@ -1,0 +1,67 @@
+schema_version: 1
+evidence_id: "wp02c-mix-research-20260802"
+recorded_at_utc: "2026-08-02T10:35:00Z"
+scope: "WP-02C controlled pre-implementation MIX and XCC research"
+compatibility_promotion_authorized: false
+original_content_body_published: false
+absolute_paths_published: false
+
+xcc_mixer:
+  logical_name: "XCC Mixer.exe"
+  file_size: 2680832
+  sha256: "DD4E54956874BE8B995BE9B046B7302BF0F40B86A7C8BEED4A94165C6B50E7ED"
+  file_version_resource: null
+  product_version_resource: null
+  embedded_ui_version: "XCC Mixer 1.47"
+  pe_timestamp_utc: "2012-01-04T18:57:28Z"
+  authenticode: "NotSigned"
+  distribution_observation: "Toolbox redistribution is established; byte identity with an upstream 1.47 binary is not established."
+  process_started: false
+
+xcc_sources:
+  omniblade_encoding_commit: "62bb77080f13bdf65c79c84837b7cc264bdd432d"
+  sourceforge_original_zip:
+    logical_name: "XCC_Source.zip"
+    file_size: 1071166
+    sha256: "9E22CFA96650EDA8792A58E26C81D164F43D89C10E77CECBCFD5B04F32E4569B"
+  sourceforge_svn_r1201_zip:
+    logical_name: "xccu-code-r1201-trunk.zip"
+    file_size: 1247529
+    sha256: "82B699522282404A32FF33F816D2B8B4219CE8363F09075F1DDDC3ADA94270CF"
+  license: "GPL-2.0; reference only; code imported false"
+
+project_baseline_root_mix_observation:
+  baseline_logical_name: "YR1001_ProjectBaseline"
+  mix_file_count: 8
+  total_bytes: 664471054
+  classic_header_count: 0
+  extended_checksum_only_count: 1
+  extended_encrypted_only_count: 2
+  extended_encrypted_checksum_count: 4
+  zero_byte_or_truncated_count: 1
+  baseline_modified: false
+  metadata_snapshot_count_before: 169
+  metadata_snapshot_count_after: 169
+  metadata_snapshot_sha256_before: "5DD971B83D33C6D7561AB20FCC6543359DD4EC3CE4FE23AECCF734FC47A35C7E"
+  metadata_snapshot_sha256_after: "5DD971B83D33C6D7561AB20FCC6543359DD4EC3CE4FE23AECCF734FC47A35C7E"
+
+checksum_observation:
+  logical_archive: "langmd.mix"
+  declared_file_count: 10
+  declared_data_bytes: 84643056
+  checksum_trailer_bytes: 20
+  sha1_of_payload_matches_trailer: true
+  original_digest_published: false
+
+research_conclusions:
+  classic_header_layout_confirmed: true
+  extended_flag_layout_confirmed: true
+  encrypted_directory_layout_confirmed: true
+  checksum_coverage_confirmed: true
+  filename_id_vectors_are_candidates_pending_black_box: true
+  reader_implemented: false
+  writer_implemented: false
+  nested_mount_implemented: false
+  xcc_roundtrip_performed: false
+  format_pal_implemented: false
+

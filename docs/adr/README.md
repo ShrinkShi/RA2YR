@@ -13,3 +13,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0006 | Logical content resolution and baseline evidence | Accepted |
 | 0007 | Bounded binary reading and parse budgets | Accepted |
 | 0008 | Logical content path hash contract | Accepted |
+| 0009 | Independent MIX implementation and container boundaries | Accepted |
+| 0010 | XCC zero-flag headers and semantic round trips | Accepted |
