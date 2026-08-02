@@ -181,7 +181,7 @@ autonomous synthetic payloads outside the repository.
 - `PreserveEntryOrder` retained the observed four-entry order and payload
   hashes. Its bytes differed from the XCC archive, so byte identity is false.
 - XCC opened and extracted project-generated classic, checksum, encrypted-
-  directory, inner, and outer nested archives. Thirteen extracted files,
+  directory, inner, and outer nested archives. Twelve extracted files,
   including three zero-byte entries, matched the autonomous inputs byte for
   byte.
 - XCC ignored a zero-byte file during archive creation. The controlled create
