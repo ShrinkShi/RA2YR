@@ -1,0 +1,60 @@
+schema_version: 1
+evidence_id: "wp02d-pal-research-20260803"
+recorded_at_utc: "2026-08-03T00:00:00Z"
+scope: "Reference-only Westwood PAL layout, strictness, and display-conversion research before implementation"
+
+format_facts:
+  header: false
+  footer: false
+  magic: false
+  exact_length: 768
+  color_count: 256
+  bytes_per_color: 3
+  channel_order: "RGB"
+  raw_channel_minimum: 0
+  raw_channel_maximum: 63
+  trailing_data_allowed: false
+
+sources:
+  xcc:
+    commit: "62bb77080f13bdf65c79c84837b7cc264bdd432d"
+    license: "GPL-2.0-only"
+    repository_use: "reference-only; code-imported false"
+    observations:
+      - "PAL validity requires exactly sizeof(256 RGB triples)."
+      - "Any channel with an upper-two-bit set is rejected."
+      - "18-to-24 conversion uses integer floor of value * 255 / 63."
+  openra:
+    commit: "a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+    license: "GPL-3.0-or-later"
+    repository_use: "reference-only; code-imported false"
+    observations:
+      - "The palette loader reads 256 RGB triples."
+      - "Display conversion replicates high bits after a two-bit left shift."
+      - "The loader is not evidence for strict tail or raw-range rejection."
+  independent_implementation:
+    repository: "https://github.com/iron-curtain-engine/cnc-formats"
+    commit: "77da596ed72a1201740e054855bf2ff60640bfa9"
+    license: "MIT OR Apache-2.0"
+    repository_use: "reference-only; code-imported false"
+    observations:
+      - "PAL is documented as 768 raw bytes, 256 RGB entries, and no header or footer."
+      - "The implementation exposes value << 2 as its display conversion."
+
+conversion_comparison:
+  - { id: "ShiftLeftTwo", expression: "value << 2", output_maximum: 252 }
+  - { id: "ReplicateHighBits", expression: "(value << 2) | (value >> 4)", output_maximum: 255 }
+  - { id: "ScaleToFullRangeRounded", expression: "(value * 255 + 31) / 63", output_maximum: 255 }
+  - { id: "XccScaleToFullRangeFloor", expression: "(value * 255) / 63", output_maximum: 255 }
+
+decision:
+  original_yr_default_selected: false
+  audit_reference_strategy: "XccScaleToFullRangeFloor"
+  reason: "Observable implementations disagree and no controlled original YR visual comparison has passed."
+
+research_controls:
+  xcc_gui_started: false
+  external_source_code_committed: false
+  original_palette_body_committed: false
+  absolute_paths_published: false
+  compatibility_status_promoted_by_research_alone: false

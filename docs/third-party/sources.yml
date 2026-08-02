@@ -1,5 +1,5 @@
 schema_version: 1
-last_reviewed: "2026-08-02"
+last_reviewed: "2026-08-03"
 repository_license: "Apache-2.0"
 policy:
   default_approval: "not-approved"
@@ -190,7 +190,7 @@ sources:
     license:
       spdx: "GPL-2.0-only"
       verification: "SourceForge project metadata; snapshot contains no LICENSE or COPYING file"
-    purpose: "Later XCC MIX read, write, filename-ID, encryption, and nesting behavior reference"
+    purpose: "Later XCC MIX behavior plus PAL layout, strict range validation, and floor-scaled display conversion reference"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -210,7 +210,7 @@ sources:
     license:
       spdx: "GPL-2.0-only"
       verification: "Upstream lineage and SourceForge project metadata; clone contains no LICENSE or COPYING file"
-    purpose: "Pinned comparison of later MIX and encoding behavior, including a documented uppercase call-site regression"
+    purpose: "Pinned MIX comparison plus PAL layout, validation, and floor-scaled display conversion observation"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -285,7 +285,7 @@ sources:
     approval_status: "approved-license-free-data"
 
   - id: openra-mix-reference-a520984
-    name: "OpenRA MIX and Westwood key-envelope reference"
+    name: "OpenRA MIX, key-envelope, and PAL conversion reference"
     source:
       type: "external-git-reference"
       canonical_upstream: "https://github.com/OpenRA/OpenRA"
@@ -297,9 +297,29 @@ sources:
     license:
       spdx: "GPL-3.0-or-later"
       verification: "upstream COPYING and source headers"
-    purpose: "Independent observable cross-check of MIX encrypted-header layout and bounded entry streams"
+    purpose: "Independent observable cross-check of MIX behavior and PAL high-bit-replication display conversion"
     contains_code: true
     reference_only: true
     code_imported: false
     repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
+    approval_status: "approved-reference-only"
+
+  - id: iron-curtain-cnc-formats-pal-77da596
+    name: "iron-curtain-engine/cnc-formats PAL implementation"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/iron-curtain-engine/cnc-formats"
+      commit: "https://github.com/iron-curtain-engine/cnc-formats/commit/77da596ed72a1201740e054855bf2ff60640bfa9"
+      observed_location: "canonical GitHub source at the pinned commit; no repository-local clone"
+    version_or_hash:
+      release: "0.1.0-alpha.5"
+      commit: "77da596ed72a1201740e054855bf2ff60640bfa9"
+    license:
+      spdx: "MIT OR Apache-2.0"
+      verification: "pinned Cargo.toml plus upstream LICENSE-MIT and LICENSE-APACHE"
+    purpose: "Independent PAL size, RGB layout, six-bit range, and shift-left display-conversion cross-check"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only despite compatible licensing; no source, translation, or mechanical rewrite imported"
     approval_status: "approved-reference-only"

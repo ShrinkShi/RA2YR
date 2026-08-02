@@ -263,3 +263,30 @@
 ### 后续事项
 - 完成远程 Draft PR 和 Actions 实际状态验证，不自动合并。
 - PAL 解释继续保持未实现，下一工作包使用已定位的三个 768 字节条目做本地黄金样本。
+
+## 2026-08-03 - WP-02D PAL 研究与黄金来源预检
+
+### 用户目标
+- 从 PR #4 合并后的最新 `main` 创建独立 WP-02D 分支，仅实现原始 PAL 解析、显式显示转换策略和三个 MIX 内黄金样本验证。
+
+### 本轮处理
+- 快进 `main` 到 PR #4 合并提交 `10f75e95`，创建 `feature/wp02d-pal-format`。
+- 只读确认三个目标仍唯一位于 `ra2.mix -> cache.mix`，长度与固定 SHA-256 均未变化，且没有松散同名 PAL。
+- 交叉检查 XCC、OpenRA、独立实现及三个实际样本；确认无头、768 字节、256 个 RGB 三元组和 0..63 通道范围。
+- 记录 XCC 向下取整、OpenRA 位复制、左移和最近取整之间的差异；未启动 XCC GUI。
+
+### 关键结论
+- 三个样本均无越界通道；`isotem`/`temperat` 各有 256 个不同颜色，`unittem` 有 210 个。
+- 当前证据不足以指定原版 YR 显示转换默认值；研究本身不提升兼容矩阵。
+- GPL 来源继续保持 reference-only、`code_imported: false`。
+
+### 影响文件
+- `docs/formats/pal.md`
+- `docs/adr/0011-pal-raw-model-and-explicit-display-conversion.md`
+- `docs/compatibility/evidence/wp02d-pal-research-20260803.yml`
+- `docs/third-party/sources.yml`
+- `THIRD_PARTY.md`
+- `.dev-records/`
+
+### 后续事项
+- 提交研究边界后实现 Core 不可变模型、严格 reader、合成测试和受控黄金验证入口。
