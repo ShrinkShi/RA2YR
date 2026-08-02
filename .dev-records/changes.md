@@ -158,3 +158,42 @@
 - ProjectBaseline 含增补包和兼容补丁，不构成 clean YR 1.001 原版对照。
 - XCC GUI 无稳定 CLI，真实执行留作受控本地门禁，CI 只能验证合成合约。
 - 新 key source 生成、完整嵌套树重写和 PAL payload 解释仍未实现。
+
+## 2026-08-03 - WP-02D PAL 研究边界
+
+### 变更范围
+- 仅记录 PAL 格式、严格性、显示转换分歧、许可证来源和黄金样本来源预检；不含解析器或渲染实现。
+
+### 具体改动
+- 新增 PAL 格式说明和 ADR 0011，固定不可变原始模型与显式转换策略。
+- 固定独立 `cnc-formats` commit，并扩展 XCC/OpenRA reference-only 用途记录。
+- 记录三个 ProjectBaseline 样本来源、长度和哈希仍与 WP-02C 证据一致。
+
+### 验证情况
+- 未启动 XCC GUI，未修改权威基线，未提交 PAL 正文或完整颜色表。
+- `format.pal` 暂不提升，等待实现、合成测试、正式黄金验证和全部仓库门禁。
+
+### 风险
+- 当前没有原版 YR 视觉捕获支持唯一显示转换默认值。
+
+## 2026-08-03 - WP-02D PAL 严格解析与黄金验证
+
+### 变更范围
+- 仅实现 Core PAL 原始模型、严格解析、显式显示转换、MIX entry window 黄金审计、合成测试和脱敏交付；不实现任何渲染或游戏逻辑。
+
+### 具体改动
+- 新增 256×RGB 不可变原始模型，严格要求 768 字节、0..63 通道和完整消费，不返回部分成功。
+- 复用 WP-02B 预算/诊断和 WP-02C seekable window/MIX 虚拟源，支持 Memory、Stream 与嵌套 MIX entry window。
+- 保留 `ShiftLeftTwo`、`ReplicateHighBits`、`ScaleToFullRangeRounded`、`XccScaleToFullRangeFloor` 四个显式策略，不设置原版默认。
+- 固定规范化模型哈希 schema，并对三个 ProjectBaseline payload 的 ID、来源链、长度、文件哈希和模型哈希 fail-closed。
+- 完整逐项颜色清单仅原子写入仓库外 Cache；公开摘要和证据不含正文、完整颜色表或绝对路径。
+- 新增受控 Editor/PowerShell 黄金审计入口及双 PowerShell 回归。
+
+### 验证状态
+- EditMode XML 413/413、PlayMode XML 1/1；相对 WP-02C 新增 70 个 NUnit case。
+- PAL 审计包装器真实退出 0，三个固定样本全部通过且诊断为 0。
+- 双 PowerShell 仓库验证为 128 Assets/128 meta、129 个矩阵项、41 个证据引用、0 违规；版权扫描 316 个暂存候选、13/13 ignore probes、0 违规。
+
+### 风险
+- ProjectBaseline 包含地图、音乐和兼容补丁，不是 clean YR 1.001。
+- 当前没有视觉对照，`format.pal` 只能提升到可解析；写回、Texture2D、Shader、玩家色和剧院选择仍未实现。

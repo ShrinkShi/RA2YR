@@ -263,3 +263,48 @@
 ### 后续事项
 - 完成远程 Draft PR 和 Actions 实际状态验证，不自动合并。
 - PAL 解释继续保持未实现，下一工作包使用已定位的三个 768 字节条目做本地黄金样本。
+
+## 2026-08-03 - WP-02D PAL 研究与黄金来源预检
+
+### 用户目标
+- 从 PR #4 合并后的最新 `main` 创建独立 WP-02D 分支，仅实现原始 PAL 解析、显式显示转换策略和三个 MIX 内黄金样本验证。
+
+### 本轮处理
+- 快进 `main` 到 PR #4 合并提交 `10f75e95`，创建 `feature/wp02d-pal-format`。
+- 只读确认三个目标仍唯一位于 `ra2.mix -> cache.mix`，长度与固定 SHA-256 均未变化，且没有松散同名 PAL。
+- 交叉检查 XCC、OpenRA、独立实现及三个实际样本；确认无头、768 字节、256 个 RGB 三元组和 0..63 通道范围。
+- 记录 XCC 向下取整、OpenRA 位复制、左移和最近取整之间的差异；未启动 XCC GUI。
+
+### 关键结论
+- 三个样本均无越界通道；`isotem`/`temperat` 各有 256 个不同颜色，`unittem` 有 210 个。
+- 当前证据不足以指定原版 YR 显示转换默认值；研究本身不提升兼容矩阵。
+- GPL 来源继续保持 reference-only、`code_imported: false`。
+
+### 影响文件
+- `docs/formats/pal.md`
+- `docs/adr/0011-pal-raw-model-and-explicit-display-conversion.md`
+- `docs/compatibility/evidence/wp02d-pal-research-20260803.yml`
+- `docs/third-party/sources.yml`
+- `THIRD_PARTY.md`
+- `.dev-records/`
+
+### 后续事项
+- 提交研究边界后实现 Core 不可变模型、严格 reader、合成测试和受控黄金验证入口。
+
+## 2026-08-03 00:55 - WP-02D PAL 实现与 ProjectBaseline 黄金验证完成
+
+### 本轮处理
+- 独立实现 UnityEngine-free PAL reader、不可变原始颜色模型、结构化诊断、预算和四个命名显示转换策略。
+- 通过最小 MIX 名称目录和 `StructureOnly` 挂载只读解析 `ra2.mix -> cache.mix` 中的三个固定 PAL entry window。
+- 前后重建目录索引并核对 fingerprint；固定 payload SHA 与规范化模型 SHA 任一变化均阻止发布。
+- 新增外部 Cache 完整 manifest、仓库内脱敏摘要、Editor 命令和 PS5.1/PS7 包装器回归。
+
+### 关键结论
+- `isotem.pal`、`temperat.pal`、`unittem.pal` 的来源链、768 字节长度和固定 SHA 全部一致。
+- 三份文件均为 256 色、通道范围 0..63、非法通道 0；不同颜色数分别为 256、256、210。
+- EditMode 413/413、PlayMode 1/1、黄金审计 Unity 进程退出码 0。
+- 合并测试包装器在 EditMode XML 完成后读取到空退出码并 fail-closed 返回 1；单独 PlayMode 包装器返回 0，未伪造结果。
+
+### 后续事项
+- 完成分层提交、Draft PR 和 Actions 验证；不自动合并。
+- 后续视觉工作必须先建立原版截图/捕获证据，再决定显示转换默认策略。

@@ -1,0 +1,125 @@
+schema_version: 1
+evidence_id: "wp02d-pal-synthetic-20260803"
+recorded_at_utc: "2026-08-02T16:55:00Z"
+scope: "WP-02D strict Westwood PAL parsing, immutable raw model, explicit display conversions, and controlled audit contracts"
+environment:
+  unity_editor: "2022.3.60f1c1"
+  unity_test_framework: "1.1.33"
+  host: "Windows"
+  unity_engine_dependency: false
+  original_content_used_by_synthetic_tests: false
+  network_dependencies_added: false
+
+synthetic_validation:
+  format_contract:
+    header_bytes: 0
+    file_bytes: 768
+    colors: 256
+    bytes_per_color: 3
+    channel_order: "RGB"
+    raw_channel_range: "0..63"
+    trailing_policy: "RequireFullyConsumed"
+    partial_success_allowed: false
+  input_forms:
+    readonly_memory: "Passed"
+    seekable_stream: "Passed"
+    repeated_short_read_stream: "Passed"
+    nonseekable_stream_with_declared_bound: "Passed"
+    bounded_mix_entry_window: "Passed"
+    memory_stream_window_equivalence: "Passed"
+  strict_cases:
+    all_zero_palette: "Passed"
+    maximum_legal_channels: "Passed"
+    all_256_indices_preserved: "Passed"
+    rgb_channel_order: "Passed"
+    channel_gradient: "Passed"
+    duplicate_colors_preserved: "Passed"
+    first_color: "Passed"
+    last_color: "Passed"
+    exact_length: "Passed"
+    one_byte_short: "Passed"
+    one_color_short: "Passed"
+    one_byte_trailing: "Passed"
+    one_color_trailing: "Passed"
+    illegal_channel: "Passed"
+    immutable_model: "Passed"
+    raw_values_not_overwritten: "Passed"
+    diagnostic_index_channel_offset: "Passed"
+    input_budget: "Passed"
+    read_budget: "Passed"
+    allocation_budget: "Passed"
+    record_budget: "Passed"
+    damaged_input_no_partial_model: "Passed"
+    damaged_input_no_unbounded_allocation: "Passed"
+    public_success_cannot_be_forged: "Passed"
+    logical_provenance_only: "Passed"
+    canonical_model_schema: "Passed"
+  display_conversion:
+    original_default_selected: false
+    strategies:
+      ShiftLeftTwo: "Passed boundaries and monotonicity"
+      ReplicateHighBits: "Passed boundaries and monotonicity"
+      ScaleToFullRangeRounded: "Passed boundaries and monotonicity"
+      XccScaleToFullRangeFloor: "Passed boundaries and monotonicity"
+    floor_and_nearest_rounding_remain_distinct: true
+  golden_audit_contract:
+    fixed_target_identities: "Passed"
+    fixed_nested_provenance: "Passed"
+    payload_hash_change_fails_closed: "Passed"
+    normalized_model_hash_change_fails_closed: "Passed"
+    invalid_matching-hash_payload_fails_closed: "Passed"
+    ambiguous_id_fails_closed: "Passed"
+    loose_candidate_fails_closed: "Passed"
+    source_fingerprint_change_fails_closed: "Passed"
+    external_manifest_budget_fails_without_partial_publish: "Passed"
+    sanitized_summary_excludes_raw_colors_and_absolute_paths: "Passed"
+
+unity_test_run:
+  edit_mode_result: { result_xml: "Passed", executed: 413, passed: 413, failed: 0, skipped: 0 }
+  play_mode_result: { result_xml: "Passed", executed: 1, passed: 1, failed: 0, skipped: 0 }
+  wp02c_edit_mode_baseline: 343
+  new_nunit_cases: 70
+  pal_reader_cases: 38
+  display_conversion_cases: 21
+  project_baseline_audit_cases: 11
+  compilation_errors: 0
+  combined_wrapper_exit_code: 1
+  combined_wrapper_note: "EditMode XML passed 413/413, but the existing wrapper observed an empty Unity Process.ExitCode and failed closed before PlayMode."
+  separate_play_mode_wrapper_exit_code: 0
+  separate_play_mode_wrapper_note: "PlayMode XML passed 1/1; the wrapper stopped its own headless Unity process after the documented 30-second post-result grace period."
+
+tool_contract_tests:
+  windows_powershell_5_1: { executed: 9, passed: 9, failed: 0 }
+  powershell_7: { executed: 9, passed: 9, failed: 0 }
+
+repository_gates:
+  windows_powershell_5_1: "Passed"
+  powershell_7: "Passed"
+  repository_validation:
+    asset_entries: 128
+    meta_files: 128
+    duplicate_guids: 0
+    matrix_entries: 129
+    evidence_references: 41
+    violations: 0
+  repository_validation_regressions: { executed: 46, passed: 46, failed: 0 }
+  copyright_scan:
+    staged_index_candidates: 316
+    untracked_candidates: 0
+    ignored_external_probes: "13/13"
+    violations: 0
+  copyright_scan_regressions: { executed: 22, passed: 22, failed: 0 }
+
+repository_boundaries:
+  core_no_engine_references: true
+  unityengine_references_in_pal_core: 0
+  unityeditor_references_in_pal_core: 0
+  system_drawing_references_in_pal_core: 0
+  original_payloads_committed: false
+  complete_color_tables_committed: false
+  absolute_content_paths_published: false
+
+limitations:
+  - "Synthetic parsing establishes bounded structural behavior, not clean YR 1.001 visual compatibility."
+  - "No unlabeled original-rendering display conversion is selected."
+  - "PAL writing and byte or semantic roundtrip are not implemented."

@@ -15,11 +15,12 @@ public formats or behavior; it does not permit code import.
 | Ra2-Map-TriggerNetwork | MIT | External trigger-structure reference only | No | Reference only |
 | VoxelShop | Apache-2.0 | External voxel behavior/tool reference only | No | Reference only |
 | FinalAlert 2 YR 1.01 | Proprietary | External interoperability baseline only | No | Reference only |
-| XCC SourceForge original source and SVN r1201 | GPL-2.0-only | MIX format and historical behavior reference | No | Reference only |
-| OmniBlade/xcc encoding commit `62bb770` | GPL-2.0-only | Pinned MIX behavior comparison | No | Reference only |
+| XCC SourceForge original source and SVN r1201 | GPL-2.0-only | MIX and PAL format/behavior reference | No | Reference only |
+| OmniBlade/xcc encoding commit `62bb770` | GPL-2.0-only | Pinned MIX and PAL behavior comparison | No | Reference only |
 | XCC Mixer toolbox redistribution | GPL-2.0-only | External black-box interoperability tool | No | Reference only |
 | Bruce Schneier Blowfish definition | License-free | Standard initial-state constants and public vectors; independent implementation | No code; constants only | Approved data |
-| OpenRA commit `a520984` | GPL-3.0-or-later | Independent MIX/encryption behavior cross-check | No | Reference only |
+| OpenRA commit `a520984` | GPL-3.0-or-later | Independent MIX/encryption and PAL conversion cross-check | No | Reference only |
+| iron-curtain-engine/cnc-formats commit `77da596` | MIT OR Apache-2.0 | Independent PAL layout and conversion cross-check | No | Reference only |
 
 ## Import gate
 

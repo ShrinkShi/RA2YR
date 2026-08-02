@@ -8,9 +8,11 @@ behavioral compatibility.
 `format.bounded-reader` is a format-neutral safety foundation. Its `可解析`
 status means synthetic bounded-input, budget, diagnostic, and tail tests pass.
 WP-02C separately promotes only the tested MIX container, ID, encryption,
-checksum, virtual-source, nesting, and XCC interoperability entries. It does
-not promote PAL, SHP, VXL/HVA, TMP, CSF, INI, map Pack, rendering, or runtime
-game behavior.
+checksum, virtual-source, nesting, and XCC interoperability entries. WP-02D
+promotes only strict raw PAL parsing after both synthetic and three fixed
+ProjectBaseline samples pass. It does not promote SHP, VXL/HVA, TMP, PCX, CSF,
+INI, map Pack, Texture2D, shaders, player remap, theater selection, rendering,
+or runtime game behavior.
 
 ## Status vocabulary
 
@@ -45,12 +47,13 @@ golden evidence identifies user-supplied files by hash.
 
 The recorded `YR1001_ProjectBaseline` directory manifest identifies patched
 development content containing the official map add-on, music pack, and
-compatibility patch. Its complete directory and MIX audit manifests remain
-outside the repository; public evidence contains only manifest SHA-256 values,
-aggregates, target IDs/sizes/hashes, container chains, scan facts, and approved
-representative metadata. MIX structure is now parsed, but payload formats are
-not interpreted. This still does not constitute a clean YR 1.001 manifest or
-original behavior comparison.
+compatibility patch. Its complete directory, MIX, and per-index PAL audit
+manifests remain outside the repository; public evidence contains only
+manifest SHA-256 values, aggregates, target IDs/sizes/hashes, container chains,
+model hashes, scan facts, and approved representative metadata. Only the raw
+PAL payload structure is interpreted; visual output is not. This still does
+not constitute a clean YR 1.001 manifest, visual comparison, or original
+behavior comparison.
 
 For XCC, `往返通过` means the specifically recorded synthetic semantic
 contract passed: entry sets/order where required and extracted payload hashes
