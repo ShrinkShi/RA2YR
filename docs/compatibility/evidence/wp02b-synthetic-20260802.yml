@@ -160,5 +160,11 @@ repository_gates:
     violations: 0
     original_content_body_read: false
   copyright_scan_regressions: { executed: 22, passed: 22, failed: 0 }
+  github_actions_first_pr_head:
+    workflow: "Repository safety"
+    run_id: 30739931593
+    result: "Passed"
+    head_sha: "d127ce665112f978b128672a6c8d467c42bb14a1"
+    note: "All scanner, repository-validation, copyright, Windows PowerShell 5.1, and PowerShell 7 steps passed."
   compatibility_status_promotions:
     - "format.bounded-reader: 未实现 -> 可解析"

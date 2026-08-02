@@ -113,4 +113,5 @@
 - PlayMode 结果 XML：1/1 通过；两次 Unity 调用均在日志结束后未提供进程退出码，严格封装器按失败关闭返回非零，且无残留进程或锁。
 - 双 PowerShell 仓库验证通过：51 个 Assets 条目、51 个 `.meta`、120 个矩阵条目、11 个证据引用、0 违规；合成回归 46/46。
 - 双 PowerShell 暂存态版权扫描一致：163 个候选、13/13 ignore probes、0 个禁止物理根、0 违规；合成回归 22/22。
-- 远程提交、Draft PR 和 GitHub Actions 实际结果将在推送后补录。
+- 实现提交 `d127ce665112f978b128672a6c8d467c42bb14a1` 已普通推送；Draft PR #3 以 `main` 为 base 创建且保持未合并。
+- 首个 PR head 的 GitHub Actions `Repository safety` run `30739931593` 全部通过；远程交付记录提交后的最终 head 状态在交付报告中如实报告。

@@ -173,3 +173,18 @@
 ### 后续事项
 - 补齐 WP-02B 合成证据和兼容矩阵，再运行 PlayMode、双 PowerShell 仓库/版权门禁。
 - 提交并创建独立 Draft PR，观察实际 GitHub Actions，不自动合并。
+
+## 2026-08-02 - WP-02B 远程交付
+
+### 本轮处理
+- 创建实现提交 `d127ce665112f978b128672a6c8d467c42bb14a1`，以普通非强制推送发布独立 feature 分支。
+- 创建 Draft PR #3，base 为 `main`、head 为 `feature/wp02b-bounded-binary-foundation`，未自动合并。
+- GitHub Actions `Repository safety` 首个 PR head 运行 `30739931593` 全部通过。
+
+### 关键结论
+- 远程只将 `format.bounded-reader` 提升到合成测试支持的 `可解析`；具体 YR 格式、原版对照和往返状态未提升。
+- Unity EditMode/PlayMode XML 通过与严格封装器缺失退出码的非零结果均已在 PR 正文和证据中保留。
+- 两份外层 Git 备份继续存在，未删除或改写。
+
+### 后续事项
+- 等待最终文档记录 head 的 Actions 结果和用户审查；不得自动合并 Draft PR #3。
