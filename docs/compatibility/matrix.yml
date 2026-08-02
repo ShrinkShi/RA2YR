@@ -215,11 +215,33 @@ entries:
         description: "Stream inputs are copied into one bounded session snapshot; incremental format parsing without a full snapshot is not implemented."
   - id: format.pal
     domain: format
-    feature: "PAL palettes"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    feature: "Strict Westwood PAL raw palette parsing"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Pal.WestwoodPaletteReaderTests.Exactly768BytesAreFullyConsumed"
+      - "RA2YR.Tests.EditMode.Formats.Pal.WestwoodPaletteReaderTests.OutOfRangeChannelFailsAtExactIndexChannelAndOffset"
+      - "RA2YR.Tests.EditMode.Formats.Pal.WestwoodPaletteReaderTests.MemoryStreamAndMixWindowProduceEquivalentModels"
+      - "RA2YR.Tests.EditMode.Formats.Pal.WestwoodPaletteReaderTests.ParsedModelDoesNotAliasInputOrExposeMutableColorStorage"
+      - "RA2YR.Tests.EditMode.Formats.Pal.WestwoodPaletteReaderTests.CanonicalModelHashUsesLockedDomainCountIndexAndRgbSchema"
+      - "RA2YR.Tests.EditMode.Formats.Pal.PaletteDisplayConversionTests.EveryStrategyIsMonotonic"
+      - "RA2YR.Tests.EditMode.Content.Pal.Audit.PaletteProjectBaselineAuditServiceTests.FixedProfileLocksProjectBaselineTargetAndModelIdentities"
+      - "RA2YR.Tests.EditMode.Content.Pal.Audit.PaletteProjectBaselineAuditServiceTests.CompleteAuditUsesFixedNestedWindowsAndPublishesSanitizedDelivery"
+      - "RA2YR.Tests.EditMode.Content.Pal.Audit.PaletteProjectBaselineAuditServiceTests.ChangedPayloadHashFailsBeforePublishingCache"
+      - "RA2YR.Tests.EditMode.Content.Pal.Audit.PaletteProjectBaselineAuditServiceTests.ChangedCanonicalModelFailsBeforePublishingCache"
+    evidence:
+      - "docs/compatibility/evidence/wp02d-pal-research-20260803.yml#format_facts"
+      - "docs/compatibility/evidence/wp02d-pal-synthetic-20260803.yml#synthetic_validation"
+      - "docs/compatibility/evidence/wp02d-project-baseline-20260803.yml#project_baseline_palettes"
+    limitations:
+      - id: format.pal.patched-project-baseline
+        status: "已知限制"
+        description: "The three local golden samples come from the patched YR1001_ProjectBaseline, not a clean YR 1.001 corpus."
+      - id: format.pal.visual-conversion-unresolved
+        status: "已知限制"
+        description: "Four explicit 6-bit display conversions are retained; no original YR default is selected and visual rendering is not validated."
+      - id: format.pal.read-only
+        status: "已知限制"
+        description: "PAL writing, semantic roundtrip, Texture2D conversion, shader use, player remap, and theater selection are not implemented."
   - id: format.mix-container-read
     domain: format
     feature: "Classic and extended Westwood MIX structural reader"

@@ -290,3 +290,21 @@
 
 ### 后续事项
 - 提交研究边界后实现 Core 不可变模型、严格 reader、合成测试和受控黄金验证入口。
+
+## 2026-08-03 00:55 - WP-02D PAL 实现与 ProjectBaseline 黄金验证完成
+
+### 本轮处理
+- 独立实现 UnityEngine-free PAL reader、不可变原始颜色模型、结构化诊断、预算和四个命名显示转换策略。
+- 通过最小 MIX 名称目录和 `StructureOnly` 挂载只读解析 `ra2.mix -> cache.mix` 中的三个固定 PAL entry window。
+- 前后重建目录索引并核对 fingerprint；固定 payload SHA 与规范化模型 SHA 任一变化均阻止发布。
+- 新增外部 Cache 完整 manifest、仓库内脱敏摘要、Editor 命令和 PS5.1/PS7 包装器回归。
+
+### 关键结论
+- `isotem.pal`、`temperat.pal`、`unittem.pal` 的来源链、768 字节长度和固定 SHA 全部一致。
+- 三份文件均为 256 色、通道范围 0..63、非法通道 0；不同颜色数分别为 256、256、210。
+- EditMode 413/413、PlayMode 1/1、黄金审计 Unity 进程退出码 0。
+- 合并测试包装器在 EditMode XML 完成后读取到空退出码并 fail-closed 返回 1；单独 PlayMode 包装器返回 0，未伪造结果。
+
+### 后续事项
+- 完成分层提交、Draft PR 和 Actions 验证；不自动合并。
+- 后续视觉工作必须先建立原版截图/捕获证据，再决定显示转换默认策略。

@@ -1,0 +1,83 @@
+schema_version: 1
+evidence_id: "wp02d-project-baseline-20260803"
+recorded_at_utc: "2026-08-02T16:54:33Z"
+scope: "Strict PAL parsing of three fixed YR1001_ProjectBaseline entries through the bounded MIX virtual content source"
+
+project_baseline_palettes:
+  baseline:
+    logical_name: "YR1001_ProjectBaseline"
+    description: "Patched development baseline with official map add-on, music pack, and Windows compatibility patch; not clean YR 1.001"
+    directory_fingerprint: "481E4AE76662001008EEF8105CC749B29B958C9C5D39D0DFE889F47A046D1E6E"
+    started_utc: "2026-08-02T16:54:23.6549580Z"
+    completed_utc: "2026-08-02T16:54:33.1725177Z"
+    source_modified: false
+    loose_target_pal_used: false
+    reference_tool_palette_used: false
+  external_manifest:
+    schema_version: 1
+    length: 28582
+    sha256: "27E5535F15424EEF16F458D9619B180560FCC5E4C6B91C9A8985BF24A55E1DC7"
+    repository_external_cache_only: true
+    contains_complete_per_index_raw_colors: true
+    committed_to_repository: false
+  sanitized_summary:
+    sha256: "9E7332C1D4905A0DBBAEE8E81F23F53435F0700FB1EF473330222FC651B0B98F"
+    contains_absolute_paths: false
+    contains_complete_color_table: false
+    contains_original_payload_body: false
+  validation:
+    audit_status: "Complete"
+    unity_process_exit_code: 0
+    palette_count: 3
+    display_conversion_strategy: "XccScaleToFullRangeFloor"
+    strategy_claim: "Named XCC reference strategy only; not an original YR or global default"
+    diagnostic_count: 0
+  palettes:
+    - logical_name: "isotem.pal"
+      mix_id: "0x5F9D97B9"
+      provenance: ["ra2.mix", "cache.mix", "isotem.pal"]
+      length: 768
+      sha256: "5D6E40FCD11A592A31494C635D93C21796CFE86A2743F0258B1F7D0AFF850795"
+      color_count: 256
+      raw_channel_minimum: 0
+      raw_channel_maximum: 63
+      invalid_channel_count: 0
+      distinct_color_count: 256
+      normalized_model_sha256: "F8650500F5D49F5FE8DD050EDA345E1EB9EEC82B42A8064770ED58C9C31C6524"
+      display_conversion_strategy: "XccScaleToFullRangeFloor"
+      diagnostic_count: 0
+    - logical_name: "temperat.pal"
+      mix_id: "0x9C58DE40"
+      provenance: ["ra2.mix", "cache.mix", "temperat.pal"]
+      length: 768
+      sha256: "5903B69868B84F494CFBB4E7100398015EF9775B37726019A0D7B5FB6CB33B55"
+      color_count: 256
+      raw_channel_minimum: 0
+      raw_channel_maximum: 63
+      invalid_channel_count: 0
+      distinct_color_count: 256
+      normalized_model_sha256: "8932AF31CFA5A30098429EFDC5AB61445AF555B95CC827721426BF066EF1FC42"
+      display_conversion_strategy: "XccScaleToFullRangeFloor"
+      diagnostic_count: 0
+    - logical_name: "unittem.pal"
+      mix_id: "0x63DA7359"
+      provenance: ["ra2.mix", "cache.mix", "unittem.pal"]
+      length: 768
+      sha256: "ED785E62EED291480F3198DD44F6B656EBE3A9B75E9F641944D710ABC6BDE3E3"
+      color_count: 256
+      raw_channel_minimum: 0
+      raw_channel_maximum: 63
+      invalid_channel_count: 0
+      distinct_color_count: 210
+      normalized_model_sha256: "36D158B0A336D5F0EBB3749E66C79089191F4336DD970F02F7C5C24D35207717"
+      display_conversion_strategy: "XccScaleToFullRangeFloor"
+      diagnostic_count: 0
+
+compatibility_boundary:
+  strict_project_baseline_sample_validation: true
+  clean_yr_1001_original_comparison: false
+  visual_rendering_validated: false
+  player_remap_validated: false
+  theater_selection_validated: false
+  pal_roundtrip_validated: false
+  limitation: "The patched ProjectBaseline proves the fixed three payloads parse; it does not prove clean YR 1.001 visual output or behavior."
