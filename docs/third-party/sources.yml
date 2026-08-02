@@ -1,5 +1,5 @@
 schema_version: 1
-last_reviewed: "2026-08-01"
+last_reviewed: "2026-08-02"
 repository_license: "Apache-2.0"
 policy:
   default_approval: "not-approved"
@@ -153,3 +153,129 @@ sources:
       launch_requires_explicit_purpose: true
       test_only_on_copies: true
       overwrite_original_maps: false
+
+  - id: xcc-sourceforge-original-20011021
+    name: "XCC Utilities original SourceForge source archive"
+    source:
+      type: "external-source-reference"
+      canonical_upstream: "https://sourceforge.net/projects/xccu/files/OldFiles/XCC_Source.zip/download"
+      project: "https://sourceforge.net/projects/xccu/"
+      observed_location: "../Reference/ThirdParty/XCC_Source-SourceForge-20011021.zip (logical external location)"
+    version_or_hash:
+      release_date: "2001-10-21"
+      file_size: 1071166
+      sha256: "9E22CFA96650EDA8792A58E26C81D164F43D89C10E77CECBCFD5B04F32E4569B"
+    license:
+      spdx: "GPL-2.0-only"
+      verification: "SourceForge project metadata; archive contains no LICENSE or COPYING file"
+    purpose: "Historical original-author MIX structure and behavior reference"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
+    approval_status: "approved-reference-only"
+
+  - id: xcc-sourceforge-svn-r1201
+    name: "XCC Utilities SourceForge SVN r1201 snapshot"
+    source:
+      type: "external-source-reference"
+      canonical_upstream: "https://sourceforge.net/code-snapshots/svn/x/xc/xccu/code/xccu-code-r1201-trunk.zip"
+      project: "https://sourceforge.net/projects/xccu/"
+      observed_location: "../Reference/ThirdParty/xccu-code-r1201-trunk.zip (logical external location)"
+    version_or_hash:
+      revision: "r1201"
+      revision_date: "2010-04-17"
+      file_size: 1247529
+      sha256: "82B699522282404A32FF33F816D2B8B4219CE8363F09075F1DDDC3ADA94270CF"
+    license:
+      spdx: "GPL-2.0-only"
+      verification: "SourceForge project metadata; snapshot contains no LICENSE or COPYING file"
+    purpose: "Later XCC MIX read, write, filename-ID, encryption, and nesting behavior reference"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
+    approval_status: "approved-reference-only"
+
+  - id: omniblade-xcc-encoding-62bb770
+    name: "OmniBlade/xcc encoding branch"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/OmniBlade/xcc"
+      commit: "https://github.com/OmniBlade/xcc/commit/62bb77080f13bdf65c79c84837b7cc264bdd432d"
+      observed_location: "../Reference/ThirdParty/OmniBlade-xcc-encoding (logical external location)"
+    version_or_hash:
+      branch_observed: "encoding"
+      commit: "62bb77080f13bdf65c79c84837b7cc264bdd432d"
+    license:
+      spdx: "GPL-2.0-only"
+      verification: "Upstream lineage and SourceForge project metadata; clone contains no LICENSE or COPYING file"
+    purpose: "Pinned comparison of later MIX and encoding behavior, including a documented uppercase call-site regression"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
+    approval_status: "approved-reference-only"
+
+  - id: xcc-mixer-local-toolbox-147
+    name: "XCC Mixer local toolbox redistribution"
+    source:
+      type: "external-reference-tool"
+      canonical_upstream: "https://sourceforge.net/projects/xccu/"
+      observed_location: "../Reference/Toolbox/XCC Mixer.exe (logical external location)"
+    version_or_hash:
+      embedded_ui_version: "XCC Mixer 1.47"
+      file_version_resource: null
+      product_version_resource: null
+      file_size: 2680832
+      sha256: "DD4E54956874BE8B995BE9B046B7302BF0F40B86A7C8BEED4A94165C6B50E7ED"
+      pe_timestamp_utc: "2012-01-04T18:57:28Z"
+      authenticode: "NotSigned"
+    license:
+      spdx: "GPL-2.0-only"
+      verification: "XCC SourceForge project metadata; redistributed executable contains no signature or version resource"
+    purpose: "External black-box MIX read/write interoperability baseline"
+    contains_code: true
+    code_form: "external executable only"
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; executable remains outside repository; tests use copies and synthetic payloads"
+    approval_status: "approved-reference-only-no-redistribution"
+
+  - id: bruce-schneier-blowfish-definition
+    name: "Bruce Schneier Blowfish algorithm definition and vectors"
+    source:
+      type: "public-algorithm-reference"
+      canonical_upstream: "https://www.schneier.com/academic/blowfish/"
+      vectors: "https://www.schneier.com/academic/blowfish/"
+    version_or_hash:
+      algorithm: "Blowfish, 16 rounds, 64-bit block, 32-448-bit key"
+    license:
+      spdx: "LicenseRef-Schneier-Blowfish-License-Free"
+      verification: "Author page states unpatented, license-free, and available free for all uses"
+    purpose: "Independent generic Blowfish implementation constants and public test vectors"
+    contains_code: false
+    reference_only: true
+    code_imported: false
+    repository_use: "algorithm facts and vectors only; implementation independently authored"
+    approval_status: "approved-reference-only"
+
+  - id: openra-mix-reference-a520984
+    name: "OpenRA MIX and Westwood key-envelope reference"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/OpenRA/OpenRA"
+      commit: "https://github.com/OpenRA/OpenRA/commit/a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+      observed_location: "../Reference/ThirdParty/OpenRA-bleed (logical external location)"
+    version_or_hash:
+      branch_observed: "bleed"
+      commit: "a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+    license:
+      spdx: "GPL-3.0-or-later"
+      verification: "upstream COPYING and source headers"
+    purpose: "Independent observable cross-check of MIX encrypted-header layout and bounded entry streams"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
+    approval_status: "approved-reference-only"

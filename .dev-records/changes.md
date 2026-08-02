@@ -115,3 +115,19 @@
 - 双 PowerShell 暂存态版权扫描一致：163 个候选、13/13 ignore probes、0 个禁止物理根、0 违规；合成回归 22/22。
 - 实现提交 `d127ce665112f978b128672a6c8d467c42bb14a1` 已普通推送；Draft PR #3 以 `main` 为 base 创建且保持未合并。
 - 首个 PR head 的 GitHub Actions `Repository safety` run `30739931593` 全部通过；远程交付记录提交后的最终 head 状态在交付报告中如实报告。
+
+## 2026-08-02 - WP-02C MIX 研究与独立实现边界
+
+### 变更范围
+- 仅包含受控格式研究、第三方来源身份、许可证边界、架构决策和未实现兼容条目。
+
+### 具体改动
+- 固定 SourceForge XCC 原始源码包、SVN r1201 和 OmniBlade encoding commit；全部仅在仓库外保存。
+- 登记本机 XCC Mixer 的脱敏静态身份和工具箱再分发事实，不将二进制提交到仓库。
+- 记录经典/扩展 MIX、加密目录、文件名 ID、payload-only SHA-1 和嵌套窗口事实。
+- 明确 XCC/OpenRA GPL 代码只可 reference-only，`code_imported: false`；通用 Blowfish 依据作者公开的 license-free 定义独立实现。
+- 新增 MIX 细分兼容条目但全部保持 `未实现`；研究证据不构成状态提升。
+
+### 验证情况
+- 双 PowerShell 仓库验证均通过：129 个矩阵条目、21 个证据引用、0 违规。
+- ProjectBaseline 研究前后元数据指纹一致；未启动 XCC，未修改或复制权威内容。

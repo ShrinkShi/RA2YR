@@ -7,7 +7,7 @@
 - [ ] 后续研究原版 YR `.sav` 二进制格式，不纳入第一阶段当前实现。
 - [ ] 实现 MIX 与加密 MIX 内容源；WP-02A 仅建立抽象边界。
 - [ ] 对 YR 1.001 原版内容覆盖行为建立可复现对照。
-- [ ] 等待审查并批准 WP-02B Draft PR；不得自动合并。
+- [ ] 以权威 ProjectBaseline 建立 MIX 读取、写入、加密/校验、嵌套挂载和 XCC 往返证据。
 - [ ] 为非 Windows 平台实现并验证 realpath/device 路径 identity。
 - [ ] 调查 Unity 2022.3.60f1c1 中国版 headless 测试完成后的退出异常。
 
@@ -27,3 +27,4 @@
 - [x] 完成 `YR1001_ProjectBaseline` 目录级清单与仓库外完整 manifest。
 - [x] 推送 WP-02A 实现并创建、验证独立 Draft PR #2。
 - [x] 合并并以最新 `main` 作为 WP-02B 分支基线。
+- [x] 合并并远程验证 WP-02B Draft PR #3。

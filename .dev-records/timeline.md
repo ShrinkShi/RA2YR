@@ -188,3 +188,46 @@
 
 ### 后续事项
 - 等待最终文档记录 head 的 Actions 结果和用户审查；不得自动合并 Draft PR #3。
+
+## 2026-08-02 17:35 - WP-02C 内容链路预检与 MIX 路线确认
+
+### 用户目标
+- 从 PR #3 合并后的最新 `main` 创建独立 WP-02C 分支。
+- 以 `YR1001_ProjectBaseline` 为权威基线，建立 MIX 读取、写入、加密、嵌套挂载与 XCC Mixer 往返链路；PAL 数据解释仍不在本轮实现。
+
+### 本轮处理
+- 确认 PR #3 已合并，快进本地 `main` 到合并提交 `e9777044`，创建分支后安全重命名为 `feature/wp02c-mix-read-write`。
+- 只读检查被忽略的本机内容配置、已配置来源和工作区已知外部内容目录；未扫描整盘、未写入或更改外部文件。
+- 配置的 Clean 与 Unpacked 来源目录不存在；ProjectBaseline 存在但三个目标 PAL 均无松散文件匹配。
+- Reference 工具集合含多组 RA1/RA2/TS/TD 混合来源的同名 768 字节 PAL；这些文件不替代权威基线内容链路。
+
+### 关键结论
+- 松散 PAL 不存在，权威基线内容主要位于 MIX；MIX 因此成为正式运行链路的必要前置。
+- 不再要求 `YR1001_Unpacked`，不实现 PAL 数据解释，`format.pal` 保持 `未实现`。
+- XCC/XCC 源码仅用于格式事实、算法行为、测试向量和黑盒结果；GPL 代码不得进入 Apache-2.0 仓库。
+
+### 影响文件
+- `.dev-records/timeline.md`
+- `.dev-records/issues.md`
+- `.dev-records/backlog.md`
+
+### 后续事项
+- 完成本机 XCC 静态识别、XCC 源码与许可证固定、MIX 头部研究和基线只读调查，再开始自主 C# 实现。
+
+## 2026-08-02 18:35 - WP-02C MIX 受控研究完成
+
+### 本轮处理
+- 固定 OmniBlade/xcc `encoding` 精确 commit、SourceForge 原始源码包与 SVN r1201 快照；全部存于正式仓库外。
+- 静态识别本机 XCC Mixer，不启动进程；确认工具箱再分发、内嵌 1.47 字符串、无版本资源、未签名。
+- 只读检查 ProjectBaseline 的 8 个根级 MIX，并以前后元数据指纹和二次 SHA-256 确认未写入。
+- 交叉确认经典/新式头、加密目录、文件名 ID 和尾部校验布局；`langmd.mix` 的 20 字节尾部与 payload-only SHA-1 一致。
+
+### 关键结论
+- XCC 源码严格 reference-only、`code_imported: false`；正式实现必须自主编写。
+- OmniBlade 固定提交存在大写返回值未接收的回归，不能作为唯一 ID 行为依据。
+- XCC Editor 可复用 key source 写加密目录，但未证明可生成新 key source；checksum 读取和保存也未形成算法证据。
+- 研究证据不提升任何兼容矩阵状态，`format.pal` 仍未实现。
+
+### 后续事项
+- 先提交 Research/ADR，再实现共享预算的 seekable file window。
+- 逐提交实现 reader、writer、嵌套挂载和 XCC/基线交付证据。
