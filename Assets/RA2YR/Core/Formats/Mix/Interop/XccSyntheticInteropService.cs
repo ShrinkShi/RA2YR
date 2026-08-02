@@ -47,7 +47,7 @@ namespace RA2YR.Core.Formats.Mix.Interop
             new SyntheticPayloadSpec(
                 "xcc-alpha.synthetic.bin",
                 Encoding.ASCII.GetBytes("RA2YR-WP02C-XCC-SYNTHETIC-ALPHA-V1\r\n")),
-            new SyntheticPayloadSpec("xcc-empty.synthetic.bin", Array.Empty<byte>()),
+            new SyntheticPayloadSpec("xcc-small.synthetic.bin", new byte[] { 0x5a }),
             new SyntheticPayloadSpec("xcc-omega.synthetic.bin", CreatePattern(193, 29, 7))
         };
 

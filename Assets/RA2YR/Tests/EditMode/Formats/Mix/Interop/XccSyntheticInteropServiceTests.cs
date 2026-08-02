@@ -18,7 +18,7 @@ namespace RA2YR.Tests.EditMode.Formats.Mix.Interop
         private static readonly string[] XccInputNames =
         {
             "xcc-alpha.synthetic.bin",
-            "xcc-empty.synthetic.bin",
+            "xcc-small.synthetic.bin",
             "xcc-omega.synthetic.bin"
         };
 
