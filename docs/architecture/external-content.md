@@ -40,6 +40,23 @@ official map add-on, music pack, and Windows compatibility patch, it is not a
 clean YR 1.001 golden baseline and cannot by itself support a clean-original
 compatibility claim.
 
+For the current workstation, the only authoritative runtime root is:
+
+```text
+E:\时锐\RA2\RA2YR-unity\尤里的复仇-1.001-原版（已加官方地图增补包、音乐包、win10兼容补丁）
+```
+
+This machine path remains external configuration and must not be emitted by
+diagnostics, manifests, or public compatibility evidence. FinalAlert 2,
+reference tools, manually unpacked copies, caches, and tool temporary
+directories are excluded from runtime candidate discovery even when they
+contain files with matching logical names.
+
+The external RA2 DIY 2025 tutorial bundle is registered as a
+`CommunitySemanticReference`. It may inform later stock/extension/unresolved
+semantic hypotheses, but it is not a runtime content source and cannot enter
+content discovery or precedence.
+
 ## Directory index
 
 The index recursively discovers regular files without following reparse

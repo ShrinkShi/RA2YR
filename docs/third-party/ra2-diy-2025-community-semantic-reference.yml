@@ -1,0 +1,87 @@
+schema_version: 1
+reference_id: "ra2-diy-2025-tutorial-bundle-local"
+reference_role: "CommunitySemanticReference"
+edition: "2025"
+observed_file_count: 18
+observed_total_bytes: 1034682
+content_imported: false
+runtime_content_source: false
+license: "LicenseRef-Unverified-Community-Tutorial"
+use_boundary:
+  - "Use only to form and cross-check stock, extension-specific, and unresolved semantic hypotheses."
+  - "Do not copy tutorial prose, examples, document XML, spreadsheets, binaries, or value data."
+  - "Do not include this directory in runtime candidate discovery."
+files:
+  - name: "1.原版工具条名称词典.ini"
+    length: 16537
+    sha256: "2049B42E648857AD0A1F56EBC0D091E2F23B31702E0E26BB7E4289F7FFB186CF"
+    purpose: "Community hypotheses for stock toolbar labels and terminology."
+  - name: "10.污染物和Voxel碎片及杂项词典.ini"
+    length: 13469
+    sha256: "0F20B9C2A1B5915E84C50DD00333A0F662DA2A2EF1321E8CE364AEFD3902E60E"
+    purpose: "Community hypotheses for particle, voxel-debris, and miscellaneous fields."
+  - name: "2.单位属性rules词典2025.ini"
+    length: 192772
+    sha256: "ECF9F6E244507F0E28570808DADB0D57E1503FD22D6B587C2CD8E0A6EA74E0BA"
+    purpose: "Community hypotheses for Rules object fields; stock and extension semantics require separate classification."
+  - name: "3.art词典2025.ini"
+    length: 80258
+    sha256: "9EABB0BFB6E26A2EB611BC9EFD0823F55138C18AFBBE9147345EEF0B633B952A"
+    purpose: "Community hypotheses for Art fields and resource-routing terminology."
+  - name: "4.全局代码解释2025.ini"
+    length: 114930
+    sha256: "5EA3FF65DA0B60599C04EE8690EF29A4399233D62102C45C9E016F01B9A5BB07"
+    purpose: "Community hypotheses for global INI fields and cross-file terminology."
+  - name: "5.武器系统全解.txt"
+    length: 18948
+    sha256: "FB12FC042183F73B9D7A977605B55D297966E4212A06DBFD1FE697BC15D75A1A"
+    purpose: "Community conceptual reference for weapon-system semantics."
+  - name: "6.武器系统代码词典2025.ini"
+    length: 59387
+    sha256: "7C6A2D610B9B213D36565722699C71331DD4AE3FE6F67F206264B5CF66A988CB"
+    purpose: "Community hypotheses for weapon-related keys and values."
+  - name: "7.超级武器词典.ini"
+    length: 11945
+    sha256: "7516E6175C80A13C3D2859BAB1B3EC927FDAF6C83B343E6F526C46117DDC82DA"
+    purpose: "Community hypotheses for super-weapon configuration fields."
+  - name: "8.地形对象词典.ini"
+    length: 4725
+    sha256: "ED388C721D0C6AEC2E0150566A71ABB9D279DCCF110FF87989069C64E61ED786"
+    purpose: "Community hypotheses for terrain-object configuration."
+  - name: "9.覆盖物词典.ini"
+    length: 12569
+    sha256: "0F2164479071800DFE6F486F2D5AD686AEA5F323737855CD2CEAD1276B56F129"
+    purpose: "Community hypotheses for overlay configuration."
+  - name: "AI的艺♂术(2022年1月版AI教程) by Madman_M.ini"
+    length: 54322
+    sha256: "97FBEFBF48C2E235ECF70D4D0CEB889899789E35D47C1FA0F4076112E0D1A852"
+    purpose: "Community AI semantics reference; not stock runtime proof."
+  - name: "AI教程by LH_Mouse.txt"
+    length: 24868
+    sha256: "85658FDA4457FE9D5CB4A34DA663B5F3480450A8D444C66B93A18BF7E5AD77BB"
+    purpose: "Independent community AI tutorial reference."
+  - name: "Kratos机制速查表  触发-事件-约束条件.xlsx"
+    length: 20044
+    sha256: "1E16417EE49BF528E1679D8ABE37682D9553837E5A77DD90869A5258BE18D345"
+    purpose: "Extension-specific Kratos mechanism index; never treated as stock semantics."
+  - name: "高阶INI教程/AE教程.docx"
+    length: 364484
+    sha256: "43186E978F439D85F09CF20B10274574399B82EF2C14BD16408C114659A4D9D8"
+    purpose: "Extension-oriented advanced INI reference; stock boundaries must be established independently."
+  - name: "高阶INI教程/RA2TS修改入门指南 黑科技玩家养成实例.docx"
+    length: 21193
+    sha256: "20D0AA0940652325289A3AEF52CDE117BE6E8283F53EFD82A25F7887E98458D3"
+    purpose: "Community introductory modification reference."
+  - name: "粒子系统说明书20171213.txt"
+    length: 7034
+    sha256: "611AF82A6FE4B4280EEE1AC0D3974A03CE06F015FEC8AD2FE9AF2AE1B9758EAF"
+    purpose: "Community particle-system semantics reference."
+  - name: "杂项资源网盘，DeeZire英文原版doc文档等均转移至此.url"
+    length: 123
+    sha256: "ACC47C999EB85F22928AAEFA38BB4516ED611F0B9ADA72E4C8F4A3A52802638F"
+    purpose: "Bundle navigation pointer only; no linked content is adopted or trusted implicitly."
+  - name: "逐浪mod圈.txt"
+    length: 17074
+    sha256: "3B862F38C1E06DB5BED7DF60E7F0C9888103DF04CD57D2434A25B42056CCC72B"
+    purpose: "Community ecosystem reference; not runtime or format evidence."
+
