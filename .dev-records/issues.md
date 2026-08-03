@@ -225,3 +225,16 @@ XCC GUI 创建流程忽略零字节 dropped file，并将无功能 flag 的 RA2 
 
 ### 验证方式
 固定黄金模型 SHA 与独立计算一致；500000 长度的零负载夹具优先返回准确 EOF，非零 MIX window 的损坏 marker 返回 `base + 24` 偏移。Unity EditMode 489/489 通过。
+
+## 2026-08-03 - 已完成 headless 测试留下空 UnityLockfile
+
+### 现象
+INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退出；终止该已完成进程后，`Temp/UnityLockfile` 仍存在，黄金审计包装器按设计拒绝继续。
+
+### 核验与处理
+- 确认不存在 Unity 进程；锁文件为 0 字节普通文件、非 ReparsePoint，时间与刚才测试一致。
+- 仅删除这个可再生的空临时锁；未触碰 Assets、仓库外 Cache 或 ProjectBaseline。
+- 重新运行黄金审计，Unity `-executeMethod` 真实退出码为 0。
+
+### 结论
+测试 XML、包装器退出状态和进程收尾必须继续分开记录；审计入口对任何现存 lock fail-closed 是正确行为。

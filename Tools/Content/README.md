@@ -155,6 +155,49 @@ pwsh.exe -NoProfile -File `
     ./Tools/Content/Tests/Invoke-CsfProjectBaselineAudit.Tests.ps1
 ```
 
+## WP-02F INI ProjectBaseline audit and identity roundtrip
+
+`Invoke-IniProjectBaselineAudit.ps1` invokes
+`RA2YR.Editor.IniProjectBaselineAuditCommand.Run`. It mounts the fixed root and
+nested MIX chains for `artmd.ini`, `ai.ini`, and both distinct `rulesmd.ini`
+candidates, then applies the bounded raw-byte INI parser and unmodified identity
+writer. It does not choose a winning `rulesmd.ini` candidate.
+
+The wrapper supports Windows PowerShell 5.1 and PowerShell 7 on Windows. It:
+
+- requires Unity 2022.3.60f1c1 and a closed Unity project;
+- read-locks the ignored local configuration while Unity runs;
+- pins each fixed payload and canonical model identity;
+- rejects observed reparse points and verifies Git ignore/cache boundaries;
+- writes complete line-level and identity artifacts only below the configured
+  repository-external Cache;
+- independently verifies the external manifest length and SHA-256; and
+- reports Unity's actual process exit code separately from parsed audit status.
+
+Run from the repository root:
+
+```powershell
+./Tools/Content/Invoke-IniProjectBaselineAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+The ignored JSON summary below `TestResults` contains only logical identities,
+MIX provenance, aggregate structure statistics, one-way hashes, diagnostics,
+and limitations. It contains no section list, key list, values, comments, raw
+lines, Base64, or host paths. `roundtrip` in this workflow means only unmodified
+byte-identical output; semantic editing and FinalAlert 2 edited roundtrip remain
+unimplemented.
+
+Run the wrapper contract tests in both supported hosts:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
+    ./Tools/Content/Tests/Invoke-IniProjectBaselineAudit.Tests.ps1
+
+pwsh.exe -NoProfile -File `
+    ./Tools/Content/Tests/Invoke-IniProjectBaselineAudit.Tests.ps1
+```
+
 ## WP-02C XCC synthetic interoperability
 
 `Invoke-XccSyntheticInterop.ps1` provides three operator-facing modes around

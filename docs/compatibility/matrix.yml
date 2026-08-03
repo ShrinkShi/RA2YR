@@ -1,5 +1,5 @@
 schema_version: 1
-last_updated: "2026-08-02"
+last_updated: "2026-08-03"
 baseline:
   game: "Command & Conquer: Yuri's Revenge 1.001"
   content_role: "YR1001_ProjectBaseline patched development content source; not a clean YR 1.001 golden baseline"
@@ -476,13 +476,89 @@ entries:
     limitations: []
 
   # INI document and typed configuration layers
-  - id: ini.lossless-document
-    domain: ini
-    feature: "Encoding, line endings, comments, order, duplicate keys/sections, empty values, and unknown tags"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+  - id: format.ini-byte-document
+    domain: format
+    feature: "Immutable physical INI document preserving BOM, raw bytes, offsets, whitespace, and per-line endings"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.MixedLineEndingsRemainAttachedToTheirOriginalLines"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.MemoryInputIsSnapshottedBeforeCallerMutation"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.RawOffsetsAndLengthsAreExactWithNonzeroAbsoluteBase"
+    evidence:
+      - "docs/compatibility/evidence/wp02f-ini-research-20260803.yml#project_baseline_read_only_observation"
+      - "docs/compatibility/evidence/wp02f-ini-synthetic-20260803.yml#synthetic_validation"
+      - "docs/compatibility/evidence/wp02f-project-baseline-20260803.yml#project_baseline_ini"
+    limitations:
+      - id: format.ini-byte-document.patched-baseline
+        status: "已知限制"
+        description: "Golden documents come from the patched YR1001_ProjectBaseline, not a clean YR 1.001 corpus."
+  - id: format.ini-structure-read
+    domain: format
+    feature: "Ordered sections, key/value records, full-line comments, blank lines, duplicates, and explicit ambiguity diagnostics"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.DuplicateSectionsRemainSeparateOrderedNodes"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.DuplicateKeysRemainSeparateOrderedCandidates"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.InlineSemicolonIsNotTruncatedAndProducesAmbiguityWarning"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.OpaqueSectionTailDoesNotActivateFollowingKeys"
+    evidence:
+      - "docs/compatibility/evidence/wp02f-ini-research-20260803.yml#conservative_structure_policy"
+      - "docs/compatibility/evidence/wp02f-ini-synthetic-20260803.yml#synthetic_validation"
+      - "docs/compatibility/evidence/wp02f-project-baseline-20260803.yml#project_baseline_ini"
+    limitations:
+      - id: format.ini-structure-read.runtime-semantics-unresolved
+        status: "已知限制"
+        description: "Inline semicolon rules, duplicate winner behavior, and cross-file precedence are retained as unresolved runtime semantics."
+  - id: format.ini-identity-write
+    domain: format
+    feature: "Unmodified identity writer preserving every original byte and validating external-cache publication"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "往返通过" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.IdentityWriterReproducesMixedLineEndingsByteForByte"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.IdentityWriterRejectsAnOutputOverItsBudget"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.IdentityWriterResultReturnsDefensiveCopies"
+      - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.IdentityArtifactsAreExactSyntheticInputs"
+      - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.ExternalCacheReparsePointIsRejectedBeforePublication"
+      - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.ExistingChangedIdentityArtifactFailsWithoutOverwrite"
+      - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.IdentityReferenceRejectsPathTraversal"
+    evidence:
+      - "docs/compatibility/evidence/wp02f-ini-synthetic-20260803.yml#synthetic_validation"
+      - "docs/compatibility/evidence/wp02f-project-baseline-20260803.yml#project_baseline_ini"
+    limitations:
+      - id: format.ini-identity-write.unmodified-only
+        status: "已知限制"
+        description: "unmodified-byte-identical-only; semantic editing, original writer cloning, and FinalAlert 2 edited roundtrip are not implemented."
+  - id: format.ini-encoding-policy
+    domain: format
+    feature: "Explicit BOM-aware strict text views with raw single-byte authority when no code page is proven"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.NonAsciiBytesRemainRawWithoutHostCodePageDecoding"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.Utf8BomUsesStrictUtf8ButKeepsRawBytes"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.Utf16LittleEndianBomUsesCodeUnitAwareSyntaxScanning"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.InvalidBomDeclaredUtf8FailsWithoutReplacementCharacters"
+    evidence:
+      - "docs/compatibility/evidence/wp02f-ini-research-20260803.yml#encoding_policy"
+      - "docs/compatibility/evidence/wp02f-ini-synthetic-20260803.yml#synthetic_validation"
+    limitations:
+      - id: format.ini-encoding-policy.code-page-unresolved
+        status: "已知限制"
+        description: "No-BOM ProjectBaseline documents remain raw single-byte data; the original runtime code page and localization behavior are unresolved."
+  - id: format.ini-opaque-preservation
+    domain: format
+    feature: "Lossless preservation of structurally ambiguous, unknown, and mod-extension physical lines"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.UnknownDirectiveIsAnOpaquePreservedLine"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.SectionTrailingSemicolonIsOpaqueUntilSemanticsAreConfirmed"
+      - "RA2YR.Tests.EditMode.Formats.Ini.WestwoodIniReaderTests.UnsupportedControlCharacterMakesLineOpaqueWithoutDataLoss"
+    evidence:
+      - "docs/compatibility/evidence/wp02f-ini-synthetic-20260803.yml#synthetic_validation"
+      - "docs/compatibility/evidence/wp02f-project-baseline-20260803.yml#project_baseline_ini"
+    limitations:
+      - id: format.ini-opaque-preservation.not-semantic-support
+        status: "已知限制"
+        description: "Preservation does not mean unknown syntax or mod extensions are executable or behaviorally compatible."
   - id: ini.override-source-tracking
     domain: ini
     feature: "Configuration override semantics and per-value source tracking"

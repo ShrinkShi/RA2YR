@@ -1,0 +1,174 @@
+schema_version: 1
+evidence_id: "wp02f-ini-synthetic-20260803"
+recorded_at_utc: "2026-08-03T03:30:00Z"
+scope: "WP-02F immutable raw-byte INI document, bounded structural parsing, opaque preservation, and unmodified byte-identical identity writing"
+
+environment:
+  unity_editor: "2022.3.60f1c1"
+  unity_test_framework: "1.1.33"
+  host: "Windows"
+  unity_engine_dependency: false
+  system_drawing_dependency: false
+  original_content_used_by_synthetic_tests: false
+  network_dependencies_added: false
+
+synthetic_validation:
+  physical_document:
+    bom_absent: "Passed"
+    utf8_bom: "Passed"
+    utf16le_bom: "Passed"
+    strict_invalid_bom_encoding_failure: "Passed"
+    crlf_preserved: "Passed"
+    lf_preserved: "Passed"
+    cr_preserved: "Passed"
+    mixed_line_endings_preserved: "Passed"
+    final_no_newline_preserved: "Passed"
+    multiple_final_blank_lines_preserved: "Passed"
+    raw_offsets_and_lengths: "Passed"
+    input_backing_array_snapshotted: "Passed"
+    immutable_collections_and_slices: "Passed"
+  structure:
+    section_order: "Passed"
+    duplicate_sections: "Passed"
+    key_order: "Passed"
+    duplicate_keys: "Passed"
+    original_case: "Passed"
+    leading_and_trailing_whitespace: "Passed"
+    equals_whitespace: "Passed"
+    empty_values: "Passed"
+    additional_equals_in_value: "Passed"
+    full_line_semicolon_comment: "Passed"
+    inline_semicolon_preserved_with_ambiguity_diagnostic: "Passed"
+    opaque_unknown_line: "Passed"
+    opaque_key_outside_section: "Passed"
+    opaque_missing_equals: "Passed"
+    opaque_unterminated_section: "Passed"
+    opaque_section_trailing_content: "Passed"
+    opaque_section_does_not_activate_following_keys: "Passed"
+    unknown_runtime_winner_rule_applied: false
+  encoding_boundary:
+    encoding_default_used: false
+    current_culture_used: false
+    no_bom_code_page_assumed: false
+    raw_non_ascii_bytes_preserved: "Passed"
+    unicode_normalization_performed: false
+    decoder_replacement_fallback_used: false
+    nul_rejected: "Passed"
+    unsupported_controls_preserved_as_opaque: "Passed"
+  inputs:
+    readonly_memory: "Passed"
+    seekable_stream: "Passed"
+    repeated_short_read_stream: "Passed"
+    bounded_mix_entry_window: "Passed"
+    memory_stream_window_model_equivalence: "Passed"
+    nonzero_absolute_window_offset: "Passed"
+  budgets:
+    maximum_input_bytes: "Passed"
+    maximum_single_read_bytes: "Passed"
+    maximum_line_count: "Passed"
+    maximum_line_bytes: "Passed"
+    section_node_budget: "Passed"
+    key_value_node_budget: "Passed"
+    comment_node_budget: "Passed"
+    opaque_node_budget: "Passed"
+    total_node_budget: "Passed"
+    cumulative_raw_bytes: "Passed"
+    cumulative_allocation: "Passed"
+    seekable_bounds_checked_before_snapshot: "Passed"
+    damaged_input_no_unbounded_allocation: "Passed"
+    damaged_input_no_infinite_loop: "Passed"
+  identity_writer:
+    exact_original_bytes: "Passed"
+    mixed_line_endings: "Passed"
+    opaque_lines: "Passed"
+    final_no_newline: "Passed"
+    output_budget: "Passed"
+    defensive_result_copy: "Passed"
+    stable_sha256: "Passed"
+    semantic_editing: "NotImplemented"
+  audit_contract:
+    four_fixed_candidates_kept_separate: "Passed"
+    rulesmd_winner_selected: false
+    payload_hash_change_fails_closed: "Passed"
+    payload_length_change_fails_closed: "Passed"
+    invalid_matching_hash_payload_fails_closed: "Passed"
+    missing_target_or_root_fails_closed: "Passed"
+    loose_candidate_rejected: "Passed"
+    source_fingerprint_change_fails_closed: "Passed"
+    manifest_budget_failure_has_no_success_manifest: "Passed"
+    external_cache_reparse_paths_rejected: "Passed"
+    sanitized_summary_excludes_original_text_and_host_paths: "Passed"
+
+test_runs:
+  focused_edit_mode:
+    result_xml: "Passed"
+    executed: 71
+    passed: 71
+    failed: 0
+    skipped: 0
+    format_cases: 55
+    audit_cases: 16
+  full_edit_mode:
+    result_xml: "Passed"
+    executed: 560
+    passed: 560
+    failed: 0
+    skipped: 0
+    wp02e_edit_mode_baseline: 489
+    new_wp02f_cases: 71
+    wrapper_shell_exit_code: 1
+    unity_process_exit_code_observed: false
+    note: "The complete XML passed 560/560, but Process.ExitCode was empty and the wrapper failed closed."
+  full_play_mode:
+    result_xml: "Passed"
+    executed: 1
+    passed: 1
+    failed: 0
+    skipped: 0
+    wrapper_shell_exit_code: 0
+    post_result_shutdown_required: true
+  ini_wrapper_regressions:
+    windows_powershell_5_1: { shell_exit_code: 0, executed: 9, passed: 9, failed: 0 }
+    powershell_7: { shell_exit_code: 0, executed: 9, passed: 9, failed: 0 }
+
+repository_gates:
+  windows_powershell_5_1: "Passed"
+  powershell_7: "Passed"
+  repository_validation:
+    asset_entries: 170
+    meta_files: 170
+    duplicate_guids: 0
+    matrix_entries: 133
+    evidence_references: 56
+    violations: 0
+  repository_validation_regressions: { executed: 46, passed: 46, failed: 0 }
+  copyright_scan:
+    status: "Passed"
+    index_candidates: 403
+    untracked_candidates: 0
+    ignored_external_probes: "13/13"
+    violations: 0
+  copyright_scan_regressions: { executed: 22, passed: 22, failed: 0 }
+
+repository_boundaries:
+  core_no_engine_references: true
+  unityengine_references_in_ini_core: 0
+  unityeditor_references_in_ini_core: 0
+  system_drawing_references_in_ini_core: 0
+  original_payloads_committed: false
+  section_or_key_lists_committed: false
+  original_values_or_comments_committed: false
+  base64_original_content_committed: false
+  absolute_content_paths_published: false
+
+compatibility_boundary:
+  raw_byte_document_parse: true
+  structure_classification: true
+  opaque_preservation: true
+  unmodified_byte_identical_roundtrip: true
+  semantic_editing: false
+  runtime_precedence: false
+  typed_rules_art_ai_views: false
+  finalalert2_edited_roundtrip: false
+  clean_yr_1001_original_comparison: false
+  limitation: "Synthetic preservation and identity writing do not establish Westwood runtime lookup, cross-file precedence, semantic editing, or FinalAlert 2 edited roundtrip behavior."

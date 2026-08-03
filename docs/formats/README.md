@@ -7,3 +7,4 @@ promoted only by the tests and local comparisons required for that entry.
 - [Westwood MIX containers](mix.md)
 - [Westwood PAL palettes](pal.md)
 - [Westwood CSF string tables](csf.md)
+- [Westwood RA2/YR INI physical documents](ini.md)

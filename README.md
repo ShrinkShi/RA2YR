@@ -2,7 +2,7 @@
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
-> 项目目前处于 WP-02E 基础格式阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
+> 项目目前处于 WP-02F 基础格式阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
 ## 项目定位
 
@@ -22,6 +22,8 @@ RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项�
 - 固定 XCC Mixer 1.47 的合成归档双向语义往返记录；
 - 严格的 768 字节 Westwood PAL 原始调色盘解析、不可变 RGB 模型、显式显示转换策略和三个 MIX 内黄金样本审计；
 - 严格的 Westwood CSF v3 有序文档解析、原始 UTF-16 code-unit 保留，以及 `langmd.mix` 内 `ra2md.csf` 黄金样本审计；
+- Westwood INI 原始字节文档、物理行结构与 Opaque 保留，以及未修改文档的逐字节 identity roundtrip；
+- 通过 MIX 虚拟源分别验证 `artmd.ini`、`ai.ini` 和两个不同的 `rulesmd.ini` 候选，不选择运行时胜出者；
 - EditMode、PlayMode、仓库静态验证和 CI 入口；
 - 明确区分“未实现”“可解析”和原版对照等兼容状态。
 
@@ -51,7 +53,7 @@ Windows 是当前优先平台。核心格式、内容和确定性逻辑的设计
 2. 将 source 和 cache 路径改为仓库外的本机目录。
 3. 不要移动、重命名或写入原版内容；本机配置和缓存已被 Git 忽略。
 
-WP-02A 建立目录型来源、显式优先级、来源链和仓库外 manifest；WP-02B 建立有界二进制输入、预算和诊断；WP-02C 在这些边界上增加 MIX 容器读写、加密目录、校验、嵌套挂载及 XCC 合成互操作；WP-02D 增加严格的 PAL 原始 RGB 解析；WP-02E 增加严格、只读的 CSF v3 文档解析。SHP、PCX、VXL/HVA、TMP、INI、地图 Pack、Texture2D、Shader、玩家色、剧院选择以及 CSF 写入和运行时本地化仍未实现，也不证明视觉或游戏行为兼容。受控基线命令只读访问必要字节并计算摘要；公开证据不包含文件正文、完整颜色表、字符串表、绝对路径或完整文件级清单。
+WP-02A 建立目录型来源、显式优先级、来源链和仓库外 manifest；WP-02B 建立有界二进制输入、预算和诊断；WP-02C 在这些边界上增加 MIX 容器读写、加密目录、校验、嵌套挂载及 XCC 合成互操作；WP-02D 增加严格的 PAL 原始 RGB 解析；WP-02E 增加严格、只读的 CSF v3 文档解析；WP-02F 增加 INI 原始字节、物理行结构、显式编码边界和未修改 identity writer。SHP、PCX、VXL/HVA、TMP、地图 Pack、Texture2D、Shader、玩家色、剧院选择、INI 强类型语义与覆盖优先级，以及 CSF 写入和运行时本地化仍未实现，也不证明视觉或游戏行为兼容。受控基线命令只读访问必要字节并计算摘要；公开证据不包含文件正文、完整颜色表、字符串表、绝对路径或完整文件级清单。
 
 本轮的 XCC `往返通过` 是明确的语义结果：条目集合、要求保留的顺序和提取负载 SHA-256 一致。XCC 生成归档与本项目重建归档的文件字节并不相同，因此不宣称字节级复原。
 
@@ -101,6 +103,15 @@ WP-02A 建立目录型来源、显式优先级、来源链和仓库外 manifest�
 
 完整逐记录字符串审计只写入仓库外 Cache；被忽略的本机摘要和仓库证据仅包含固定 MIX 身份、数量与长度统计、规范化模型 SHA-256 和诊断计数，不包含标签列表或字符串正文。该命令不实现 CSF 写入、运行时标签查找、语言回退、字体或 UI 渲染。
 
+通过 MIX 虚拟内容源验证四个固定 INI 候选并执行未修改字节往返：
+
+```powershell
+./Tools/Content/Invoke-IniProjectBaselineAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+完整逐行审计和 identity 输出只写入仓库外 Cache。公开摘要只含逻辑来源、大小、哈希、行/节点聚合和诊断计数，不含节名、键名、值、注释或原始行。这里的“往返通过”仅指未修改输入逐字节一致；语义编辑、原版 writer、跨 MIX 覆盖和 FinalAlert 2 编辑往返仍未实现。
+
 XCC 合成互操作使用 `Prepare`、`VerifyXccCreated` 和 `VerifyXccExtractions` 三个受控阶段。包装器不会启动或证明 XCC 进程；操作员必须只使用外部 cache 中的自主合成文件，并以固定工具哈希另行记录真实 GUI 操作。命令和固定目录契约见 [Tools/Content/README.md](Tools/Content/README.md)。
 
 运行版权扫描及其双 PowerShell 回归：
@@ -146,6 +157,7 @@ Tools/Testing/                  Unity 命令行测试入口
 - [Westwood MIX 格式研究与验证](docs/formats/mix.md)
 - [Westwood PAL 格式研究与严格解析](docs/formats/pal.md)
 - [Westwood CSF 格式研究与严格解析](docs/formats/csf.md)
+- [Westwood INI 原始字节文档与严格边界](docs/formats/ini.md)
 - [兼容矩阵说明](docs/compatibility/README.md)
 - [机器可读兼容矩阵](docs/compatibility/matrix.yml)
 - [架构决策记录](docs/adr/README.md)

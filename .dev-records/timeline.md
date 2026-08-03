@@ -330,3 +330,26 @@
 ### 后续事项
 - 完成仓库门禁、分层提交、Draft PR 和 Actions 实际状态验证，不自动合并。
 - 后续本地化工作必须先研究原版标签大小写、重复项胜出、语言覆盖和缺失标签回退规则。
+
+## 2026-08-03 - WP-02F INI 无损字节文档与黄金 identity 往返
+
+### 用户目标
+- 从 PR #6 合并后的 `main` 创建独立分支，仅实现 INI 原始字节文档、结构分类、编码边界和未修改逐字节往返。
+
+### 本轮处理
+- 从合并提交 `7bb74992` 创建 `feature/wp02f-lossless-ini-document`，没有叠加 WP-02E 分支。
+- 交叉研究 ProjectBaseline、FinalAlert 2 开源实现、OpenRA 和既有 XCC 参考；第三方代码保持 reference-only。
+- 实现 UnityEngine-free 不可变原始字节 store、物理行、结构节点、Opaque 节点、严格显式编码视图、预算、诊断和 identity writer。
+- 通过 MIX 虚拟源固定 `artmd.ini`、`ai.ini` 和两个独立 `rulesmd.ini`；完整逐行记录和 identity 文件只发布到仓库外 Cache。
+- 新增受控 Editor 命令、PS5.1/PS7 包装器及固定 payload/model fail-closed 验证。
+
+### 当前结论
+- 四个固定候选全部精确 identity roundtrip；两个 `rulesmd.ini` 长度、payload 和结构统计不同，继续不选择胜出者。
+- 无 BOM 样本只认定为 ASCII-compatible 单字节原始数据，不推断 UTF-8 或主机代码页。
+- Opaque 保留证明可无损保存，不代表未知语法已经可执行。
+- ProjectBaseline 审计 Unity 进程退出码 0；外部 manifest SHA-256 为 `1D7ACFE624D9F3575DC9391F6FE070B2A351F0DA560B89606129E530AD9A3F35`。
+- 全量 EditMode XML 560/560、PlayMode XML 1/1；EditMode 包装器因空 `Process.ExitCode` fail-closed 返回 1，PlayMode 包装器收尾后真实返回 0。
+
+### 后续事项
+- 完成全量 Unity、仓库、版权和双 PowerShell 门禁后创建 Draft PR，不自动合并。
+- WP-02G 单独研究 MIX 层级和运行时配置覆盖；本轮不实现 Rules/Art/AI 强类型语义。
