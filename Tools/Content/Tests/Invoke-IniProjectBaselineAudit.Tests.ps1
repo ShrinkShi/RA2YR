@@ -8,6 +8,7 @@ if ([string]::IsNullOrWhiteSpace($RepositoryRoot)) {
 }
 $root = [IO.Path]::GetFullPath($RepositoryRoot)
 $wrapperPath = Join-Path $root 'Tools\Content\Invoke-IniProjectBaselineAudit.ps1'
+$runtimeWrapperPath = Join-Path $root 'Tools\Content\Invoke-IniRuntimeResolutionAudit.ps1'
 $editorPath = Join-Path $root 'Assets\RA2YR\Editor\IniProjectBaselineAuditCommand.cs'
 $utf8 = New-Object Text.UTF8Encoding($false, $true)
 $passed = 0
@@ -73,7 +74,62 @@ function New-SyntheticSummary {
     }
 }
 
+function New-SyntheticRuntimeCandidate {
+    param($Name, $Hash, $RootArchive)
+    [pscustomobject]@{
+        logicalName = $Name; mixId = '0x00000001'
+        provenance = [pscustomobject]@{
+            sourceId = 'YR1001_ProjectBaseline'; rootArchive = $RootArchive
+            layers = @([pscustomobject]@{
+                archive = $RootArchive; entryId = '0x00000001'; resolvedName = $Name
+            })
+        }
+        length = 1; sha256 = $Hash
+    }
+}
+
+function New-SyntheticRuntimeSummary {
+    $rulesA = New-SyntheticRuntimeCandidate 'rulesmd.ini' `
+        '3d341ef8a13a4b5ab24af2eef48ac94931ac2bb87d950fe3330a07e2d25672ef' `
+        'expandmd01.mix'
+    $rulesB = New-SyntheticRuntimeCandidate 'rulesmd.ini' `
+        '06761dd7f714e7d9400216ec3c06109ec5c1461f6a0727be7401eb9d8b0f6d05' `
+        'ra2md.mix'
+    $soundA = New-SyntheticRuntimeCandidate 'soundmd.ini' `
+        '0a8e85381aef1a0f97074c953bfe99504da00c6220fae1a023a1afd857023232' `
+        'expandmd01.mix'
+    $soundB = New-SyntheticRuntimeCandidate 'soundmd.ini' `
+        'd1be76491a0888396b4d0e53f4857f33879a5afd40a8bcea65ea1d1a3096d419' `
+        'ra2md.mix'
+    [pscustomobject]@{
+        schemaVersion = 1; manifestType = 'RA2YR.IniRuntimeResolutionAuditSanitized'
+        baselineLogicalName = 'YR1001_ProjectBaseline'; auditStatus = 'Complete'
+        directoryFingerprint = ('b' * 64)
+        candidateSets = @(
+            [pscustomobject]@{ logicalName = 'rulesmd.ini'; candidateCount = 2
+                candidates = @($rulesA, $rulesB); selectedWinner = $null
+                winnerEvidence = 'Unresolved' },
+            [pscustomobject]@{ logicalName = 'soundmd.ini'; candidateCount = 2
+                candidates = @($soundA, $soundB); selectedWinner = $null
+                winnerEvidence = 'Unresolved' }
+        )
+        syntaxAudits = @(1, 2, 3, 4)
+        runtimeBoundary = [pscustomobject]@{
+            genericExplicitLoadPlanExecutable = $true
+            perValueCandidateChainImplemented = $true
+            projectBaselineRuntimeWinnerSelected = $false
+            originalRuntimeComparisonPassed = $false
+            blackBoxAuthorization = 'not-granted-not-executed'
+        }
+        baseIniAuditExternalManifest = [pscustomobject]@{
+            cacheRelativePath = 'wp02f/ini-audits/test/manifest.json'
+            length = 1; sha256 = ('c' * 64)
+        }
+    }
+}
+
 if (-not (Test-Path -LiteralPath $wrapperPath -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $runtimeWrapperPath -PathType Leaf) -or
     -not (Test-Path -LiteralPath $editorPath -PathType Leaf)) {
     throw 'The WP-02F controlled audit entry points are missing.'
 }
@@ -87,6 +143,7 @@ if ($parseErrors.Count -ne 0) {
     throw (($parseErrors | ForEach-Object { $_.Message }) -join '; ')
 }
 $wrapperText = [IO.File]::ReadAllText($wrapperPath, $utf8)
+$runtimeWrapperText = [IO.File]::ReadAllText($runtimeWrapperPath, $utf8)
 $editorText = [IO.File]::ReadAllText($editorPath, $utf8)
 
 Invoke-Case 'PowerShell parser accepts wrapper' {
@@ -118,6 +175,23 @@ Invoke-Case 'Editor command uses controlled Core service' {
         if (-not $editorText.Contains($required)) { throw "Missing editor boundary: $required" }
     }
 }
+Invoke-Case 'Runtime audit mode is exposed through the same safety wrapper' {
+    foreach ($required in @(
+        "ValidateSet('PhysicalDocument', 'RuntimeResolution')",
+        'RunRuntimeResolution', 'wp02g1-ini-runtime-resolution-summary.json',
+        'baseIniAuditExternalManifest')) {
+        if (-not $wrapperText.Contains($required)) { throw "Missing runtime gate: $required" }
+    }
+    if (-not $editorText.Contains('RunRuntimeResolutionAudit(configuration)')) {
+        throw 'The editor runtime audit command does not call the controlled Core service.'
+    }
+    foreach ($required in @(
+        'Invoke-IniProjectBaselineAudit.ps1', '-AuditMode RuntimeResolution')) {
+        if (-not $runtimeWrapperText.Contains($required)) {
+            throw "Missing runtime forwarding boundary: $required"
+        }
+    }
+}
 
 $functionAsts = @($ast.FindAll({
     param($node)
@@ -126,6 +200,7 @@ $functionAsts = @($ast.FindAll({
 foreach ($functionAst in $functionAsts) { Invoke-Expression $functionAst.Extent.Text }
 $baselineName = 'YR1001_ProjectBaseline'
 $manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
+$runtimeResolutionAudit = $false
 
 Invoke-Case 'Synthetic sanitized summary passes' {
     $summary = New-SyntheticSummary
@@ -150,6 +225,24 @@ Invoke-Case 'Absolute host paths are rejected' {
     $summary = New-SyntheticSummary
     $summary.limitations[0] = 'C:\private\original.ini'
     Assert-Throws { Assert-SanitizedSummary $summary ($summary | ConvertTo-Json -Depth 8 -Compress) }
+}
+
+Invoke-Case 'Synthetic runtime resolution summary passes' {
+    $script:manifestType = 'RA2YR.IniRuntimeResolutionAuditSanitized'
+    $script:runtimeResolutionAudit = $true
+    $summary = New-SyntheticRuntimeSummary
+    Assert-SanitizedSummary $summary ($summary | ConvertTo-Json -Depth 8 -Compress)
+    $script:runtimeResolutionAudit = $false
+    $script:manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
+}
+Invoke-Case 'Runtime winner selection fails closed' {
+    $script:manifestType = 'RA2YR.IniRuntimeResolutionAuditSanitized'
+    $script:runtimeResolutionAudit = $true
+    $summary = New-SyntheticRuntimeSummary
+    $summary.candidateSets[0].selectedWinner = $summary.candidateSets[0].candidates[0]
+    Assert-Throws { Assert-SanitizedSummary $summary ($summary | ConvertTo-Json -Depth 8 -Compress) }
+    $script:runtimeResolutionAudit = $false
+    $script:manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
 }
 
 "INI audit wrapper regression tests passed: $passed"
