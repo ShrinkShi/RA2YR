@@ -333,3 +333,20 @@
 - Added 97 Unity EditMode tests and 9 SHP wrapper regression cases.
 - Added format documentation, ADR 0018/0019, third-party reference records, compatibility matrix entries, README status, and delivery evidence.
 - Final local validation: EditMode 775/775, PlayMode 1/1, repository regression 46/46, copyright regression 22/22, and zero wrapper or scan exit failures in PowerShell 5.1/7.
+
+## 2026-08-03 - ProjectBaseline INI ordered semantic composition revision
+
+- Added a ProjectBaseline-only load-plan builder with the explicit low-to-high
+  order `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Same-name INI documents now compose per `SectionName + KeyName`; higher layers
+  override matching values while lower unique values and higher additions remain.
+- Every resolved value retains its winning layer and complete overridden
+  candidate chain, physical line IDs, source ID, and logical MIX provenance.
+- Invalid or duplicate expand numbers and non-ProjectBaseline sources fail with
+  structured diagnostics; discovery enumeration order cannot change results.
+- Rules typed auditing consumes the composed two-layer result. Intradocument
+  name, duplicate, semicolon, whitespace, and empty-value behavior remains an
+  explicit testing policy and is not original-runtime confirmation.
+- Final validation: composition 16/16, full EditMode 824/824, PlayMode 1/1,
+  INI wrapper 15/15 in both PowerShell hosts, repository validation 46/46,
+  copyright regression 22/22, and all real audit/gate exit codes zero.

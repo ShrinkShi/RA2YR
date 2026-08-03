@@ -427,3 +427,17 @@
 - Strict decoding succeeded for all raw frames and failed closed for 257 non-empty flags 3 frames. Every observed failure was a row-0 output overflow by one index; production behavior was not widened or sample-special-cased.
 - Final local results: EditMode 775/775, PlayMode 1/1, both Unity wrappers exit 0 with controlled post-result shutdown; SHP/INI/CSF/PAL wrapper regressions pass in PowerShell 5.1 and 7.
 - Repository validation reports 214 Assets/214 meta, 147 matrix entries, and 95 evidence references. Copyright scans report zero violations and 13/13 ignored external probes in both hosts.
+
+## 2026-08-03 - ProjectBaseline INI composition correction
+
+- Replaced the interim whole-file winner model with ordered multi-document
+  semantic composition: `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Added deterministic expand-number parsing, per-key overlay tests, complete
+  overridden-candidate traces, and fail-closed source/layer diagnostics.
+- Re-routed the WP-02G2 Rules audit through the composed two-document result;
+  `artmd.ini` remains a one-layer regression input.
+- Kept original-runtime comparison and all intradocument syntax policies
+  unresolved and independently evidence-gated.
+- Final ProjectBaseline audits were stable across PowerShell 5.1/7: Rules has
+  22,720 resolved values, 22,709 overridden chains, five registries and 1,171
+  entries; Art remains 880 records. Final Unity XML is 824/824 and 1/1.

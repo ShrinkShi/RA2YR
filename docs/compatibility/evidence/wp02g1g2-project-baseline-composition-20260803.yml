@@ -1,0 +1,164 @@
+schema_version: 1
+evidence_id: "wp02g1g2-project-baseline-composition-20260803"
+recorded_at_utc: "2026-08-03T20:05:15.9066409Z"
+scope: "Configured ProjectBaseline ordered multi-document INI composition and minimal Rules/Art audit"
+
+policy:
+  evidence_level: "ConfiguredForProjectBaseline"
+  confirms_original_runtime: false
+  confirms_project_baseline_runtime_execution: false
+  authoritative_source_id: "YR1001_ProjectBaseline"
+  low_to_high_layers: ["ra2", "ra2md", "expandmd01..expandmd99", "loose"]
+  composition_identity: "SectionName + KeyName"
+  whole_file_winner: false
+  text_concatenation: false
+  missing_expand_numbers_allowed: true
+  enumeration_order_affects_result: false
+  excluded_candidate_sources:
+    - "FinalAlert 2"
+    - "reference material"
+    - "manual extraction"
+    - "cache"
+    - "tool temporary output"
+  independently_unresolved:
+    - "section and key name comparison"
+    - "duplicate sections"
+    - "duplicate keys"
+    - "inline semicolon"
+    - "whitespace"
+    - "empty-value override or deletion"
+
+composition_layers:
+  rulesmd_ini:
+    mix_id: "0x8218F9F4"
+    document_role: "CompositionLayer"
+    order: "low-to-high"
+    layers:
+      - layer_id: "projectbaseline-ra2md"
+        priority: 200
+        provenance: ["ra2md.mix", "localmd.mix", "rulesmd.ini"]
+        length: 742958
+        sha256: "06761DD7F714E7D9400216EC3C06109EC5C1461F6A0727BE7401EB9D8B0F6D05"
+      - layer_id: "projectbaseline-expandmd01"
+        priority: 301
+        expand_number: 1
+        provenance: ["expandmd01.mix", "rulesmd.ini"]
+        length: 743215
+        sha256: "3D341EF8A13A4B5AB24AF2EEF48AC94931AC2BB87D950FE3330A07E2D25672EF"
+  soundmd_ini:
+    mix_id: "0x7A742519"
+    document_role: "CompositionLayer"
+    order: "low-to-high"
+    layers:
+      - layer_id: "projectbaseline-ra2md"
+        priority: 200
+        provenance: ["ra2md.mix", "localmd.mix", "soundmd.ini"]
+        length: 99292
+        sha256: "D1BE76491A0888396B4D0E53F4857F33879A5AFD40A8BCEA65EA1D1A3096D419"
+      - layer_id: "projectbaseline-expandmd01"
+        priority: 301
+        expand_number: 1
+        provenance: ["expandmd01.mix", "soundmd.ini"]
+        length: 99392
+        sha256: "0A8E85381AEF1A0F97074C953BFE99504DA00C6220FAE1A023A1AFD857023232"
+
+rules_composition:
+  intradocument_policy_evidence: "ConfiguredForTesting"
+  typed_status: "Incomplete"
+  document_layer_count: 2
+  resolved_value_count: 22720
+  values_with_overridden_candidates: 22709
+  winner_layer_counts:
+    projectbaseline-expandmd01: 22720
+  registry_type_count: 5
+  registry_entry_count: 1171
+  invalid_identifier_count: 109
+  failed_identifier_count: 0
+  source_trace_complete: 1171
+  source_trace_total: 1171
+  normalized_model_schema: "RA2YR.INI.MINIMAL.RULES.V2"
+  normalized_model_sha256: "0B0BDBCCA9127615FDD0D67E86D9BE739481FD83FCA5D5C28C7233425ABFBE62"
+  diagnostic_counts:
+    DuplicateRegistryIdentifier: 10
+    InlineSemicolonMayAffectTarget: 218
+    InvalidAsciiIdentifier: 109
+    OpaqueMayAffectTarget: 1470
+
+art_regression:
+  typed_status: "Incomplete"
+  record_count: 880
+  explicit_image_count: 297
+  voxel: { yes: 43, no: 1, invalid: 0, missing: 836 }
+  source_trace_complete: 1521
+  source_trace_total: 1521
+  normalized_model_schema: "RA2YR.INI.MINIMAL.ART.V2"
+  normalized_model_sha256: "CA2980BC41E5EF74A530BBB36CFFE4B9D3ECCF0D9478E9F063CE8EF02F098CE5"
+
+sanitized_runs:
+  runtime_resolution:
+    directory_fingerprint: "481E4AE76662001008EEF8105CC749B29B958C9C5D39D0DFE889F47A046D1E6E"
+    powershell_7:
+      started_utc: "2026-08-03T19:46:37.4762435Z"
+      completed_utc: "2026-08-03T19:46:51.0006675Z"
+      sanitized_summary_sha256: "1DF1BCBADEE1872EC8337AD5E393DD20790D18A699A6ABF14458A8DFD6B76B96"
+      unity_exit: 0
+    powershell_5_1:
+      started_utc: "2026-08-03T19:47:18.9223180Z"
+      completed_utc: "2026-08-03T19:47:32.3630043Z"
+      sanitized_summary_sha256: "5454DE9B0195300712D2863D8BB181CE0097851549FD7F686FAA27B7BA58E201"
+      unity_exit: 0
+    stable_aggregate_equivalent: true
+  minimal_resource:
+    directory_fingerprint: "481E4AE76662001008EEF8105CC749B29B958C9C5D39D0DFE889F47A046D1E6E"
+    powershell_7:
+      started_utc: "2026-08-03T20:04:14.9633405Z"
+      completed_utc: "2026-08-03T20:04:28.4676805Z"
+      sanitized_summary_sha256: "3CC45D822700A76E0CDD59201538AB10D0FD81B1FD25A3D6FC400C220A38916A"
+      unity_exit: 0
+    powershell_5_1:
+      started_utc: "2026-08-03T20:05:02.4526391Z"
+      completed_utc: "2026-08-03T20:05:15.9066409Z"
+      sanitized_summary_sha256: "F2707C077E14CA22C412CA2B75267350DCB57C528EEDCB5C3EABE7B9C27916CB"
+      unity_exit: 0
+    stable_aggregate_equivalent: true
+
+synthetic_validation:
+  new_test_cases: 16
+  focused_result: "16/16 passed"
+  wrapper_regression:
+    powershell_5_1: "15/15 passed"
+    powershell_7: "15/15 passed"
+  coverage:
+    - "ra2/ra2md/expand01/expand99/loose explicit order"
+    - "missing expand numbers"
+    - "per-key override, inheritance, and addition"
+    - "enumeration-order independence"
+    - "complete layer and MIX provenance"
+    - "duplicate and invalid expand numbers"
+    - "duplicate base layer"
+    - "non-ProjectBaseline source rejection"
+    - "typed source trace layer retention"
+    - "ConfiguredForProjectBaseline is not runtime confirmation"
+
+final_validation:
+  unity_editmode: "824/824 passed"
+  unity_playmode: "1/1 passed"
+  unity_wrapper_exit: 0
+  forced_post_result_shutdown: false
+  repository_validation:
+    powershell_5_1: "passed; assets=226 meta=226 matrixEntries=148 evidenceReferences=109"
+    powershell_7: "passed; assets=226 meta=226 matrixEntries=148 evidenceReferences=109"
+    regression: "46/46 passed"
+  copyright_scan:
+    powershell_5_1: "passed; violations=0 ignoredExternalProbes=13/13"
+    powershell_7: "passed; violations=0 ignoredExternalProbes=13/13"
+    regression: "22/22 passed"
+  unity_or_xcc_processes_after_validation: 0
+  unity_lockfile_present_after_validation: false
+
+publication_boundary:
+  original_text_published: false
+  section_or_key_lists_published: false
+  values_published: false
+  absolute_paths_published: false
+  reconstructable_per_value_manifest_published: false

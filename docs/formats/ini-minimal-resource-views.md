@@ -15,9 +15,9 @@ ambiguous or failed resolution.
 | Identifier list | comma-separated explicit identifiers | empty-item removal and implicit trim |
 
 Every present or invalid scalar retains its raw bytes, winner, overridden
-candidates, source ID, logical MIX chain, section physical-line ID, and key
-physical-line ID. Budgets limit scalar bytes, list items, source candidates,
-registry entries, Art records, and diagnostics.
+candidates, layer ID, source ID, logical MIX chain, section physical-line ID,
+and key physical-line ID. Budgets limit scalar bytes, list items, source
+candidates, registry entries, Art records, and diagnostics.
 
 ## Minimal Rules projection
 
@@ -54,12 +54,22 @@ candidates, not proof that an asset exists or can be decoded.
 
 ## ProjectBaseline boundary
 
-The fixed `expandmd01.mix` and `ra2md.mix/localmd.mix` Rules candidates are
-resolved separately under `ConfiguredForTesting`. `artmd.ini` is processed the
-same way. Public evidence contains aggregate counts, complete-source coverage,
-diagnostic counts, and one-way normalized model hashes only. Object names,
+The fixed `ra2md.mix/localmd.mix` and `expandmd01.mix` Rules documents are
+composed low-to-high under `ConfiguredForProjectBaseline`. Section/key case,
+duplicates, semicolons, whitespace, and empty values remain an explicit
+`ConfiguredForTesting` policy for this typed audit and are not original-runtime
+confirmation. `artmd.ini` currently has one configured layer.
+
+The composed Rules audit contains 22,720 value identities and 22,709 values
+with a preserved overridden candidate. All current winners are in the expand
+layer because that document repeats every lower identity and adds eleven; the
+resolver did not select the file as a whole. The minimal result remains five
+registries and 1,171 entries.
+
+Public evidence contains aggregate counts, complete-source coverage,
+diagnostic counts, and one-way V2 normalized model hashes only. Object names,
 section lists, resource names, values, raw bytes, and host paths are excluded.
 
-Stock archive precedence, full Rules/Art semantics, defaults, fallbacks,
+Original-runtime confirmation, full Rules/Art semantics, defaults, fallbacks,
 inheritance, SHP/VXL decoding, palette selection, rendering, and gameplay are
 not implemented.

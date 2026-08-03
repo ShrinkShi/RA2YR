@@ -349,3 +349,19 @@ All 257 observed ProjectBaseline flags 3 failures overflow the first row by one 
 
 ### Impact
 Directory and raw indexed decoding can be promoted independently. Strict synthetic flags 3 decoding is implemented, while ProjectBaseline compressed-frame compatibility remains limited and explicitly evidenced.
+
+## 2026-08-03 - ProjectBaseline same-name INI files compose by value identity
+
+### Decision
+- The configured layer order is `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Same-name documents overlay low-to-high by `SectionName + KeyName`; they are
+  not whole-file winners, fallback-only files, or concatenated text.
+- The result preserves each value winner and all overridden candidates with
+  document layer, physical line, source, and archive provenance.
+- This policy is `ConfiguredForProjectBaseline`, not
+  `ConfirmedByOriginalRuntime`.
+
+### Independent unresolved boundaries
+Section/key comparison, duplicate sections and keys, inline semicolons,
+whitespace, and empty-value override/deletion remain separate policies. The
+cross-document composition decision does not select them implicitly.

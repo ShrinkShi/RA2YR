@@ -13,7 +13,7 @@
 - [ ] 为非 Windows 平台实现并验证 realpath/device 路径 identity。
 - [ ] 调查 Unity 2022.3.60f1c1 中国版 headless 测试完成后的退出异常。
 - [ ] 获得单独授权后，在仓库外一次性副本上执行 stock YR INI precedence、重复项、大小写、分号、空白和空值 A/B 黑盒对照。
-- [ ] 黑盒证据通过前保持 ProjectBaseline `rulesmd.ini` 与 `soundmd.ini` winner 为 Ambiguous。
+- [ ] 在单独授权的黑盒对照中验证已冻结的 ProjectBaseline composition 是否匹配原版运行时；在此之前证据等级保持 `ConfiguredForProjectBaseline`。
 - [ ] Resolve the ProjectBaseline SHP(TS) flags 3 row-width conflict with independently authorized original-runtime or reference-tool observations; do not relax the strict decoder from corpus shape alone.
 - [ ] Audit real flags 2, high-bit coordinates, and `00 00` command semantics if future fixed samples expose them.
 - [ ] Implement palette binding, remap, shadow pairing, visual comparison, and Unity rendering only in later work packages.

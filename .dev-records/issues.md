@@ -246,9 +246,11 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 证明 stock YR 游戏运行时采用相同规则。
 
 ### 处理
-运行时审计将 `selectedWinner` 保持为 null，证据等级标为 `Unresolved`；
-实现只接受显式策略。没有启动游戏、XCC、FinalAlert 2 或 GUI 自动化，也
-没有创建会被原版加载的测试 MOD。
+初版运行时审计将 whole-file selection 保持未决，实现只接受显式策略。
+该临时结论已由 ADR 0022 取代：ProjectBaseline 现在采用明确的有序多文档
+逐值组合，但证据等级仅为 `ConfiguredForProjectBaseline`，不声称原版运行时
+对照。没有启动游戏、XCC、FinalAlert 2 或 GUI 自动化，也没有创建会被
+原版加载的测试 MOD。
 
 ### 后续验证
 按 `docs/formats/ini-runtime-resolution.md` 中的 A/B 黑盒计划，在用户另行
