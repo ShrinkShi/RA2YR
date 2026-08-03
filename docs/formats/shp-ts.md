@@ -192,6 +192,39 @@ All failures occurred on row 0, so later commands in those frames were not
 examined. The public `00 00` count of zero means none was reached before strict
 termination; it is not proof that all compressed rows lack `00 00`.
 
+## M2-SHP1F independent row-width probe
+
+The follow-up forensic analyzer leaves production decode semantics unchanged.
+It independently walks bounded row payloads and records scalar command/output
+classifications only; it does not call the production row decoder, fixture
+builder, encoder, or indexed-frame reconstruction path.
+
+Stage A confirmed the locked 257-frame row-zero aggregate. Every extra output
+came from the final zero run, was index zero, overshot by exactly one, and left
+the declared input exactly consumed when that one output was ignored. This
+allowed conditional Stage B analysis of all declared rows.
+
+Stage B analyzed 9,495 rows:
+
+- 1,331 rows mechanically produce exactly `WidthRaw`;
+- 8,164 rows mechanically produce `WidthRaw + 1`;
+- every width-plus-one row has the same final-zero-run, one-zero-extra shape;
+- no literal overflow, `00 00`, malformed row, or other output length occurs;
+- all 257 frames contain a mixture of exact-width and width-plus-one rows;
+- building, infantry, animation, and map-add-on categories all contain both
+  row classes.
+
+The evidence therefore reaches decision B, not A1 or D. Row zero is uniform,
+but the all-row contract is not. Category count ratios differ, while category
+behavior does not split into distinct contracts. A generic clip would hide
+the unresolved reason that some rows carry the extra transparent output and
+others do not.
+
+The production decoder remains strict. ProjectBaseline flags-3 compatibility
+is not promoted, and no production repair is recommended. The independent
+probe did exhaustively count `00 00` across these 9,495 declared rows and found
+zero; this does not define its stock semantic acceptance for other files.
+
 ## Immutable model and canonical hashes
 
 `ShpTsDocument` contains an immutable `ShpTsHeader`, ordered immutable

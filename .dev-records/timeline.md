@@ -1,5 +1,29 @@
 # 开发时间线
 
+## 2026-08-03 18:20 - M2-SHP1F flags-3 row-width forensic probe
+
+### User goal
+- Keep the production SHP decoder unchanged while classifying the locked 257-frame row-width conflict.
+
+### Work completed
+- Added an independent bounded scalar analyzer, conditional all-row audit, sanitized evidence, and PS 5.1/7 wrapper.
+- Locked the existing row-zero aggregate before inference.
+- Analyzed 9,495 declared rows after Stage A passed its five conditions.
+
+### Key conclusion
+- Decision B: 1,331 rows equal WidthRaw and 8,164 rows equal WidthRaw+1; every frame contains both classes.
+- No production repair is recommended and flags-3 ProjectBaseline compatibility remains unimplemented.
+
+### Files affected
+- `Assets/RA2YR/Core/Content/ShpTs/Forensics/`
+- `Assets/RA2YR/Tests/EditMode/Content/ShpTs/Forensics/`
+- `Tools/Content/Invoke-ShpTsRleForensicAudit.ps1`
+- `docs/adr/0020-shp-ts-rle-forensic-probe-remains-non-production.md`
+- `docs/compatibility/evidence/m2-shp1f-rle-forensic-20260803.yml`
+
+### Follow-up
+- Run the final full repository gates, commit the forensic work independently, and keep PR #11 Draft.
+
 ## 2026-08-01 17:26 - 启动 WP-00 和 WP-01
 
 ### 用户目标

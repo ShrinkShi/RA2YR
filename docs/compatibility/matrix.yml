@@ -436,21 +436,39 @@ entries:
       - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RleRunOutputOverflowFailsWithoutClamp"
       - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.ZeroZeroConsumesTwoBytesButReturnsUnresolved"
       - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.StrictRleFailureStillPublishesControlledSanitizedEvidence"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Forensics.ShpTsRleForensicAnalyzerTests.FinalZeroRunGuardIsClassifiedWithoutProducingPixels"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Forensics.ShpTsRleForensicAuditTests.MixedRowsSharedAcrossCategoriesReachB"
     evidence:
       - "docs/compatibility/evidence/m2-shp1-shp-ts-research-20260803.yml#compression_decisions"
       - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#test_classes"
       - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml#rle_conflict"
+      - "docs/compatibility/evidence/m2-shp1f-rle-forensic-20260803.yml"
       - "docs/adr/0019-shp-ts-rle-zero-strictness.md"
+      - "docs/adr/0020-shp-ts-rle-forensic-probe-remains-non-production.md"
     limitations:
       - id: format.shp-ts-rle-zero-indexed-decode.project-baseline-conflict
         status: "已知限制"
-        description: "All 257 attempted non-empty flags-3 ProjectBaseline frames fail on row zero because the encoded zero run would emit width+1 indices; the strict decoder does not clamp, pad, widen, or special-case them, so ProjectBaseline compressed-frame compatibility is not promoted."
+        description: "All 257 attempted non-empty flags-3 ProjectBaseline frames fail strictly on row zero. The independent all-row probe found 1,331 exact-width rows and 8,164 final-zero-run width+1 rows, so decision B keeps the decoder strict and ProjectBaseline compressed-frame compatibility unpromoted."
       - id: format.shp-ts-rle-zero-indexed-decode.flags2-unresolved
         status: "已知限制"
         description: "RawFlags 2 remains source-conflicting between XCC and OpenRA and has no default decoder; unknown flags also remain unresolved."
       - id: format.shp-ts-rle-zero-indexed-decode.zero-zero-unresolved
         status: "已知限制"
-        description: "00 00 consumes input but its stock semantic acceptance remains unresolved; the fixed audit stops on row zero for failing frames and cannot exhaustively inspect later rows."
+        description: "00 00 consumes input but its stock semantic acceptance remains unresolved. The independent scalar probe found zero occurrences across 9,495 declared rows in the fixed failing frames, which is sample evidence rather than a format-wide rule."
+  - id: format.shp-ts-rle-forensic-probe
+    domain: format
+    feature: "Independent bounded SHP(TS) flags-3 row-width forensic classification"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Forensics.ShpTsRleForensicAnalyzerTests"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Forensics.ShpTsRleForensicAuditTests"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1f-rle-forensic-20260803.yml"
+      - "docs/adr/0020-shp-ts-rle-forensic-probe-remains-non-production.md"
+    limitations:
+      - id: format.shp-ts-rle-forensic-probe.non-production
+        status: "已知限制"
+        description: "Decision B is aggregate forensic evidence only; it neither changes the strict production decoder nor proves original runtime behavior."
   - id: format.shp-ts-mix-window
     domain: format
     feature: "Bounded SHP(TS) Memory, Stream, short-read, and MIX-entry-window equivalence"

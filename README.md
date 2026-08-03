@@ -27,7 +27,7 @@ RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项�
 - 显式、证据分级的 INI 加载计划与独立的文件组合、名称比较、重复项、分号、空白和空值策略；
 - 确定性的逐值候选链与完整来源追踪；`rulesmd.ini` 和 `soundmd.ini` 的 ProjectBaseline 胜出者仍保持歧义；
 - 只消费显式 `Complete` INI resolution 的最小 typed scalar、Rules 类型注册表和 Art 资源路由视图；Art 多重匹配与 Rules 重复 ordinal 均保留全部候选并 fail-closed，不选择首项赢家；
-- Westwood SHP(TS) 8 字节头、24 字节帧目录、不可变局部索引帧，以及 flags 0/1 raw 解码；严格 flags 3 RLE-Zero 已通过合成测试，但 257 个 ProjectBaseline 压缩帧因首行多输出一个索引而受控失败，未提升黄金兼容状态；
+- Westwood SHP(TS) 8 字节头、24 字节帧目录、不可变局部索引帧，以及 flags 0/1 raw 解码；严格 flags 3 RLE-Zero 已通过合成测试，独立探针进一步确认 257 个失败帧同时包含精确宽度行和多一个透明输出的行，因此保持门槛 B 和未提升的黄金兼容状态；
 - EditMode、PlayMode、仓库静态验证和 CI 入口；
 - 明确区分“未实现”“可解析”和原版对照等兼容状态。
 
@@ -142,6 +142,15 @@ WP-02A 建立目录型来源、显式优先级、来源链和仓库外 manifest�
 ```
 
 完整逐帧 manifest 只写入仓库外 Cache。公开摘要只包含选择依据、MIX ID 和逻辑来源链、大小与 SHA-256、帧/flags/几何/padding 聚合、规范化模型 SHA-256 和诊断计数。当前结果有 257 个严格 `RleOutputOverflow`，因此 flags 3 只保持“合成解析通过、ProjectBaseline 冲突”；raw flags 0/1 已通过本地样本。该命令不启动 XCC 或游戏，也不输出索引帧、像素或图片。
+
+对这 257 个 flags 3 失败帧执行独立只读行宽探针：
+
+```powershell
+./Tools/Content/Invoke-ShpTsRleForensicAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+探针分析 9,495 行，其中 1,331 行输出精确等于 `WidthRaw`，8,164 行由最后一个 zero-run 多输出一个零索引；257 帧全部同时含有两类行。结论为门槛 B，不修改 production decoder，不建议通用裁剪、丢弃末项或 `WidthRaw + 1`。
 
 XCC 合成互操作使用 `Prepare`、`VerifyXccCreated` 和 `VerifyXccExtractions` 三个受控阶段。包装器不会启动或证明 XCC 进程；操作员必须只使用外部 cache 中的自主合成文件，并以固定工具哈希另行记录真实 GUI 操作。命令和固定目录契约见 [Tools/Content/README.md](Tools/Content/README.md)。
 

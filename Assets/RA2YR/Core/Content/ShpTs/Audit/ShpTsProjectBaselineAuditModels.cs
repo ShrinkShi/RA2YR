@@ -288,6 +288,21 @@ namespace RA2YR.Core.Content.ShpTs.Audit
         public ShpTsReadLimits ReadLimits { get; }
     }
 
+    internal sealed class ShpTsGoldenSampleEntryContext
+    {
+        public ShpTsGoldenSampleEntryContext(
+            ShpTsGoldenSampleSpecification specification,
+            MixVirtualEntry entry)
+        {
+            Specification = specification ??
+                throw new ArgumentNullException(nameof(specification));
+            Entry = entry ?? throw new ArgumentNullException(nameof(entry));
+        }
+
+        public ShpTsGoldenSampleSpecification Specification { get; }
+        public MixVirtualEntry Entry { get; }
+    }
+
     internal sealed class ShpTsAuditProvenanceLayer
     {
         public ShpTsAuditProvenanceLayer(

@@ -1,5 +1,25 @@
 # 变更记录
 
+## 2026-08-03 - M2-SHP1F independent RLE row-width probe
+
+### Change scope
+- Audit-only SHP(TS) flags-3 classification; no production decoder changes.
+
+### Concrete changes
+- Added bounded scalar row analysis, baseline drift lock, conditional Stage B, decision gates, sanitized serializer, Editor command, wrapper, and tests.
+- Added ADR, format notes, compatibility evidence, matrix references, README status, and development records.
+
+### Verification
+- Focused EditMode: 33/33 passed.
+- Full EditMode XML: 808/808 passed; wrapper exit 1 because Process.ExitCode was empty.
+- PlayMode XML: 1/1 passed; wrapper exit 1 for the same reason.
+- PS 5.1 and PS 7 wrapper contract tests: 6/6 passed in each host.
+- Actual PS 5.1 and PS 7 forensic wrappers: exit 0, Unity exit 0, forced shutdown false, decision B.
+- Repository validation and copyright scan passed in PS 5.1 and PS 7; copyright violations: 0.
+
+### Risk
+- The result narrows the local conflict but does not prove original runtime behavior or authorize a general crop rule.
+
 ## 2026-08-01 - WP-00/WP-01 基础建设
 
 ### 变更范围
