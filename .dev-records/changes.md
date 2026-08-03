@@ -288,3 +288,12 @@
 - Art 多重名称匹配改为真正的 `Ambiguous` 字段：无单一 `Parsed`、保留全部候选和来源链、不生成 reference 或 route。
 - Rules registry 新增按解析后整数判断的 `DuplicateRegistryOrdinal`；冲突仅限同一 registry，所有原始条目继续保留。
 - 新增 4 个 EditMode case；阶段性全量结果为 678/678，ProjectBaseline 三个规范化模型哈希和既有聚合保持不变。
+
+## 2026-08-03 - M2-SHP1 SHP(TS) core indexed reader
+
+- Added UnityEngine-free SHP(TS) header and directory models, bounded reader, strict raw/RLE indexed decoder, diagnostics, budgets, and canonical hashing.
+- Added Memory, seekable Stream, short-read Stream, and bounded MIX-entry-window equivalence.
+- Added six fixed ProjectBaseline audit profiles, repository-external per-frame manifests, sanitized repository evidence, and a controlled Editor/PowerShell entry point.
+- Added 97 Unity EditMode tests and 9 SHP wrapper regression cases.
+- Added format documentation, ADR 0018/0019, third-party reference records, compatibility matrix entries, README status, and delivery evidence.
+- Final local validation: EditMode 775/775, PlayMode 1/1, repository regression 46/46, copyright regression 22/22, and zero wrapper or scan exit failures in PowerShell 5.1/7.

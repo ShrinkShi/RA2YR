@@ -369,3 +369,13 @@
 - 2026-08-03: 删除经审计无 PR、无独有提交、无仓库引用的远端临时分支 `research/m2-shp-format-dossier-merge-probe`、`noop`、`noop2`。
 - 2026-08-03: 以普通 merge `e60f7beb` 将最新 main 合入 PR #10；完成 Art ambiguity 和 duplicate registry ordinal 的 fail-closed 修复，新增 4 个 EditMode case。
 - 2026-08-03: 最终本地门禁得到 EditMode 678/678、PlayMode 1/1、WP-02G2 聚焦 51/51；PS7/PS5.1 typed audit 聚合和三个模型哈希保持不变。
+
+## 2026-08-03 - M2-SHP1 core reader and ProjectBaseline audit
+
+- Created `feature/m2-shp-ts-core-reader` from merged main `7e43b513`.
+- Implemented the 8-byte SHP(TS) header, ordered 24-byte descriptors, raw flags 0/1 decode, strict flags 3 RLE-Zero decode, bounded inputs, immutable local indexed frames, and structured diagnostics.
+- Added 97 EditMode tests: 47 reader, 38 decoder, and 12 ProjectBaseline audit cases.
+- Audited six fixed MIX-backed SHP entries without publishing pixels or frame bodies. The aggregate contains 988 frames: raw0=1, raw1=477, flags3=510, canonical-empty=253.
+- Strict decoding succeeded for all raw frames and failed closed for 257 non-empty flags 3 frames. Every observed failure was a row-0 output overflow by one index; production behavior was not widened or sample-special-cased.
+- Final local results: EditMode 775/775, PlayMode 1/1, both Unity wrappers exit 0 with controlled post-result shutdown; SHP/INI/CSF/PAL wrapper regressions pass in PowerShell 5.1 and 7.
+- Repository validation reports 214 Assets/214 meta, 147 matrix entries, and 95 evidence references. Copyright scans report zero violations and 13/13 ignored external probes in both hosts.

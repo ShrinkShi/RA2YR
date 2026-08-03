@@ -22,3 +22,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0015 | Evidence-gated INI runtime resolution | Accepted |
 | 0016 | Fail-closed minimal Rules and Art resource views | Accepted |
 | 0017 | Ambiguous Art fields and duplicate registry ordinals remain unresolved | Accepted |
+| 0018 | SHP(TS) Core exposes immutable local indexed frames | Accepted |
+| 0019 | SHP(TS) RLE-Zero remains strict despite baseline tolerance evidence | Accepted with compatibility conflict |
