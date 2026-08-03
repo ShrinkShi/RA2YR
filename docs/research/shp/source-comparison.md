@@ -6,14 +6,14 @@
 
 | 来源 | URL | revision | 相关路径/页面 | 许可证 | SHP家族/支持 | 可采用事实 | 已知缺陷或宽松行为 |
 |---|---|---|---|---|---|---|---|
-| OpenRA/OpenRA | `https://github.com/OpenRA/OpenRA` | `a520984d91eda9de48a62b1d15c1e3bad0d4fb1a` | `OpenRA.Mods.Common/SpriteLoaders/ShpTSLoader.cs` | GPL-3.0-or-later；reference-only | SHP(TS)：raw 0/1、特殊2、RLE 3 | 8+24布局、offset、空帧、format 3逐行RLE | format 2解释与flags模型冲突；对bogus frame有兼容绕过；不能移植代码 |
+| OpenRA/OpenRA | `https://github.com/OpenRA/OpenRA` | `a520984d91eda9de48a62b1d15c1e3bad0d4fb1a` | `OpenRA.Mods.Common/SpriteLoaders/ShpTSLoader.cs` | GPL-3.0-or-later；reference-only | SHP(TS)：raw 0/1、特殊2、RLE 3 | 8+24布局、offset、空帧、format 3逐行RLE | format 2使用length-prefixed raw scanlines；对bogus frame有兼容绕过；不能移植代码 |
 | OmniBlade/xcc `encoding` | `https://github.com/OmniBlade/xcc/tree/encoding` | `62bb77080f13bdf65c79c84837b7cc264bdd432d` | `xcc/misc/cc_structures.h`, `shp_ts_file.h/.cpp`, `shp_decode.*`, `shp_file.cpp` | 原XCC SourceForge项目标注GPL-2.0；GitHub导出快照未定位根LICENSE；reference-only | 同时含TD/RA1与SHP(TS) | 8/24结构、32位flags/unknown/reserved/offset、`flags & 2` RLE判定、空帧、边界；清楚区分旧SHP | 多处只做宽松`is_valid`；signed声明不等于格式语义；internal format4易被误读 |
 | XCC SourceForge | `https://sourceforge.net/projects/xccu/` | 指定核对目标：SVN `r1201` | 原CVS/SVN中的同名`cc_structures`, `shp_ts_file`, `shp_decode` | SourceForge项目元数据GPL-2.0；reference-only | 多家族 | 作为OmniBlade导出谱系核对目标 | 当前公开网页未稳定提供可复现的r1201文件级内容；不得宣称与GitHub commit等价 |
 | Electronic Arts FinalSun/FinalAlert2 | `https://github.com/electronicarts/CNC_TS_and_RA2_Mission_Editor` | `6abf0f557469baea73079c6bf6550709e2e3584e` | `MissionEditorPackLib/MissionEditorPackLib.cpp`, bundled XCC headers | GPL-3.0-or-later；reference-only | TS/RA2编辑器 + XCC | 官方公开编辑器确实依赖`Cshp_ts_file`/`shp_decode`；可验证工具谱系 | 不是游戏运行时源码；打包XCC经过裁剪和补丁 |
-| Electronic Arts CnC Remastered | `https://github.com/electronicarts/CnC_Remastered_Collection` | 仓库归档`master`；实现前应记录确切commit | `TIBERIANDAWN/*`, `REDALERT/*` shape/LCW相关代码 | GPL-3.0 + additional terms；reference-only | TD/RA1 SHP | 旧家族LCW/XOR/reference边界 | 不含TS/RA2/YR SHP(TS)运行时，不能证明SHP(TS)行为 |
-| ModdingWiki SHP(TS) | `https://moddingwiki.shikadi.net/wiki/Westwood_SHP_Format_(TS)` | `oldid=10936` | 格式页 | 引用页面未显式展示内容许可证；事实型参考，不复制正文/代码 | SHP(TS)：flags 0/1/3 | 8/24字段表、flags位、FrameColor、reserved、offset、阴影说明 | 社区整理而非官方规范 |
-| ModdingWiki RLE-Zero | `https://moddingwiki.shikadi.net/wiki/Westwood_RLE-Zero` | `oldid=11565` | Tiberian Sun小节 | 同上 | SHP(TS)/Dune对比 | 行长包含2字节头、`00,count`、行边界 | 示例代码不是本项目实现蓝图 |
-| ModdingWiki SHP(TD) | `https://moddingwiki.shikadi.net/wiki/Westwood_SHP_Format_(TD)` | `oldid=10933` | 格式页 | 同上 | TD/RA1 | LCW/XOR/20/40/80/reference明确只属旧家族 | 仅用于排除 |
+| Electronic Arts CnC Remastered | `https://github.com/electronicarts/CnC_Remastered_Collection` | **未固定精确 commit；supplementary only** | `TIBERIANDAWN/*`, `REDALERT/*` shape/LCW相关代码 | GPL-3.0 + additional terms；reference-only | TD/RA1 SHP | 仅补充说明旧家族存在LCW/XOR/reference概念 | 在固定精确commit前不进入主要证据权重；不含TS/RA2/YR SHP(TS)运行时，不能证明SHP(TS)行为 |
+| ModdingWiki SHP(TS) | `https://moddingwiki.shikadi.net/wiki/Westwood_SHP_Format_(TS)?oldid=10936` | `oldid=10936` | 格式页 | 引用页面未显式展示内容许可证；事实型参考，不复制正文/代码 | SHP(TS)：flags 0/1/3 | 8/24字段表、flags位、FrameColor、reserved、offset、阴影说明 | 社区整理而非官方规范 |
+| ModdingWiki RLE-Zero | `https://moddingwiki.shikadi.net/wiki/Westwood_RLE-Zero?oldid=11565` | `oldid=11565` | Tiberian Sun小节 | 同上 | SHP(TS)/Dune对比 | 行长包含2字节头、`00,count`、行边界 | 示例代码不是本项目实现蓝图；未解决`00 00`严格接受性 |
+| ModdingWiki SHP(TD) | `https://moddingwiki.shikadi.net/wiki/Westwood_SHP_Format_(TD)?oldid=10933` | `oldid=10933` | 格式页 | 同上 | TD/RA1 | LCW/XOR/20/40/80/reference明确只属旧家族 | 仅用于排除 |
 | ModEnc SHP | `https://modenc.renegadeprojects.com/SHP` | `oldid=20503` | SHP(TS)教程 | 页面允许署名镜像但非标准代码许可证；事实型参考 | SHP(TS) | 外部PAL、`00,count`、用途列表 | 字段表不完整，旧教程措辞含混 |
 | iron-curtain-engine/cnc-formats | `https://github.com/iron-curtain-engine/cnc-formats` | `77da596ed72a1201740e054855bf2ff60640bfa9` | `src/shp_ts/mod.rs`, tests | MIT OR Apache-2.0 | 意图支持SHP(TS)：raw/RLE/LCW映射 | 安全预算、fuzz方向、8/24基础 | 将compression 3当LCW，与强来源冲突；截断时补透明；帧数据借到EOF；不可作为兼容真值 |
 | OS SHP Builder | `svn://svn.ppmsite.com/shp_builder`；浏览入口见PPM工具页 | 尚未建立可复现revision pin | `Shp_File.pas`, `Shp_Engine.pas`等 | 未定位清晰OSI许可证；reference-only | TD/RA1与SHP(TS) | 后续用于flags2、写入对齐、FrameColor交叉验证；PPM revision 29记录曾将误称Transparent字段更名为RadarColor | 部分代码由XCC转换；历史帖子自述存在flaws；不能机械移植 |
@@ -30,7 +30,7 @@
 5. 论坛陈述；
 6. 与强来源冲突的单个现代库。
 
-许可证更宽松不等于格式事实更可靠；`cnc-formats`虽为MIT/Apache，但其LCW映射仍不能覆盖多来源一致的RLE-Zero结论。
+未固定精确 revision 的来源只能 supplementary，不进入主要证据权重。许可证更宽松不等于格式事实更可靠；`cnc-formats`虽为MIT/Apache，但其LCW映射仍不能覆盖多来源一致的RLE-Zero结论。
 
 ## 3. 主要冲突
 
@@ -39,11 +39,12 @@
 | 文件头 | 8字节、首u16=0、canvas、帧数 | zero/magic/empty | 0帧是否合法 | 布局确认；0帧严格拒绝、保留审计问题 |
 | 目录项 | 24字节、x/y/w/h、32位字段、offset | compression vs flags | x/y signed/unsigned；0x0C unknown vs FrameColor | 保存raw；几何按非负范围验证；FrameColor语义可选 |
 | flags 0/1 | 都是raw bytes | opaque/transparent raw | 无 | 解码相同，绘制语义分离 |
-| flags 2 | XCC按RLE位处理 | format2 | OpenRA特殊length-prefixed raw路径；flags模型称矛盾组合 | 不作为正常编码；等待黄金样本 |
+| flags 2 | 位模型可表达`UsesRle=true`, `HasTransparency=false` | format2 | XCC按`flags & 2`使用RLE-Zero；OpenRA使用length-prefixed raw scanlines | source-conflicting / underconfirmed；不作为首版正常写入目标；黄金审计前不选择默认解码策略 |
 | flags 3 | RLE-Zero | format3/compressed | `cnc-formats`称LCW | 采纳RLE-Zero；将LCW映射标为实现缺陷 |
+| `00 00` | 消费2字节、输出0像素 | zero-count zero-run | no-op/padding/非法三种解释未收敛 | 命令预算 + 输入推进 + 行输入精确消费 + 最终输出等于width；严格接受性未选择 |
 | literal-run | 连续非零字节形成literal序列 | 有来源误称literal-run | 无独立长度控制码证据 | 不实现虚构控制码 |
 | data length | 目录无显式长度 | 可由下一offset推断候选区域 | 部分读取器直接借到EOF | 按raw面积/RLE行自描述解码；下一offset只做结构检查 |
-| reference/delta | SHP(TS)强来源均无字段 | “format20/40/80”常混用 | 用户要求dependency测试，但它们属于旧家族/未来契约 | dependency API仅预留；相关测试标记非本家族 |
+| reference/delta | SHP(TS)强来源均无字段 | “format20/40/80”常混用 | 旧家族概念易被误植到SHP(TS) | 首版不设计dependency模型或resolver；仅测试parser不会发明依赖 |
 | shadow | 文件无shadow元数据 | second-half convention | 偶数帧不必然是shadow | 通用解码不自动合并 |
 | PAL | 外部PAL | shared palette | 无 | SHP Core只输出索引 |
 | XCC format 4 | 工具内部中间格式 | 名字含format | 容易误认成flags值4 | 明确排除 |
@@ -53,4 +54,5 @@
 - GPL来源只能reference-only：不复制代码、不逐句翻译、不机械改写、不生成接近源码结构的C#草稿。
 - 许可证不明确的论坛/工具源码只做reference-only。
 - 即使来源是MIT/Apache，也不能用其与强证据冲突的行为覆盖本项目格式结论。
+- 本次修订同样不引入任何第三方源码复制、翻译或移植。
 - 最终实现必须由本目录中的行为规范、合成样本和本地黄金审计共同驱动。

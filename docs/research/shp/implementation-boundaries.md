@@ -47,24 +47,21 @@ ShpFrameDecoder.Decode(
 - raw与RLE分支独立；
 - decoder只产生局部 `width × height` 索引；
 - 每行创建/使用有界子范围；
+- 每行输入、输出和命令数分别受限；
 - 不读取下一帧像素；
 - 不应用PAL/remap/shadow。
 
-### 2.3 Dependency resolution
+### 2.3 首版不建立 dependency 层
 
-定义 `ShpFrameDependency`，但首版 SHP(TS)应只有：
+当前没有证据证明 SHP(TS) 目录存在 reference/delta 字段。因此首版：
 
-```text
-None
-UnsupportedOrExternal(raw metadata)
-```
+- 不推荐或定义 `ShpFrameDependency`；
+- 不实现 dependency resolver；
+- 不增加 dependency depth 或 cumulative work budget；
+- 不从 `FrameColorRaw`、`ReservedRaw`、`DataOffsetRaw`、重复offset或帧顺序推断依赖；
+- 只增加一个负向测试：parser never invents a dependency。
 
-不要因为类型名存在就实现 delta。未来如果本地证据证明某扩展格式存在依赖，再由单独 resolver处理：
-
-- index合法性；
-- forward/self/cycle；
-- depth/cumulative budget；
-- normalized dependency graph。
+若未来发现有许可证、可复现样本和第二来源支持的扩展格式，应另立研究工作包；不能在首版 API 中预埋看似确定的引用模型。
 
 ### 2.4 Canvas reconstruction
 
@@ -114,19 +111,19 @@ Core SHP不硬编码 remap范围，不改变原始 indices。
 
 Core assembly必须不引用 `UnityEngine`。
 
-### 2.8 Art.ini semantics
+### 2.8 Art.ini 和资源语义
 
 Rules/Art资源引用层负责：
 
 - logical `Image=`;
 - SHP/VXL选择；
--方向与帧段；
+- 方向与帧段；
 - Start/LoopStart/LoopEnd/Rate；
--建筑 damaged/buildup/turret/anim；
--shadow组织；
--pivot/anchor/Foundation/YSort/ZAdjust。
+- 建筑 damaged/buildup/turret/anim；
+- shadow组织；
+- pivot/anchor/Foundation/YSort/ZAdjust。
 
-不得将 Art.ini含义反向写进通用 SHP reader。
+UI/cameo、mouse/cursor 的资源选择可能来自其他配置或 catalog，不得强行归入 Rules/Art。不得将这些语义反向写进通用 SHP reader。
 
 ## 3. 建议类型
 
@@ -149,6 +146,7 @@ Rules/Art资源引用层负责：
 - validated rectangle / optional data window
 - 不包含 Unity pivot
 - 不伪造 data length
+- 不包含 reference index、base frame 或 dependency 属性
 
 ### `ShpCompressionKind`
 
@@ -158,11 +156,11 @@ Rules/Art资源引用层负责：
 RawOpaque
 RawTransparent
 RleZeroTransparent
-SuspiciousRleWithoutTransparency
+SourceConflictingFlags2
 UnknownFlags
 ```
 
-同时保留 `RawFlags`。
+同时保留 `RawFlags`。`SourceConflictingFlags2` 表示位模型可表达，但默认字节流策略尚未选择。
 
 ### `ShpIndexedFrame`
 
@@ -173,20 +171,13 @@ UnknownFlags
 - 可计算规范化 hash；
 - 可统计 index min/max/histogram摘要。
 
-### `ShpFrameDependency`
-
-- `Kind`
-- `TargetFrameIndex?`
-- `Evidence`
-- SHP(TS)首版通常为 None；
-- 不把目录 `FrameColor`/reserved误当 reference。
-
 ### `ShpDecodeResult`
 
 - success/failure二选一；
 - frame或diagnostics；
-- bytes consumed、rows consumed、pixel count；
-- 不允许“成功但偷偷补零”。
+- bytes consumed、rows consumed、commands consumed、pixel count；
+- 不允许“成功但偷偷补零”；
+- 对flags 2默认返回策略未选择，而不是猜测一种解码。
 
 ### `ShpDiagnostic`
 
@@ -202,7 +193,7 @@ UnknownFlags
 - field/section
 - message
 
-诊断码至少覆盖：invalid marker、directory truncated、invalid flags、reserved nonzero、rectangle overflow/outside canvas、invalid offset、overlap、row length invalid、row truncated、zero-run truncated/overflow/no-progress、pixel underflow/overflow、trailing data、budget exceeded、unsupported dependency。
+诊断码至少覆盖：invalid marker、directory truncated、source-conflicting flags2、unknown flags、reserved nonzero、rectangle overflow/outside canvas、invalid offset、overlap、row length invalid、row truncated、zero-run truncated/overflow、zero-output command policy unresolved、command budget exceeded、pixel underflow/overflow、trailing data、budget exceeded。
 
 ### `ShpReadLimits`
 
@@ -214,14 +205,13 @@ UnknownFlags
 - max local frame area
 - max total decoded pixels
 - max single row bytes
+- max commands per row/frame
 - max compressed bytes per frame
 - max allocated bytes
 - max records/subranges
 - max diagnostic count
-- max dependency depth
-- max cumulative dependency work
 
-转换为现有 `BinaryReadLimits` / `ReadOnlyDataWindowLimits` 时必须保留更严格者。
+首版不包含 dependency depth 或 cumulative dependency work。转换为现有 `BinaryReadLimits` / `ReadOnlyDataWindowLimits` 时必须保留更严格者。
 
 ## 4. 解析流程
 
@@ -230,11 +220,12 @@ UnknownFlags
 3. checked计算目录长度；
 4. 逐项保存 raw descriptor；
 5. 完成目录后统一验证矩形、offset、flags、reserved、候选数据区间；
-6. `ShpDocument`只在目录可信时暴露可解码帧；
-7. 按需解码单帧；
-8. 可选重建完整 canvas；
-9. 可选PAL转换；
-10. Art/runtime决定方向、阴影、remap、pivot和播放。
+6. 明确保证 descriptor 没有从任何raw字段派生dependency；
+7. `ShpDocument`只在目录可信时暴露可解码帧；
+8. 按需解码单帧；
+9. 可选重建完整 canvas；
+10. 可选PAL转换；
+11. Art/UI/mouse/runtime层决定资源角色、阴影、remap、pivot和播放。
 
 ## 5. 区间策略
 
@@ -244,16 +235,29 @@ UnknownFlags
 - RLE：读取每行长度并累加，最终得到实际 consumed length；
 - offset排序只用于计算 `next distinct offset` 上界和重叠诊断；
 - 重复offset可以是损坏，也可能是共享数据兼容扩展；不得未经证据自动去重；
+- 重复或重叠offset绝不能被解释为reference关系；
 - 任何帧实际消费不得跨越文件窗口；
 - 若跨越下一distinct offset，应报 overlap；是否允许共享完全相同区间由策略决定。
 
-## 6. Provenance
+## 6. RLE命令边界
+
+- 非零命令消费1字节并输出1像素；
+- `00 count`消费2字节并输出`count`像素；
+- `00 00`消费2字节并输出0像素，输入位置会前移；
+- 每个命令计入命令预算；
+- 每个命令必须推进输入；
+- 行输入必须精确消费声明范围；
+- 行输出最终必须等于width；
+- `00 00`是否可接受由未来证据决定，不能靠终止安全性替代格式语义判断。
+
+## 7. Provenance
 
 `ShpDocument`、每个 diagnostic和本地审计记录都应带：
 
 - logical source id；
 - logical content path；
 - MIX archive/entry chain；
+- 资源选择依据类别：Rules/Art、UI/resource config、mouse/UI config、verified catalog survey等；
 - 不含绝对物理路径；
 - parser/version；
 - 可选源entry SHA-256。

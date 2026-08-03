@@ -77,6 +77,26 @@ XCC接受 `Width == 0 && Height == 0 && DataOffset == 0` 的空目录项。其�
 - partial empty：诊断并拒绝解码；
 - 不为 canonical empty 分配 canvas-sized像素。
 
+### 3.5 RawFlags 2
+
+按低两位模型：
+
+```text
+UsesRle = true
+HasTransparency = false
+```
+
+该组合在结构上可以表达。当前未解决的是来源对字节流解释的冲突：
+
+- XCC 以 `flags & 2` 进入 RLE-Zero；
+- OpenRA 对值 2 使用 length-prefixed raw scanlines。
+
+因此其状态为 source-conflicting / underconfirmed。首版保存原始值，不把它作为正常写入目标，并在本地黄金审计前不选择默认解码策略。
+
+### 3.6 不存在已确认 dependency 字段
+
+`FrameColorRaw`、`Reserved`、`DataOffset`、重复offset和帧顺序都不是已确认的 reference/delta 字段。首版 descriptor 不得从这些字段推断 dependency，也不应为 SHP(TS)建立 dependency resolver。
+
 ## 4. 坐标和 canvas
 
 ### 4.1 格式层
@@ -143,10 +163,13 @@ XCC接受 `Width == 0 && Height == 0 && DataOffset == 0` 的空目录项。其�
 3. 行数恰为 frame height；
 4. 每行声明长度至少 2；
 5. 行结束不越过窗口；
-6. 每行输出恰为 frame width；
-7. zero-run 不越过本行；
-8. 输出总像素不超过 width × height；
-9. 操作数、行、帧和累计预算；
-10. 任意循环每次必须推进输入或输出，否则立即失败。
+6. 每行声明输入被精确消费；
+7. 每行输出最终恰为 frame width；
+8. zero-run 不越过本行；
+9. 输出总像素不超过 width × height；
+10. 操作数、命令、行、帧和累计预算；
+11. 每个命令必须推进输入。
+
+`00 00` 会消费两个输入字节、输出零个像素，输入位置会前移。它仍计入命令预算；其 no-op、padding 或非法语义尚未确认。无论是否接受，行输入都必须精确消费，行输出最终都必须等于 width。
 
 宽松读取器把截断行补零的行为不应成为本项目默认兼容策略；损坏必须形成可定位诊断。
