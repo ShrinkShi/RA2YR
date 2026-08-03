@@ -1,0 +1,158 @@
+schema_version: 1
+evidence_id: "wp02f-project-baseline-20260803"
+recorded_at_utc: "2026-08-03T03:35:24.5753071Z"
+scope: "Lossless raw-byte parsing and unmodified byte-identical identity writing for four fixed INI candidates through the YR1001_ProjectBaseline MIX virtual content source"
+
+project_baseline_ini:
+  baseline:
+    logical_name: "YR1001_ProjectBaseline"
+    description: "Patched development baseline with official map add-on, music pack, and Windows compatibility patch; not clean YR 1.001"
+    directory_fingerprint: "481E4AE76662001008EEF8105CC749B29B958C9C5D39D0DFE889F47A046D1E6E"
+    started_utc: "2026-08-03T03:35:11.3171479Z"
+    completed_utc: "2026-08-03T03:35:24.5753071Z"
+    audit_read_only: true
+    source_modified: false
+    loose_ini_used: false
+    hand_extracted_ini_used: false
+    reference_tool_ini_used: false
+  external_manifest:
+    schema_version: 1
+    length: 18851146
+    sha256: "1D7ACFE624D9F3575DC9391F6FE070B2A351F0DA560B89606129E530AD9A3F35"
+    repository_external_cache_only: true
+    contains_complete_per_line_audit: true
+    contains_identity_output_files: true
+    committed_to_repository: false
+  sanitized_summary:
+    schema_version: 1
+    manifest_type: "RA2YR.IniProjectBaselineAuditSanitized"
+    length: 9679
+    sha256: "D7E9B92BB2DB7676D148D1CD131CFC9341A7098C534CAC360A270F19D82DC6D2"
+    contains_absolute_paths: false
+    contains_section_or_key_list: false
+    contains_values_or_comments: false
+    contains_raw_lines: false
+    contains_base64: false
+    contains_per_line_hash_list: false
+  validation:
+    audit_status: "Complete"
+    unity_process_exit_code: 0
+    fixed_payload_identity_verified: true
+    fixed_provenance_verified: true
+    fixed_canonical_model_verified: true
+    source_fingerprint_stable: true
+    document_count: 4
+    byte_identical_document_count: 4
+
+  samples:
+    - sample_id: "artmd-localmd"
+      logical_name: "artmd.ini"
+      mix_id: "0x5B47D8D5"
+      provenance: ["ra2md.mix", "localmd.mix", "artmd.ini"]
+      length: 336535
+      sha256: "E1F0378394313C04EBBD5073F47785EE3E46F1B3C62D65724E8F3C310EE7BA31"
+      bom: "none"
+      encoding_observation: "raw-single-byte-bom-absent-code-page-unresolved"
+      line_count: 19605
+      line_endings: { crlf: 19604, lf: 0, cr: 0, none: 1 }
+      nodes: { section: 1428, key_value: 12713, comment: 2535, blank: 1719, opaque: 1210 }
+      duplicate_sections_raw_exact: 1
+      duplicate_keys_raw_exact_within_physical_section: 0
+      maximum_line_bytes: 216
+      canonical_model_sha256: "D138E1443BB1797B95C23857DE0FFFC9900FFAE6838B9CD79C42707AF519A64D"
+      identity_output_sha256: "E1F0378394313C04EBBD5073F47785EE3E46F1B3C62D65724E8F3C310EE7BA31"
+      byte_identical: true
+      diagnostic_counts: { AmbiguousInlineSemicolon: 252, OpaqueLinePreserved: 1210 }
+    - sample_id: "ai-local"
+      logical_name: "ai.ini"
+      mix_id: "0x9E11E49A"
+      provenance: ["ra2.mix", "local.mix", "ai.ini"]
+      length: 84972
+      sha256: "1FEAC6DDEA6886B177DDF7E5F8580B7A99A63F12684F2CBB42831671BB7A8A79"
+      bom: "none"
+      encoding_observation: "raw-single-byte-bom-absent-code-page-unresolved"
+      line_count: 4501
+      line_endings: { crlf: 4501, lf: 0, cr: 0, none: 0 }
+      nodes: { section: 241, key_value: 4020, comment: 0, blank: 240, opaque: 0 }
+      duplicate_sections_raw_exact: 0
+      duplicate_keys_raw_exact_within_physical_section: 0
+      maximum_line_bytes: 189
+      canonical_model_sha256: "B41FEC9D9331349126B32929ABBF2D1D8E77CE3959A4CF2461C034324C72A361"
+      identity_output_sha256: "1FEAC6DDEA6886B177DDF7E5F8580B7A99A63F12684F2CBB42831671BB7A8A79"
+      byte_identical: true
+      diagnostic_counts: {}
+    - sample_id: "rulesmd-expandmd01"
+      logical_name: "rulesmd.ini"
+      mix_id: "0x8218F9F4"
+      provenance: ["expandmd01.mix", "rulesmd.ini"]
+      length: 743215
+      sha256: "3D341EF8A13A4B5AB24AF2EEF48AC94931AC2BB87D950FE3330A07E2D25672EF"
+      bom: "none"
+      encoding_observation: "raw-single-byte-bom-absent-code-page-unresolved"
+      line_count: 31071
+      line_endings: { crlf: 31071, lf: 0, cr: 0, none: 0 }
+      nodes: { section: 1417, key_value: 22721, comment: 4097, blank: 2101, opaque: 735 }
+      duplicate_sections_raw_exact: 0
+      duplicate_keys_raw_exact_within_physical_section: 1
+      maximum_line_bytes: 303
+      canonical_model_sha256: "86FA33B1C844101CE6FACB8DF50E254CEB784BAFB45880E0CE2F55FC3738D287"
+      identity_output_sha256: "3D341EF8A13A4B5AB24AF2EEF48AC94931AC2BB87D950FE3330A07E2D25672EF"
+      byte_identical: true
+      diagnostic_counts: { AmbiguousInlineSemicolon: 2448, OpaqueLinePreserved: 735 }
+    - sample_id: "rulesmd-localmd"
+      logical_name: "rulesmd.ini"
+      mix_id: "0x8218F9F4"
+      provenance: ["ra2md.mix", "localmd.mix", "rulesmd.ini"]
+      length: 742958
+      sha256: "06761DD7F714E7D9400216EC3C06109EC5C1461F6A0727BE7401EB9D8B0F6D05"
+      bom: "none"
+      encoding_observation: "raw-single-byte-bom-absent-code-page-unresolved"
+      line_count: 31061
+      line_endings: { crlf: 31061, lf: 0, cr: 0, none: 0 }
+      nodes: { section: 1417, key_value: 22710, comment: 4097, blank: 2102, opaque: 735 }
+      duplicate_sections_raw_exact: 0
+      duplicate_keys_raw_exact_within_physical_section: 1
+      maximum_line_bytes: 303
+      canonical_model_sha256: "B5F97E861FA620BF2AF96060C8216965F682C5AE24CA50CDD6BDE3219AB224E1"
+      identity_output_sha256: "06761DD7F714E7D9400216EC3C06109EC5C1461F6A0727BE7401EB9D8B0F6D05"
+      byte_identical: true
+      diagnostic_counts: { AmbiguousInlineSemicolon: 2444, OpaqueLinePreserved: 735 }
+
+  rulesmd_candidate_boundary:
+    both_candidates_valid_lossless_documents: true
+    payloads_differ: true
+    structural_statistics_differ: true
+    both_identity_roundtrips_byte_identical: true
+    selected_winner: null
+    runtime_mix_precedence_researched: false
+
+  survey:
+    located_candidates:
+      - { logical_name: "aimd.ini", root: "ra2md.mix", length: 138538 }
+      - { logical_name: "art.ini", root: "ra2.mix", length: 245825 }
+      - { logical_name: "evamd.ini", root: "ra2md.mix", length: 79889 }
+      - { logical_name: "missionmd.ini", root: "ra2md.mix", length: 5034 }
+      - { logical_name: "rules.ini", root: "ra2.mix", length: 541915 }
+      - { logical_name: "snow.ini", root: "ra2.mix", length: 22603 }
+      - { logical_name: "soundmd.ini", root: "expandmd01.mix", length: 99392 }
+      - { logical_name: "soundmd.ini", root: "ra2md.mix", length: 99292 }
+      - { logical_name: "temperat.ini", root: "ra2.mix", length: 25269 }
+      - { logical_name: "uimd.ini", root: "ra2md.mix", length: 885 }
+      - { logical_name: "urban.ini", root: "ra2.mix", length: 30093 }
+    not_located_in_current_mounted_directory_and_mix_sources:
+      - "desert.ini"
+      - "lunar.ini"
+      - "urbann.ini"
+    not_located_interpretation: "Not located in the currently mounted directory and MIX name catalog; this is not a claim that the original game file is missing."
+
+compatibility_boundary:
+  project_baseline_sample_validation: true
+  content_obtained_through_mix_virtual_source: true
+  clean_yr_1001_original_comparison: false
+  unmodified_byte_identical_roundtrip: true
+  semantic_editing: false
+  finalalert2_edited_roundtrip: false
+  rulesmd_runtime_winner: false
+  runtime_code_page: false
+  rules_art_ai_theater_semantics: false
+  limitation: "This proves raw-byte preservation and identity writing for the patched ProjectBaseline candidates only; it does not prove clean YR 1.001 parsing behavior, runtime precedence, typed INI semantics, or edited roundtrip compatibility."

@@ -219,3 +219,25 @@
 ### 风险
 - 黄金样本来自 patched ProjectBaseline，不是 clean YR 1.001。
 - 原版运行时查找、重复项胜出、语言回退、写回和 UI 表现均未验证。
+
+## 2026-08-03 - WP-02F INI 原始字节文档和 identity writer
+
+### 变更范围
+- 仅实现 INI 物理字节、结构分类、Opaque 保留、显式编码视图、未修改 identity writer 和 ProjectBaseline 审计；不实现语义编辑或运行时规则。
+
+### 具体改动
+- 新增 BOM/逐行换行/原始偏移/空白/重复项/未知行保留的不可变模型。
+- 新增 Memory、seekable/short-read Stream 和 MIX entry window 输入，统一限制输入、行、节点、原始字节和分配预算。
+- 未确认的行内分号保留在值中并报告诊断；未确认的节尾内容成为 Opaque 且不会激活节。
+- 新增只返回完整文档或失败结果的严格 reader，以及逐字节复制、预算和哈希自证的 identity writer。
+- 固定四个黄金 payload 与 canonical model SHA；外部 Cache 保存完整逐行 manifest 和 identity 文件，公开证据只含聚合。
+- 新增 55 个格式用例、16 个审计用例和双 PowerShell 9 项包装器回归。
+
+### 验证状态
+- EditMode XML 560/560、PlayMode XML 1/1；新增 71 个 NUnit case。
+- INI 黄金审计包装器真实退出 0；四个固定文档均通过 payload、model 和 identity 验证。
+- 双 PowerShell 仓库验证为 170 Assets/170 meta、133 个矩阵项、56 个证据引用、0 违规；版权扫描和 13/13 ignore probes 通过。
+
+### 风险
+- 无 BOM 单字节文件的原版代码页、分号语义、重复项胜出和跨 MIX precedence 未确认。
+- `往返通过` 仅限未修改 byte identity，不覆盖编辑、FinalAlert 2 或原版 writer 行为。
