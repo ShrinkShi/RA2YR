@@ -55,6 +55,46 @@ namespace RA2YR.Editor
             }
         }
 
+        public static void RunRuntimeResolution()
+        {
+            try
+            {
+                string repositoryRoot = Path.GetFullPath(
+                    Path.Combine(Application.dataPath, ".."));
+                string configurationPath = GetRequiredPathArgument(
+                    "-ra2yrExternalContentConfig");
+                string summaryOutput = GetRequiredPathArgument("-ra2yrSummaryOutput");
+
+                ValidateRegularInputFile(configurationPath);
+                ValidateSummaryOutput(repositoryRoot, summaryOutput);
+                ExternalContentConfiguration configuration =
+                    new ExternalContentConfigurationLoader()
+                        .Load(configurationPath, repositoryRoot)
+                        .Configuration;
+                ValidateBaselineConfiguration(configuration);
+
+                IniRuntimeProjectBaselineAuditDelivery delivery =
+                    IniProjectBaselineAuditService.RunRuntimeResolutionAudit(configuration);
+                ValidateRuntimeSanitizedDelivery(
+                    delivery,
+                    configuration,
+                    configurationPath,
+                    repositoryRoot);
+                WriteNewUtf8FileAtomically(summaryOutput, delivery.SanitizedSummary);
+
+                Debug.Log(
+                    "WP-02G1 INI runtime-resolution audit completed: summaryBytes=" +
+                    delivery.SummaryUtf8Length +
+                    ", summarySha256=" + delivery.SummarySha256);
+                EditorApplication.Exit(0);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception);
+                EditorApplication.Exit(1);
+            }
+        }
+
         private static string GetRequiredPathArgument(string name)
         {
             return Path.GetFullPath(GetRequiredValueArgument(name));
@@ -216,6 +256,53 @@ namespace RA2YR.Editor
             return value.All(character =>
                 (character >= '0' && character <= '9') ||
                 (character >= 'a' && character <= 'f'));
+        }
+
+        private static void ValidateRuntimeSanitizedDelivery(
+            IniRuntimeProjectBaselineAuditDelivery delivery,
+            ExternalContentConfiguration configuration,
+            string configurationPath,
+            string repositoryRoot)
+        {
+            if (delivery == null ||
+                string.IsNullOrWhiteSpace(delivery.SanitizedSummary) ||
+                delivery.SummaryUtf8Length <= 0 ||
+                delivery.SummaryUtf8Length > MaximumSummaryUtf8Bytes ||
+                !IsLowerSha256(delivery.SummarySha256))
+            {
+                throw new InvalidOperationException(
+                    "The runtime INI audit returned an incomplete delivery.");
+            }
+
+            var protectedPaths = new List<string>
+            {
+                repositoryRoot,
+                configurationPath,
+                configuration.CachePath
+            };
+            protectedPaths.AddRange(configuration.Sources.Select(source => source.RootPath));
+            foreach (string protectedPath in protectedPaths)
+            {
+                RejectSensitivePath(delivery.SanitizedSummary, protectedPath);
+            }
+
+            string summary = delivery.SanitizedSummary;
+            if (!summary.Contains(
+                    "\"manifestType\":\"RA2YR.IniRuntimeResolutionAuditSanitized\"") ||
+                !summary.Contains("\"baselineLogicalName\":\"YR1001_ProjectBaseline\"") ||
+                !summary.Contains("\"candidateSets\":[") ||
+                !summary.Contains("\"syntaxAudits\":[") ||
+                !summary.Contains("\"projectBaselineRuntimeWinnerSelected\":false") ||
+                !summary.Contains("\"blackBoxAuthorization\":\"not-granted-not-executed\"") ||
+                summary.Contains("\"rawBytes\":") ||
+                summary.Contains("\"lineRecords\":[") ||
+                summary.Contains("\"sectionName\":") ||
+                summary.Contains("\"keyName\":") ||
+                summary.Contains("\"valueText\":"))
+            {
+                throw new InvalidOperationException(
+                    "The runtime INI summary does not match the approved delivery identity.");
+            }
         }
 
         private static void RejectSensitivePath(string summary, string path)

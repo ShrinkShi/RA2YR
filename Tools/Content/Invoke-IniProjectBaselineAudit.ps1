@@ -10,6 +10,10 @@ param(
     [string] $ConfigurationPath,
 
     [Parameter()]
+    [ValidateSet('PhysicalDocument', 'RuntimeResolution')]
+    [string] $AuditMode = 'PhysicalDocument',
+
+    [Parameter()]
     [ValidateRange(60, 86400)]
     [int] $TimeoutSeconds = 3600
 )
@@ -18,7 +22,12 @@ Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 $expectedUnityVersion = '2022.3.60f1c1'
 $baselineName = 'YR1001_ProjectBaseline'
-$manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
+$runtimeResolutionAudit = $AuditMode -ceq 'RuntimeResolution'
+$manifestType = if ($runtimeResolutionAudit) {
+    'RA2YR.IniRuntimeResolutionAuditSanitized'
+} else {
+    'RA2YR.IniProjectBaselineAuditSanitized'
+}
 
 function Quote-ProcessArgument {
     param([Parameter(Mandatory)][string] $Value)
@@ -248,7 +257,7 @@ function Assert-SampleIdentity {
     Assert-LowerSha256 ([string]$Sample.canonicalModelSha256) "$SampleId model hash"
 }
 
-function Assert-SanitizedSummary {
+function Assert-PhysicalSanitizedSummary {
     param([Parameter(Mandatory)][object] $Summary, [Parameter(Mandatory)][string] $RawJson)
 
     if ([int]$Summary.schemaVersion -ne 1 -or
@@ -289,6 +298,87 @@ function Assert-SanitizedSummary {
         }
     }
     Assert-NoAbsolutePathInValue $Summary
+}
+
+function Assert-RuntimeResolutionSanitizedSummary {
+    param([Parameter(Mandatory)][object] $Summary, [Parameter(Mandatory)][string] $RawJson)
+
+    if ([int]$Summary.schemaVersion -ne 1 -or
+        [string]$Summary.manifestType -cne $manifestType -or
+        [string]$Summary.baselineLogicalName -cne $baselineName -or
+        [string]$Summary.auditStatus -cne 'Complete' -or
+        @($Summary.candidateSets).Count -ne 2 -or
+        @($Summary.syntaxAudits).Count -ne 4 -or
+        [bool]$Summary.runtimeBoundary.genericExplicitLoadPlanExecutable -ne $true -or
+        [bool]$Summary.runtimeBoundary.perValueCandidateChainImplemented -ne $true -or
+        [bool]$Summary.runtimeBoundary.projectBaselineRuntimeWinnerSelected -ne $false -or
+        [bool]$Summary.runtimeBoundary.originalRuntimeComparisonPassed -ne $false -or
+        [string]$Summary.runtimeBoundary.blackBoxAuthorization -cne 'not-granted-not-executed') {
+        throw 'The sanitized runtime INI summary identity is invalid.'
+    }
+    Assert-LowerSha256 ([string]$Summary.directoryFingerprint) 'directory fingerprint'
+    Assert-LogicalPath (
+        [string]$Summary.baseIniAuditExternalManifest.cacheRelativePath) `
+        'external manifest path'
+    Assert-LowerSha256 (
+        [string]$Summary.baseIniAuditExternalManifest.sha256) `
+        'external manifest hash'
+    if ([int64]$Summary.baseIniAuditExternalManifest.length -le 0) {
+        throw 'The external runtime INI audit manifest length is invalid.'
+    }
+
+    $candidateSets = @{}
+    foreach ($set in @($Summary.candidateSets)) {
+        $candidateSets[[string]$set.logicalName] = $set
+    }
+    foreach ($logicalName in @('rulesmd.ini', 'soundmd.ini')) {
+        $set = $candidateSets[$logicalName]
+        if ($null -eq $set -or [int]$set.candidateCount -ne 2 -or
+            @($set.candidates).Count -ne 2 -or $null -ne $set.selectedWinner -or
+            [string]$set.winnerEvidence -cne 'Unresolved') {
+            throw "The runtime INI candidate set is not explicitly ambiguous: $logicalName"
+        }
+    }
+
+    $rulesHashes = @($candidateSets['rulesmd.ini'].candidates | ForEach-Object {
+        [string]$_.sha256
+    })
+    foreach ($expected in @(
+        '3d341ef8a13a4b5ab24af2eef48ac94931ac2bb87d950fe3330a07e2d25672ef',
+        '06761dd7f714e7d9400216ec3c06109ec5c1461f6a0727be7401eb9d8b0f6d05')) {
+        if ($rulesHashes -cnotcontains $expected) {
+            throw 'A fixed rulesmd.ini candidate identity changed.'
+        }
+    }
+    $soundHashes = @($candidateSets['soundmd.ini'].candidates | ForEach-Object {
+        [string]$_.sha256
+    })
+    foreach ($expected in @(
+        '0a8e85381aef1a0f97074c953bfe99504da00c6220fae1a023a1afd857023232',
+        'd1be76491a0888396b4d0e53f4857f33879a5afd40a8bcea65ea1d1a3096d419')) {
+        if ($soundHashes -cnotcontains $expected) {
+            throw 'A fixed soundmd.ini candidate identity changed.'
+        }
+    }
+
+    foreach ($forbidden in @(
+        '"lineRecords"', '"identityCacheRelativePath"', '"rawBytes"',
+        '"sectionName"', '"keyName"', '"valueText"', '"commentText"')) {
+        if ($RawJson.Contains($forbidden)) {
+            throw "The sanitized runtime INI summary contains forbidden field: $forbidden"
+        }
+    }
+    Assert-NoAbsolutePathInValue $Summary
+}
+
+function Assert-SanitizedSummary {
+    param([Parameter(Mandatory)][object] $Summary, [Parameter(Mandatory)][string] $RawJson)
+
+    if ($runtimeResolutionAudit) {
+        Assert-RuntimeResolutionSanitizedSummary $Summary $RawJson
+    } else {
+        Assert-PhysicalSanitizedSummary $Summary $RawJson
+    }
 }
 
 if ([IO.Path]::DirectorySeparatorChar -ne '\') {
@@ -352,7 +442,17 @@ $runId = (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssfffZ') + '-' +
 $runRoot = Join-Path $resultsRoot $runId
 [IO.Directory]::CreateDirectory($runRoot) | Out-Null
 Assert-NoExistingReparsePoint $runRoot
-$summaryPath = Join-Path $runRoot 'wp02f-ini-project-baseline-summary.json'
+$summaryFileName = if ($runtimeResolutionAudit) {
+    'wp02g1-ini-runtime-resolution-summary.json'
+} else {
+    'wp02f-ini-project-baseline-summary.json'
+}
+$executeMethod = if ($runtimeResolutionAudit) {
+    'RA2YR.Editor.IniProjectBaselineAuditCommand.RunRuntimeResolution'
+} else {
+    'RA2YR.Editor.IniProjectBaselineAuditCommand.Run'
+}
+$summaryPath = Join-Path $runRoot $summaryFileName
 $logPath = Join-Path $runRoot 'unity.log'
 
 $configurationIdentity = Open-LockedFileIdentity $resolvedConfigurationPath
@@ -362,7 +462,7 @@ try {
     $arguments = @(
         '-batchmode', '-nographics', '-quit',
         '-projectPath', (Quote-ProcessArgument $resolvedProjectRoot),
-        '-executeMethod', 'RA2YR.Editor.IniProjectBaselineAuditCommand.Run',
+        '-executeMethod', $executeMethod,
         '-ra2yrExternalContentConfig', (Quote-ProcessArgument $resolvedConfigurationPath),
         '-ra2yrSummaryOutput', (Quote-ProcessArgument $summaryPath),
         '-logFile', (Quote-ProcessArgument $logPath)
@@ -402,7 +502,12 @@ try {
 }
 Assert-SanitizedSummary $summary $summaryText
 
-$manifestRelativePath = [string]$summary.externalManifest.cacheRelativePath
+$manifestReference = if ($runtimeResolutionAudit) {
+    $summary.baseIniAuditExternalManifest
+} else {
+    $summary.externalManifest
+}
+$manifestRelativePath = [string]$manifestReference.cacheRelativePath
 $manifestPath = [IO.Path]::GetFullPath((Join-Path $cachePath $manifestRelativePath.Replace('/', '\')))
 if (-not (Test-InsideOrEqual $manifestPath $cachePath) -or
     ([IO.Path]::GetFullPath($manifestPath).TrimEnd('\')).Equals(
@@ -413,8 +518,8 @@ if (-not (Test-InsideOrEqual $manifestPath $cachePath) -or
 Assert-NoExistingReparsePoint $manifestPath
 $manifestIdentity = Open-LockedFileIdentity $manifestPath
 try {
-    if ([int64]$manifestIdentity.Length -ne [int64]$summary.externalManifest.length -or
-        [string]$manifestIdentity.Sha256 -cne [string]$summary.externalManifest.sha256) {
+    if ([int64]$manifestIdentity.Length -ne [int64]$manifestReference.length -or
+        [string]$manifestIdentity.Sha256 -cne [string]$manifestReference.sha256) {
         throw 'The external INI audit manifest does not match the sanitized summary.'
     }
 } finally {
@@ -425,8 +530,9 @@ try { $summarySha256 = [string]$summaryIdentity.Sha256 }
 finally { $summaryIdentity.Stream.Dispose() }
 
 "Unity process exit code: $unityExitCode"
+"Audit mode: $AuditMode"
 "Audit status: $($summary.auditStatus)"
-"Validated INI documents: $(@($summary.samples).Count)"
-"External manifest SHA-256: $($summary.externalManifest.sha256)"
+"Validated INI documents: $(if ($runtimeResolutionAudit) { @($summary.syntaxAudits).Count } else { @($summary.samples).Count })"
+"External manifest SHA-256: $($manifestReference.sha256)"
 "Sanitized summary SHA-256: $summarySha256"
-"Sanitized summary: TestResults/$runId/wp02f-ini-project-baseline-summary.json"
+"Sanitized summary: TestResults/$runId/$summaryFileName"

@@ -1,0 +1,97 @@
+schema_version: 1
+evidence_id: "wp02g1-ini-synthetic-20260803"
+recorded_at_utc: "2026-08-03T05:46:30Z"
+scope: "Explicit INI load plans, policy dimensions, deterministic resolution, and complete per-value traces"
+
+environment:
+  unity_editor: "2022.3.60f1c1"
+  unity_test_framework: "1.1.33"
+  unity_engine_dependency: false
+  system_drawing_dependency: false
+  original_content_used_by_synthetic_tests: false
+  network_dependencies_added: false
+
+synthetic_validation:
+  load_plan:
+    single_layer_single_document: "Passed"
+    explicit_multi_layer_priority: "Passed"
+    equal_highest_priority_ambiguous: "Passed"
+    missing_priority_ambiguous: "Passed"
+    enumeration_order_independent: "Passed"
+    loose_and_mix_candidates: "Passed"
+    nested_mix_provenance: "Passed"
+    incomplete_provenance_fails_closed: "Passed"
+    source_id_tie_break_forbidden: "Passed"
+  file_composition:
+    select_highest_document: "Passed"
+    overlay_low_to_high: "Passed"
+    unresolved_is_ambiguous: "Passed"
+  duplicate_policy:
+    first_section: "Passed"
+    last_section: "Passed"
+    merge_sections: "Passed"
+    first_key: "Passed"
+    last_key: "Passed"
+    unresolved_section_or_key: "Passed"
+  text_read_policy:
+    ordinal_raw_ascii: "Passed"
+    ordinal_ignore_case_ascii: "Passed"
+    turkish_culture_independent: "Passed"
+    empty_value_override_choices: "Passed"
+    semicolon_preserve_and_comment_choices: "Passed"
+    whitespace_preserve_and_trim_choices: "Passed"
+    additional_equals_preserved: "Passed"
+    unresolved_choices_are_ambiguous: "Passed"
+  trace_and_safety:
+    every_winner_keeps_overridden_candidates: "Passed"
+    stable_trace_order: "Passed"
+    raw_documents_unchanged: "Passed"
+    opaque_nodes_diagnosed_not_executed: "Passed"
+    candidate_and_document_budgets: "Passed"
+    public_result_not_forgeable: "Passed"
+    diagnostics_exclude_absolute_paths: "Passed"
+    public_evidence_excludes_original_text: "Passed"
+  syntax_audit:
+    opaque_reason_position_and_pattern_aggregates: "Passed"
+    inline_semicolon_position_aggregates: "Passed"
+    raw_text_excluded: "Passed"
+    document_unchanged: "Passed"
+  project_baseline_audit_contract:
+    rulesmd_winner_selected: false
+    soundmd_winner_selected: false
+    fixed_candidate_hashes_pinned: "Passed"
+    runtime_summary_is_sanitized: "Passed"
+
+test_runs:
+  full_edit_mode:
+    result_xml: "Passed"
+    executed: 611
+    passed: 611
+    failed: 0
+    skipped: 0
+    prior_wp02f_baseline: 560
+    new_wp02g1_cases: 51
+    isolated_result: "TestResults/20260803T060720276Z-39b55a6b83b2427fb60d7367a10606ee/EditMode/results.xml"
+    wrapper_shell_exit_code: 0
+    post_result_shutdown_required: true
+  ini_wrapper_regressions:
+    windows_powershell_5_1: { shell_exit_code: 0, executed: 12, passed: 12, failed: 0 }
+    powershell_7: { shell_exit_code: 0, executed: 12, passed: 12, failed: 0 }
+  full_play_mode:
+    result_xml: "Passed"
+    executed: 1
+    passed: 1
+    failed: 0
+    skipped: 0
+    isolated_result: "TestResults/20260803T060258132Z-15fdc37ba2684c1db500adab4d756293/PlayMode/results.xml"
+
+compatibility_boundary:
+  generic_explicit_load_plan: true
+  per_value_candidate_chain: true
+  stock_container_precedence: false
+  stock_file_composition: false
+  stock_name_comparison: false
+  stock_duplicate_resolution: false
+  stock_inline_comment_semantics: false
+  typed_rules_art_ai: false
+  original_runtime_comparison: false

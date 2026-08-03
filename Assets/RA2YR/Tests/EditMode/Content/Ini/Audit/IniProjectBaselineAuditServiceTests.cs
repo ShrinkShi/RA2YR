@@ -81,6 +81,37 @@ namespace RA2YR.Tests.EditMode.Content.Ini.Audit
         }
 
         [Test]
+        public void RuntimeResolutionAuditKeepsProjectBaselineWinnersUnresolved()
+        {
+            using (AuditFixture fixture = AuditFixture.Create(FixtureLayout.Fixed))
+            {
+                IniRuntimeProjectBaselineAuditDelivery delivery = fixture.RunRuntime();
+                string summary = delivery.SanitizedSummary;
+
+                Assert.That(summary, Does.Contain(
+                    "\"manifestType\":\"RA2YR.IniRuntimeResolutionAuditSanitized\""));
+                Assert.That(summary, Does.Contain(
+                    "\"logicalName\":\"rulesmd.ini\",\"candidateCount\":2"));
+                Assert.That(summary, Does.Contain("\"selectedWinner\":null"));
+                Assert.That(summary, Does.Contain(
+                    "\"winnerEvidence\":\"Unresolved\""));
+                Assert.That(summary, Does.Contain(
+                    "\"genericExplicitLoadPlanExecutable\":true"));
+                Assert.That(summary, Does.Contain(
+                    "\"projectBaselineRuntimeWinnerSelected\":false"));
+                Assert.That(summary, Does.Contain("\"patternCounts\":{"));
+                Assert.That(delivery.SummarySha256, Has.Length.EqualTo(64));
+                Assert.That(delivery.SummaryUtf8Length,
+                    Is.EqualTo(Encoding.UTF8.GetByteCount(summary)));
+                Assert.That(summary, Does.Not.Contain("PrivateSection"));
+                Assert.That(summary, Does.Not.Contain("SecretValue"));
+                Assert.That(summary, Does.Not.Contain(fixture.RepositoryPath));
+                Assert.That(summary, Does.Not.Contain(fixture.SourcePath));
+                Assert.That(summary, Does.Not.Contain(fixture.CachePath));
+            }
+        }
+
+        [Test]
         public void IdentityArtifactsAreExactSyntheticInputs()
         {
             using (AuditFixture fixture = AuditFixture.Create(FixtureLayout.Fixed))
@@ -403,6 +434,16 @@ namespace RA2YR.Tests.EditMode.Content.Ini.Audit
                     configuration ?? Configuration,
                     profile ?? Profile(),
                     buildIndex ?? (value => new ContentIndexer().Build(value)),
+                    () => clock++ == 0 ? StartedUtc : CompletedUtc);
+            }
+
+            public IniRuntimeProjectBaselineAuditDelivery RunRuntime()
+            {
+                int clock = 0;
+                return IniProjectBaselineAuditService.RunRuntimeResolutionAuditForTesting(
+                    Configuration,
+                    Profile(),
+                    value => new ContentIndexer().Build(value),
                     () => clock++ == 0 ? StartedUtc : CompletedUtc);
             }
 

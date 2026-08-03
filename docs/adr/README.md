@@ -19,3 +19,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0012 | CSF ordered raw document model | Accepted |
 | 0013 | Raw-byte INI document authority | Accepted |
 | 0014 | Explicit INI encoding policy | Accepted |
+| 0015 | Evidence-gated INI runtime resolution | Accepted |

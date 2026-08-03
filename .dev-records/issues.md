@@ -238,3 +238,53 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 
 ### 结论
 测试 XML、包装器退出状态和进程收尾必须继续分开记录；审计入口对任何现存 lock fail-closed 是正确行为。
+## 2026-08-03 - 静态资料无法证明 ProjectBaseline INI 胜出规则
+
+### 现象
+`rulesmd.ini` 和 `soundmd.ini` 各有两个不同长度、不同 SHA-256 的 MIX
+候选。官方编辑器源码给出编辑器搜索/解析行为，但独立实现和扩展资料不能
+证明 stock YR 游戏运行时采用相同规则。
+
+### 处理
+运行时审计将 `selectedWinner` 保持为 null，证据等级标为 `Unresolved`；
+实现只接受显式策略。没有启动游戏、XCC、FinalAlert 2 或 GUI 自动化，也
+没有创建会被原版加载的测试 MOD。
+
+### 后续验证
+按 `docs/formats/ini-runtime-resolution.md` 中的 A/B 黑盒计划，在用户另行
+授权后对仓库外一次性副本执行，并逐项固定输入哈希、观察结果和基线未变证明。
+
+## 2026-08-03 - PR #8 审查发现 UTF-16、枚举预算和来源身份边界错误
+
+### 现象
+- UTF-16 ASCII 辅助函数仅按宽度匹配，同时接受 LE/BE 字节排列，导致反向
+  code unit 可能被误判为分号、空格或 Tab。
+- resolver 在检查 `MaxDocuments` 前对任意 `IEnumerable` 调用 `ToArray`，预算
+  不能限制枚举和分配。
+- provenance source ID 使用 `OrdinalIgnoreCase`，与精确身份语义不符。
+
+### 根因与修复
+- 统一由物理编码感知读取器识别 ASCII code unit：LE 仅 `XX 00`，BE 仅
+  `00 XX`；名称、值转换和语法审计共享该规则。
+- 候选最多读取 `MaxDocuments + 1`，多出的一个仅用于确认超限，随后立刻
+  返回 `DocumentBudgetExceeded`；`IniLoadPlan` 收窄为可信的已物化
+  `IReadOnlyList`。
+- source ID 改为 `StringComparison.Ordinal`。
+
+### 验证
+聚焦 EditMode 66/66、全量 EditMode 627/627、PlayMode 1/1。惰性枚举在
+`MaxDocuments + 1` 停止，未触发下一项的故意异常，trace 只包含已保留项。
+
+## 2026-08-03 - PR #8 修复验证中的两次调用错误
+
+### 现象
+- 首次聚焦编译因公开 NUnit 测试方法暴露 internal enum 参数而报 CS0051，
+  没有生成可声明通过的 XML。
+- 首次仓库/版权回归调用向测试脚本传入不存在的 `-RepositoryRoot` 参数，
+  四次 shell 均 exit 1；随后首次实际仓库门禁因新 evidence 尚未创建而按
+  设计报告 3 个缺失引用。
+
+### 处理
+- 参数化测试改用公开 `bool` 输入并在方法内映射物理编码；重新运行通过。
+- 按脚本真实契约无参数重跑回归；创建修复 evidence 后重新运行实际门禁。
+  所有失败状态均保留在执行记录中，不将失败调用伪装为成功。

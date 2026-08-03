@@ -22,7 +22,30 @@ namespace RA2YR.Core.Content.Ini.Audit
                 configuration,
                 IniProjectBaselineAuditProfile.ProjectBaseline,
                 value => new ContentIndexer().Build(value),
-                () => DateTime.UtcNow);
+                () => DateTime.UtcNow,
+                null);
+        }
+
+        public static IniRuntimeProjectBaselineAuditDelivery RunRuntimeResolutionAudit(
+            ExternalContentConfiguration configuration)
+        {
+            IniProjectBaselineAuditModel observedModel = null;
+            IniProjectBaselineAuditDelivery baseDelivery = RunCore(
+                configuration,
+                IniProjectBaselineAuditProfile.ProjectBaseline,
+                value => new ContentIndexer().Build(value),
+                () => DateTime.UtcNow,
+                model => observedModel = model);
+            if (observedModel == null)
+            {
+                throw new InvalidOperationException(
+                    "The runtime INI audit did not receive a complete baseline model.");
+            }
+
+            string summary = IniRuntimeProjectBaselineAuditSerializer.SerializeSanitizedSummary(
+                observedModel,
+                baseDelivery);
+            return new IniRuntimeProjectBaselineAuditDelivery(summary);
         }
 
         internal static IniProjectBaselineAuditDelivery RunForTesting(
@@ -31,14 +54,41 @@ namespace RA2YR.Core.Content.Ini.Audit
             Func<ExternalContentConfiguration, ContentIndexResult> buildIndex,
             Func<DateTime> utcNow)
         {
-            return RunCore(configuration, profile, buildIndex, utcNow);
+            return RunCore(configuration, profile, buildIndex, utcNow, null);
+        }
+
+        internal static IniRuntimeProjectBaselineAuditDelivery
+            RunRuntimeResolutionAuditForTesting(
+                ExternalContentConfiguration configuration,
+                IniProjectBaselineAuditProfile profile,
+                Func<ExternalContentConfiguration, ContentIndexResult> buildIndex,
+                Func<DateTime> utcNow)
+        {
+            IniProjectBaselineAuditModel observedModel = null;
+            IniProjectBaselineAuditDelivery baseDelivery = RunCore(
+                configuration,
+                profile,
+                buildIndex,
+                utcNow,
+                model => observedModel = model);
+            if (observedModel == null)
+            {
+                throw new InvalidOperationException(
+                    "The runtime INI test audit did not receive a complete model.");
+            }
+
+            return new IniRuntimeProjectBaselineAuditDelivery(
+                IniRuntimeProjectBaselineAuditSerializer.SerializeSanitizedSummary(
+                    observedModel,
+                    baseDelivery));
         }
 
         private static IniProjectBaselineAuditDelivery RunCore(
             ExternalContentConfiguration configuration,
             IniProjectBaselineAuditProfile profile,
             Func<ExternalContentConfiguration, ContentIndexResult> buildIndex,
-            Func<DateTime> utcNow)
+            Func<DateTime> utcNow,
+            Action<IniProjectBaselineAuditModel> modelObserver)
         {
             if (configuration == null)
             {
@@ -124,6 +174,7 @@ namespace RA2YR.Core.Content.Ini.Audit
                     unresolvedSurvey,
                     startedUtc,
                     completedUtc);
+                modelObserver?.Invoke(model);
                 byte[] externalBytes =
                     IniProjectBaselineAuditSerializer.SerializeExternalManifestUtf8(
                         model,

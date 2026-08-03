@@ -559,13 +559,153 @@ entries:
       - id: format.ini-opaque-preservation.not-semantic-support
         status: "已知限制"
         description: "Preservation does not mean unknown syntax or mod extensions are executable or behaviorally compatible."
+  - id: ini.load-plan
+    domain: ini
+    feature: "Explicit evidence-labelled INI candidate layers and deterministic load-plan execution"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SingleLayerSingleDocumentResolves"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.HigherExplicitPriorityOverridesLowerPriority"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EqualHighestPriorityIsAmbiguous"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EnumerationOrderDoesNotChangeWinnerOrTrace"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.IncompleteProvenanceFailsClosed"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.CandidateBudgetFailsWithoutPartialSuccess"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.CandidateEnumerationStopsAfterMaximumPlusOne"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.LoadPlanRequiresPrematerializedTrustedLayerList"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SourceIdCaseMismatchFailsAsIncompleteProvenanceWithoutHostPath"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.CompleteResolutionResultCannotBeForgedThroughPublicApi"
+    evidence:
+      - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
+      - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
+      - "docs/adr/0015-ini-runtime-resolution-policy.md"
+    limitations:
+      - id: ini.load-plan.explicit-policy-only
+        status: "已知限制"
+        description: "Executable plans require caller-supplied priorities and policies with evidence labels; no stock YR load plan is selected."
+  - id: ini.container-precedence
+    domain: ini
+    feature: "Stock YR loose, expand, ecache, elocal, base, and nested MIX precedence"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.LooseAndMixCandidatesRemainDistinctLayers"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.NestedMixProvenanceIsValidatedAsACompleteChain"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.MissingPriorityReturnsAmbiguous"
+    evidence:
+      - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
+      - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
+    limitations:
+      - id: ini.container-precedence.runtime-unresolved
+        status: "已知限制"
+        description: "Official editor source and independent implementations narrow hypotheses but do not prove stock YR runtime order; rulesmd.ini and soundmd.ini winners remain ambiguous."
+  - id: ini.file-composition
+    domain: ini
+    feature: "Stock same-name INI selection/overlay and base-versus-md file composition"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SelectDocumentPolicyExcludesUniqueLowerDocumentValues"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.OverlayPolicyRetainsUniqueLowerDocumentValues"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.UnresolvedFileCompositionReturnsAmbiguous"
+    evidence:
+      - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
+      - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
+    limitations:
+      - id: ini.file-composition.runtime-unresolved
+        status: "已知限制"
+        description: "Select and overlay strategies are synthetic capabilities only; stock rules.ini/rulesmd.ini, art.ini/artmd.ini, and same-name archive composition are unresolved."
+  - id: ini.name-comparison
+    domain: ini
+    feature: "Stock section and key name comparison"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.OrdinalRawAsciiKeepsCaseDistinct"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.OrdinalIgnoreCaseAsciiCombinesCaseVariants"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.CurrentTurkishCultureDoesNotChangeAsciiComparison"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.UnresolvedNameComparisonReturnsAmbiguous"
+    evidence:
+      - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
+    limitations:
+      - id: ini.name-comparison.runtime-unresolved
+        status: "已知限制"
+        description: "Raw ASCII ordinal and culture-invariant ASCII folding are explicit options; stock case and legacy code-page comparison remain unresolved."
+  - id: ini.duplicate-resolution
+    domain: ini
+    feature: "Stock duplicate section, duplicate key, and empty-value winner semantics"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.DuplicateSectionsCanSelectFirstPhysicalSection"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.DuplicateSectionsCanSelectLastPhysicalSection"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.DuplicateSectionsCanMergeBeforeKeyResolution"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.DuplicateKeysCanSelectFirstPhysicalKey"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.DuplicateKeysCanSelectLastPhysicalKey"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.UnresolvedDuplicateKeyReturnsAmbiguous"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EmptyValueCanOverrideEarlierNonemptyValue"
+    evidence:
+      - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
+    limitations:
+      - id: ini.duplicate-resolution.runtime-unresolved
+        status: "已知限制"
+        description: "Editor and independent parser observations disagree and do not establish stock runtime winners."
+  - id: ini.inline-comment-semantics
+    domain: ini
+    feature: "Stock inline semicolon, whitespace, equals, and empty-string read semantics"
+    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SemicolonPreservePolicyKeepsTheFullValue"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SemicolonCommentPolicyCutsAtTheFirstSemicolon"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.UnresolvedSemicolonPolicyReturnsAmbiguous"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.WhitespacePreservePolicyKeepsEqualsAndTrailingWhitespace"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.WhitespaceTrimPolicyRemovesAsciiSpaceAndTabOnly"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.AdditionalEqualsSignsRemainInTheEffectiveValue"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.Utf16LittleEndianRecognizesOnlyTrueSemicolon"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.Utf16BigEndianRecognizesOnlyTrueSemicolon"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.Utf16TrueAsciiSpaceAndTabAreTrimmed"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.Utf16U2000IsNotTrimmedAsAsciiSpace"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeSyntaxAuditTests.Utf16AuditCountsEndianCorrectSemicolonOnly"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeSyntaxAuditTests.Utf16AuditDoesNotTreatU2000AsAsciiWhitespace"
+    evidence:
+      - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
+      - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#syntax_audits"
+      - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
+    limitations:
+      - id: ini.inline-comment-semantics.runtime-unresolved
+        status: "已知限制"
+        description: "Explicit preserve/strip and whitespace strategies exist, but thousands of baseline semicolon cases have no original-runtime comparison."
+  - id: ini.resolution-trace
+    domain: ini
+    feature: "Deterministic per-document and per-value candidate chain with physical and container provenance"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ThreeLayersRetainTheCompleteCandidateChain"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EveryWinnerRetainsOverriddenCandidates"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EnumerationOrderDoesNotChangeWinnerOrTrace"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.OpaqueNodesAreDiagnosedAndNeverExecuted"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.DiagnosticsExposeLogicalPathsButNoAbsolutePaths"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ExactSourceIdCaseMatchesProvenance"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SourceIdCaseMismatchFailsAsIncompleteProvenanceWithoutHostPath"
+      - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.RuntimeResolutionAuditKeepsProjectBaselineWinnersUnresolved"
+    evidence:
+      - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
+      - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
+      - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
+    limitations:
+      - id: ini.resolution-trace.explicit-plan-only
+        status: "已知限制"
+        description: "Complete traces are available for explicitly configured policies; ProjectBaseline runtime winners and typed values remain unresolved."
   - id: ini.override-source-tracking
     domain: ini
     feature: "Configuration override semantics and per-value source tracking"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EveryWinnerRetainsOverriddenCandidates"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ThreeLayersRetainTheCompleteCandidateChain"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ResolutionDoesNotModifyTheRawDocuments"
+    evidence:
+      - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
+      - "docs/adr/0015-ini-runtime-resolution-policy.md"
+    limitations:
+      - id: ini.override-source-tracking.runtime-policy-unresolved
+        status: "已知限制"
+        description: "Per-value candidate chains are complete under an explicit policy, but stock configuration override semantics are not selected or original-runtime-verified."
   - id: ini.typed-views
     domain: ini
     feature: "Strongly typed views coexisting with preserved raw nodes"
