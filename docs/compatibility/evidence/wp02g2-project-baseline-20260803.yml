@@ -16,6 +16,13 @@ wrapper_validation:
   game_started: false
   xcc_started: false
   finalalert2_started: false
+review_fix_regression:
+  aggregate_changed: false
+  rules_registry_entry_counts_unchanged: true
+  art_record_and_field_counts_unchanged: true
+  normalized_model_hashes_unchanged: true
+  art_ambiguous_field_count: 0
+  duplicate_registry_ordinal_diagnostic_count: 0
 rules_candidates:
   - role: "rulesmd-expandmd01"
     typed_status: "Incomplete"

@@ -126,14 +126,28 @@ namespace RA2YR.Core.Configuration.Ini.Typed
 
     internal sealed class IniArtResourceField
     {
+        private readonly IReadOnlyList<IniTypedParseResult> parsedCandidates;
+
         private IniArtResourceField(
             IniArtFieldKind kind,
             IniTypedValueStatus status,
-            IniTypedParseResult parsed)
+            IniTypedParseResult parsed,
+            IEnumerable<IniTypedParseResult> parsedCandidates)
         {
+            IniTypedParseResult[] candidates =
+                (parsedCandidates ?? throw new ArgumentNullException(nameof(parsedCandidates)))
+                .ToArray();
             if (!Enum.IsDefined(typeof(IniArtFieldKind), kind) ||
                 !Enum.IsDefined(typeof(IniTypedValueStatus), status) ||
-                (status == IniTypedValueStatus.Missing ? parsed != null : parsed == null))
+                candidates.Any(candidate => candidate == null) ||
+                (status == IniTypedValueStatus.Missing &&
+                    (parsed != null || candidates.Length != 0)) ||
+                (status == IniTypedValueStatus.Ambiguous &&
+                    (parsed != null || candidates.Length < 2 ||
+                     candidates.Any(candidate => candidate.Value == null))) ||
+                (status != IniTypedValueStatus.Missing &&
+                 status != IniTypedValueStatus.Ambiguous &&
+                    (parsed == null || parsed.Status != status || candidates.Length != 0)))
             {
                 throw new ArgumentException("The Art resource field is inconsistent.");
             }
@@ -141,15 +155,21 @@ namespace RA2YR.Core.Configuration.Ini.Typed
             Kind = kind;
             Status = status;
             Parsed = parsed;
+            this.parsedCandidates = Array.AsReadOnly(candidates);
         }
 
         public IniArtFieldKind Kind { get; }
         public IniTypedValueStatus Status { get; }
         public IniTypedParseResult Parsed { get; }
+        public IReadOnlyList<IniTypedParseResult> ParsedCandidates => parsedCandidates;
 
         internal static IniArtResourceField Missing(IniArtFieldKind kind)
         {
-            return new IniArtResourceField(kind, IniTypedValueStatus.Missing, null);
+            return new IniArtResourceField(
+                kind,
+                IniTypedValueStatus.Missing,
+                null,
+                Array.Empty<IniTypedParseResult>());
         }
 
         internal static IniArtResourceField FromParse(
@@ -159,7 +179,19 @@ namespace RA2YR.Core.Configuration.Ini.Typed
             return new IniArtResourceField(
                 kind,
                 (parsed ?? throw new ArgumentNullException(nameof(parsed))).Status,
-                parsed);
+                parsed,
+                Array.Empty<IniTypedParseResult>());
+        }
+
+        internal static IniArtResourceField Ambiguous(
+            IniArtFieldKind kind,
+            IEnumerable<IniTypedParseResult> candidates)
+        {
+            return new IniArtResourceField(
+                kind,
+                IniTypedValueStatus.Ambiguous,
+                null,
+                candidates);
         }
     }
 
@@ -350,6 +382,15 @@ namespace RA2YR.Core.Configuration.Ini.Typed
                         if (field.Parsed != null)
                         {
                             AppendParse(sha, field.Parsed);
+                        }
+                        else if (field.Status == IniTypedValueStatus.Ambiguous)
+                        {
+                            Append(sha, field.ParsedCandidates.Count.ToString(
+                                CultureInfo.InvariantCulture));
+                            foreach (IniTypedParseResult candidate in field.ParsedCandidates)
+                            {
+                                AppendParse(sha, candidate);
+                            }
                         }
                     }
                 }

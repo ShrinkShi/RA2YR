@@ -9,24 +9,25 @@ scope:
   - "fail-closed resolution status and provenance preservation"
 test_delta:
   previous_editmode: 627
-  current_editmode: 674
-  added_cases: 47
+  current_editmode: 678
+  added_cases: 51
+  review_fix_cases: 4
 test_classes:
   - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniTypedScalarParserTests"
   - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests"
   - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceAuditTests"
 unity_gate:
   wrapper_exit: 0
-  result_root: "TestResults/20260803T083908521Z-85ce5952e67c43f48665619fe2dbd311"
+  result_root: "TestResults/20260803T092200957Z-9a085b33a6d9457092bb82e12a23f7cc"
   editmode:
-    passed: 674
+    passed: 678
     failed: 0
-    xml_sha256: "50a7a582f4e9dd3cd9046e28ad32b22792e73ff9ab584214722d6396381de7ff"
+    xml_sha256: "97804e2341ea792b292fda3761f16c64d9ddceb9a84d2e88537d881a8bef63a4"
     forced_post_result_shutdown: true
   playmode:
     passed: 1
     failed: 0
-    xml_sha256: "cd87e9d764ca6260808a6effa2b36c376d15f8069d5845426d139540e2e2ffcf"
+    xml_sha256: "8b055d60f961057cc39640ac1489dd3bd00ca78272dda9c76a2e739ee1423b7a"
     forced_post_result_shutdown: true
 verified:
   complete_input_only: true
@@ -37,6 +38,13 @@ verified:
   mix_provenance_preserved: true
   opaque_prevents_complete_claim: true
   inline_semicolon_prevents_complete_claim: true
+  art_multiple_match_has_no_single_winner: true
+  art_ambiguous_candidates_preserved: true
+  art_ambiguous_reference_suppressed: true
+  art_ambiguous_route_unknown: true
+  art_ambiguous_hash_order_stable: true
+  duplicate_registry_ordinal_preserved: true
+  duplicate_registry_ordinal_scoped_per_registry: true
   section_name_image_fallback: false
   automatic_extension_completion: false
   current_culture_dependency: false

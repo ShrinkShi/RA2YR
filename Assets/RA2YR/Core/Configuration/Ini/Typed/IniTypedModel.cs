@@ -59,6 +59,7 @@ namespace RA2YR.Core.Configuration.Ini.Typed
         DuplicateSectionMayAffectTarget,
         DuplicateKeyMayAffectTarget,
         DuplicateRegistryIdentifier,
+        DuplicateRegistryOrdinal,
         InvalidRegistryOrdinal,
         ArtSectionMissing,
         ArtSectionAmbiguous,

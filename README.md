@@ -26,7 +26,7 @@ RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项�
 - 通过 MIX 虚拟源分别验证 `artmd.ini`、`ai.ini` 和两个不同的 `rulesmd.ini` 候选，不选择运行时胜出者；
 - 显式、证据分级的 INI 加载计划与独立的文件组合、名称比较、重复项、分号、空白和空值策略；
 - 确定性的逐值候选链与完整来源追踪；`rulesmd.ini` 和 `soundmd.ini` 的 ProjectBaseline 胜出者仍保持歧义；
-- 只消费显式 `Complete` INI resolution 的最小 typed scalar、Rules 类型注册表和 Art 资源路由视图；Ambiguous/Failed 输入拒绝，Opaque/分号风险不会被静默标为完整；
+- 只消费显式 `Complete` INI resolution 的最小 typed scalar、Rules 类型注册表和 Art 资源路由视图；Art 多重匹配与 Rules 重复 ordinal 均保留全部候选并 fail-closed，不选择首项赢家；
 - EditMode、PlayMode、仓库静态验证和 CI 入口；
 - 明确区分“未实现”“可解析”和原版对照等兼容状态。
 

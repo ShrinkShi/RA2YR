@@ -281,3 +281,10 @@
 - 新增 47 个 EditMode case，最终全量结果为 EditMode 674/674、PlayMode 1/1；总包装器退出 0，两种模式均在完整 XML 后执行受控收尾。
 - ProjectBaseline typed audit Unity 真实退出 0；三个输入来源追踪覆盖完整。
 - 所有 ProjectBaseline typed 结果因保留的 Opaque/分号/重复风险而明确为 `Incomplete`，未伪造完整语义。
+
+## 2026-08-03 - PR #10 review fixes
+
+- 合并 PR #9 后的 `main`，不改写 WP-02G2 原有三个提交，也不修改或实现 SHP。
+- Art 多重名称匹配改为真正的 `Ambiguous` 字段：无单一 `Parsed`、保留全部候选和来源链、不生成 reference 或 route。
+- Rules registry 新增按解析后整数判断的 `DuplicateRegistryOrdinal`；冲突仅限同一 registry，所有原始条目继续保留。
+- 新增 4 个 EditMode case；阶段性全量结果为 678/678，ProjectBaseline 三个规范化模型哈希和既有聚合保持不变。

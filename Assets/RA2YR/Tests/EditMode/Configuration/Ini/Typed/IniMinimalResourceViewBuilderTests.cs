@@ -109,6 +109,37 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini.Typed
         }
 
         [Test]
+        public void DuplicateRegistryOrdinalsArePreservedWithoutChoosingAWinner()
+        {
+            IniTypedViewResult<IniRulesResourceDocument> result = RulesResult(
+                "[VehicleTypes]\n0=ONE\n00=TWO");
+            IniRulesRegistry registry = result.Document.Registries.Single(value =>
+                value.Kind == IniRulesRegistryKind.VehicleTypes);
+
+            Assert.That(result.Status, Is.EqualTo(IniTypedViewStatus.Incomplete));
+            Assert.That(registry.Entries.Select(value => value.OriginalOrdinalKey),
+                Is.EqualTo(new[] { "0", "00" }));
+            Assert.That(registry.Entries.Select(value => value.Ordinal),
+                Is.EqualTo(new[] { 0, 0 }));
+            Assert.That(result.Diagnostics.Count(value =>
+                value.Code == IniTypedDiagnosticCode.DuplicateRegistryOrdinal),
+                Is.EqualTo(2));
+            Assert.That(registry.Entries.All(value =>
+                value.Identifier.Value.SourceTrace.Winner != null), Is.True);
+        }
+
+        [Test]
+        public void RegistryOrdinalsAreScopedToTheirOwnRegistry()
+        {
+            IniTypedViewResult<IniRulesResourceDocument> result = RulesResult(
+                "[VehicleTypes]\n0=ONE\n[InfantryTypes]\n0=TWO");
+
+            Assert.That(result.Document.EntryCount, Is.EqualTo(2));
+            Assert.That(result.Diagnostics.Any(value =>
+                value.Code == IniTypedDiagnosticCode.DuplicateRegistryOrdinal), Is.False);
+        }
+
+        [Test]
         public void InvalidRegistryOrdinalIsNotExecuted()
         {
             IniTypedViewResult<IniRulesResourceDocument> result = RulesResult(
@@ -195,6 +226,89 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini.Typed
             Assert.That(Field(record, IniArtFieldKind.Voxel).Status,
                 Is.EqualTo(IniTypedValueStatus.Invalid));
             Assert.That(record.RouteCandidate, Is.EqualTo(IniResourceRouteCandidate.Unknown));
+        }
+
+        [Test]
+        public void ArtCaseInsensitiveMultipleMatchIsAmbiguousAndFailClosed()
+        {
+            IniResolutionResult input = Resolve(
+                new[]
+                {
+                    Source("candidate-only", "layer-only", "source-only", 10,
+                        "[UNIT]\nImage=FIRST\nimage=SECOND", "artmd.ini")
+                },
+                IniFileCompositionPolicy.SelectHighestPriorityDocument,
+                IniNameComparisonPolicy.OrdinalRawAscii);
+
+            IniTypedViewResult<IniArtResourceDocument> result =
+                IniMinimalResourceViewBuilder.BuildArt(
+                    input,
+                    IniTypedNameComparisonPolicy.OrdinalIgnoreCaseAscii,
+                    IniBooleanCasePolicy.OrdinalIgnoreCaseAscii);
+            IniArtResourceRecord record = result.Document.Records.Single();
+            IniArtResourceField image = Field(record, IniArtFieldKind.Image);
+
+            Assert.That(input.Sections.Single().Values.Select(value => value.KeyName),
+                Is.EquivalentTo(new[] { "Image", "image" }));
+            Assert.That(result.Status, Is.EqualTo(IniTypedViewStatus.Incomplete));
+            Assert.That(image.Status, Is.EqualTo(IniTypedValueStatus.Ambiguous));
+            Assert.That(image.Parsed, Is.Null);
+            Assert.That(image.ParsedCandidates.Count, Is.EqualTo(2));
+            Assert.That(image.ParsedCandidates.All(candidate =>
+                candidate.Value.SourceTrace.Winner != null), Is.True);
+            Assert.That(record.References.References.Any(reference =>
+                reference.Field == IniArtFieldKind.Image), Is.False);
+            Assert.That(record.RouteCandidate, Is.EqualTo(IniResourceRouteCandidate.Unknown));
+            Assert.That(result.Diagnostics.Any(value =>
+                value.Code == IniTypedDiagnosticCode.ArtSectionAmbiguous), Is.True);
+        }
+
+        [Test]
+        public void ArtAmbiguityCanonicalOrderDoesNotDependOnResolvedValueEnumeration()
+        {
+            IniResolutionResult input = Resolve(
+                new[]
+                {
+                    Source("candidate-only", "layer-only", "source-only", 10,
+                        "[UNIT]\nImage=FIRST\nimage=SECOND", "artmd.ini")
+                },
+                IniFileCompositionPolicy.SelectHighestPriorityDocument,
+                IniNameComparisonPolicy.OrdinalRawAscii);
+            IniResolutionResult reversed = IniResolutionResult.Create(
+                input.Status,
+                input.Sections.Select(section => new IniResolvedSection(
+                    section.Name,
+                    section.Values.Reverse())),
+                input.Trace,
+                input.Diagnostics);
+
+            IniArtResourceDocument first = IniMinimalResourceViewBuilder.BuildArt(
+                input,
+                IniTypedNameComparisonPolicy.OrdinalIgnoreCaseAscii,
+                IniBooleanCasePolicy.OrdinalIgnoreCaseAscii).Document;
+            IniArtResourceDocument second = IniMinimalResourceViewBuilder.BuildArt(
+                reversed,
+                IniTypedNameComparisonPolicy.OrdinalIgnoreCaseAscii,
+                IniBooleanCasePolicy.OrdinalIgnoreCaseAscii).Document;
+            IniArtResourceDocument changed = IniMinimalResourceViewBuilder.BuildArt(
+                Resolve(
+                    new[]
+                    {
+                        Source("candidate-only", "layer-only", "source-only", 10,
+                            "[UNIT]\nImage=FIRST\nimage=CHANGED", "artmd.ini")
+                    },
+                    IniFileCompositionPolicy.SelectHighestPriorityDocument,
+                    IniNameComparisonPolicy.OrdinalRawAscii),
+                IniTypedNameComparisonPolicy.OrdinalIgnoreCaseAscii,
+                IniBooleanCasePolicy.OrdinalIgnoreCaseAscii).Document;
+
+            Assert.That(first.CanonicalModelSha256, Is.EqualTo(second.CanonicalModelSha256));
+            Assert.That(first.CanonicalModelSha256, Is.Not.EqualTo(
+                changed.CanonicalModelSha256));
+            Assert.That(Field(first.Records.Single(), IniArtFieldKind.Image)
+                .ParsedCandidates.Select(candidate => candidate.Value.Identifier),
+                Is.EqualTo(Field(second.Records.Single(), IniArtFieldKind.Image)
+                    .ParsedCandidates.Select(candidate => candidate.Value.Identifier)));
         }
 
         [Test]
@@ -392,13 +506,15 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini.Typed
 
         private static IniResolutionResult Resolve(
             IEnumerable<SourceFixture> sources,
-            IniFileCompositionPolicy composition)
+            IniFileCompositionPolicy composition,
+            IniNameComparisonPolicy nameComparison =
+                IniNameComparisonPolicy.OrdinalIgnoreCaseAscii)
         {
             SourceFixture[] values = sources.ToArray();
             return new IniRuntimeResolver().Resolve(
                 new IniLoadPlan("wp02g2-tests", values.Select(value => value.Layer).ToArray()),
                 values.Select(value => value.Candidate),
-                Policy(composition));
+                Policy(composition, nameComparison));
         }
 
         private static SourceFixture Source(
@@ -427,12 +543,15 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini.Typed
                 new IniCandidateDocument(candidateId, layerId, logicalName, parsed.Document));
         }
 
-        private static IniResolutionPolicy Policy(IniFileCompositionPolicy composition)
+        private static IniResolutionPolicy Policy(
+            IniFileCompositionPolicy composition,
+            IniNameComparisonPolicy nameComparison =
+                IniNameComparisonPolicy.OrdinalIgnoreCaseAscii)
         {
             IniResolutionEvidence evidence = Evidence();
             return new IniResolutionPolicy(
                 composition, evidence,
-                IniNameComparisonPolicy.OrdinalIgnoreCaseAscii, evidence,
+                nameComparison, evidence,
                 IniDuplicateSectionPolicy.MergeSectionsInFileOrder, evidence,
                 IniDuplicateKeyPolicy.LastKeyWins, evidence,
                 IniInlineCommentPolicy.PreserveSemicolonInValue, evidence,

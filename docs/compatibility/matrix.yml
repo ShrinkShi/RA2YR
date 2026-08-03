@@ -731,6 +731,7 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.ArtUsesExplicitImageAndDoesNotUseSectionNameFallback"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.OpaqueLinePreventsCompleteTypedClaim"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.InlineSemicolonPreventsCompleteTypedClaim"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.ArtCaseInsensitiveMultipleMatchIsAmbiguousAndFailClosed"
     evidence:
       - "docs/compatibility/evidence/wp02g2-ini-typed-synthetic-20260803.yml"
       - "docs/compatibility/evidence/wp02g2-project-baseline-20260803.yml"
@@ -746,6 +747,8 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.AllFiveRequestedRegistriesAreRepresented"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.RulesRegistriesPreserveExplicitFileOrderAndOrdinalSpelling"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.DuplicateRegistryIdentifiersArePreservedAndMarkedIncomplete"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.DuplicateRegistryOrdinalsArePreservedWithoutChoosingAWinner"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.RegistryOrdinalsAreScopedToTheirOwnRegistry"
     evidence:
       - "docs/compatibility/evidence/wp02g2-project-baseline-20260803.yml"
       - "docs/formats/ini-minimal-resource-views.md"
@@ -761,13 +764,15 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.ArtParsesExplicitVoxelAndReferenceFields"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.VoxelYesProducesOnlyAnExplicitRouteCandidate"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.InvalidVoxelRemainsInvalidAndRouteUnknown"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.ArtCaseInsensitiveMultipleMatchIsAmbiguousAndFailClosed"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.ArtAmbiguityCanonicalOrderDoesNotDependOnResolvedValueEnumeration"
     evidence:
       - "docs/compatibility/evidence/wp02g2-project-baseline-20260803.yml"
       - "docs/adr/0016-minimal-rules-art-resource-views.md"
     limitations:
       - id: ini.art-resource-routing.explicit-candidates-only
         status: "已知限制"
-        description: "Routes are explicit research candidates only; stock defaults, fallback, SHP/VXL decoding, palette choice, shadow interpretation, pivots, and rendering remain unimplemented."
+        description: "Routes are explicit research candidates only; multi-match fields fail closed without a reference or route. Stock defaults, fallback, SHP/VXL decoding, palette choice, shadow interpretation, pivots, and rendering remain unimplemented."
   - id: ini.rules
     domain: ini
     feature: "rules.ini and rulesmd.ini"

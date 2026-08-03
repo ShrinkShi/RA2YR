@@ -113,6 +113,7 @@ namespace RA2YR.Core.Configuration.Ini.Typed
                 }
 
                 AddDuplicateIdentifierDiagnostics(entries, nameComparison, diagnostics);
+                AddDuplicateOrdinalDiagnostics(entries, diagnostics);
                 registries.Add(new IniRulesRegistry(kind, entries));
             }
 
@@ -191,14 +192,33 @@ namespace RA2YR.Core.Configuration.Ini.Typed
 
                     if (matches.Length > 1)
                     {
+                        matches = OrderAmbiguousArtMatches(matches);
+                        var parsedCandidates = new List<IniTypedParseResult>(matches.Length);
+                        foreach (IniResolvedValue match in matches)
+                        {
+                            IniTypedParseResult candidate = ParseArtField(
+                                kind,
+                                match,
+                                booleanCase,
+                                limits);
+                            if (candidate.Status == IniTypedValueStatus.Failed)
+                            {
+                                return IniTypedViewResult<IniArtResourceDocument>
+                                    .FailCompleteInput(input, candidate.Diagnostics.First());
+                            }
+
+                            diagnostics.AddRange(candidate.Diagnostics);
+                            AddValueHazards(match, diagnostics);
+                            parsedCandidates.Add(candidate);
+                        }
+
                         diagnostics.Add(new IniTypedDiagnostic(
                             IniTypedDiagnosticCode.ArtSectionAmbiguous,
                             IniTypedDiagnosticSeverity.Error,
                             IniTypedTargetKind.ArtField,
-                            "More than one resolved Art field matched the explicit name policy.",
-                            matches[0].Winner.Document.LogicalName,
-                            matches[0].Winner.Document.CandidateId,
-                            matches[0].Winner.KeyLineId));
+                            "More than one resolved Art field matched the explicit name policy."));
+                        fields.Add(IniArtResourceField.Ambiguous(kind, parsedCandidates));
+                        continue;
                     }
 
                     IniResolvedValue selected = matches[0];
@@ -344,6 +364,46 @@ namespace RA2YR.Core.Configuration.Ini.Typed
                         winner.KeyPhysicalLineId));
                 }
             }
+        }
+
+        private static void AddDuplicateOrdinalDiagnostics(
+            IEnumerable<IniRulesRegistryEntry> entries,
+            TypedDiagnosticCollector diagnostics)
+        {
+            foreach (IGrouping<int, IniRulesRegistryEntry> group in entries
+                         .GroupBy(entry => entry.Ordinal)
+                         .Where(group => group.Count() > 1))
+            {
+                foreach (IniRulesRegistryEntry entry in group)
+                {
+                    IniValueSourceCandidateTrace winner = entry.Identifier.Value == null
+                        ? null
+                        : entry.Identifier.Value.SourceTrace.Winner;
+                    diagnostics.Add(new IniTypedDiagnostic(
+                        IniTypedDiagnosticCode.DuplicateRegistryOrdinal,
+                        IniTypedDiagnosticSeverity.Error,
+                        IniTypedTargetKind.RulesRegistry,
+                        "A Rules registry contains more than one entry for the same parsed ordinal.",
+                        winner?.LogicalName,
+                        winner?.CandidateId,
+                        winner?.KeyPhysicalLineId));
+                }
+            }
+        }
+
+        private static IniResolvedValue[] OrderAmbiguousArtMatches(
+            IEnumerable<IniResolvedValue> matches)
+        {
+            return matches
+                .OrderBy(value => value.KeyName, StringComparer.Ordinal)
+                .ThenBy(value => value.Winner.Document.Document.Provenance.SourceId,
+                    StringComparer.Ordinal)
+                .ThenBy(value => value.Winner.Document.CandidateId, StringComparer.Ordinal)
+                .ThenBy(value => value.Winner.Document.LogicalName.Value,
+                    StringComparer.Ordinal)
+                .ThenBy(value => value.Winner.SectionLineId)
+                .ThenBy(value => value.Winner.KeyLineId)
+                .ToArray();
         }
 
         private static bool TryParseOrdinal(

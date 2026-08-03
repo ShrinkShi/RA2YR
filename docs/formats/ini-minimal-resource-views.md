@@ -26,7 +26,11 @@ Only the explicit registries `AircraftTypes`, `BuildingTypes`,
 stores its registry kind, original ordinal-key spelling, checked ordinal,
 explicit identifier result, and source trace. Duplicate identifiers are
 preserved and make the typed result incomplete; stock duplicate behavior is
-not selected.
+not selected. Ordinal spelling is not identity: entries such as `0` and `00`
+both parse to ordinal zero. Such entries remain in source order, receive a
+`DuplicateRegistryOrdinal` diagnostic within that registry, and never acquire
+an implicit first/last winner. Equal ordinals in different registries do not
+conflict.
 
 ## Minimal Art projection
 
@@ -34,6 +38,14 @@ The fields are `Image`, `Cameo`, `AltCameo`, `Voxel`, `Remapable`,
 `NewTheater`, `Palette`, `CustomPalette`, `Buildup`, and `ShadowIndex`.
 `CustomPalette` remains raw because its stock semantic grammar is not yet
 established. Missing fields remain missing and invalid fields retain raw bytes.
+
+Name comparison is an explicit typed-view policy. If that policy matches more
+than one G1-resolved field (for example exact `Image` and `image` values under
+an ASCII case-insensitive G2 projection), the field is `Ambiguous`: it has no
+single parsed winner, preserves every parsed candidate and source trace in a
+canonical order, contributes no resource reference, and cannot determine a
+route candidate. The normalized model hash includes the complete ordered
+candidate set.
 
 Explicit file extensions are counted but never appended. An explicit valid
 `Voxel=yes` produces a VXL route candidate and `Voxel=no` produces an SHP
