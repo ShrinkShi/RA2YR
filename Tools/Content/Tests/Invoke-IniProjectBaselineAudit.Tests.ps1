@@ -9,6 +9,7 @@ if ([string]::IsNullOrWhiteSpace($RepositoryRoot)) {
 $root = [IO.Path]::GetFullPath($RepositoryRoot)
 $wrapperPath = Join-Path $root 'Tools\Content\Invoke-IniProjectBaselineAudit.ps1'
 $runtimeWrapperPath = Join-Path $root 'Tools\Content\Invoke-IniRuntimeResolutionAudit.ps1'
+$minimalWrapperPath = Join-Path $root 'Tools\Content\Invoke-IniMinimalResourceAudit.ps1'
 $editorPath = Join-Path $root 'Assets\RA2YR\Editor\IniProjectBaselineAuditCommand.cs'
 $utf8 = New-Object Text.UTF8Encoding($false, $true)
 $passed = 0
@@ -128,8 +129,47 @@ function New-SyntheticRuntimeSummary {
     }
 }
 
+function New-SyntheticMinimalSummary {
+    $trace = [pscustomobject]@{ complete = 2; total = 2 }
+    $ruleA = [pscustomobject]@{
+        candidateRole = 'rulesmd-expandmd01'; typedStatus = 'Incomplete'
+        registryTypeCount = 5; registryEntryCount = 2
+        invalidIdentifierCount = 0; failedIdentifierCount = 0
+        sourceTraceCoverage = $trace; normalizedModelSha256 = ('d' * 64)
+        diagnosticCounts = [pscustomobject]@{}
+    }
+    $ruleB = [pscustomobject]@{
+        candidateRole = 'rulesmd-localmd'; typedStatus = 'Incomplete'
+        registryTypeCount = 5; registryEntryCount = 2
+        invalidIdentifierCount = 0; failedIdentifierCount = 0
+        sourceTraceCoverage = $trace; normalizedModelSha256 = ('e' * 64)
+        diagnosticCounts = [pscustomobject]@{}
+    }
+    [pscustomobject]@{
+        schemaVersion = 1
+        manifestType = 'RA2YR.IniMinimalResourceProjectBaselineAuditSanitized'
+        baselineLogicalName = 'YR1001_ProjectBaseline'; auditStatus = 'Complete'
+        policyEvidence = 'ConfiguredForTesting'; stockRuntimeWinnerSelected = $false
+        sourceVersion = 'synthetic'; directoryFingerprint = ('b' * 64)
+        baseIniAuditExternalManifest = [pscustomobject]@{
+            schemaVersion = 1; cacheRelativePath = 'wp02f/ini-audits/test/manifest.json'
+            length = 1; sha256 = ('c' * 64)
+        }
+        startedUtc = '2026-08-03T00:00:00Z'; completedUtc = '2026-08-03T00:00:01Z'
+        rulesCandidates = @($ruleA, $ruleB)
+        artCandidate = [pscustomobject]@{
+            candidateRole = 'artmd-localmd'; typedStatus = 'Incomplete'
+            recordCount = 1; explicitImageCount = 1
+            sourceTraceCoverage = [pscustomobject]@{ complete = 1; total = 1 }
+            normalizedModelSha256 = ('f' * 64)
+        }
+        limitations = @('explicit-only')
+    }
+}
+
 if (-not (Test-Path -LiteralPath $wrapperPath -PathType Leaf) -or
     -not (Test-Path -LiteralPath $runtimeWrapperPath -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $minimalWrapperPath -PathType Leaf) -or
     -not (Test-Path -LiteralPath $editorPath -PathType Leaf)) {
     throw 'The WP-02F controlled audit entry points are missing.'
 }
@@ -144,6 +184,7 @@ if ($parseErrors.Count -ne 0) {
 }
 $wrapperText = [IO.File]::ReadAllText($wrapperPath, $utf8)
 $runtimeWrapperText = [IO.File]::ReadAllText($runtimeWrapperPath, $utf8)
+$minimalWrapperText = [IO.File]::ReadAllText($minimalWrapperPath, $utf8)
 $editorText = [IO.File]::ReadAllText($editorPath, $utf8)
 
 Invoke-Case 'PowerShell parser accepts wrapper' {
@@ -177,7 +218,7 @@ Invoke-Case 'Editor command uses controlled Core service' {
 }
 Invoke-Case 'Runtime audit mode is exposed through the same safety wrapper' {
     foreach ($required in @(
-        "ValidateSet('PhysicalDocument', 'RuntimeResolution')",
+        "ValidateSet('PhysicalDocument', 'RuntimeResolution', 'MinimalResource')",
         'RunRuntimeResolution', 'wp02g1-ini-runtime-resolution-summary.json',
         'baseIniAuditExternalManifest')) {
         if (-not $wrapperText.Contains($required)) { throw "Missing runtime gate: $required" }
@@ -192,6 +233,22 @@ Invoke-Case 'Runtime audit mode is exposed through the same safety wrapper' {
         }
     }
 }
+Invoke-Case 'Minimal resource mode is exposed through the same safety wrapper' {
+    foreach ($required in @(
+        'RunMinimalResourceTypedViews', 'wp02g2-ini-minimal-resource-summary.json',
+        'stockRuntimeWinnerSelected', 'ConfiguredForTesting')) {
+        if (-not $wrapperText.Contains($required)) { throw "Missing minimal gate: $required" }
+    }
+    if (-not $editorText.Contains('RunMinimalResourceTypedViewAudit(')) {
+        throw 'The editor minimal audit command does not call the controlled Core service.'
+    }
+    foreach ($required in @(
+        'Invoke-IniProjectBaselineAudit.ps1', '-AuditMode MinimalResource')) {
+        if (-not $minimalWrapperText.Contains($required)) {
+            throw "Missing minimal forwarding boundary: $required"
+        }
+    }
+}
 
 $functionAsts = @($ast.FindAll({
     param($node)
@@ -201,6 +258,7 @@ foreach ($functionAst in $functionAsts) { Invoke-Expression $functionAst.Extent.
 $baselineName = 'YR1001_ProjectBaseline'
 $manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
 $runtimeResolutionAudit = $false
+$minimalResourceAudit = $false
 
 Invoke-Case 'Synthetic sanitized summary passes' {
     $summary = New-SyntheticSummary
@@ -242,6 +300,24 @@ Invoke-Case 'Runtime winner selection fails closed' {
     $summary.candidateSets[0].selectedWinner = $summary.candidateSets[0].candidates[0]
     Assert-Throws { Assert-SanitizedSummary $summary ($summary | ConvertTo-Json -Depth 8 -Compress) }
     $script:runtimeResolutionAudit = $false
+    $script:manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
+}
+
+Invoke-Case 'Synthetic minimal resource summary passes' {
+    $script:manifestType = 'RA2YR.IniMinimalResourceProjectBaselineAuditSanitized'
+    $script:minimalResourceAudit = $true
+    $summary = New-SyntheticMinimalSummary
+    Assert-SanitizedSummary $summary ($summary | ConvertTo-Json -Depth 8 -Compress)
+    $script:minimalResourceAudit = $false
+    $script:manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
+}
+Invoke-Case 'Minimal resource stock winner selection fails closed' {
+    $script:manifestType = 'RA2YR.IniMinimalResourceProjectBaselineAuditSanitized'
+    $script:minimalResourceAudit = $true
+    $summary = New-SyntheticMinimalSummary
+    $summary.stockRuntimeWinnerSelected = $true
+    Assert-Throws { Assert-SanitizedSummary $summary ($summary | ConvertTo-Json -Depth 8 -Compress) }
+    $script:minimalResourceAudit = $false
     $script:manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
 }
 

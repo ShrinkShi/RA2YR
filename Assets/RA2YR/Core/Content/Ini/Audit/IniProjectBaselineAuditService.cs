@@ -48,6 +48,28 @@ namespace RA2YR.Core.Content.Ini.Audit
             return new IniRuntimeProjectBaselineAuditDelivery(summary);
         }
 
+        public static IniMinimalResourceProjectBaselineAuditDelivery
+            RunMinimalResourceTypedViewAudit(
+                ExternalContentConfiguration configuration)
+        {
+            IniProjectBaselineAuditModel observedModel = null;
+            IniProjectBaselineAuditDelivery baseDelivery = RunCore(
+                configuration,
+                IniProjectBaselineAuditProfile.ProjectBaseline,
+                value => new ContentIndexer().Build(value),
+                () => DateTime.UtcNow,
+                model => observedModel = model);
+            if (observedModel == null)
+            {
+                throw new InvalidOperationException(
+                    "The minimal resource audit did not receive a complete baseline model.");
+            }
+
+            return IniMinimalResourceProjectBaselineAudit.Build(
+                observedModel,
+                baseDelivery);
+        }
+
         internal static IniProjectBaselineAuditDelivery RunForTesting(
             ExternalContentConfiguration configuration,
             IniProjectBaselineAuditProfile profile,

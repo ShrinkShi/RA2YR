@@ -2,7 +2,7 @@
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
-> 项目目前处于 WP-02G1 INI 运行时解析研究阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
+> 项目目前处于 WP-02G2 最小 Rules/Art 资源引用视图阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
 ## 项目定位
 
@@ -26,6 +26,7 @@ RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项�
 - 通过 MIX 虚拟源分别验证 `artmd.ini`、`ai.ini` 和两个不同的 `rulesmd.ini` 候选，不选择运行时胜出者；
 - 显式、证据分级的 INI 加载计划与独立的文件组合、名称比较、重复项、分号、空白和空值策略；
 - 确定性的逐值候选链与完整来源追踪；`rulesmd.ini` 和 `soundmd.ini` 的 ProjectBaseline 胜出者仍保持歧义；
+- 只消费显式 `Complete` INI resolution 的最小 typed scalar、Rules 类型注册表和 Art 资源路由视图；Art 多重匹配与 Rules 重复 ordinal 均保留全部候选并 fail-closed，不选择首项赢家；
 - EditMode、PlayMode、仓库静态验证和 CI 入口；
 - 明确区分“未实现”“可解析”和原版对照等兼容状态。
 
@@ -55,7 +56,7 @@ Windows 是当前优先平台。核心格式、内容和确定性逻辑的设计
 2. 将 source 和 cache 路径改为仓库外的本机目录。
 3. 不要移动、重命名或写入原版内容；本机配置和缓存已被 Git 忽略。
 
-WP-02A 建立目录型来源、显式优先级、来源链和仓库外 manifest；WP-02B 建立有界二进制输入、预算和诊断；WP-02C 在这些边界上增加 MIX 容器读写、加密目录、校验、嵌套挂载及 XCC 合成互操作；WP-02D 增加严格的 PAL 原始 RGB 解析；WP-02E 增加严格、只读的 CSF v3 文档解析；WP-02F 增加 INI 原始字节、物理行结构、显式编码边界和未修改 identity writer；WP-02G1 增加显式 INI 加载计划、可配置比较/重复/读取策略和逐值来源链，但不猜测 stock YR 的胜出规则。SHP、PCX、VXL/HVA、TMP、地图 Pack、Texture2D、Shader、玩家色、剧院选择、INI 强类型语义与原版运行时覆盖优先级，以及 CSF 写入和运行时本地化仍未实现，也不证明视觉或游戏行为兼容。受控基线命令只读访问必要字节并计算摘要；公开证据不包含文件正文、完整颜色表、字符串表、绝对路径或完整文件级清单。
+WP-02A 建立目录型来源、显式优先级、来源链和仓库外 manifest；WP-02B 建立有界二进制输入、预算和诊断；WP-02C 在这些边界上增加 MIX 容器读写、加密目录、校验、嵌套挂载及 XCC 合成互操作；WP-02D 增加严格的 PAL 原始 RGB 解析；WP-02E 增加严格、只读的 CSF v3 文档解析；WP-02F 增加 INI 原始字节、物理行结构、显式编码边界和未修改 identity writer；WP-02G1 增加显式 INI 加载计划、可配置比较/重复/读取策略和逐值来源链，但不猜测 stock YR 的胜出规则；WP-02G2 仅增加来源可追踪的最小 Rules/Art 显式资源引用视图。SHP、PCX、VXL/HVA、TMP、地图 Pack、Texture2D、Shader、玩家色、剧院选择、完整 Rules/Art 语义、默认值、回退与原版运行时覆盖优先级，以及 CSF 写入和运行时本地化仍未实现，也不证明视觉或游戏行为兼容。受控基线命令只读访问必要字节并计算摘要；公开证据不包含文件正文、完整颜色表、字符串表、绝对路径或完整文件级清单。
 
 本轮的 XCC `往返通过` 是明确的语义结果：条目集合、要求保留的顺序和提取负载 SHA-256 一致。XCC 生成归档与本项目重建归档的文件字节并不相同，因此不宣称字节级复原。
 
@@ -122,6 +123,15 @@ WP-02A 建立目录型来源、显式优先级、来源链和仓库外 manifest�
 ```
 
 该命令不会启动游戏、XCC 或 FinalAlert 2，也不会选择 `rulesmd.ini` 或 `soundmd.ini` 的胜出者。完整逐行清单仍位于仓库外 Cache；公开摘要只含候选来源、哈希和结构聚合。静态资料尚不足以证明 stock YR 的容器优先级、文件组合、重复项、大小写、行内分号、空白和空值语义，因此这些状态仍为未实现，等待另行授权且只在副本上执行的黑盒对照。
+
+分别生成两个 `rulesmd.ini` 候选和一个 `artmd.ini` 候选的最小资源引用聚合：
+
+```powershell
+./Tools/Content/Invoke-IniMinimalResourceAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+该入口只接受由 `ConfiguredForTesting` 显式计划产生的完整单文档 resolution，两个 Rules 候选不会合并或选择赢家。仓库内证据只包含注册项、显式资源字段、路由候选、诊断和来源完整率的聚合及单向模型哈希；不包含对象名、资源名、节/键/值正文或绝对路径。
 
 XCC 合成互操作使用 `Prepare`、`VerifyXccCreated` 和 `VerifyXccExtractions` 三个受控阶段。包装器不会启动或证明 XCC 进程；操作员必须只使用外部 cache 中的自主合成文件，并以固定工具哈希另行记录真实 GUI 操作。命令和固定目录契约见 [Tools/Content/README.md](Tools/Content/README.md)。
 

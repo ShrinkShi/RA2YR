@@ -288,3 +288,15 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 - 参数化测试改用公开 `bool` 输入并在方法内映射物理编码；重新运行通过。
 - 按脚本真实契约无参数重跑回归；创建修复 evidence 后重新运行实际门禁。
   所有失败状态均保留在执行记录中，不将失败调用伪装为成功。
+## 2026-08-03 - WP-02G2 ProjectBaseline typed results remain incomplete
+
+- 现象：两个 Rules 聚合与 Art 聚合均为 `Incomplete`。
+- 原因：原始文档含大量已保留 Opaque 行，部分注册值含未决行内分号，且显式测试重复策略会影响候选。
+- 处理：继续保留 typed 文档用于脱敏聚合，但不将其标为完整语义，不选择 stock winner，不实现默认值或回退。
+- 后续：只有获得 stock runtime 语法与 precedence 证据后，才能缩小风险影响范围或提升 original comparison。
+
+## 2026-08-03 - PR #10 审查发现 typed view 仍隐式选择首项
+
+- 现象：Art 多重匹配虽报告 `ArtSectionAmbiguous`，仍把 `matches[0]` 作为 Present 字段并生成资源引用；Rules 的 `0` 与 `00` 也未标记解析 ordinal 冲突。
+- 根因：诊断与字段状态未形成同一 fail-closed 契约，ordinal 保留原始拼写但缺少解析身份分组。
+- 修复：引入无单值赢家的 Ambiguous 候选集合和同 registry ordinal 冲突诊断；增加枚举顺序稳定性与跨 registry 隔离测试。

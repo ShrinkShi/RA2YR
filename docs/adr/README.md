@@ -20,3 +20,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0013 | Raw-byte INI document authority | Accepted |
 | 0014 | Explicit INI encoding policy | Accepted |
 | 0015 | Evidence-gated INI runtime resolution | Accepted |
+| 0016 | Fail-closed minimal Rules and Art resource views | Accepted |
+| 0017 | Ambiguous Art fields and duplicate registry ordinals remain unresolved | Accepted |

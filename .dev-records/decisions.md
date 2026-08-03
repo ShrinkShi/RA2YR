@@ -284,3 +284,20 @@ typed Rules/Art/AI 保持未实现。后续黑盒对照必须另行授权并只�
 ### 原因
 字节序、资源预算和身份比较分别关系到语法正确性、拒绝服务边界和
 provenance 完整性，不能借用字宽、延迟检查或运行时名称规则隐式决定。
+
+## 2026-08-03 - 最小资源 typed view 只消费完整显式 resolution
+
+### 决策
+- Ambiguous/Failed resolution 不产生部分 typed 文档。
+- Rules/Art 只投影明确列出的资源发现字段，并完整继承逐值来源链。
+- Opaque、未决分号和重复策略影响使结果保持 Incomplete。
+- ProjectBaseline 两个 Rules 候选分别使用 ConfiguredForTesting，绝不据此选择 stock winner。
+
+### 原因
+typed projection 不能反过来替 WP-02G1 猜测 precedence，也不能用便捷默认值掩盖尚未证实的原版语义。该边界可为后续 SHP/VXL 样本研究提供可审计候选，同时保持兼容声明保守。
+
+## 2026-08-03 - Art 多重匹配和注册表 ordinal 冲突不产生隐式赢家
+
+- G2 名称策略匹配多个 G1 值时，字段状态为 `Ambiguous`，单值属性为空；全部候选按稳定键排序后进入模型和哈希。
+- Ambiguous 字段不进入资源引用，也不能产生 SHP/VXL route candidate。
+- 同一 Rules registry 内相同解析 ordinal 的全部条目保留并标记 Incomplete；不同 registry 的相同 ordinal 相互独立。

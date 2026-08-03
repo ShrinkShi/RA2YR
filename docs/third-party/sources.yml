@@ -317,7 +317,7 @@ sources:
     license:
       spdx: "GPL-3.0-or-later"
       verification: "upstream COPYING and source headers"
-    purpose: "Independent observable cross-check of MIX behavior, PAL high-bit-replication display conversion, and legacy INI parsing"
+    purpose: "Independent observable cross-check of MIX behavior, PAL high-bit-replication display conversion, legacy INI parsing, and explicit Rules/Art resource field names"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -325,6 +325,7 @@ sources:
     approval_status: "approved-reference-only"
     notes:
       - "The pinned tree contains no CSF implementation or CSF format documentation and is not WP-02E evidence."
+      - "WP-02G2 used only observable field and registry presence to bound a minimal projection; OpenRA defaults and runtime behavior were not adopted as stock YR semantics."
 
   - id: iron-curtain-cnc-formats-pal-77da596
     name: "iron-curtain-engine/cnc-formats PAL and CSF implementation"
@@ -442,9 +443,11 @@ sources:
     license:
       spdx: "LicenseRef-Unverified-Community-Tutorial"
       verification: "No redistribution or code-import license was established during WP-02G1"
-    purpose: "Community-documented INI syntax, case, comment, duplicate, and gameplay-property hypotheses"
+    purpose: "Community-documented INI syntax, case, comment, duplicate, registry, and explicit Art resource-field hypotheses"
     contains_code: true
     reference_only: true
     code_imported: false
     repository_use: "reference-only; no tutorial text, examples, document XML, translation, or binary imported"
     approval_status: "approved-reference-only-no-reuse"
+    notes:
+      - "WP-02G2 confirmed that the pinned Rules and Art dictionaries discuss the requested registry and resource field names; no tutorial prose, examples, code, or value data was copied."

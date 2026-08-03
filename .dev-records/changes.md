@@ -264,3 +264,27 @@
 - 将 source ID provenance 比较改为 `Ordinal`。
 - 新增 16 个 EditMode case、修复 evidence、ADR/格式说明、兼容矩阵引用和
   开发记录；不改变 ProjectBaseline precedence 或任何 typed view 状态。
+
+## 2026-08-03 - WP-02G2 最小 Rules/Art 资源引用视图
+
+### 变更范围
+- 只实现显式 typed scalar、五类资源注册表、十个 Art 资源字段、来源追踪和脱敏 ProjectBaseline 聚合；未实现完整 Rules/Art、SHP、VXL 或游戏逻辑。
+
+### 具体改动
+- typed view 只接受 `Complete` resolution；Ambiguous/Failed 不返回文档。
+- 保留 winner、overridden candidates、physical line ID、source ID 和完整 MIX provenance。
+- 缺失、非法和风险影响分别记录；不执行节名 Image fallback、扩展名补全、默认值或拼写修复。
+- 两个 `rulesmd.ini` 候选分别按 `ConfiguredForTesting` 审计，不合并、不选择 stock winner。
+- 新增只读 Editor/PS5.1/PS7 审计入口、ADR 0016、格式说明、合成证据和脱敏本地证据。
+
+### 当前验证
+- 新增 47 个 EditMode case，最终全量结果为 EditMode 674/674、PlayMode 1/1；总包装器退出 0，两种模式均在完整 XML 后执行受控收尾。
+- ProjectBaseline typed audit Unity 真实退出 0；三个输入来源追踪覆盖完整。
+- 所有 ProjectBaseline typed 结果因保留的 Opaque/分号/重复风险而明确为 `Incomplete`，未伪造完整语义。
+
+## 2026-08-03 - PR #10 review fixes
+
+- 合并 PR #9 后的 `main`，不改写 WP-02G2 原有三个提交，也不修改或实现 SHP。
+- Art 多重名称匹配改为真正的 `Ambiguous` 字段：无单一 `Parsed`、保留全部候选和来源链、不生成 reference 或 route。
+- Rules registry 新增按解析后整数判断的 `DuplicateRegistryOrdinal`；冲突仅限同一 registry，所有原始条目继续保留。
+- 新增 4 个 EditMode case；阶段性全量结果为 678/678，ProjectBaseline 三个规范化模型哈希和既有聚合保持不变。

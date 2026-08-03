@@ -362,3 +362,10 @@
   UTF-16 字节序、候选有界枚举和 source ID 精确身份。
 - 2026-08-03: 聚焦 EditMode 66/66、全量 EditMode 627/627、PlayMode 1/1；
   PS5.1/7 RuntimeResolution 审计聚合一致且 winners 保持 Unresolved。
+- 2026-08-03: PR #8 squash 合并为 `b3707172`，main Repository safety run `30794186808` 成功；从该 main 创建 `feature/wp02g2-minimal-rules-art-resource-views`。
+- 2026-08-03: 完成 WP-02G2 typed scalar、最小 Rules/Art 资源视图和 47 个新增 EditMode case，阶段性全量 674/674。
+- 2026-08-03: 只读审计两个独立 Rules 候选和一个 Art 候选；不选择 stock winner，最终脱敏摘要 SHA-256 为 `2F9FF23716D0524139F781D0CAB36178BE26DEE897BFADF692995F66BDB89BF4`。
+- 2026-08-03: PR #9 squash 合并后 main 为 `aea6b550`，Repository safety run `30799700783` 成功。
+- 2026-08-03: 删除经审计无 PR、无独有提交、无仓库引用的远端临时分支 `research/m2-shp-format-dossier-merge-probe`、`noop`、`noop2`。
+- 2026-08-03: 以普通 merge `e60f7beb` 将最新 main 合入 PR #10；完成 Art ambiguity 和 duplicate registry ordinal 的 fail-closed 修复，新增 4 个 EditMode case。
+- 2026-08-03: 最终本地门禁得到 EditMode 678/678、PlayMode 1/1、WP-02G2 聚焦 51/51；PS7/PS5.1 typed audit 聚合和三个模型哈希保持不变。
