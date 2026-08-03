@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -267,6 +268,62 @@ namespace RA2YR.Tests.EditMode.Content.Ini.Audit
             }
         }
 
+        [Test]
+        public void ExternalCacheReparsePointIsRejectedBeforePublication()
+        {
+            if (Path.DirectorySeparatorChar != '\\')
+            {
+                Assert.Ignore("Windows junction behavior is validated on the primary platform.");
+            }
+
+            using (AuditFixture fixture = AuditFixture.Create(FixtureLayout.Fixed))
+            {
+                if (!fixture.TryCreateCacheJunction())
+                {
+                    Assert.Ignore("A bounded test junction could not be created on this host.");
+                }
+
+                IniProjectBaselineAuditException exception =
+                    Assert.Throws<IniProjectBaselineAuditException>(() => fixture.Run());
+
+                Assert.That(exception.Code, Is.EqualTo(
+                    IniProjectBaselineAuditFailureCode.DirectoryIndexIncomplete));
+            }
+        }
+
+        [Test]
+        public void ExistingChangedIdentityArtifactFailsWithoutOverwrite()
+        {
+            using (AuditFixture fixture = AuditFixture.Create(FixtureLayout.Fixed))
+            {
+                fixture.Run();
+                string identity = Directory.GetFiles(
+                        fixture.CachePath,
+                        "*.ini",
+                        SearchOption.AllDirectories)
+                    .OrderBy(path => path, StringComparer.Ordinal)
+                    .First();
+                byte[] changed = { 0x52, 0x41, 0x32, 0x59, 0x52 };
+                File.WriteAllBytes(identity, changed);
+
+                IniProjectBaselineAuditException exception =
+                    Assert.Throws<IniProjectBaselineAuditException>(() => fixture.Run());
+
+                Assert.That(exception.Code, Is.EqualTo(
+                    IniProjectBaselineAuditFailureCode.ExternalArtifactWriteFailed));
+                Assert.That(File.ReadAllBytes(identity), Is.EqualTo(changed));
+            }
+        }
+
+        [Test]
+        public void IdentityReferenceRejectsPathTraversal()
+        {
+            Assert.Throws<ArgumentException>(() => new IniIdentityArtifactReference(
+                "../outside.ini",
+                1,
+                new string('0', 64)));
+        }
+
         private static int Count(string value, string token)
         {
             int count = 0;
@@ -418,6 +475,35 @@ namespace RA2YR.Tests.EditMode.Content.Ini.Audit
             public void WriteAdditionalFile()
             {
                 temporary.WriteBytes("source/appeared.bin", new byte[] { 1 });
+            }
+
+            public bool TryCreateCacheJunction()
+            {
+                string target = temporary.CreateDirectory("cache-target");
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = Environment.GetEnvironmentVariable("ComSpec"),
+                    Arguments = "/d /c mklink /J \"" + CachePath + "\" \"" + target + "\"",
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+                using (Process process = Process.Start(startInfo))
+                {
+                    if (process == null)
+                    {
+                        return false;
+                    }
+
+                    if (!process.WaitForExit(10000))
+                    {
+                        process.Kill();
+                        return false;
+                    }
+
+                    return process.ExitCode == 0;
+                }
             }
 
             public void Dispose()
