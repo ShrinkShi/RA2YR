@@ -10,7 +10,7 @@ param(
     [string] $ConfigurationPath,
 
     [Parameter()]
-    [ValidateSet('PhysicalDocument', 'RuntimeResolution')]
+    [ValidateSet('PhysicalDocument', 'RuntimeResolution', 'MinimalResource')]
     [string] $AuditMode = 'PhysicalDocument',
 
     [Parameter()]
@@ -23,7 +23,10 @@ $ErrorActionPreference = 'Stop'
 $expectedUnityVersion = '2022.3.60f1c1'
 $baselineName = 'YR1001_ProjectBaseline'
 $runtimeResolutionAudit = $AuditMode -ceq 'RuntimeResolution'
-$manifestType = if ($runtimeResolutionAudit) {
+$minimalResourceAudit = $AuditMode -ceq 'MinimalResource'
+$manifestType = if ($minimalResourceAudit) {
+    'RA2YR.IniMinimalResourceProjectBaselineAuditSanitized'
+} elseif ($runtimeResolutionAudit) {
     'RA2YR.IniRuntimeResolutionAuditSanitized'
 } else {
     'RA2YR.IniProjectBaselineAuditSanitized'
@@ -371,10 +374,79 @@ function Assert-RuntimeResolutionSanitizedSummary {
     Assert-NoAbsolutePathInValue $Summary
 }
 
+function Assert-MinimalResourceSanitizedSummary {
+    param([Parameter(Mandatory)][object] $Summary, [Parameter(Mandatory)][string] $RawJson)
+
+    if ([int]$Summary.schemaVersion -ne 1 -or
+        [string]$Summary.manifestType -cne $manifestType -or
+        [string]$Summary.baselineLogicalName -cne $baselineName -or
+        [string]$Summary.auditStatus -cne 'Complete' -or
+        [string]$Summary.policyEvidence -cne 'ConfiguredForTesting' -or
+        [bool]$Summary.stockRuntimeWinnerSelected -ne $false -or
+        @($Summary.rulesCandidates).Count -ne 2 -or
+        $null -eq $Summary.artCandidate) {
+        throw 'The sanitized minimal resource INI summary identity is invalid.'
+    }
+    Assert-LowerSha256 ([string]$Summary.directoryFingerprint) 'directory fingerprint'
+    Assert-LowerSha256 (
+        [string]$Summary.baseIniAuditExternalManifest.sha256) `
+        'external manifest hash'
+    Assert-LogicalPath (
+        [string]$Summary.baseIniAuditExternalManifest.cacheRelativePath) `
+        'external manifest path'
+    if ([int64]$Summary.baseIniAuditExternalManifest.length -le 0) {
+        throw 'The minimal resource external INI manifest length is invalid.'
+    }
+
+    $roles = @($Summary.rulesCandidates | ForEach-Object { [string]$_.candidateRole })
+    foreach ($expectedRole in @('rulesmd-expandmd01', 'rulesmd-localmd')) {
+        if ($roles -cnotcontains $expectedRole) {
+            throw 'A required independent rulesmd.ini candidate aggregate is absent.'
+        }
+    }
+    foreach ($candidate in @($Summary.rulesCandidates)) {
+        if ([string]$candidate.typedStatus -cnotin @('Complete', 'Incomplete') -or
+            [int64]$candidate.registryTypeCount -lt 0 -or
+            [int64]$candidate.registryEntryCount -lt 0 -or
+            [int64]$candidate.invalidIdentifierCount -lt 0 -or
+            [int64]$candidate.failedIdentifierCount -lt 0 -or
+            [int64]$candidate.sourceTraceCoverage.complete -ne
+                [int64]$candidate.sourceTraceCoverage.total) {
+            throw 'A Rules candidate aggregate is incomplete or has missing provenance.'
+        }
+        Assert-LowerSha256 ([string]$candidate.normalizedModelSha256) `
+            'Rules normalized model hash'
+    }
+
+    $art = $Summary.artCandidate
+    if ([string]$art.candidateRole -cne 'artmd-localmd' -or
+        [string]$art.typedStatus -cnotin @('Complete', 'Incomplete') -or
+        [int64]$art.recordCount -lt 0 -or
+        [int64]$art.explicitImageCount -lt 0 -or
+        [int64]$art.sourceTraceCoverage.complete -ne
+            [int64]$art.sourceTraceCoverage.total) {
+        throw 'The Art candidate aggregate is incomplete or has missing provenance.'
+    }
+    Assert-LowerSha256 ([string]$art.normalizedModelSha256) `
+        'Art normalized model hash'
+
+    foreach ($forbidden in @(
+        '"lineRecords"', '"identityCacheRelativePath"', '"rawBytes"',
+        '"sectionName"', '"keyName"', '"valueText"', '"objectNames"',
+        '"resourceNames"')) {
+        if ($RawJson.Contains($forbidden)) {
+            throw "The sanitized minimal resource summary contains forbidden field: $forbidden"
+        }
+    }
+    Assert-NoAbsolutePathInValue $Summary
+}
+
 function Assert-SanitizedSummary {
     param([Parameter(Mandatory)][object] $Summary, [Parameter(Mandatory)][string] $RawJson)
 
-    if ($runtimeResolutionAudit) {
+    if ($minimalResourceAudit) {
+        Assert-MinimalResourceSanitizedSummary $Summary $RawJson
+    } elseif ($runtimeResolutionAudit) {
         Assert-RuntimeResolutionSanitizedSummary $Summary $RawJson
     } else {
         Assert-PhysicalSanitizedSummary $Summary $RawJson
@@ -442,12 +514,16 @@ $runId = (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssfffZ') + '-' +
 $runRoot = Join-Path $resultsRoot $runId
 [IO.Directory]::CreateDirectory($runRoot) | Out-Null
 Assert-NoExistingReparsePoint $runRoot
-$summaryFileName = if ($runtimeResolutionAudit) {
+$summaryFileName = if ($minimalResourceAudit) {
+    'wp02g2-ini-minimal-resource-summary.json'
+} elseif ($runtimeResolutionAudit) {
     'wp02g1-ini-runtime-resolution-summary.json'
 } else {
     'wp02f-ini-project-baseline-summary.json'
 }
-$executeMethod = if ($runtimeResolutionAudit) {
+$executeMethod = if ($minimalResourceAudit) {
+    'RA2YR.Editor.IniProjectBaselineAuditCommand.RunMinimalResourceTypedViews'
+} elseif ($runtimeResolutionAudit) {
     'RA2YR.Editor.IniProjectBaselineAuditCommand.RunRuntimeResolution'
 } else {
     'RA2YR.Editor.IniProjectBaselineAuditCommand.Run'
@@ -502,7 +578,7 @@ try {
 }
 Assert-SanitizedSummary $summary $summaryText
 
-$manifestReference = if ($runtimeResolutionAudit) {
+$manifestReference = if ($runtimeResolutionAudit -or $minimalResourceAudit) {
     $summary.baseIniAuditExternalManifest
 } else {
     $summary.externalManifest
@@ -532,7 +608,7 @@ finally { $summaryIdentity.Stream.Dispose() }
 "Unity process exit code: $unityExitCode"
 "Audit mode: $AuditMode"
 "Audit status: $($summary.auditStatus)"
-"Validated INI documents: $(if ($runtimeResolutionAudit) { @($summary.syntaxAudits).Count } else { @($summary.samples).Count })"
+"Validated INI documents: $(if ($minimalResourceAudit) { 3 } elseif ($runtimeResolutionAudit) { @($summary.syntaxAudits).Count } else { @($summary.samples).Count })"
 "External manifest SHA-256: $($manifestReference.sha256)"
 "Sanitized summary SHA-256: $summarySha256"
 "Sanitized summary: TestResults/$runId/$summaryFileName"
