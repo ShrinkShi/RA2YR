@@ -35,11 +35,28 @@ An `IniLoadPlan` owns declared `IniLoadLayer` objects. Each layer includes:
 - an optional explicit priority; and
 - evidence for that priority.
 
+The constructor accepts only a pre-materialized trusted `IReadOnlyList` and
+copies it. `MaxLayers` is a resolver bound over that list; it does not claim to
+bound construction of an arbitrary lazy sequence. Candidate documents use a
+separate bounded materializer: it reads at most `MaxDocuments + 1` items, uses
+the extra item only to prove overflow, returns `DocumentBudgetExceeded`, and
+does not touch later elements or invent them in the trace.
+
 Candidate documents separately bind a logical INI name and immutable
 `IniRawDocument` to a layer. The resolver validates every binding before it
 examines values. It sorts by explicit priority and stable physical facts.
 Input enumeration, dictionary order, thread order, current culture, and source
 ID cannot decide an equal-priority conflict.
+
+Layer and provenance source IDs are identities, so their comparison is exact
+`Ordinal`; a case-only difference is `IncompleteProvenance`. This is separate
+from the explicit section/key name comparison policy.
+
+For syntax bytes, raw single-byte and UTF-8 BOM documents retain their existing
+ASCII-byte behavior. UTF-16LE recognizes ASCII only as `XX 00`; UTF-16BE only
+as `00 XX`. Name decoding, semicolon policy, ASCII space/tab trimming, and the
+sanitized syntax auditor all use this same rule. Thus U+3B00 cannot masquerade
+as U+003B, and U+2000 cannot masquerade as U+0020.
 
 A completed value trace retains the winning candidate and all considered
 candidates with dispositions including duplicate suppression, empty-value

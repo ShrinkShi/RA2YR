@@ -358,3 +358,7 @@
 - 2026-08-03: 完成显式 INI 加载计划、独立策略、逐值来源链和 50 个新增 EditMode 测试。
 - 2026-08-03: 通过 MIX 只读审计 ProjectBaseline；`rulesmd.ini` 与 `soundmd.ini` 胜出者保持 Unresolved。
 - 2026-08-03: 真实审计 Unity 退出码 0；脱敏摘要 SHA-256 为 `4DA1FAF7DE29995C8EDF4CAEFEDB9D7FBF801A1DFACD2AB09D626A1629D877CB`。
+- 2026-08-03: 在现有 PR #8 分支追加审查修复，不改写原有三个提交；修复
+  UTF-16 字节序、候选有界枚举和 source ID 精确身份。
+- 2026-08-03: 聚焦 EditMode 66/66、全量 EditMode 627/627、PlayMode 1/1；
+  PS5.1/7 RuntimeResolution 审计聚合一致且 winners 保持 Unresolved。

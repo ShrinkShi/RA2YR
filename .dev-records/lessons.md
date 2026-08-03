@@ -68,3 +68,9 @@ Opaque 不是解析失败，也不是行为支持。先保留原始行、位置�
 任何 typed view 开发前先检查其输入是否含可能有语义的 Opaque 行，并要求
 每个 resolved value 保留完整候选链。只有原版或 ProjectBaseline 运行时的
 可复现观察才能提升 original/runtime comparison。
+
+## 2026-08-03 - 宽度不是 UTF-16 字节序
+
+二字节 code unit 不能仅凭任一字节为零就认定为 ASCII；所有语法辅助函数
+必须携带物理 encoding。资源预算也必须约束枚举发生的位置，而不是在
+`ToArray` 完成后检查集合大小。

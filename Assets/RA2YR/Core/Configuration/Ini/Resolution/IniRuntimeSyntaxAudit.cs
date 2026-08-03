@@ -124,12 +124,7 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
                 throw new ArgumentNullException(nameof(document));
             }
 
-            int width = document.PhysicalEncoding ==
-                            IniPhysicalEncodingKind.Utf16LittleEndianWithBom ||
-                        document.PhysicalEncoding ==
-                            IniPhysicalEncodingKind.Utf16BigEndianWithBom
-                ? 2
-                : 1;
+            IniPhysicalEncodingKind encoding = document.PhysicalEncoding;
             bool seenStructuredSection = false;
             bool activeStructuredSection = false;
             int opaqueBefore = 0;
@@ -175,8 +170,8 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
                     }
 
                     byte[] bytes = opaque.Line.Content.ToArray();
-                    bool hasEquals = FindAsciiUnit(bytes, width, '=') >= 0;
-                    IniOpaqueLeadingClass leading = ClassifyLeading(bytes, width);
+                    bool hasEquals = FindAsciiUnit(bytes, encoding, '=') >= 0;
+                    IniOpaqueLeadingClass leading = ClassifyLeading(bytes, encoding);
                     if (hasEquals)
                     {
                         opaqueEquals = checked(opaqueEquals + 1);
@@ -201,7 +196,7 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
                                      (hasEquals ? "yes" : "no") + "|leading=" + leading;
                     Increment(patterns, pattern);
 
-                    if (FirstNonWhitespaceAsciiUnit(bytes, width) == '[')
+                    if (FirstNonWhitespaceAsciiUnit(bytes, encoding) == '[')
                     {
                         activeStructuredSection = false;
                     }
@@ -220,14 +215,14 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
                 var combined = new byte[checked(beforeValue.Length + value.Length)];
                 Buffer.BlockCopy(beforeValue, 0, combined, 0, beforeValue.Length);
                 Buffer.BlockCopy(value, 0, combined, beforeValue.Length, value.Length);
-                int semicolon = FindAsciiUnit(combined, width, ';');
+                int semicolon = FindAsciiUnit(combined, encoding, ';');
                 if (semicolon < 0)
                 {
                     continue;
                 }
 
-                int first = FirstNonWhitespaceOffset(combined, width);
-                int last = LastNonWhitespaceOffset(combined, width);
+                int first = FirstNonWhitespaceOffset(combined, encoding);
+                int last = LastNonWhitespaceOffset(combined, encoding);
                 if (semicolon == first)
                 {
                     semicolonStart = checked(semicolonStart + 1);
@@ -258,9 +253,11 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
                 patterns);
         }
 
-        private static IniOpaqueLeadingClass ClassifyLeading(byte[] bytes, int width)
+        private static IniOpaqueLeadingClass ClassifyLeading(
+            byte[] bytes,
+            IniPhysicalEncodingKind encoding)
         {
-            int value = FirstNonWhitespaceAsciiUnit(bytes, width);
+            int value = FirstNonWhitespaceAsciiUnit(bytes, encoding);
             if (value < 0)
             {
                 return bytes.Length == 0
@@ -284,17 +281,22 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
                 : IniOpaqueLeadingClass.NonAsciiOrInvalid;
         }
 
-        private static int FirstNonWhitespaceAsciiUnit(byte[] bytes, int width)
+        private static int FirstNonWhitespaceAsciiUnit(
+            byte[] bytes,
+            IniPhysicalEncodingKind encoding)
         {
-            int offset = FirstNonWhitespaceOffset(bytes, width);
-            return offset < 0 ? -1 : ReadAsciiUnit(bytes, offset, width);
+            int offset = FirstNonWhitespaceOffset(bytes, encoding);
+            return offset < 0 ? -1 : ReadAsciiUnit(bytes, offset, encoding);
         }
 
-        private static int FirstNonWhitespaceOffset(byte[] bytes, int width)
+        private static int FirstNonWhitespaceOffset(
+            byte[] bytes,
+            IniPhysicalEncodingKind encoding)
         {
+            int width = IniPhysicalAscii.GetUnitWidth(encoding);
             for (int offset = 0; offset <= bytes.Length - width; offset += width)
             {
-                int value = ReadAsciiUnit(bytes, offset, width);
+                int value = ReadAsciiUnit(bytes, offset, encoding);
                 if (value != ' ' && value != '\t')
                 {
                     return offset;
@@ -304,11 +306,14 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             return -1;
         }
 
-        private static int LastNonWhitespaceOffset(byte[] bytes, int width)
+        private static int LastNonWhitespaceOffset(
+            byte[] bytes,
+            IniPhysicalEncodingKind encoding)
         {
+            int width = IniPhysicalAscii.GetUnitWidth(encoding);
             for (int offset = bytes.Length - width; offset >= 0; offset -= width)
             {
-                int value = ReadAsciiUnit(bytes, offset, width);
+                int value = ReadAsciiUnit(bytes, offset, encoding);
                 if (value != ' ' && value != '\t')
                 {
                     return offset;
@@ -318,11 +323,15 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             return -1;
         }
 
-        private static int FindAsciiUnit(byte[] bytes, int width, int expected)
+        private static int FindAsciiUnit(
+            byte[] bytes,
+            IniPhysicalEncodingKind encoding,
+            int expected)
         {
+            int width = IniPhysicalAscii.GetUnitWidth(encoding);
             for (int offset = 0; offset <= bytes.Length - width; offset += width)
             {
-                if (ReadAsciiUnit(bytes, offset, width) == expected)
+                if (ReadAsciiUnit(bytes, offset, encoding) == expected)
                 {
                     return offset;
                 }
@@ -331,24 +340,12 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             return -1;
         }
 
-        private static int ReadAsciiUnit(byte[] bytes, int offset, int width)
+        private static int ReadAsciiUnit(
+            byte[] bytes,
+            int offset,
+            IniPhysicalEncodingKind encoding)
         {
-            if (width == 1)
-            {
-                return bytes[offset] <= 0x7f ? bytes[offset] : -1;
-            }
-
-            if (bytes[offset + 1] == 0 && bytes[offset] <= 0x7f)
-            {
-                return bytes[offset];
-            }
-
-            if (bytes[offset] == 0 && bytes[offset + 1] <= 0x7f)
-            {
-                return bytes[offset + 1];
-            }
-
-            return -1;
+            return IniPhysicalAscii.ReadUnit(bytes, offset, encoding);
         }
 
         private static void Increment<TKey>(IDictionary<TKey, int> counts, TKey key)

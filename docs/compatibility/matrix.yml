@@ -570,9 +570,13 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EnumerationOrderDoesNotChangeWinnerOrTrace"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.IncompleteProvenanceFailsClosed"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.CandidateBudgetFailsWithoutPartialSuccess"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.CandidateEnumerationStopsAfterMaximumPlusOne"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.LoadPlanRequiresPrematerializedTrustedLayerList"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SourceIdCaseMismatchFailsAsIncompleteProvenanceWithoutHostPath"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.CompleteResolutionResultCannotBeForgedThroughPublicApi"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
+      - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
       - "docs/adr/0015-ini-runtime-resolution-policy.md"
     limitations:
       - id: ini.load-plan.explicit-policy-only
@@ -652,9 +656,16 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.WhitespacePreservePolicyKeepsEqualsAndTrailingWhitespace"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.WhitespaceTrimPolicyRemovesAsciiSpaceAndTabOnly"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.AdditionalEqualsSignsRemainInTheEffectiveValue"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.Utf16LittleEndianRecognizesOnlyTrueSemicolon"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.Utf16BigEndianRecognizesOnlyTrueSemicolon"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.Utf16TrueAsciiSpaceAndTabAreTrimmed"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.Utf16U2000IsNotTrimmedAsAsciiSpace"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeSyntaxAuditTests.Utf16AuditCountsEndianCorrectSemicolonOnly"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeSyntaxAuditTests.Utf16AuditDoesNotTreatU2000AsAsciiWhitespace"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
       - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#syntax_audits"
+      - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
     limitations:
       - id: ini.inline-comment-semantics.runtime-unresolved
         status: "已知限制"
@@ -669,10 +680,13 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EnumerationOrderDoesNotChangeWinnerOrTrace"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.OpaqueNodesAreDiagnosedAndNeverExecuted"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.DiagnosticsExposeLogicalPathsButNoAbsolutePaths"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ExactSourceIdCaseMatchesProvenance"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SourceIdCaseMismatchFailsAsIncompleteProvenanceWithoutHostPath"
       - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.RuntimeResolutionAuditKeepsProjectBaselineWinnersUnresolved"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
       - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
+      - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
     limitations:
       - id: ini.resolution-trace.explicit-plan-only
         status: "已知限制"

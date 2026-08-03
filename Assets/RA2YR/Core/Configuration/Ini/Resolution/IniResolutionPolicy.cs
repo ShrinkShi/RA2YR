@@ -110,14 +110,25 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
     {
         private readonly IReadOnlyList<IniLoadLayer> layers;
 
-        public IniLoadPlan(string planId, IEnumerable<IniLoadLayer> layers)
+        public IniLoadPlan(string planId, IReadOnlyList<IniLoadLayer> layers)
         {
             PlanId = BinaryDiagnosticLabel.Validate(planId, nameof(planId));
-            IniLoadLayer[] values =
-                (layers ?? throw new ArgumentNullException(nameof(layers))).ToArray();
-            if (values.Length == 0 || values.Any(layer => layer == null))
+            if (layers == null)
+            {
+                throw new ArgumentNullException(nameof(layers));
+            }
+
+            if (layers.Count == 0)
             {
                 throw new ArgumentException(
+                    "An INI load plan requires at least one non-null layer.",
+                    nameof(layers));
+            }
+
+            var values = new IniLoadLayer[layers.Count];
+            for (int index = 0; index < values.Length; index++)
+            {
+                values[index] = layers[index] ?? throw new ArgumentException(
                     "An INI load plan requires at least one non-null layer.",
                     nameof(layers));
             }

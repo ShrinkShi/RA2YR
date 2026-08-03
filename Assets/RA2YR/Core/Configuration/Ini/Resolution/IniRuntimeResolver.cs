@@ -6,6 +6,40 @@ using RA2YR.Core.Formats.Ini;
 
 namespace RA2YR.Core.Configuration.Ini.Resolution
 {
+    internal static class IniPhysicalAscii
+    {
+        public static int GetUnitWidth(IniPhysicalEncodingKind encoding)
+        {
+            return encoding == IniPhysicalEncodingKind.Utf16LittleEndianWithBom ||
+                   encoding == IniPhysicalEncodingKind.Utf16BigEndianWithBom
+                ? 2
+                : 1;
+        }
+
+        public static int ReadUnit(
+            byte[] bytes,
+            int offset,
+            IniPhysicalEncodingKind encoding)
+        {
+            if (encoding == IniPhysicalEncodingKind.RawSingleByte ||
+                encoding == IniPhysicalEncodingKind.Utf8WithBom)
+            {
+                return bytes[offset] <= 0x7f ? bytes[offset] : -1;
+            }
+
+            if (encoding == IniPhysicalEncodingKind.Utf16LittleEndianWithBom)
+            {
+                return bytes[offset + 1] == 0 && bytes[offset] <= 0x7f
+                    ? bytes[offset]
+                    : -1;
+            }
+
+            return bytes[offset] == 0 && bytes[offset + 1] <= 0x7f
+                ? bytes[offset + 1]
+                : -1;
+        }
+    }
+
     internal sealed class IniRuntimeResolver
     {
         public IniResolutionResult Resolve(
@@ -31,26 +65,38 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
 
             limits = limits ?? IniResolutionLimits.Default;
             var diagnostics = new DiagnosticCollector(limits.MaxDiagnostics);
-            IniCandidateDocument[] input = candidates.ToArray();
-            if (input.Length == 0)
+            var input = new List<IniCandidateDocument>(
+                Math.Min(limits.MaxDocuments, 256));
+            using (IEnumerator<IniCandidateDocument> enumerator = candidates.GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    IniCandidateDocument candidate = enumerator.Current;
+                    if (candidate == null)
+                    {
+                        throw new ArgumentException(
+                            "INI candidates cannot contain null.",
+                            nameof(candidates));
+                    }
+
+                    if (input.Count == limits.MaxDocuments)
+                    {
+                        diagnostics.AddError(
+                            IniResolutionDiagnosticCode.DocumentBudgetExceeded,
+                            "The INI candidate document budget was exceeded.");
+                        return Failed(input, diagnostics);
+                    }
+
+                    input.Add(candidate);
+                }
+            }
+
+            if (input.Count == 0)
             {
                 diagnostics.AddError(
                     IniResolutionDiagnosticCode.EmptyCandidateSet,
                     "INI resolution requires at least one candidate document.");
                 return Failed(Array.Empty<IniCandidateDocument>(), diagnostics);
-            }
-
-            if (input.Any(candidate => candidate == null))
-            {
-                throw new ArgumentException("INI candidates cannot contain null.", nameof(candidates));
-            }
-
-            if (input.Length > limits.MaxDocuments)
-            {
-                diagnostics.AddError(
-                    IniResolutionDiagnosticCode.DocumentBudgetExceeded,
-                    "The INI candidate document budget was exceeded.");
-                return Failed(input, diagnostics);
             }
 
             if (plan.Layers.Count > limits.MaxLayers)
@@ -62,7 +108,7 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             }
 
             if (input.Select(candidate => candidate.CandidateId)
-                .Distinct(StringComparer.Ordinal).Count() != input.Length)
+                .Distinct(StringComparer.Ordinal).Count() != input.Count)
             {
                 diagnostics.AddError(
                     IniResolutionDiagnosticCode.DuplicateCandidateId,
@@ -234,7 +280,7 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             return string.Equals(
                        provenance.SourceId,
                        layer.SourceId,
-                       StringComparison.OrdinalIgnoreCase) &&
+                       StringComparison.Ordinal) &&
                    provenance.LogicalChain.Count == layer.LogicalChain.Count &&
                    provenance.LogicalChain.Zip(
                        layer.LogicalChain,
@@ -421,13 +467,12 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             var combined = new byte[checked(leading.Length + value.Length)];
             Buffer.BlockCopy(leading, 0, combined, 0, leading.Length);
             Buffer.BlockCopy(value, 0, combined, leading.Length, value.Length);
-            int width = GetUnitWidth(encoding);
-            bool hasSemicolon = FindAsciiUnit(combined, width, (byte)';') >= 0;
+            bool hasSemicolon = FindAsciiUnit(combined, encoding, (byte)';') >= 0;
             if (hasSemicolon)
             {
                 if (policy.InlineComments == IniInlineCommentPolicy.SemicolonStartsComment)
                 {
-                    int semicolon = FindAsciiUnit(combined, width, (byte)';');
+                    int semicolon = FindAsciiUnit(combined, encoding, (byte)';');
                     Array.Resize(ref combined, semicolon);
                 }
                 else if (policy.InlineComments == IniInlineCommentPolicy.Unresolved)
@@ -443,10 +488,10 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
 
             if (policy.Whitespace == IniWhitespaceReadPolicy.TrimAsciiSpaceAndTab)
             {
-                combined = TrimAsciiWhitespace(combined, width);
+                combined = TrimAsciiWhitespace(combined, encoding);
             }
             else if (policy.Whitespace == IniWhitespaceReadPolicy.Unresolved &&
-                     HasEdgeAsciiWhitespace(combined, width))
+                     HasEdgeAsciiWhitespace(combined, encoding))
             {
                 diagnostics.AddError(
                     IniResolutionDiagnosticCode.UnresolvedWhitespace,
@@ -707,7 +752,7 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             out string value)
         {
             byte[] bytes = slice.ToArray();
-            int width = GetUnitWidth(encoding);
+            int width = IniPhysicalAscii.GetUnitWidth(encoding);
             if (bytes.Length % width != 0)
             {
                 value = null;
@@ -718,33 +763,8 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             for (int index = 0; index < characters.Length; index++)
             {
                 int offset = index * width;
-                byte ascii;
-                if (width == 1)
-                {
-                    ascii = bytes[offset];
-                }
-                else if (encoding == IniPhysicalEncodingKind.Utf16LittleEndianWithBom)
-                {
-                    if (bytes[offset + 1] != 0)
-                    {
-                        value = null;
-                        return false;
-                    }
-
-                    ascii = bytes[offset];
-                }
-                else
-                {
-                    if (bytes[offset] != 0)
-                    {
-                        value = null;
-                        return false;
-                    }
-
-                    ascii = bytes[offset + 1];
-                }
-
-                if (ascii > 0x7f || ascii == 0)
+                int ascii = IniPhysicalAscii.ReadUnit(bytes, offset, encoding);
+                if (ascii <= 0 || ascii > 0x7f)
                 {
                     value = null;
                     return false;
@@ -776,21 +796,15 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             return new string(normalized);
         }
 
-        private static int GetUnitWidth(IniPhysicalEncodingKind encoding)
+        private static int FindAsciiUnit(
+            byte[] bytes,
+            IniPhysicalEncodingKind encoding,
+            byte value)
         {
-            return encoding == IniPhysicalEncodingKind.Utf16LittleEndianWithBom ||
-                   encoding == IniPhysicalEncodingKind.Utf16BigEndianWithBom
-                ? 2
-                : 1;
-        }
-
-        private static int FindAsciiUnit(byte[] bytes, int width, byte value)
-        {
+            int width = IniPhysicalAscii.GetUnitWidth(encoding);
             for (int offset = 0; offset <= bytes.Length - width; offset += width)
             {
-                if (width == 1 ? bytes[offset] == value :
-                    (bytes[offset] == value && bytes[offset + 1] == 0) ||
-                    (bytes[offset] == 0 && bytes[offset + 1] == value))
+                if (IniPhysicalAscii.ReadUnit(bytes, offset, encoding) == value)
                 {
                     return offset;
                 }
@@ -799,16 +813,19 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             return -1;
         }
 
-        private static byte[] TrimAsciiWhitespace(byte[] bytes, int width)
+        private static byte[] TrimAsciiWhitespace(
+            byte[] bytes,
+            IniPhysicalEncodingKind encoding)
         {
+            int width = IniPhysicalAscii.GetUnitWidth(encoding);
             int start = 0;
             int end = bytes.Length;
-            while (start < end && IsAsciiWhitespaceUnit(bytes, start, width))
+            while (start < end && IsAsciiWhitespaceUnit(bytes, start, encoding))
             {
                 start += width;
             }
 
-            while (end > start && IsAsciiWhitespaceUnit(bytes, end - width, width))
+            while (end > start && IsAsciiWhitespaceUnit(bytes, end - width, encoding))
             {
                 end -= width;
             }
@@ -818,24 +835,23 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
             return result;
         }
 
-        private static bool HasEdgeAsciiWhitespace(byte[] bytes, int width)
+        private static bool HasEdgeAsciiWhitespace(
+            byte[] bytes,
+            IniPhysicalEncodingKind encoding)
         {
+            int width = IniPhysicalAscii.GetUnitWidth(encoding);
             return bytes.Length > 0 &&
-                   (IsAsciiWhitespaceUnit(bytes, 0, width) ||
-                    IsAsciiWhitespaceUnit(bytes, bytes.Length - width, width));
+                   (IsAsciiWhitespaceUnit(bytes, 0, encoding) ||
+                    IsAsciiWhitespaceUnit(bytes, bytes.Length - width, encoding));
         }
 
-        private static bool IsAsciiWhitespaceUnit(byte[] bytes, int offset, int width)
+        private static bool IsAsciiWhitespaceUnit(
+            byte[] bytes,
+            int offset,
+            IniPhysicalEncodingKind encoding)
         {
-            if (width == 1)
-            {
-                return bytes[offset] == (byte)' ' || bytes[offset] == (byte)'\t';
-            }
-
-            return (bytes[offset] == (byte)' ' || bytes[offset] == (byte)'\t') &&
-                       bytes[offset + 1] == 0 ||
-                   bytes[offset] == 0 &&
-                       (bytes[offset + 1] == (byte)' ' || bytes[offset + 1] == (byte)'\t');
+            int value = IniPhysicalAscii.ReadUnit(bytes, offset, encoding);
+            return value == ' ' || value == '\t';
         }
 
         private static IniResolutionResult Failed(

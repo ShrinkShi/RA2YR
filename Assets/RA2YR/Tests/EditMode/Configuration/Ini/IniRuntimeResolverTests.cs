@@ -121,6 +121,42 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini
         }
 
         [Test]
+        public void ExactSourceIdCaseMatchesProvenance()
+        {
+            Fixture fixture = One("[S]\nK=V");
+            fixture.Layers[0] = Layer(
+                "layer-only", "Source-Only", IniLoadLayerKind.TestSource,
+                10, "rulesmd.ini");
+            fixture.Candidates[0] = Candidate(
+                "candidate-only", "layer-only", "Source-Only", "[S]\nK=V",
+                "rulesmd.ini");
+
+            Assert.That(Resolve(fixture).Status, Is.EqualTo(IniResolutionStatus.Complete));
+        }
+
+        [Test]
+        public void SourceIdCaseMismatchFailsAsIncompleteProvenanceWithoutHostPath()
+        {
+            Fixture fixture = One("[S]\nK=V");
+            fixture.Layers[0] = Layer(
+                "layer-only", "Source-Only", IniLoadLayerKind.TestSource,
+                10, "rulesmd.ini");
+            fixture.Candidates[0] = Candidate(
+                "candidate-only", "layer-only", "source-only", "[S]\nK=V",
+                "rulesmd.ini");
+
+            IniResolutionResult result = Resolve(fixture);
+
+            Assert.That(result.Status, Is.EqualTo(IniResolutionStatus.Failed));
+            AssertCode(result, IniResolutionDiagnosticCode.IncompleteProvenance);
+            Assert.That(result.Diagnostics.All(value =>
+                !value.Message.Contains(":\\") &&
+                (value.LogicalPath == null ||
+                 !value.LogicalPath.Value.Contains(":") &&
+                 !value.LogicalPath.Value.Contains("\\"))), Is.True);
+        }
+
+        [Test]
         public void IncompleteProvenanceFailsClosed()
         {
             Fixture fixture = One("[S]\nK=V", "rulesmd.ini");
@@ -386,6 +422,80 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini
         }
 
         [Test]
+        public void Utf16LittleEndianRecognizesOnlyTrueSemicolon()
+        {
+            IniResolutionResult trueSemicolon = Resolve(
+                OneEncoded("[S]\nK=value;comment",
+                    IniPhysicalEncodingKind.Utf16LittleEndianWithBom),
+                Policy(inlineComments: IniInlineCommentPolicy.SemicolonStartsComment));
+            IniResolutionResult reverseLookalike = Resolve(
+                OneEncoded("[S]\nK=value\u3b00tail",
+                    IniPhysicalEncodingKind.Utf16LittleEndianWithBom),
+                Policy(inlineComments: IniInlineCommentPolicy.SemicolonStartsComment));
+
+            Assert.That(DecodedValue(
+                trueSemicolon,
+                IniPhysicalEncodingKind.Utf16LittleEndianWithBom), Is.EqualTo("value"));
+            Assert.That(DecodedValue(
+                reverseLookalike,
+                IniPhysicalEncodingKind.Utf16LittleEndianWithBom),
+                Is.EqualTo("value\u3b00tail"));
+            Assert.That(GetValue(reverseLookalike, "s", "k").Winner.ContainsInlineSemicolon,
+                Is.False);
+        }
+
+        [Test]
+        public void Utf16BigEndianRecognizesOnlyTrueSemicolon()
+        {
+            IniResolutionResult trueSemicolon = Resolve(
+                OneEncoded("[S]\nK=value;comment",
+                    IniPhysicalEncodingKind.Utf16BigEndianWithBom),
+                Policy(inlineComments: IniInlineCommentPolicy.SemicolonStartsComment));
+            IniResolutionResult reverseLookalike = Resolve(
+                OneEncoded("[S]\nK=value\u3b00tail",
+                    IniPhysicalEncodingKind.Utf16BigEndianWithBom),
+                Policy(inlineComments: IniInlineCommentPolicy.SemicolonStartsComment));
+
+            Assert.That(DecodedValue(
+                trueSemicolon,
+                IniPhysicalEncodingKind.Utf16BigEndianWithBom), Is.EqualTo("value"));
+            Assert.That(DecodedValue(
+                reverseLookalike,
+                IniPhysicalEncodingKind.Utf16BigEndianWithBom),
+                Is.EqualTo("value\u3b00tail"));
+            Assert.That(GetValue(reverseLookalike, "s", "k").Winner.ContainsInlineSemicolon,
+                Is.False);
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Utf16TrueAsciiSpaceAndTabAreTrimmed(bool bigEndian)
+        {
+            IniPhysicalEncodingKind encoding = bigEndian
+                ? IniPhysicalEncodingKind.Utf16BigEndianWithBom
+                : IniPhysicalEncodingKind.Utf16LittleEndianWithBom;
+            IniResolutionResult result = Resolve(
+                OneEncoded("[S]\nK= \tvalue\t ", encoding),
+                Policy(whitespace: IniWhitespaceReadPolicy.TrimAsciiSpaceAndTab));
+
+            Assert.That(DecodedValue(result, encoding), Is.EqualTo("value"));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Utf16U2000IsNotTrimmedAsAsciiSpace(bool bigEndian)
+        {
+            IniPhysicalEncodingKind encoding = bigEndian
+                ? IniPhysicalEncodingKind.Utf16BigEndianWithBom
+                : IniPhysicalEncodingKind.Utf16LittleEndianWithBom;
+            IniResolutionResult result = Resolve(
+                OneEncoded("[S]\nK=\u2000value\u2000", encoding),
+                Policy(whitespace: IniWhitespaceReadPolicy.TrimAsciiSpaceAndTab));
+
+            Assert.That(DecodedValue(result, encoding), Is.EqualTo("\u2000value\u2000"));
+        }
+
+        [Test]
         public void UnresolvedSemicolonPolicyReturnsAmbiguous()
         {
             Fixture fixture = One("[S]\nK=value;comment");
@@ -492,6 +602,60 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini
         }
 
         [Test]
+        public void CandidateEnumerationStopsAfterMaximumPlusOne()
+        {
+            Fixture fixture = Three("one", "two", "three");
+            var lazy = new ThrowingCandidateEnumerable(fixture.Candidates);
+            var limits = new IniResolutionLimits(2, 4, 10, 10, 20);
+
+            IniResolutionResult result = new IniRuntimeResolver().Resolve(
+                new IniLoadPlan("bounded-lazy-plan", fixture.Layers),
+                lazy,
+                Policy(),
+                limits);
+
+            Assert.That(result.Status, Is.EqualTo(IniResolutionStatus.Failed));
+            AssertCode(result, IniResolutionDiagnosticCode.DocumentBudgetExceeded);
+            Assert.That(lazy.MoveNextCount, Is.EqualTo(3));
+            Assert.That(lazy.ThrowReached, Is.False);
+            Assert.That(result.Trace.DocumentCandidates.Select(value => value.CandidateId),
+                Is.EqualTo(new[] { "candidate-low", "candidate-mid" }));
+        }
+
+        [Test]
+        public void NullCandidateWithinBudgetStillThrowsArgumentException()
+        {
+            Fixture fixture = One("[S]\nK=V");
+            fixture.Candidates[0] = null;
+
+            Assert.Throws<ArgumentException>(() => Resolve(fixture));
+        }
+
+        [Test]
+        public void DuplicateCandidateIdWithinBudgetStillFailsClosed()
+        {
+            Fixture fixture = Two("[S]\nK=low", "[S]\nK=high", 10, 20);
+            fixture.Candidates[1] = Candidate(
+                "candidate-low", "layer-high", "source-high", "[S]\nK=high",
+                "expandmd01.mix", "rulesmd.ini");
+
+            IniResolutionResult result = Resolve(fixture);
+
+            Assert.That(result.Status, Is.EqualTo(IniResolutionStatus.Failed));
+            AssertCode(result, IniResolutionDiagnosticCode.DuplicateCandidateId);
+        }
+
+        [Test]
+        public void LoadPlanRequiresPrematerializedTrustedLayerList()
+        {
+            ParameterInfo layerParameter = typeof(IniLoadPlan).GetConstructors()
+                .Single().GetParameters()[1];
+
+            Assert.That(layerParameter.ParameterType,
+                Is.EqualTo(typeof(IReadOnlyList<IniLoadLayer>)));
+        }
+
+        [Test]
         public void DiagnosticsExposeLogicalPathsButNoAbsolutePaths()
         {
             Fixture fixture = Two("[S]\nK=one", "[S]\nK=two", 20, 20);
@@ -554,6 +718,28 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini
                 {
                     Candidate("candidate-only", "layer-only", "source-only", content,
                         actualChain)
+                });
+        }
+
+        private static Fixture OneEncoded(
+            string content,
+            IniPhysicalEncodingKind encoding)
+        {
+            string[] chain = { "rulesmd.ini" };
+            return new Fixture(
+                new List<IniLoadLayer>
+                {
+                    Layer("layer-only", "source-only", IniLoadLayerKind.TestSource,
+                        10, chain)
+                },
+                new List<IniCandidateDocument>
+                {
+                    Candidate(
+                        "candidate-only",
+                        "layer-only",
+                        "source-only",
+                        EncodeWithBom(content, encoding),
+                        chain)
                 });
         }
 
@@ -628,10 +814,25 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini
             string content,
             params string[] chain)
         {
+            return Candidate(
+                candidateId,
+                layerId,
+                sourceId,
+                Encoding.ASCII.GetBytes(content),
+                chain);
+        }
+
+        private static IniCandidateDocument Candidate(
+            string candidateId,
+            string layerId,
+            string sourceId,
+            byte[] content,
+            params string[] chain)
+        {
             LogicalContentPath[] paths = chain.Select(LogicalContentPath.Parse).ToArray();
             LogicalContentPath logicalName = paths[paths.Length - 1];
             IniParseResult parsed = WestwoodIniReader.Read(
-                Encoding.ASCII.GetBytes(content),
+                content,
                 new BinarySourceContext(
                     "ini-runtime-resolution",
                     sourceId,
@@ -689,6 +890,39 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini
                 GetValue(result, section, key).Winner.CopyEffectiveValueBytes());
         }
 
+        private static string DecodedValue(
+            IniResolutionResult result,
+            IniPhysicalEncodingKind encoding)
+        {
+            return GetUtf16Encoding(encoding).GetString(
+                GetValue(result, "s", "k").Winner.CopyEffectiveValueBytes());
+        }
+
+        private static byte[] EncodeWithBom(
+            string value,
+            IniPhysicalEncodingKind encoding)
+        {
+            Encoding textEncoding = GetUtf16Encoding(encoding);
+            return textEncoding.GetPreamble()
+                .Concat(textEncoding.GetBytes(value))
+                .ToArray();
+        }
+
+        private static Encoding GetUtf16Encoding(IniPhysicalEncodingKind encoding)
+        {
+            if (encoding == IniPhysicalEncodingKind.Utf16LittleEndianWithBom)
+            {
+                return new UnicodeEncoding(false, true, true);
+            }
+
+            if (encoding == IniPhysicalEncodingKind.Utf16BigEndianWithBom)
+            {
+                return new UnicodeEncoding(true, true, true);
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(encoding));
+        }
+
         private static string[] TraceIds(IniResolutionResult result)
         {
             return result.Trace.DocumentCandidates.Select(value => value.CandidateId).ToArray();
@@ -722,6 +956,45 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini
 
             public List<IniLoadLayer> Layers { get; }
             public List<IniCandidateDocument> Candidates { get; }
+        }
+
+        private sealed class ThrowingCandidateEnumerable :
+            IEnumerable<IniCandidateDocument>
+        {
+            private readonly IReadOnlyList<IniCandidateDocument> candidates;
+
+            public ThrowingCandidateEnumerable(
+                IReadOnlyList<IniCandidateDocument> candidates)
+            {
+                this.candidates = candidates;
+            }
+
+            public int MoveNextCount { get; private set; }
+            public bool ThrowReached { get; private set; }
+
+            public IEnumerator<IniCandidateDocument> GetEnumerator()
+            {
+                return Enumerate().GetEnumerator();
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+
+            private IEnumerable<IniCandidateDocument> Enumerate()
+            {
+                foreach (IniCandidateDocument candidate in candidates)
+                {
+                    MoveNextCount++;
+                    yield return candidate;
+                }
+
+                MoveNextCount++;
+                ThrowReached = true;
+                throw new InvalidOperationException(
+                    "The resolver enumerated MaxDocuments + 2 candidates.");
+            }
         }
     }
 }

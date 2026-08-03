@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -93,9 +94,45 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini
             Assert.That(document.CanonicalModelSha256, Is.EqualTo(before));
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Utf16AuditCountsEndianCorrectSemicolonOnly(bool bigEndian)
+        {
+            IniPhysicalEncodingKind encoding = bigEndian
+                ? IniPhysicalEncodingKind.Utf16BigEndianWithBom
+                : IniPhysicalEncodingKind.Utf16LittleEndianWithBom;
+            IniRuntimeSyntaxAudit audit = Analyze(
+                "[S]\nA=value;comment\nB=value\u3b00tail",
+                encoding);
+
+            Assert.That(audit.InlineSemicolonLineCount, Is.EqualTo(1));
+            Assert.That(audit.SemicolonInValueMiddleCount, Is.EqualTo(1));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Utf16AuditDoesNotTreatU2000AsAsciiWhitespace(bool bigEndian)
+        {
+            IniPhysicalEncodingKind encoding = bigEndian
+                ? IniPhysicalEncodingKind.Utf16BigEndianWithBom
+                : IniPhysicalEncodingKind.Utf16LittleEndianWithBom;
+            IniRuntimeSyntaxAudit audit = Analyze("[S]\nA=\u2000;comment\u2000", encoding);
+
+            Assert.That(audit.SemicolonInValueMiddleCount, Is.EqualTo(1));
+            Assert.That(audit.SemicolonAtValueStartCount, Is.Zero);
+            Assert.That(audit.SemicolonAtValueEndCount, Is.Zero);
+        }
+
         private static IniRuntimeSyntaxAudit Analyze(string text)
         {
             return IniRuntimeSyntaxAuditor.Analyze(Parse(text));
+        }
+
+        private static IniRuntimeSyntaxAudit Analyze(
+            string text,
+            IniPhysicalEncodingKind encoding)
+        {
+            return IniRuntimeSyntaxAuditor.Analyze(Parse(text, encoding));
         }
 
         private static IniRawDocument Parse(string text)
@@ -103,6 +140,38 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini
             LogicalContentPath path = LogicalContentPath.Parse("synthetic/audit.ini");
             IniParseResult result = WestwoodIniReader.Read(
                 Encoding.ASCII.GetBytes(text),
+                new BinarySourceContext("ini-runtime-syntax-audit", "synthetic-source", path),
+                new IniSourceProvenance(
+                    "synthetic-source",
+                    new[] { LogicalContentPath.Parse("synthetic.mix"), path }));
+            Assert.That(result.IsSuccess, Is.True);
+            return result.Document;
+        }
+
+        private static IniRawDocument Parse(
+            string text,
+            IniPhysicalEncodingKind encoding)
+        {
+            Encoding textEncoding;
+            if (encoding == IniPhysicalEncodingKind.Utf16LittleEndianWithBom)
+            {
+                textEncoding = new UnicodeEncoding(false, true, true);
+            }
+            else if (encoding == IniPhysicalEncodingKind.Utf16BigEndianWithBom)
+            {
+                textEncoding = new UnicodeEncoding(true, true, true);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(encoding));
+            }
+
+            byte[] bytes = textEncoding.GetPreamble()
+                .Concat(textEncoding.GetBytes(text))
+                .ToArray();
+            LogicalContentPath path = LogicalContentPath.Parse("synthetic/audit.ini");
+            IniParseResult result = WestwoodIniReader.Read(
+                bytes,
                 new BinarySourceContext("ini-runtime-syntax-audit", "synthetic-source", path),
                 new IniSourceProvenance(
                     "synthetic-source",

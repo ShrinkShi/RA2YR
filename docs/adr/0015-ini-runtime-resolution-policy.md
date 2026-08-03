@@ -25,9 +25,16 @@ observation selects a winner.
 - `IniLoadPlan` contains explicit ordered layers. Each layer retains source ID,
   layer kind, complete logical container chain, optional priority, and the
   evidence supporting that priority.
+- `IniLoadPlan` accepts an already-materialized trusted `IReadOnlyList`. Its
+  `MaxLayers` check bounds resolver consumption, not arbitrary producer-side
+  enumeration or allocation. Candidate documents remain an `IEnumerable`, but
+  the resolver reads at most `MaxDocuments + 1` items and stops immediately
+  after the extra item proves the budget was exceeded.
 - Missing priority, equal highest priority, incomplete provenance, or an
   `Unresolved` policy returns `Ambiguous` or `Failed`; source IDs and input
   enumeration order never break a tie.
+- Source IDs are exact identities and therefore compare with `Ordinal`, while
+  logical INI name comparison remains a separately selected policy.
 - Explicit `ConfiguredForTesting` policies are executable for synthetic work.
   They are not stock-runtime defaults.
 - Resolution reads the immutable WP-02F document without changing its bytes or
@@ -40,6 +47,9 @@ observation selects a winner.
 - Runtime names are restricted to the current explicit raw-ASCII boundary.
   Raw ordinal and culture-invariant ASCII case folding are separate policies;
   host culture and `Encoding.Default` are forbidden.
+- ASCII syntax recognition is physical-encoding-aware. UTF-16LE accepts only
+  `XX 00` and UTF-16BE accepts only `00 XX` for ASCII code units; reversed
+  lookalikes are neither delimiters nor ASCII whitespace.
 - Each conclusion records one evidence level: original runtime, ProjectBaseline
   runtime, official editor source, independent implementation, community
   documentation, configured testing, or unresolved.

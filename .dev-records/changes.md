@@ -255,3 +255,12 @@
   evidence, third-party reference records, and compatibility entries.
 - Full EditMode result after implementation: 611/611 passed; WP-02G1 adds 51
   cases over the WP-02F 560-test baseline.
+
+## 2026-08-03 - PR #8 review-fix commit
+
+- 修复 UTF-16LE/BE 分号、ASCII 空格和 Tab 的精确字节序识别，并让名称、
+  值读取和 syntax audit 共享规则。
+- 将候选输入改为 `MaxDocuments + 1` 有界枚举；收窄 `IniLoadPlan` 构造契约。
+- 将 source ID provenance 比较改为 `Ordinal`。
+- 新增 16 个 EditMode case、修复 evidence、ADR/格式说明、兼容矩阵引用和
+  开发记录；不改变 ProjectBaseline precedence 或任何 typed view 状态。

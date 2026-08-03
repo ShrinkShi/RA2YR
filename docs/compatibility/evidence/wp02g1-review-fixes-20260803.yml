@@ -1,0 +1,104 @@
+schema_version: 1
+evidence_id: "wp02g1-review-fixes-20260803"
+recorded_at_utc: "2026-08-03T07:00:40Z"
+scope: "PR #8 review fixes for exact UTF-16 syntax units, bounded candidates, and exact source identity"
+
+review_fixes:
+  utf16_physical_units:
+    little_endian_true_ascii_semicolon: "Passed"
+    little_endian_reverse_lookalike_rejected: "Passed"
+    big_endian_true_ascii_semicolon: "Passed"
+    big_endian_reverse_lookalike_rejected: "Passed"
+    true_ascii_space_and_tab_trimmed: "Passed"
+    u2000_not_treated_as_ascii_space: "Passed"
+    syntax_audit_uses_exact_endianness: "Passed"
+    semicolon_comment_does_not_truncate_reverse_lookalike: "Passed"
+  candidate_materialization:
+    maximum_documents: 2
+    enumerated_items: 3
+    maximum_items_touched: "MaxDocuments + 1"
+    later_throwing_item_touched: false
+    status: "Failed"
+    diagnostic: "DocumentBudgetExceeded"
+    trace_contains_only_materialized_candidates: true
+  load_plan_contract:
+    input: "pre-materialized trusted IReadOnlyList"
+    max_layers_scope: "resolver consumption only"
+    arbitrary_enumerable_allocation_claimed_bounded: false
+  source_identity:
+    comparison: "Ordinal"
+    exact_case_match: "Passed"
+    case_only_mismatch_status: "Failed"
+    case_only_mismatch_diagnostic: "IncompleteProvenance"
+    absolute_host_path_exposed: false
+
+test_runs:
+  focused_edit_mode:
+    result: "Passed"
+    executed: 66
+    passed: 66
+    failed: 0
+    skipped: 0
+    isolated_result: "TestResults/20260803T065055382Z-wp02g1-focused/results.xml"
+    unity_process_exit_code: 0
+    forced_post_result_shutdown: false
+    xml_sha256: "C9818F25C4B45F26E0E2D8A7F7F3DCBC0AFCF0F84F99811EE7FFDAF33480493C"
+  full_edit_mode:
+    result: "Passed"
+    executed: 627
+    passed: 627
+    failed: 0
+    skipped: 0
+    prior_wp02g1_baseline: 611
+    new_review_cases: 16
+    isolated_result: "TestResults/20260803T065624474Z-10907884c51b4450ab1c6255c9535823/EditMode/results.xml"
+    xml_sha256: "FAE136230F3E53FA6B4B4DF7B9D6B2465D7D00FCB084173EA97461FFC8341E84"
+  full_play_mode:
+    result: "Passed"
+    executed: 1
+    passed: 1
+    failed: 0
+    skipped: 0
+    isolated_result: "TestResults/20260803T065624474Z-10907884c51b4450ab1c6255c9535823/PlayMode/results.xml"
+    xml_sha256: "8A4ACDAF7D3ED3495674C34EE12227A25CE57C63FE868291D49038788EA7880D"
+  unity_test_wrapper:
+    shell_exit_code: 0
+    forced_post_result_shutdown: false
+
+project_baseline_regression:
+  windows_powershell_5_1:
+    wrapper_exit_code: 0
+    unity_process_exit_code: 0
+    status: "Complete"
+    validated_documents: 4
+  powershell_7:
+    wrapper_exit_code: 0
+    unity_process_exit_code: 0
+    status: "Complete"
+    validated_documents: 4
+  candidate_sets_unchanged: true
+  rulesmd_candidate_count: 2
+  rulesmd_winner: null
+  soundmd_candidate_count: 2
+  soundmd_winner: null
+  opaque_and_semicolon_aggregates_unchanged: true
+
+wrapper_regressions:
+  ini:
+    windows_powershell_5_1: { exit_code: 0, passed: 12, failed: 0 }
+    powershell_7: { exit_code: 0, passed: 12, failed: 0 }
+  csf:
+    windows_powershell_5_1: { exit_code: 0, passed: 10, failed: 0 }
+    powershell_7: { exit_code: 0, passed: 10, failed: 0 }
+  pal:
+    windows_powershell_5_1: { exit_code: 0, passed: 9, failed: 0 }
+    powershell_7: { exit_code: 0, passed: 9, failed: 0 }
+
+compatibility_boundary:
+  project_baseline_precedence_changed: false
+  rulesmd_winner_selected: false
+  soundmd_winner_selected: false
+  typed_rules_or_art_added: false
+  original_runtime_started: false
+  external_gui_tool_started: false
+  project_baseline_modified: false
