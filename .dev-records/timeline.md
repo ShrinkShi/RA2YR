@@ -1,5 +1,29 @@
 # 开发时间线
 
+## 2026-08-03 - 冻结 runtime root、社区语义参考和现代资产边界
+
+### 用户目标
+- 将权威游戏安装与所有研究/工具目录严格分离，并建立面向现代资产的长期架构边界。
+
+### 本轮处理
+- 新增 ADR 0021、视觉资产管线和工程可维护性规则。
+- 登记 RA2 DIY 2025 教程目录的 18 项脱敏元数据。
+- 更新外部内容、第三方台账、README 和开发决策记录。
+
+### 关键结论
+- legacy 格式是 import adapters；simulation 只引用 `VisualAssetId`。
+- 教程目录是 `CommunitySemanticReference`，不是 runtime content source。
+
+### 影响文件
+- `docs/adr/0021-legacy-formats-are-import-adapters.md`
+- `docs/architecture/visual-asset-pipeline.md`
+- `docs/architecture/engineering-maintainability.md`
+- `docs/third-party/ra2-diy-2025-community-semantic-reference.yml`
+- 架构索引、第三方台账、README 和开发记录
+
+### 后续事项
+- 以独立提交实现 ProjectBaseline ordered multi-document INI semantic composition。
+
 ## 2026-08-03 18:20 - M2-SHP1F flags-3 row-width forensic probe
 
 ### User goal

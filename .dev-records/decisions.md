@@ -1,5 +1,39 @@
 # 技术决策记录
 
+## 2026-08-03 - Legacy formats remain import adapters
+
+### 背景
+SHP/PAL 与 VXL/HVA 是兼容输入，但不应固化未来 simulation 或现代渲染资产结构。
+
+### 决策
+simulation 仅引用逻辑 `VisualAssetId`；legacy 格式由独立 provider 导入，Core 与 Unity adapter 分离。像素尺寸、世界尺寸、pivot、占地和碰撞分别建模，team color 使用抽象 mask/remap channel。
+
+### 原因
+避免游戏逻辑依赖 `.shp`/`.vxl`，并允许未来 RGBA、多材质、高分辨率动画和现代模型替换底层表示。
+
+### 代价
+后续必须实现显式 provider routing 和 provider-neutral visual asset contract，不能直接把 reader 结果交给 simulation。
+
+### 替代方案
+- 直接以 SHP/VXL 文件名作为运行时资产身份：拒绝，耦合 legacy 表示与游戏逻辑。
+
+## 2026-08-03 - Runtime root and community reference separation
+
+### 背景
+本机同时存在权威游戏安装、FinalAlert 2、工具箱、手工解包、Cache 和社区教程资料。
+
+### 决策
+只有 `YR1001_ProjectBaseline` 配置根参与 runtime candidate discovery。RA2 DIY 2025 教程目录登记为 `CommunitySemanticReference`，只形成语义假设，不作为内容源。
+
+### 原因
+防止同名文件从研究或工具目录污染 provenance 和加载计划。
+
+### 代价
+教程结论必须继续按 stock、扩展和未决语义分类，并由独立证据确认。
+
+### 替代方案
+- 扫描所有本机 RA2/YR 相关目录：拒绝，来源身份和运行时语义不可控。
+
 ## 2026-08-01 - 正式仓库和外部内容边界
 
 ### 背景

@@ -1,5 +1,21 @@
 # 变更记录
 
+## 2026-08-03 - 项目级架构和来源边界冻结
+
+### 变更范围
+- 仅文档、第三方元数据台账和开发记录；不修改 SHP forensic 或 production decoder。
+
+### 具体改动
+- 新增 legacy visual provider ADR、现代视觉资产管线和工程可维护性规范。
+- 固定唯一 ProjectBaseline runtime root，并排除 FinalAlert 2、参考工具、手工解包和临时目录。
+- 以文件名、长度和 SHA-256 登记 18 个社区教程文件，正文不进入仓库。
+
+### 验证情况
+- 教程目录复核为 18 个文件、1,034,682 字节，元数据与登记值一致。
+
+### 风险
+- 社区教程许可证未确认，只能 reference-only；其语义不能单独证明 stock runtime 行为。
+
 ## 2026-08-03 - M2-SHP1F independent RLE row-width probe
 
 ### Change scope

@@ -25,3 +25,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0018 | SHP(TS) Core exposes immutable local indexed frames | Accepted |
 | 0019 | SHP(TS) RLE-Zero remains strict despite baseline tolerance evidence | Accepted with compatibility conflict |
 | 0020 | SHP(TS) row-width forensic evidence remains non-production | Accepted |
+| 0021 | Legacy formats are import adapters, not canonical runtime assets | Accepted |
