@@ -256,3 +256,31 @@ ProjectBaseline INI 无 BOM，参考实现对无等号行、节头位置、重�
 
 ### 代价
 当前不能用该模型直接实现 Rules/Art/AI 运行时字典或语义编辑；Opaque 数量也不能被误解为损坏文件。
+## 2026-08-03 - INI runtime policies remain independent and evidence-gated
+
+### 决策
+容器优先级、同名文件组合、名称比较、重复节、重复键、行内分号、
+空白和空值分别建模。缺少证据或出现同优先级时返回 Ambiguous，不能用
+source ID、枚举顺序或一个笼统 LastWins 隐式决定。
+
+### 原因
+FinalAlert 2、OpenRA、Chrono Divide、Ares、Phobos 和社区教程分别属于
+编辑器、独立实现、扩展或二手资料；它们不能单独证明 stock YR 运行时。
+ProjectBaseline 中 `rulesmd.ini` 与 `soundmd.ini` 都存在内容不同的两个候选。
+
+### 影响
+显式测试计划和逐值 provenance 可执行，但 stock runtime precedence 与
+typed Rules/Art/AI 保持未实现。后续黑盒对照必须另行授权并只使用副本。
+
+## 2026-08-03 - INI 物理 ASCII、输入预算和来源身份必须是独立边界
+
+### 决策
+- 所有运行时 INI ASCII 标点和空白识别都显式携带物理编码，不再由字宽
+  推测 UTF-16 字节序。
+- lazy candidate 输入由 resolver 有界物化；load plan 只接受已物化可信
+  集合，并明确 `MaxLayers` 不负责约束调用方枚举器的前置分配。
+- source ID 采用 `Ordinal` 精确身份；节名和键名的比较仍由独立策略决定。
+
+### 原因
+字节序、资源预算和身份比较分别关系到语法正确性、拒绝服务边界和
+provenance 完整性，不能借用字宽、延迟检查或运行时名称规则隐式决定。

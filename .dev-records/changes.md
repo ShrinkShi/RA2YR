@@ -241,3 +241,26 @@
 ### 风险
 - 无 BOM 单字节文件的原版代码页、分号语义、重复项胜出和跨 MIX precedence 未确认。
 - `往返通过` 仅限未修改 byte identity，不覆盖编辑、FinalAlert 2 或原版 writer 行为。
+## 2026-08-03 - WP-02G1 INI runtime-resolution foundation
+
+- Added UnityEngine-free explicit INI load layers, evidence-labelled policy
+  dimensions, deterministic candidate resolution, budgets, diagnostics, and
+  complete per-value provenance traces.
+- Added aggregate Opaque/semicolon auditing without original text publication.
+- Added a controlled ProjectBaseline runtime-resolution audit mode and shared
+  PowerShell 5.1/7 wrapper gates.
+- Preserved both `rulesmd.ini` and both `soundmd.ini` candidates without a
+  winner; no original program or GUI tool was started.
+- Added ADR 0015, runtime-resolution format notes, research/synthetic/local
+  evidence, third-party reference records, and compatibility entries.
+- Full EditMode result after implementation: 611/611 passed; WP-02G1 adds 51
+  cases over the WP-02F 560-test baseline.
+
+## 2026-08-03 - PR #8 review-fix commit
+
+- 修复 UTF-16LE/BE 分号、ASCII 空格和 Tab 的精确字节序识别，并让名称、
+  值读取和 syntax audit 共享规则。
+- 将候选输入改为 `MaxDocuments + 1` 有界枚举；收窄 `IniLoadPlan` 构造契约。
+- 将 source ID provenance 比较改为 `Ordinal`。
+- 新增 16 个 EditMode case、修复 evidence、ADR/格式说明、兼容矩阵引用和
+  开发记录；不改变 ProjectBaseline precedence 或任何 typed view 状态。

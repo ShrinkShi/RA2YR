@@ -198,6 +198,39 @@ pwsh.exe -NoProfile -File `
     ./Tools/Content/Tests/Invoke-IniProjectBaselineAudit.Tests.ps1
 ```
 
+## WP-02G1 INI runtime-resolution audit
+
+`Invoke-IniRuntimeResolutionAudit.ps1` forwards to the same locked,
+reparse-rejecting wrapper used by WP-02F, selecting
+`IniProjectBaselineAuditCommand.RunRuntimeResolution`. It mounts the fixed
+ProjectBaseline chains, keeps both `rulesmd.ini` and both `soundmd.ini`
+candidates, and publishes only candidate identities plus Opaque/semicolon
+aggregates.
+
+Run from the repository root:
+
+```powershell
+./Tools/Content/Invoke-IniRuntimeResolutionAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+The command never starts the game, XCC, or FinalAlert 2. It never selects a
+runtime winner. The complete line-level base audit remains in the configured
+repository-external Cache, while the ignored JSON below `TestResults` contains
+no source text or host path. The wrapper validates the fixed candidate hashes,
+explicit null winners, external-manifest identity, and Unity's real exit code.
+
+The shared wrapper regression suite covers both physical-document and runtime
+modes and must pass in Windows PowerShell 5.1 and PowerShell 7:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
+    ./Tools/Content/Tests/Invoke-IniProjectBaselineAudit.Tests.ps1
+
+pwsh.exe -NoProfile -File `
+    ./Tools/Content/Tests/Invoke-IniProjectBaselineAudit.Tests.ps1
+```
+
 ## WP-02C XCC synthetic interoperability
 
 `Invoke-XccSyntheticInterop.ps1` provides three operator-facing modes around
