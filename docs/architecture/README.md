@@ -79,3 +79,10 @@ input, budget, diagnostic, and tail boundary is documented in
 [`bounded-binary-reading.md`](bounded-binary-reading.md). The bounded archive,
 mount, provenance, and rebuilding boundaries are documented in
 [`mix-content.md`](mix-content.md).
+
+The WP-02G2 typed projection remains inside Core and consumes only a completed,
+explicit WP-02G1 resolution. It preserves every selected and overridden source
+trace and fails closed for ambiguous/failed inputs. Its current Rules and Art
+surface is limited to explicit resource discovery; see
+[`../formats/ini-minimal-resource-views.md`](../formats/ini-minimal-resource-views.md)
+and ADR 0016.

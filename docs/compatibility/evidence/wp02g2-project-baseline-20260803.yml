@@ -1,0 +1,72 @@
+schema_version: 1
+work_package: "WP-02G2"
+evidence_kind: "project-baseline-sanitized"
+date_utc: "2026-08-03"
+baseline_logical_name: "YR1001_ProjectBaseline"
+baseline_is_clean_yr1001: false
+policy_evidence: "ConfiguredForTesting"
+stock_runtime_winner_selected: false
+directory_fingerprint: "481e4ae76662001008eef8105cc749b29b958c9c5d39d0dfe889f47a046d1e6e"
+base_ini_external_manifest_sha256: "2d2a6b9a8cb1268c7fceb4e348286c346c3e1997bcdecc3b44170493d67e2f81"
+sanitized_summary_sha256: "2f9ff23716d0524139f781d0cab36178be26dee897bfadf692995f66bdb89bf4"
+wrapper_validation:
+  powershell_7_exit: 0
+  windows_powershell_5_1_exit: 0
+  unity_process_exit: 0
+  game_started: false
+  xcc_started: false
+  finalalert2_started: false
+rules_candidates:
+  - role: "rulesmd-expandmd01"
+    typed_status: "Incomplete"
+    registry_type_count: 5
+    registry_entry_count: 1171
+    invalid_identifier_count: 109
+    failed_identifier_count: 0
+    source_trace_complete: 1171
+    source_trace_total: 1171
+    normalized_model_sha256: "4c0da0cb9dc1b5178abdb677a8d9c0911babaa475609de4a89d48f17478bd14e"
+    diagnostic_counts:
+      DuplicateRegistryIdentifier: 10
+      InlineSemicolonMayAffectTarget: 109
+      InvalidAsciiIdentifier: 109
+      OpaqueMayAffectTarget: 735
+  - role: "rulesmd-localmd"
+    typed_status: "Incomplete"
+    registry_type_count: 5
+    registry_entry_count: 1171
+    invalid_identifier_count: 109
+    failed_identifier_count: 0
+    source_trace_complete: 1171
+    source_trace_total: 1171
+    normalized_model_sha256: "f39861ce9b0c5446fdbd99172f45ebadd23999d9f3865762a139bc622da85522"
+    diagnostic_counts:
+      DuplicateRegistryIdentifier: 10
+      InlineSemicolonMayAffectTarget: 109
+      InvalidAsciiIdentifier: 109
+      OpaqueMayAffectTarget: 735
+art_candidate:
+  role: "artmd-localmd"
+  typed_status: "Incomplete"
+  record_count: 880
+  explicit_image_count: 297
+  voxel: { yes: 43, no: 1, invalid: 0, missing: 836 }
+  references: { cameo: 90, alt_cameo: 1, buildup: 76 }
+  explicit_extensions: { none: 465, shp: 0, vxl: 0, pal: 0, other: 0 }
+  route_candidates: { shp: 1, vxl: 43, unknown: 836 }
+  field_states: { ambiguous: 0, invalid: 2, missing: 7279 }
+  source_trace_complete: 1521
+  source_trace_total: 1521
+  normalized_model_sha256: "4471d764e9c25e7a735ecf95dd2224c77eac7309f13b45fbd5424a0ebd41ad62"
+  diagnostic_counts:
+    InvalidAsciiIdentifier: 2
+    OpaqueMayAffectTarget: 1210
+privacy:
+  original_text_in_repository: false
+  object_name_list_in_repository: false
+  resource_name_list_in_repository: false
+  absolute_path_in_summary: false
+limitations:
+  - "Both rules candidates remain separate; neither is a stock runtime winner."
+  - "Incomplete is intentional where unresolved physical syntax can affect typed interpretation."
+  - "SHP, VXL, palette routing, defaults, fallback, rendering, and gameplay remain unimplemented."

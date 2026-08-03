@@ -362,3 +362,6 @@
   UTF-16 字节序、候选有界枚举和 source ID 精确身份。
 - 2026-08-03: 聚焦 EditMode 66/66、全量 EditMode 627/627、PlayMode 1/1；
   PS5.1/7 RuntimeResolution 审计聚合一致且 winners 保持 Unresolved。
+- 2026-08-03: PR #8 squash 合并为 `b3707172`，main Repository safety run `30794186808` 成功；从该 main 创建 `feature/wp02g2-minimal-rules-art-resource-views`。
+- 2026-08-03: 完成 WP-02G2 typed scalar、最小 Rules/Art 资源视图和 47 个新增 EditMode case，阶段性全量 674/674。
+- 2026-08-03: 只读审计两个独立 Rules 候选和一个 Art 候选；不选择 stock winner，最终脱敏摘要 SHA-256 为 `2F9FF23716D0524139F781D0CAB36178BE26DEE897BFADF692995F66BDB89BF4`。

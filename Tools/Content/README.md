@@ -231,6 +231,26 @@ pwsh.exe -NoProfile -File `
     ./Tools/Content/Tests/Invoke-IniProjectBaselineAudit.Tests.ps1
 ```
 
+## WP-02G2 minimal Rules and Art resource audit
+
+`Invoke-IniMinimalResourceAudit.ps1` reuses the locked, reparse-rejecting INI
+wrapper and selects `IniProjectBaselineAuditCommand.RunMinimalResourceTypedViews`.
+It evaluates the two fixed Rules candidates independently and the fixed Art
+candidate under a single-document `ConfiguredForTesting` plan. It does not
+select or merge a stock runtime winner.
+
+```powershell
+./Tools/Content/Invoke-IniMinimalResourceAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+The ignored JSON under `TestResults` contains aggregate registry, field,
+route, diagnostic, and provenance-coverage counts plus one-way model hashes.
+It rejects object-name lists, resource-name lists, values, raw bytes, and host
+paths. The complete physical INI manifest remains in the configured external
+Cache. Run the command with both Windows PowerShell 5.1 and PowerShell 7 for
+the delivery regression.
+
 ## WP-02C XCC synthetic interoperability
 
 `Invoke-XccSyntheticInterop.ps1` provides three operator-facing modes around
