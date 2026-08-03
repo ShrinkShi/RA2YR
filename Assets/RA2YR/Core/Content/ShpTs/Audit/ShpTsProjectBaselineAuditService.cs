@@ -33,6 +33,93 @@ namespace RA2YR.Core.Content.ShpTs.Audit
             return RunCore(configuration, profile, buildIndex, utcNow);
         }
 
+        internal static TResult UseFixedEntries<TResult>(
+            ExternalContentConfiguration configuration,
+            Func<
+                ExternalContentSourceDescriptor,
+                string,
+                IReadOnlyList<ShpTsGoldenSampleEntryContext>,
+                TResult> inspect)
+        {
+            if (configuration == null || inspect == null)
+            {
+                throw new ArgumentNullException(
+                    configuration == null ? nameof(configuration) : nameof(inspect));
+            }
+
+            ShpTsProjectBaselineAuditProfile profile =
+                ShpTsProjectBaselineAuditProfile.ProjectBaseline;
+            ExternalContentSourceDescriptor source = ValidateConfiguration(configuration);
+            ContentSourceIndex beforeSource = GetBaselineSource(
+                BuildCompleteIndex(configuration, value => new ContentIndexer().Build(value)));
+            RejectLooseCandidates(beforeSource, profile);
+
+            MixNameCatalog nameCatalog = BuildNameCatalog(profile);
+            var mounts = new List<MixVirtualContentMountResult>();
+            Exception operationFailure = null;
+            TResult result = default(TResult);
+            bool hasResult = false;
+            try
+            {
+                foreach (LogicalContentPath root in profile.Samples
+                             .Select(sample => sample.RootArchive)
+                             .Distinct()
+                             .OrderBy(value => value, LogicalContentPathReportComparer.Instance))
+                {
+                    MixVirtualContentMountResult mount = MixVirtualContentSource.MountDirectorySource(
+                        beforeSource,
+                        new[] { root },
+                        nameCatalog,
+                        MixArchiveCatalogAdapters.ReadWithCoreReader,
+                        profile.MountLimits,
+                        MixMountIndexMode.ManifestAudit);
+                    mounts.Add(mount);
+                    if (!mount.IsComplete || mount.Diagnostics.Any(value =>
+                            value.Severity == MixMountDiagnosticSeverity.Error))
+                    {
+                        throw Failure(
+                            ShpTsProjectBaselineAuditFailureCode.MixMountFailed,
+                            "A controlled SHP root MIX mount failed closed.");
+                    }
+                }
+
+                IReadOnlyList<ShpTsGoldenSampleEntryContext> entries = Array.AsReadOnly(
+                    profile.Samples.Select(specification =>
+                        new ShpTsGoldenSampleEntryContext(
+                            specification,
+                            FindExactEntry(mounts, specification)))
+                    .ToArray());
+                result = inspect(source, beforeSource.Fingerprint, entries);
+                hasResult = true;
+
+                ContentSourceIndex afterSource = GetBaselineSource(
+                    BuildCompleteIndex(configuration, value => new ContentIndexer().Build(value)));
+                if (!string.Equals(
+                        beforeSource.Fingerprint,
+                        afterSource.Fingerprint,
+                        StringComparison.Ordinal))
+                {
+                    throw Failure(
+                        ShpTsProjectBaselineAuditFailureCode.BaselineChangedDuringAudit,
+                        "The ProjectBaseline fingerprint changed during the SHP forensic read.");
+                }
+            }
+            catch (Exception exception)
+            {
+                operationFailure = exception;
+            }
+
+            int cleanupFailures = DisposeAll(mounts);
+            ThrowAfterCleanup(operationFailure, cleanupFailures);
+            if (!hasResult)
+            {
+                throw new InvalidOperationException(
+                    "The fixed SHP entry callback ended without a result or structured failure.");
+            }
+
+            return result;
+        }
+
         private static ShpTsProjectBaselineAuditDelivery RunCore(
             ExternalContentConfiguration configuration,
             ShpTsProjectBaselineAuditProfile profile,

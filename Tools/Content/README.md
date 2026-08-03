@@ -287,6 +287,35 @@ pwsh.exe -NoProfile -File `
     ./Tools/Content/Tests/Invoke-ShpTsProjectBaselineAudit.Tests.ps1
 ```
 
+## M2-SHP1F flags-3 row-width forensic audit
+
+`Invoke-ShpTsRleForensicAudit.ps1` invokes the independent scalar analyzer for
+the 257 locked non-empty flags-3 failures. It validates the original row-zero
+aggregate before inference and executes the all-row stage only when the five
+final-zero-run guard preconditions are satisfied.
+
+```powershell
+./Tools/Content/Invoke-ShpTsRleForensicAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+The accepted result is decision B: 9,495 rows contain 1,331 exact-width rows
+and 8,164 width-plus-one rows, with every frame containing both classes. The
+wrapper pins these aggregates, records real Unity exit state, and publishes
+only a sanitized summary below ignored `TestResults`; per-frame/per-row scalar
+records remain in repository-external Cache. It does not change or relax the
+production decoder and does not start XCC, FinalAlert, or the game.
+
+Run the wrapper contract tests in both supported hosts:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
+    ./Tools/Content/Tests/Invoke-ShpTsRleForensicAudit.Tests.ps1
+
+pwsh.exe -NoProfile -File `
+    ./Tools/Content/Tests/Invoke-ShpTsRleForensicAudit.Tests.ps1
+```
+
 ## WP-02C XCC synthetic interoperability
 
 `Invoke-XccSyntheticInterop.ps1` provides three operator-facing modes around

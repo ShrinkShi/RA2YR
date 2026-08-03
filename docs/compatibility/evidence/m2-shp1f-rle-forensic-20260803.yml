@@ -1,0 +1,159 @@
+schema_version: 1
+work_package: "M2-SHP1F"
+evidence_kind: "project-baseline-rle-row-forensic-sanitized"
+date_utc: "2026-08-03"
+baseline_logical_name: "YR1001_ProjectBaseline"
+baseline_is_clean_yr1001: false
+directory_fingerprint: "481e4ae76662001008eef8105cc749b29b958c9c5d39d0dfe889f47a046d1e6e"
+input_catalog_sha256: "66734662ff4e72febadcfea8af92a4a7113543bdedcc01de714e9d66a646d562"
+canonical_model_sha256: "97c981d4555854d05fea54d1698d09416ec38d076d53b73a601650007d3961da"
+production_decoder_modified: false
+production_repair_recommended: false
+decision_gate: "B"
+input_modes_equivalent: true
+baseline_lock:
+  nonempty_flags_3_frames: 257
+  production_failures: 257
+  production_failure_row_zero: 257
+  production_failure_code: { RleOutputOverflow: 257 }
+  mechanical_width_plus_one: 257
+  width_range: { min: 14, max: 202 }
+  parity: { odd: 137, even: 120 }
+stage_a:
+  analyzed_rows: 257
+  commands: { total: 1441, literal: 898, zero_run: 543, zero_zero: 0 }
+  extra_source: { literal: 0, zero_run: 257, malformed: 0 }
+  extra_from_last_command: { true: 257, false: 0 }
+  extra_is_last_output: { true: 257, false: 0 }
+  extra_is_zero: { true: 257, false: 0 }
+  overshoot_exactly_one: 257
+  ignore_one_extra_input_exact: { true: 257, false: 0 }
+  remaining_when_width_reached: { end: 257, other: 0 }
+  final_command: { zero_run: 257, other: 0 }
+  final_zero_run_count_buckets:
+    one: 0
+    two: 12
+    three_to_four: 13
+    five_to_eight: 63
+    nine_to_sixteen: 117
+    seventeen_plus: 52
+  distance_before_final_zero_run_buckets:
+    one: 12
+    two: 9
+    three_to_four: 18
+    five_to_eight: 70
+    nine_to_sixteen: 100
+    seventeen_plus: 48
+  line_length_including_header:
+    width: 0
+    width_plus_one: 257
+    other: 0
+    input_exact: 257
+    malformed: 0
+  line_length_excluding_header:
+    width: 0
+    width_plus_one: 0
+    other: 0
+    input_exact: 0
+    malformed: 257
+  openra_style: { width: 0, width_plus_one: 257, other: 0, input_exact: 257 }
+  xcc_zero_run_clip: { width: 257, width_plus_one: 0, other: 0, input_exact: 257 }
+  final_transparent_guard_classifier:
+    width: 257
+    width_plus_one: 0
+    other: 0
+    input_exact: 257
+  category_frames:
+    building: { frames: 6, zero_run_extra: 6, literal_extra: 0 }
+    infantry: { frames: 226, zero_run_extra: 226, literal_extra: 0 }
+    animation: { frames: 17, zero_run_extra: 17, literal_extra: 0 }
+    map_addon: { frames: 8, zero_run_extra: 8, literal_extra: 0 }
+stage_b:
+  executed: true
+  analyzed_rows: 9495
+  mechanical_width: 1331
+  mechanical_width_plus_one: 8164
+  mechanical_other: 0
+  extra_from_final_zero_run: 8164
+  extra_is_zero: 8164
+  literal_overflow_rows: 0
+  zero_zero_rows: 0
+  malformed_rows: 0
+  ignore_one_extra_input_exact: 8164
+  frames_all_rows_guard_pattern: 0
+  frames_mixed_pattern: 257
+  category_rows:
+    building: { rows: 1305, width: 31, width_plus_one: 1274, other: 0 }
+    infantry: { rows: 5197, width: 1057, width_plus_one: 4140, other: 0 }
+    animation: { rows: 2321, width: 212, width_plus_one: 2109, other: 0 }
+    map_addon: { rows: 672, width: 31, width_plus_one: 641, other: 0 }
+hypotheses:
+  H1: "final zero-run boundary explains width-plus-one rows only"
+  H2: "rejected as a universal inclusive-width contract"
+  H3: "rejected; no extra output came from a literal"
+  H4: "reduced; excluding the row header is malformed for all Stage A rows"
+  H5: "reduced to final runs; a general count offset is not supported"
+  H6: "supported for width-plus-one rows but not universal"
+  H7: "locally plausible for width-plus-one rows; not runtime-confirmed or universal"
+  H8: "two mechanical row-width classes observed without a second on-disk field"
+  H9: "rejected; declared row payload boundaries are respected"
+  H10: "addressed by independent analyzer and independent synthetic fixtures"
+host_runs:
+  windows_powershell_5_1:
+    wrapper_exit: 0
+    unity_process_exit: 0
+    forced_post_result_shutdown: false
+    external_manifest_length: 4339825
+    external_manifest_sha256: "eca2b9ef17c19be54b9a504a1fdaa690c2ff755ff5c3773ef93a095bbd4be271"
+    sanitized_summary_sha256: "7d9e7ab0aba36373e1bd8a38b39bbe97f376ac004d4ba805b1a1a54cd87aef19"
+  powershell_7:
+    wrapper_exit: 0
+    unity_process_exit: 0
+    forced_post_result_shutdown: false
+    external_manifest_length: 4339825
+    external_manifest_sha256: "c5321c8d228d1525d07496bfa9c2801fd5923149911cdb14804c5412bbce91b7"
+    sanitized_summary_sha256: "77c5d0255946e4fc76e0afd8bef33995784149e2024ad9ba3f67a6a2e02fd4a4"
+  aggregate_semantics_equal: true
+tests:
+  focused_unity_editmode: { passed: 33, failed: 0 }
+  full_unity_editmode:
+    xml: { passed: 808, failed: 0, skipped: 0 }
+    wrapper_exit: 1
+    wrapper_failure: "empty Process.ExitCode after complete passing XML"
+  unity_playmode:
+    xml: { passed: 1, failed: 0, skipped: 0 }
+    wrapper_exit: 1
+    wrapper_failure: "empty Process.ExitCode after complete passing XML"
+  wrapper_contract_windows_powershell_5_1: { passed: 6, failed: 0 }
+  wrapper_contract_powershell_7: { passed: 6, failed: 0 }
+repository_gates:
+  windows_powershell_5_1:
+    repository_validation_exit: 0
+    copyright_scan_exit: 0
+  powershell_7:
+    repository_validation_exit: 0
+    copyright_scan_exit: 0
+  repository_validation:
+    assets: 224
+    meta: 224
+    matrix_entries: 148
+    evidence_references: 99
+  copyright_scan:
+    index_candidates: 516
+    untracked_candidates: 22
+    ignored_external_probes: "13/13"
+    violations: 0
+privacy:
+  command_sequences_in_repository: false
+  row_bytes_in_repository: false
+  indices_or_pixels_in_repository: false
+  images_base64_hex_in_repository: false
+  per_frame_records_in_repository: false
+  absolute_paths_in_public_evidence: false
+  complete_scalar_manifest_location: "repository-external Cache only"
+limitations:
+  - "Decision B does not authorize a production decoder change."
+  - "The probe confirms mixed exact-width and width-plus-one rows in every sampled frame."
+  - "XCC-style clipping is an observed compatibility mechanism, not original-runtime proof."
+  - "Flags-3 ProjectBaseline compatibility remains unimplemented."
+  - "The Unity test wrapper returned 1 for empty Process.ExitCode despite complete passing XML; no Unity process or UnityLockfile remained."
