@@ -88,7 +88,7 @@ is used.
 |---|---|---|
 | Empty or ASCII-space/tab-only content | `Blank` | No semantic payload is inferred. |
 | First non-space byte/code unit is `;` | `Comment` | FA2 and OpenRA both treat this as a comment. |
-| First non-space unit is `[`, followed by `]`, with only space/tab or a semicolon tail | `Section` | Conservative common section form. Name bytes and tail remain raw slices. |
+| First non-space unit is `[`, followed by `]`, with only space/tab after it | `Section` | Conservative common section form. Name bytes and trailing whitespace remain raw slices. |
 | Nonempty key followed by the first `=` inside a current nonempty section | `KeyValue` | The first equals separates key and value; later equals remain value bytes. |
 | Anything not covered above but safe to retain | `Opaque` | Identity output remains possible without inventing semantics. |
 
@@ -104,7 +104,8 @@ The following are deliberately opaque in WP-02F:
 - a line without an equals sign;
 - an unterminated section header;
 - an empty section name;
-- a section header with unresolved trailing content;
+- a section header with unresolved trailing content, including a semicolon
+  tail whose original-game meaning is not yet established;
 - an unsupported control character; and
 - a nonstandard directive or MOD extension.
 

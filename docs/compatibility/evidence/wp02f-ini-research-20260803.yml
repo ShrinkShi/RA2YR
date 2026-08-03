@@ -98,7 +98,7 @@ conservative_structure_policy:
   punctuation_basis: "ASCII bytes or BOM-selected UTF-16 code units"
   blank: "empty or ASCII-space/tab-only physical content"
   full_line_comment: "first non-space unit is semicolon"
-  section: "leading bracket after ASCII space/tab, closing bracket, and only whitespace or semicolon tail"
+  section: "leading bracket after ASCII space/tab, closing bracket, and only ASCII space/tab after it"
   key_value: "nonempty key and first equals inside a current nonempty section"
   inline_semicolon_removed: false
   inline_semicolon_semantics_confirmed_for_original_yr: false
@@ -108,7 +108,7 @@ conservative_structure_policy:
     - "line without equals"
     - "unterminated section"
     - "empty section"
-    - "unresolved section trailing content"
+    - "unresolved section trailing content, including a semicolon tail"
     - "unsupported control character"
     - "nonstandard MOD extension"
   duplicate_sections_preserved: true
