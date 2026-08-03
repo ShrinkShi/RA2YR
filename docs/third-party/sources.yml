@@ -367,3 +367,84 @@ sources:
     code_imported: false
     repository_use: "reference-only despite compatible licensing; no source, translation, or mechanical rewrite imported"
     approval_status: "approved-reference-only"
+
+  - id: ares-docs-7e2a509
+    name: "Ares documentation"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/Ares-Developers/Ares-docs"
+      commit: "https://github.com/Ares-Developers/Ares-docs/commit/7e2a509b731efb3a523d64a6933f2fde01903623"
+      observed_location: "../Reference/ThirdParty/Ares-docs-7e2a509 (logical external location)"
+    version_or_hash:
+      commit: "7e2a509b731efb3a523d64a6933f2fde01903623"
+    license:
+      spdx: "BSD-4-Clause"
+      verification: "pinned repository LICENSE"
+    purpose: "Ares-specific INI include and later-value overlay behavior reference; not stock YR behavior"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
+    approval_status: "approved-reference-only"
+
+  - id: phobos-c535598
+    name: "Phobos extension source and documentation"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/Phobos-developers/Phobos"
+      commit: "https://github.com/Phobos-developers/Phobos/commit/c5355981cfe15bab929bb440379ae0b12cee62f4"
+      observed_location: "../Reference/ThirdParty/Phobos-c535598 (logical external location)"
+    version_or_hash:
+      commit: "c5355981cfe15bab929bb440379ae0b12cee62f4"
+    license:
+      spdx: "GPL-3.0-only"
+      verification: "pinned repository LICENSE.md"
+    purpose: "Phobos opt-in INI include and later-value overwrite behavior reference; not stock YR behavior"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
+    approval_status: "approved-reference-only"
+
+  - id: chrono-divide-mod-sdk-5943c4a
+    name: "Chrono Divide Mod SDK"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/chronodivide/mod-sdk"
+      commit: "https://github.com/chronodivide/mod-sdk/commit/5943c4ae6c19897929d348a417d6d2f1481b75fd"
+      observed_location: "../Reference/ThirdParty/ChronoDivide-mod-sdk-5943c4a (logical external location)"
+    version_or_hash:
+      commit: "5943c4ae6c19897929d348a417d6d2f1481b75fd"
+    license:
+      spdx: "LicenseRef-Unverified-ChronoDivide-Mod-SDK"
+      verification: "No root license file was observed in the pinned external clone; reuse is not approved"
+    purpose: "Independent-engine content archive loading-order documentation; not stock YR runtime proof"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source, translation, mechanical rewrite, data, or binary imported"
+    approval_status: "approved-reference-only-no-reuse"
+
+  - id: ra2-diy-2025-tutorial-bundle-local
+    name: "RA2 DIY 2025 Chinese tutorial and code-dictionary bundle"
+    source:
+      type: "external-local-reference"
+      canonical_upstream: "not recorded"
+      observed_location: "../Reference/RA2-DIY-2025/code-dictionaries-and-text-tutorials (logical external role)"
+    version_or_hash:
+      edition: "2025"
+      selected_files:
+        global_dictionary_sha256: "5EA3FF65DA0B60599C04EE8690EF29A4399233D62102C45C9E016F01B9A5BB07"
+        rules_dictionary_sha256: "ECF9F6E244507F0E28570808DADB0D57E1503FD22D6B587C2CD8E0A6EA74E0BA"
+        art_dictionary_sha256: "9EABB0BFB6E26A2EB611BC9EFD0823F55138C18AFBBE9147345EEF0B633B952A"
+        introductory_docx_sha256: "20D0AA0940652325289A3AEF52CDE117BE6E8283F53EFD82A25F7887E98458D3"
+        ae_docx_sha256: "43186E978F439D85F09CF20B10274574399B82EF2C14BD16408C114659A4D9D8"
+    license:
+      spdx: "LicenseRef-Unverified-Community-Tutorial"
+      verification: "No redistribution or code-import license was established during WP-02G1"
+    purpose: "Community-documented INI syntax, case, comment, duplicate, and gameplay-property hypotheses"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no tutorial text, examples, document XML, translation, or binary imported"
+    approval_status: "approved-reference-only-no-reuse"

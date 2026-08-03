@@ -353,3 +353,8 @@
 ### 后续事项
 - 完成全量 Unity、仓库、版权和双 PowerShell 门禁后创建 Draft PR，不自动合并。
 - WP-02G 单独研究 MIX 层级和运行时配置覆盖；本轮不实现 Rules/Art/AI 强类型语义。
+- 2026-08-03: 从合并 PR #7 后的 `main` 创建 `feature/wp02g1-ini-runtime-resolution`。
+- 2026-08-03: 完成官方编辑器、独立实现、扩展文档和本地 2025 教程的受控静态研究；均按证据等级记录。
+- 2026-08-03: 完成显式 INI 加载计划、独立策略、逐值来源链和 50 个新增 EditMode 测试。
+- 2026-08-03: 通过 MIX 只读审计 ProjectBaseline；`rulesmd.ini` 与 `soundmd.ini` 胜出者保持 Unresolved。
+- 2026-08-03: 真实审计 Unity 退出码 0；脱敏摘要 SHA-256 为 `4DA1FAF7DE29995C8EDF4CAEFEDB9D7FBF801A1DFACD2AB09D626A1629D877CB`。

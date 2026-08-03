@@ -238,3 +238,18 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 
 ### 结论
 测试 XML、包装器退出状态和进程收尾必须继续分开记录；审计入口对任何现存 lock fail-closed 是正确行为。
+## 2026-08-03 - 静态资料无法证明 ProjectBaseline INI 胜出规则
+
+### 现象
+`rulesmd.ini` 和 `soundmd.ini` 各有两个不同长度、不同 SHA-256 的 MIX
+候选。官方编辑器源码给出编辑器搜索/解析行为，但独立实现和扩展资料不能
+证明 stock YR 游戏运行时采用相同规则。
+
+### 处理
+运行时审计将 `selectedWinner` 保持为 null，证据等级标为 `Unresolved`；
+实现只接受显式策略。没有启动游戏、XCC、FinalAlert 2 或 GUI 自动化，也
+没有创建会被原版加载的测试 MOD。
+
+### 后续验证
+按 `docs/formats/ini-runtime-resolution.md` 中的 A/B 黑盒计划，在用户另行
+授权后对仓库外一次性副本执行，并逐项固定输入哈希、观察结果和基线未变证明。

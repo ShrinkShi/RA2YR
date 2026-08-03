@@ -1,0 +1,109 @@
+schema_version: 1
+evidence_id: "wp02g1-project-baseline-20260803"
+recorded_at_utc: "2026-08-03T05:47:24.9504066Z"
+scope: "Sanitized ProjectBaseline INI candidate and opaque/semicolon audit through bounded MIX sources"
+
+baseline:
+  logical_name: "YR1001_ProjectBaseline"
+  role: "patched development baseline; not clean YR 1.001"
+  directory_fingerprint: "481E4AE76662001008EEF8105CC749B29B958C9C5D39D0DFE889F47A046D1E6E"
+  started_utc: "2026-08-03T05:47:02.8862053Z"
+  completed_utc: "2026-08-03T05:47:24.9504066Z"
+  source_modified: false
+  loose_ini_used: false
+  hand_extracted_ini_used: false
+
+candidate_sets:
+  rulesmd_ini:
+    mix_id: "0x8218F9F4"
+    selected_winner: null
+    winner_evidence: "Unresolved"
+    candidates:
+      - provenance: ["expandmd01.mix", "rulesmd.ini"]
+        length: 743215
+        sha256: "3D341EF8A13A4B5AB24AF2EEF48AC94931AC2BB87D950FE3330A07E2D25672EF"
+      - provenance: ["ra2md.mix", "localmd.mix", "rulesmd.ini"]
+        length: 742958
+        sha256: "06761DD7F714E7D9400216EC3C06109EC5C1461F6A0727BE7401EB9D8B0F6D05"
+  soundmd_ini:
+    selected_winner: null
+    winner_evidence: "Unresolved"
+    candidates:
+      - provenance: ["expandmd01.mix", "soundmd.ini"]
+        length: 99392
+        sha256: "0A8E85381AEF1A0F97074C953BFE99504DA00C6220FAE1A023A1AFD857023232"
+      - provenance: ["ra2md.mix", "localmd.mix", "soundmd.ini"]
+        length: 99292
+        sha256: "D1BE76491A0888396B4D0E53F4857F33879A5AFD40A8BCEA65EA1D1A3096D419"
+
+syntax_audits:
+  - sample_id: "artmd-localmd"
+    logical_name: "artmd.ini"
+    sha256: "E1F0378394313C04EBBD5073F47785EE3E46F1B3C62D65724E8F3C310EE7BA31"
+    opaque: { total: 1210, before: 282, inside: 27, after: 901, contains_equals: 1054, known_punctuation: 154, potential_runtime_impact: 1210 }
+    opaque_reasons: { KeyOutsideSection: 1054, MissingEquals: 2, SectionTrailingContent: 154 }
+    inline_semicolon: { total: 252, value_start: 0, value_middle: 252, value_end: 0 }
+  - sample_id: "ai-local"
+    logical_name: "ai.ini"
+    sha256: "1FEAC6DDEA6886B177DDF7E5F8580B7A99A63F12684F2CBB42831671BB7A8A79"
+    opaque: { total: 0, before: 0, inside: 0, after: 0, contains_equals: 0, known_punctuation: 0, potential_runtime_impact: 0 }
+    opaque_reasons: {}
+    inline_semicolon: { total: 0, value_start: 0, value_middle: 0, value_end: 0 }
+  - sample_id: "rulesmd-expandmd01"
+    logical_name: "rulesmd.ini"
+    sha256: "3D341EF8A13A4B5AB24AF2EEF48AC94931AC2BB87D950FE3330A07E2D25672EF"
+    opaque: { total: 735, before: 0, inside: 38, after: 697, contains_equals: 669, known_punctuation: 61, potential_runtime_impact: 735 }
+    opaque_reasons: { KeyOutsideSection: 669, MissingEquals: 5, SectionTrailingContent: 61 }
+    inline_semicolon: { total: 2448, value_start: 9, value_middle: 2423, value_end: 16 }
+  - sample_id: "rulesmd-localmd"
+    logical_name: "rulesmd.ini"
+    sha256: "06761DD7F714E7D9400216EC3C06109EC5C1461F6A0727BE7401EB9D8B0F6D05"
+    opaque: { total: 735, before: 0, inside: 38, after: 697, contains_equals: 669, known_punctuation: 61, potential_runtime_impact: 735 }
+    opaque_reasons: { KeyOutsideSection: 669, MissingEquals: 5, SectionTrailingContent: 61 }
+    inline_semicolon: { total: 2444, value_start: 9, value_middle: 2419, value_end: 16 }
+
+survey:
+  located:
+    - "aimd.ini"
+    - "art.ini"
+    - "evamd.ini"
+    - "missionmd.ini"
+    - "rules.ini"
+    - "snow.ini"
+    - "temperat.ini"
+    - "uimd.ini"
+    - "urban.ini"
+  not_located_in_mounted_directory_and_mix_sources:
+    - "desert.ini"
+    - "lunar.ini"
+    - "urbann.ini"
+  absence_claimed: false
+
+artifact_identity:
+  sanitized_summary_sha256: "4DA1FAF7DE29995C8EDF4CAEFEDB9D7FBF801A1DFACD2AB09D626A1629D877CB"
+  base_external_manifest_length: 18851146
+  base_external_manifest_sha256: "83223DCC0DC37A2D71EDA0C4F4E8BA053CAE912EE9178CC21BEE4C0C02F2B063"
+  complete_manifest_repository_external_only: true
+
+execution:
+  wrapper: "Tools/Content/Invoke-IniRuntimeResolutionAudit.ps1"
+  windows_powershell_5_1_shell_exit_code: 0
+  powershell_7_shell_exit_code: 0
+  unity_process_exit_code: 0
+  second_host_run:
+    sanitized_summary_sha256: "080826D2AEF9A32CA51224B35CED2A69C717842EA59A4811CAD437FA162486A3"
+    external_manifest_sha256: "B6865DD1A62468433C9346C2A269D6137D3F0BAD47F0A2D91D67B5C61F10C714"
+    semantic_aggregates_matched: true
+  audit_status: "Complete"
+  original_runtime_started: false
+  xcc_started: false
+  finalalert2_started: false
+  gui_automation_used: false
+
+publication_boundary:
+  original_lines_published: false
+  section_or_key_names_published: false
+  values_or_comments_published: false
+  absolute_paths_published: false
+  per_line_hashes_published: false
+  original_runtime_comparison_passed: false

@@ -1,0 +1,96 @@
+schema_version: 1
+evidence_id: "wp02g1-ini-research-20260803"
+recorded_at_utc: "2026-08-03T05:45:00Z"
+scope: "Stock YR and ProjectBaseline INI load-order and runtime-read policy research"
+
+evidence_levels:
+  runtime_comparison_capable:
+    - "ConfirmedByOriginalRuntime"
+    - "ConfirmedByProjectBaselineRuntime"
+  supporting_only:
+    - "ConfirmedByOfficialEditorSource"
+    - "CrossCheckedByIndependentImplementation"
+    - "CommunityDocumented"
+    - "ConfiguredForTesting"
+  no_conclusion: "Unresolved"
+
+sources:
+  project_baseline:
+    level: "Unresolved"
+    observation: "Distinct rulesmd.ini and soundmd.ini candidates exist; no runtime winner was observed."
+  ea_finalalert2_source:
+    level: "ConfirmedByOfficialEditorSource"
+    commit: "6abf0f557469baea73079c6bf6550709e2e3584e"
+    facts:
+      - "FindFileInMix has explicit numbered archive search loops and nested archive paths."
+      - "The editor parser strips from the first semicolon and trims RA2/YR views."
+      - "The editor map merges repeated sections and overwrites repeated keys."
+      - "LoadTSIni checks editor-local and game loose paths before its MIX lookup."
+    runtime_equivalence_claimed: false
+  openra:
+    level: "CrossCheckedByIndependentImplementation"
+    commit: "a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+    facts:
+      - "Independent parser strips inline semicolons and trims values."
+      - "It case-folds section names and keeps the first duplicate key."
+    runtime_equivalence_claimed: false
+  chrono_divide_mod_sdk:
+    level: "CrossCheckedByIndependentImplementation"
+    commit: "5943c4ae6c19897929d348a417d6d2f1481b75fd"
+    fact: "Independent SDK documentation publishes a loose/ecache/expand/elocal/base archive order."
+    runtime_equivalence_claimed: false
+  ares_docs:
+    level: "CrossCheckedByIndependentImplementation"
+    commit: "7e2a509b731efb3a523d64a6933f2fde01903623"
+    fact: "Ares documents extension-specific include overlay behavior."
+    stock_feature_claimed: false
+  phobos:
+    level: "CrossCheckedByIndependentImplementation"
+    commit: "c5355981cfe15bab929bb440379ae0b12cee62f4"
+    fact: "Phobos documents opt-in include behavior where later values overwrite earlier values."
+    stock_feature_claimed: false
+  ra2_diy_2025_tutorial_bundle:
+    level: "CommunityDocumented"
+    location_role: "repository-external Chinese tutorial/reference directory"
+    selected_file_hashes:
+      global_dictionary_2025: "5EA3FF65DA0B60599C04EE8690EF29A4399233D62102C45C9E016F01B9A5BB07"
+      rules_dictionary_2025: "ECF9F6E244507F0E28570808DADB0D57E1503FD22D6B587C2CD8E0A6EA74E0BA"
+      art_dictionary_2025: "9EABB0BFB6E26A2EB611BC9EFD0823F55138C18AFBBE9147345EEF0B633B952A"
+      introductory_docx: "20D0AA0940652325289A3AEF52CDE117BE6E8283F53EFD82A25F7887E98458D3"
+      ae_docx: "43186E978F439D85F09CF20B10274574399B82EF2C14BD16408C114659A4D9D8"
+    facts_used: "Community practice only for case, comment, duplicate, and standard syntax hypotheses."
+    runtime_equivalence_claimed: false
+
+policy_conclusions:
+  container_precedence:
+    strongest_support: "ConfirmedByOfficialEditorSource"
+    stock_runtime: "Unresolved"
+  file_composition:
+    strongest_support: "ConfirmedByOfficialEditorSource for editor behavior only"
+    stock_runtime: "Unresolved"
+  duplicate_sections_and_keys:
+    strongest_support: "Official editor source and independent implementations disagree as runtime evidence"
+    stock_runtime: "Unresolved"
+  name_comparison:
+    strongest_support: "Independent and community observations"
+    stock_runtime: "Unresolved"
+  inline_semicolon_whitespace_empty_value:
+    strongest_support: "Official editor source plus independent/community observations"
+    stock_runtime: "Unresolved"
+
+black_box_plan:
+  required: true
+  authorization: "not-granted-not-executed"
+  executable_started: false
+  gui_automation_used: false
+  test_mod_created: false
+  authoritative_baseline_modified: false
+  plan_document: "docs/formats/ini-runtime-resolution.md#black-box-validation-plan"
+
+license_boundary:
+  reference_only: true
+  code_imported: false
+  translated_or_mechanically_rewritten_code: false
+  external_source_or_binary_committed: false
+  local_tutorial_content_committed: false
+  third_party_ledger: "docs/third-party/sources.yml"
