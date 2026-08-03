@@ -835,28 +835,32 @@ namespace RA2YR.Core.Content.Ini.Audit
                         "localmd.mix",
                         "artmd.ini",
                         336535,
-                        "e1f0378394313c04ebbd5073f47785ee3e46f1b3c62d65724e8f3c310ee7ba31"),
+                        "e1f0378394313c04ebbd5073f47785ee3e46f1b3c62d65724e8f3c310ee7ba31",
+                        "d138e1443bb1797b95c23857de0fffc9900ffae6838b9cd79c42707af519a64d"),
                     new IniGoldenSampleSpecification(
                         "ai-local",
                         "ra2.mix",
                         "local.mix",
                         "ai.ini",
                         84972,
-                        "1feac6ddea6886b177ddf7e5f8580b7a99a63f12684f2cbb42831671bb7a8a79"),
+                        "1feac6ddea6886b177ddf7e5f8580b7a99a63f12684f2cbb42831671bb7a8a79",
+                        "b41fec9d9331349126b32929abbf2d1d8e77ce3959a4cf2461c034324c72a361"),
                     new IniGoldenSampleSpecification(
                         "rulesmd-expandmd01",
                         "expandmd01.mix",
                         null,
                         "rulesmd.ini",
                         743215,
-                        "3d341ef8a13a4b5ab24af2eef48ac94931ac2bb87d950fe3330a07e2d25672ef"),
+                        "3d341ef8a13a4b5ab24af2eef48ac94931ac2bb87d950fe3330a07e2d25672ef",
+                        "86fa33b1c844101ce6facb8df50e254ceb784bafb45880e0ce2f55fc3738d287"),
                     new IniGoldenSampleSpecification(
                         "rulesmd-localmd",
                         "ra2md.mix",
                         "localmd.mix",
                         "rulesmd.ini",
                         742958,
-                        "06761dd7f714e7d9400216ec3c06109ec5c1461f6a0727be7401eb9d8b0f6d05")
+                        "06761dd7f714e7d9400216ec3c06109ec5c1461f6a0727be7401eb9d8b0f6d05",
+                        "b5f97e861fa620bf2af96060c8216965f682c5ae24ca50cdd6bde3219ab224e1")
                 },
                 new[]
                 {
