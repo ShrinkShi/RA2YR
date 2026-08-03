@@ -136,7 +136,7 @@ namespace RA2YR.Core.Content.Ini.Audit
                     "Only unmodified byte-identical identity writing is validated; semantic editing and original writer behavior are not implemented.");
                 builder.Append(',');
                 AppendJson(builder,
-                    "Both rulesmd.ini candidates remain independent; no archive-layer winner or runtime precedence is selected.");
+                    "Both rulesmd.ini documents remain distinct ordered composition layers; no whole-file winner is selected.");
                 builder.Append(',');
                 AppendJson(builder,
                     "No-BOM single-byte text remains raw bytes; a ProjectBaseline code page and runtime decoding policy are unresolved.");

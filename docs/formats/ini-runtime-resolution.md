@@ -11,8 +11,8 @@ mission, or map-override fields are interpreted.
 
 | Dimension | Explicit choices implemented | Stock YR status |
 |---|---|---|
-| Container layer | integer priority per declared layer | Unresolved |
-| Same-name files | select highest document; overlay low to high | Unresolved |
+| Container layer | integer priority per declared layer | ProjectBaseline order configured; original runtime unconfirmed |
+| Same-name files | select highest document; overlay low to high | ProjectBaseline uses semantic overlay; original runtime unconfirmed |
 | Section/key names | raw ASCII ordinal; ASCII ordinal-ignore-case | Unresolved |
 | Duplicate sections | first; last; merge in physical order | Unresolved |
 | Duplicate keys | first; last | Unresolved |
@@ -61,7 +61,30 @@ as U+003B, and U+2000 cannot masquerade as U+0020.
 A completed value trace retains the winning candidate and all considered
 candidates with dispositions including duplicate suppression, empty-value
 suppression, cross-file override, and ambiguity. Each candidate retains the
-physical section/key line IDs and its document's source/MIX chain.
+layer ID, physical section/key line IDs, and its document's source/MIX chain.
+
+## Configured ProjectBaseline composition
+
+The frozen `YR1001_ProjectBaseline` plan is low-to-high:
+
+```text
+ra2 -> ra2md -> expandmd01 -> ... -> expandmd99 -> loose
+```
+
+`expandmdNN.mix` uses exactly two digits from `01` through `99`. Gaps are
+valid and the numeric value defines priority, independent of directory
+enumeration. Invalid numbers, duplicate numbers, duplicate base/loose layers,
+and non-ProjectBaseline sources produce structured errors.
+
+Same-name documents use ordered multi-document semantic composition. Values
+are grouped by the explicit section/key comparison policy; a higher-layer
+value wins the same identity, lower-only values are inherited, and higher-only
+values are added. The implementation does not choose one whole file, discard
+`ra2md` after finding an expand archive, or concatenate text.
+
+This order is labelled `ConfiguredForProjectBaseline`. It is not an original
+runtime claim. Name comparison, duplicate sections/keys, inline semicolons,
+whitespace, and empty values remain independent evidence-gated dimensions.
 
 ## Evidence review
 
@@ -98,7 +121,8 @@ The existing bounded MIX source finds two distinct candidates for each of:
 | `soundmd.ini` | `expandmd01.mix -> soundmd.ini` | 99392 | `0A8E85381AEF1A0F97074C953BFE99504DA00C6220FAE1A023A1AFD857023232` |
 | `soundmd.ini` | `ra2md.mix -> localmd.mix -> soundmd.ini` | 99292 | `D1BE76491A0888396B4D0E53F4857F33879A5AFD40A8BCEA65EA1D1A3096D419` |
 
-Both winner fields remain null with evidence `Unresolved`. Discovery also
+Both pairs are configured composition layers: `ra2md` priority 200 followed by
+`expandmd01` priority 301. No whole-file winner exists. Discovery also
 located `rules.ini`, `art.ini`, `aimd.ini`, `temperat.ini`, `snow.ini`,
 `urban.ini`, `uimd.ini`, `evamd.ini`, and `missionmd.ini` through mounted MIX
 sources. `desert.ini`, `lunar.ini`, and `urbann.ini` were not located in the
@@ -123,8 +147,9 @@ minimum typed view.
 
 ## Black-box validation plan
 
-Static evidence is insufficient, so no program was started. After separate
-authorization, the runtime experiment must:
+The configured ProjectBaseline policy does not require a black-box experiment
+to execute. Original-runtime confirmation and the independent intradocument
+policies still require separate authorization. That experiment must:
 
 1. clone the baseline into an isolated, repository-external disposable tree;
 2. hash and lock the authoritative baseline before any operation;
@@ -137,5 +162,6 @@ authorization, the runtime experiment must:
    empty values, and inline semicolons; and
 8. prove authoritative baseline hashes and attributes remain unchanged.
 
-Until separately authorized experiments produce reproducible evidence, no
-stock YR winner or runtime parsing rule may be selected.
+Until separately authorized experiments produce reproducible evidence, the
+configured composition must not be labelled stock-original runtime behavior,
+and no unresolved intradocument parsing rule may be promoted.

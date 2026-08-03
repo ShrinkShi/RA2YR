@@ -310,11 +310,20 @@ function Assert-RuntimeResolutionSanitizedSummary {
         [string]$Summary.manifestType -cne $manifestType -or
         [string]$Summary.baselineLogicalName -cne $baselineName -or
         [string]$Summary.auditStatus -cne 'Complete' -or
-        @($Summary.candidateSets).Count -ne 2 -or
+        @($Summary.compositionSets).Count -ne 2 -or
         @($Summary.syntaxAudits).Count -ne 4 -or
+        [string]$Summary.policyEvidence.containerPrecedence.level -cne
+            'ConfiguredForProjectBaseline' -or
+        [bool]$Summary.policyEvidence.containerPrecedence.configuresProjectBaseline -ne $true -or
+        [bool]$Summary.policyEvidence.containerPrecedence.confirmsRuntime -ne $false -or
+        [string]$Summary.policyEvidence.fileComposition.level -cne
+            'ConfiguredForProjectBaseline' -or
+        [bool]$Summary.policyEvidence.fileComposition.configuresProjectBaseline -ne $true -or
+        [bool]$Summary.policyEvidence.fileComposition.confirmsRuntime -ne $false -or
         [bool]$Summary.runtimeBoundary.genericExplicitLoadPlanExecutable -ne $true -or
         [bool]$Summary.runtimeBoundary.perValueCandidateChainImplemented -ne $true -or
-        [bool]$Summary.runtimeBoundary.projectBaselineRuntimeWinnerSelected -ne $false -or
+        [bool]$Summary.runtimeBoundary.projectBaselineCompositionConfigured -ne $true -or
+        [bool]$Summary.runtimeBoundary.wholeFileWinnerSelected -ne $false -or
         [bool]$Summary.runtimeBoundary.originalRuntimeComparisonPassed -ne $false -or
         [string]$Summary.runtimeBoundary.blackBoxAuthorization -cne 'not-granted-not-executed') {
         throw 'The sanitized runtime INI summary identity is invalid.'
@@ -330,20 +339,41 @@ function Assert-RuntimeResolutionSanitizedSummary {
         throw 'The external runtime INI audit manifest length is invalid.'
     }
 
-    $candidateSets = @{}
-    foreach ($set in @($Summary.candidateSets)) {
-        $candidateSets[[string]$set.logicalName] = $set
+    $compositionSets = @{}
+    foreach ($set in @($Summary.compositionSets)) {
+        $compositionSets[[string]$set.logicalName] = $set
     }
     foreach ($logicalName in @('rulesmd.ini', 'soundmd.ini')) {
-        $set = $candidateSets[$logicalName]
-        if ($null -eq $set -or [int]$set.candidateCount -ne 2 -or
-            @($set.candidates).Count -ne 2 -or $null -ne $set.selectedWinner -or
-            [string]$set.winnerEvidence -cne 'Unresolved') {
-            throw "The runtime INI candidate set is not explicitly ambiguous: $logicalName"
+        $set = $compositionSets[$logicalName]
+        if ($null -eq $set -or [int]$set.documentLayerCount -ne 2 -or
+            @($set.layers).Count -ne 2 -or $null -ne $set.wholeFileWinner -or
+            [string]$set.documentRole -cne 'CompositionLayer' -or
+            [string]$set.compositionStatus -cne 'ConfiguredForProjectBaseline' -or
+            [string]$set.layerOrder -cne 'low-to-high') {
+            throw "The runtime INI composition layer set is invalid: $logicalName"
+        }
+
+        $priorities = @($set.layers | ForEach-Object { [int]$_.priority })
+        if ($priorities.Count -ne 2 -or $priorities[0] -ge $priorities[1]) {
+            throw "The runtime INI composition layers are not in deterministic low-to-high order: $logicalName"
+        }
+        $baseLayer = $set.layers[0]
+        $expandLayer = $set.layers[1]
+        if ([string]$baseLayer.layerId -cne 'projectbaseline-ra2md' -or
+            [string]$baseLayer.layerKind -cne 'NestedMix' -or
+            [int]$baseLayer.priority -ne 200 -or $null -ne $baseLayer.expandNumber -or
+            [string]$baseLayer.provenance.sourceId -cne $baselineName -or
+            [string]$baseLayer.provenance.rootArchive -cne 'ra2md.mix' -or
+            [string]$expandLayer.layerId -cne 'projectbaseline-expandmd01' -or
+            [string]$expandLayer.layerKind -cne 'ExpandMix' -or
+            [int]$expandLayer.priority -ne 301 -or [int]$expandLayer.expandNumber -ne 1 -or
+            [string]$expandLayer.provenance.sourceId -cne $baselineName -or
+            [string]$expandLayer.provenance.rootArchive -cne 'expandmd01.mix') {
+            throw "The runtime INI composition layer identity changed: $logicalName"
         }
     }
 
-    $rulesHashes = @($candidateSets['rulesmd.ini'].candidates | ForEach-Object {
+    $rulesHashes = @($compositionSets['rulesmd.ini'].layers | ForEach-Object {
         [string]$_.sha256
     })
     foreach ($expected in @(
@@ -353,7 +383,7 @@ function Assert-RuntimeResolutionSanitizedSummary {
             throw 'A fixed rulesmd.ini candidate identity changed.'
         }
     }
-    $soundHashes = @($candidateSets['soundmd.ini'].candidates | ForEach-Object {
+    $soundHashes = @($compositionSets['soundmd.ini'].layers | ForEach-Object {
         [string]$_.sha256
     })
     foreach ($expected in @(
@@ -377,13 +407,17 @@ function Assert-RuntimeResolutionSanitizedSummary {
 function Assert-MinimalResourceSanitizedSummary {
     param([Parameter(Mandatory)][object] $Summary, [Parameter(Mandatory)][string] $RawJson)
 
-    if ([int]$Summary.schemaVersion -ne 1 -or
+    if ([int]$Summary.schemaVersion -ne 2 -or
         [string]$Summary.manifestType -cne $manifestType -or
         [string]$Summary.baselineLogicalName -cne $baselineName -or
         [string]$Summary.auditStatus -cne 'Complete' -or
-        [string]$Summary.policyEvidence -cne 'ConfiguredForTesting' -or
-        [bool]$Summary.stockRuntimeWinnerSelected -ne $false -or
-        @($Summary.rulesCandidates).Count -ne 2 -or
+        [string]$Summary.policyEvidence.crossDocument -cne 'ConfiguredForProjectBaseline' -or
+        [string]$Summary.policyEvidence.intradocument -cne 'ConfiguredForTesting' -or
+        [bool]$Summary.projectBaselineCompositionConfigured -ne $true -or
+        [bool]$Summary.projectBaselineCompositionExecuted -ne $true -or
+        [bool]$Summary.wholeFileWinnerSelected -ne $false -or
+        [bool]$Summary.originalRuntimeComparisonPassed -ne $false -or
+        $null -eq $Summary.rulesComposition -or
         $null -eq $Summary.artCandidate) {
         throw 'The sanitized minimal resource INI summary identity is invalid.'
     }
@@ -398,25 +432,24 @@ function Assert-MinimalResourceSanitizedSummary {
         throw 'The minimal resource external INI manifest length is invalid.'
     }
 
-    $roles = @($Summary.rulesCandidates | ForEach-Object { [string]$_.candidateRole })
-    foreach ($expectedRole in @('rulesmd-expandmd01', 'rulesmd-localmd')) {
-        if ($roles -cnotcontains $expectedRole) {
-            throw 'A required independent rulesmd.ini candidate aggregate is absent.'
-        }
+    $rules = $Summary.rulesComposition
+    $winnerLayerTotal = 0
+    foreach ($property in @($rules.winnerLayerCounts.PSObject.Properties)) {
+        $winnerLayerTotal += [int64]$property.Value
     }
-    foreach ($candidate in @($Summary.rulesCandidates)) {
-        if ([string]$candidate.typedStatus -cnotin @('Complete', 'Incomplete') -or
-            [int64]$candidate.registryTypeCount -lt 0 -or
-            [int64]$candidate.registryEntryCount -lt 0 -or
-            [int64]$candidate.invalidIdentifierCount -lt 0 -or
-            [int64]$candidate.failedIdentifierCount -lt 0 -or
-            [int64]$candidate.sourceTraceCoverage.complete -ne
-                [int64]$candidate.sourceTraceCoverage.total) {
-            throw 'A Rules candidate aggregate is incomplete or has missing provenance.'
-        }
-        Assert-LowerSha256 ([string]$candidate.normalizedModelSha256) `
-            'Rules normalized model hash'
+    if ([string]$rules.compositionRole -cne 'rulesmd-ordered-composition' -or
+        [string]$rules.typedStatus -cnotin @('Complete', 'Incomplete') -or
+        [int64]$rules.documentLayerCount -ne 2 -or
+        [int64]$rules.resolvedValueCount -lt 0 -or
+        [int64]$rules.valuesWithOverriddenCandidates -lt 0 -or
+        [int64]$rules.valuesWithOverriddenCandidates -gt [int64]$rules.resolvedValueCount -or
+        $winnerLayerTotal -ne [int64]$rules.resolvedValueCount -or
+        [int64]$rules.sourceTraceCoverage.complete -ne
+            [int64]$rules.sourceTraceCoverage.total) {
+        throw 'The Rules composition aggregate is incomplete or has missing provenance.'
     }
+    Assert-LowerSha256 ([string]$rules.normalizedModelSha256) `
+        'Rules normalized model hash'
 
     $art = $Summary.artCandidate
     if ([string]$art.candidateRole -cne 'artmd-localmd' -or

@@ -288,3 +288,20 @@
 - Art 多重名称匹配改为真正的 `Ambiguous` 字段：无单一 `Parsed`、保留全部候选和来源链、不生成 reference 或 route。
 - Rules registry 新增按解析后整数判断的 `DuplicateRegistryOrdinal`；冲突仅限同一 registry，所有原始条目继续保留。
 - 新增 4 个 EditMode case；阶段性全量结果为 678/678，ProjectBaseline 三个规范化模型哈希和既有聚合保持不变。
+
+## 2026-08-03 - ProjectBaseline INI ordered semantic composition revision
+
+- Added a ProjectBaseline-only load-plan builder with the explicit low-to-high
+  order `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Same-name INI documents now compose per `SectionName + KeyName`; higher layers
+  override matching values while lower unique values and higher additions remain.
+- Every resolved value retains its winning layer and complete overridden
+  candidate chain, physical line IDs, source ID, and logical MIX provenance.
+- Invalid or duplicate expand numbers and non-ProjectBaseline sources fail with
+  structured diagnostics; discovery enumeration order cannot change results.
+- Rules typed auditing consumes the composed two-layer result. Intradocument
+  name, duplicate, semicolon, whitespace, and empty-value behavior remains an
+  explicit testing policy and is not original-runtime confirmation.
+- Final validation: composition 16/16, full EditMode 824/824, PlayMode 1/1,
+  INI wrapper 15/15 in both PowerShell hosts, repository validation 46/46,
+  copyright regression 22/22, and all real audit/gate exit codes zero.

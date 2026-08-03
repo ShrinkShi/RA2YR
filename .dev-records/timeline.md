@@ -369,3 +369,17 @@
 - 2026-08-03: 删除经审计无 PR、无独有提交、无仓库引用的远端临时分支 `research/m2-shp-format-dossier-merge-probe`、`noop`、`noop2`。
 - 2026-08-03: 以普通 merge `e60f7beb` 将最新 main 合入 PR #10；完成 Art ambiguity 和 duplicate registry ordinal 的 fail-closed 修复，新增 4 个 EditMode case。
 - 2026-08-03: 最终本地门禁得到 EditMode 678/678、PlayMode 1/1、WP-02G2 聚焦 51/51；PS7/PS5.1 typed audit 聚合和三个模型哈希保持不变。
+
+## 2026-08-03 - ProjectBaseline INI composition correction
+
+- Replaced the interim whole-file winner model with ordered multi-document
+  semantic composition: `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Added deterministic expand-number parsing, per-key overlay tests, complete
+  overridden-candidate traces, and fail-closed source/layer diagnostics.
+- Re-routed the WP-02G2 Rules audit through the composed two-document result;
+  `artmd.ini` remains a one-layer regression input.
+- Kept original-runtime comparison and all intradocument syntax policies
+  unresolved and independently evidence-gated.
+- Final ProjectBaseline audits were stable across PowerShell 5.1/7: Rules has
+  22,720 resolved values, 22,709 overridden chains, five registries and 1,171
+  entries; Art remains 880 records. Final Unity XML is 824/824 and 1/1.
