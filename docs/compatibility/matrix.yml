@@ -384,13 +384,109 @@ entries:
       - id: interoperability.xcc-mix-write.gui-manual
         status: "已知限制"
         description: "XCC 1.47 is a GUI-only controlled manual gate; CI validates the synthetic contract but cannot execute or attest the external XCC process."
-  - id: format.shp
+  - id: format.shp-ts-directory
     domain: format
-    feature: "SHP frames, compression, offsets, shadows, and remap indices"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    feature: "Westwood SHP(TS) header and ordered frame-directory parsing"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.MinimalCanonicalEmptyFrameParses"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.TruncatedDirectoryFailsBeforeReducingFrameCount"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.FrameColorRawAndDescriptorOrderAreImmutable"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.DuplicateOffsetsArePreservedWithoutDependencyInference"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.FixedProfileLocksProjectBaselineTargetsAndModelIdentities"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-research-20260803.yml#format_facts"
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#test_classes"
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml#samples"
+      - "docs/adr/0018-shp-ts-core-indexed-model.md"
+    limitations:
+      - id: format.shp-ts-directory.patched-baseline
+        status: "已知限制"
+        description: "The fixed local samples come from the patched YR1001_ProjectBaseline, not a clean YR 1.001 corpus, and no original runtime comparison was performed."
+      - id: format.shp-ts-directory.coordinate-signedness
+        status: "已知限制"
+        description: "X/Y signedness remains unresolved; raw ushort values are authoritative and high-bit coordinates are preserved with diagnostics rather than placed on a canvas."
+      - id: format.shp-ts-directory.read-only-local-model
+        status: "已知限制"
+        description: "The model is read-only and local-indexed only; writer, dependency/delta semantics, canvas placement, palette binding, pivots, shadows, and rendering are not implemented."
+  - id: format.shp-ts-raw-indexed-decode
+    domain: format
+    feature: "SHP(TS) flags 0/1 raw local indexed-frame decoding"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RawFlagsDecodeRowMajorWithoutChangingZeroIndices"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RawPayloadTruncationFailsWithoutPaddingZeros"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RawFrameReportsAlignmentPaddingWithoutDecodingIt"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.DecodedFrameDoesNotAliasInputOrReturnedCopies"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.CompleteRawAuditPublishesSanitizedSummaryAndExternalFrames"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#test_classes"
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml#aggregate"
+    limitations:
+      - id: format.shp-ts-raw-indexed-decode.rendering-separate
+        status: "已知限制"
+        description: "Flags 0/1 retain raw index bytes only; index-zero transparency, PAL choice, RGBA, remap, shadow, Texture2D/Sprite, and visual comparison are separate unimplemented layers."
+  - id: format.shp-ts-rle-zero-indexed-decode
+    domain: format
+    feature: "Strict SHP(TS) flags 3 RLE-Zero local indexed-frame decoding"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RleZeroRunOutputsExactCount"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.MultipleRleRowsCompleteExactly"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RleRunOutputOverflowFailsWithoutClamp"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.ZeroZeroConsumesTwoBytesButReturnsUnresolved"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.StrictRleFailureStillPublishesControlledSanitizedEvidence"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-research-20260803.yml#compression_decisions"
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#test_classes"
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml#rle_conflict"
+      - "docs/adr/0019-shp-ts-rle-zero-strictness.md"
+    limitations:
+      - id: format.shp-ts-rle-zero-indexed-decode.project-baseline-conflict
+        status: "已知限制"
+        description: "All 257 attempted non-empty flags-3 ProjectBaseline frames fail on row zero because the encoded zero run would emit width+1 indices; the strict decoder does not clamp, pad, widen, or special-case them, so ProjectBaseline compressed-frame compatibility is not promoted."
+      - id: format.shp-ts-rle-zero-indexed-decode.flags2-unresolved
+        status: "已知限制"
+        description: "RawFlags 2 remains source-conflicting between XCC and OpenRA and has no default decoder; unknown flags also remain unresolved."
+      - id: format.shp-ts-rle-zero-indexed-decode.zero-zero-unresolved
+        status: "已知限制"
+        description: "00 00 consumes input but its stock semantic acceptance remains unresolved; the fixed audit stops on row zero for failing frames and cannot exhaustively inspect later rows."
+  - id: format.shp-ts-mix-window
+    domain: format
+    feature: "Bounded SHP(TS) Memory, Stream, short-read, and MIX-entry-window equivalence"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.SeekableAndShortReadStreamsProduceSameDirectoryHash"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.MixEntryWindowProducesSameDirectoryHash"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.SeekableShortReadDecodeMatchesMemory"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.MixWindowDecodeMatchesMemory"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#test_classes"
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml#samples"
+    limitations:
+      - id: format.shp-ts-mix-window.read-only
+        status: "已知限制"
+        description: "The bounded window path is read-only and does not extract assets, rewrite MIX archives, or publish frame bodies."
+  - id: format.shp-ts-project-baseline-audit
+    domain: format
+    feature: "Controlled sanitized SHP(TS) ProjectBaseline golden audit"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.FixedProfileLocksProjectBaselineTargetsAndModelIdentities"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.ChangedPayloadHashFailsBeforePublishingCache"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.LooseCandidateIsRejectedBeforeMounting"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.BaselineFingerprintChangeFailsBeforeManifestPublication"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.ManifestBudgetFailureDoesNotPublishPartialArtifact"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml"
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#power_shell_wrapper_regression"
+    limitations:
+      - id: format.shp-ts-project-baseline-audit.decode-conflicts
+        status: "已知限制"
+        description: "The audit deliberately completes as CompleteWithDecodeFailures; directory and raw-frame evidence passes while 257 strict flags-3 decodes remain incompatible with the declared-width contract."
+      - id: format.shp-ts-project-baseline-audit.selection-basis
+        status: "已知限制"
+        description: "ArtExplicitImageCatalogResolved and configuration labels preserve static evidence only; VerifiedCatalogSurvey samples prove controlled content presence, not stock runtime selection or precedence."
   - id: format.vxl
     domain: format
     feature: "VXL sections, voxels, bounds, colors, and normals"
