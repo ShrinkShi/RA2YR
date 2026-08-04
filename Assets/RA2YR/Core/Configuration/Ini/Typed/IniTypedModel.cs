@@ -178,6 +178,7 @@ namespace RA2YR.Core.Configuration.Ini.Typed
 
             IniCandidateDocument document = candidate.Document;
             CandidateId = document.CandidateId;
+            LayerId = document.LayerId;
             LogicalName = document.LogicalName;
             SourceId = document.Document.Provenance.SourceId;
             logicalChain = Array.AsReadOnly(document.Document.Provenance.LogicalChain.ToArray());
@@ -188,6 +189,7 @@ namespace RA2YR.Core.Configuration.Ini.Typed
         }
 
         public string CandidateId { get; }
+        public string LayerId { get; }
         public LogicalContentPath LogicalName { get; }
         public string SourceId { get; }
         public IReadOnlyList<LogicalContentPath> LogicalChain => logicalChain;

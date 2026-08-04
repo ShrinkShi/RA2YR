@@ -65,7 +65,7 @@ namespace RA2YR.Tests.EditMode.Content.Ini.Audit
         }
 
         [Test]
-        public void BothRulesCandidatesRemainSeparateWithoutWinner()
+        public void BothRulesDocumentsRemainDistinctCompositionLayers()
         {
             using (AuditFixture fixture = AuditFixture.Create(FixtureLayout.Fixed))
             {
@@ -75,13 +75,14 @@ namespace RA2YR.Tests.EditMode.Content.Ini.Audit
                     Is.EqualTo(2));
                 Assert.That(summary, Does.Contain("rulesmd-expand"));
                 Assert.That(summary, Does.Contain("rulesmd-local"));
-                Assert.That(summary, Does.Contain("Both rulesmd.ini candidates remain independent"));
+                Assert.That(summary, Does.Contain(
+                    "Both rulesmd.ini documents remain distinct ordered composition layers"));
                 Assert.That(summary, Does.Not.Contain("selectedCandidate"));
             }
         }
 
         [Test]
-        public void RuntimeResolutionAuditKeepsProjectBaselineWinnersUnresolved()
+        public void RuntimeResolutionAuditRecordsConfiguredCompositionWithoutWholeFileWinner()
         {
             using (AuditFixture fixture = AuditFixture.Create(FixtureLayout.Fixed))
             {
@@ -91,14 +92,28 @@ namespace RA2YR.Tests.EditMode.Content.Ini.Audit
                 Assert.That(summary, Does.Contain(
                     "\"manifestType\":\"RA2YR.IniRuntimeResolutionAuditSanitized\""));
                 Assert.That(summary, Does.Contain(
-                    "\"logicalName\":\"rulesmd.ini\",\"candidateCount\":2"));
-                Assert.That(summary, Does.Contain("\"selectedWinner\":null"));
+                    "\"logicalName\":\"rulesmd.ini\",\"documentLayerCount\":2"));
+                Assert.That(summary, Does.Contain("\"compositionSets\":["));
+                Assert.That(summary, Does.Contain("\"wholeFileWinner\":null"));
                 Assert.That(summary, Does.Contain(
-                    "\"winnerEvidence\":\"Unresolved\""));
+                    "\"compositionStatus\":\"ConfiguredForProjectBaseline\""));
+                Assert.That(summary, Does.Contain(
+                    "\"level\":\"ConfiguredForProjectBaseline\""));
+                Assert.That(summary, Does.Contain(
+                    "\"configuresProjectBaseline\":true"));
                 Assert.That(summary, Does.Contain(
                     "\"genericExplicitLoadPlanExecutable\":true"));
                 Assert.That(summary, Does.Contain(
-                    "\"projectBaselineRuntimeWinnerSelected\":false"));
+                    "\"projectBaselineCompositionConfigured\":true"));
+                Assert.That(summary, Does.Contain("\"wholeFileWinnerSelected\":false"));
+                Assert.That(summary, Does.Contain(
+                    "\"originalRuntimeComparisonPassed\":false"));
+                Assert.That(summary.IndexOf(
+                        "\"layerId\":\"projectbaseline-ra2md\"",
+                        StringComparison.Ordinal),
+                    Is.LessThan(summary.IndexOf(
+                        "\"layerId\":\"projectbaseline-expandmd01\"",
+                        StringComparison.Ordinal)));
                 Assert.That(summary, Does.Contain("\"patternCounts\":{"));
                 Assert.That(delivery.SummarySha256, Has.Length.EqualTo(64));
                 Assert.That(delivery.SummaryUtf8Length,

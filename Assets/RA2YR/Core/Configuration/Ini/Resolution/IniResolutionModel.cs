@@ -64,7 +64,12 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
         UnresolvedEmptyValue,
         NonAsciiRuntimeName,
         InvalidPhysicalNameEncoding,
-        OpaqueNodeNotExecuted
+        OpaqueNodeNotExecuted,
+        ProjectBaselineSourceRejected,
+        InvalidExpandArchiveNumber,
+        DuplicateExpandArchiveNumber,
+        DuplicateProjectBaselineLayer,
+        UnsupportedProjectBaselineLayer
     }
 
     internal sealed class IniResolutionDiagnostic

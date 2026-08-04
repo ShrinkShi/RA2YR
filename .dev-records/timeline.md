@@ -24,6 +24,30 @@
 ### Follow-up
 - Run the final full repository gates, commit the forensic work independently, and keep PR #11 Draft.
 
+## 2026-08-03 - 冻结 runtime root、社区语义参考和现代资产边界
+
+### 用户目标
+- 将权威游戏安装与所有研究/工具目录严格分离，并建立面向现代资产的长期架构边界。
+
+### 本轮处理
+- 新增 ADR 0021、视觉资产管线和工程可维护性规则。
+- 登记 RA2 DIY 2025 教程目录的 18 项脱敏元数据。
+- 更新外部内容、第三方台账、README 和开发决策记录。
+
+### 关键结论
+- legacy 格式是 import adapters；simulation 只引用 `VisualAssetId`。
+- 教程目录是 `CommunitySemanticReference`，不是 runtime content source。
+
+### 影响文件
+- `docs/adr/0021-legacy-formats-are-import-adapters.md`
+- `docs/architecture/visual-asset-pipeline.md`
+- `docs/architecture/engineering-maintainability.md`
+- `docs/third-party/ra2-diy-2025-community-semantic-reference.yml`
+- 架构索引、第三方台账、README 和开发记录
+
+### 后续事项
+- 以独立提交实现 ProjectBaseline ordered multi-document INI semantic composition。
+
 ## 2026-08-01 17:26 - 启动 WP-00 和 WP-01
 
 ### 用户目标
@@ -403,3 +427,53 @@
 - Strict decoding succeeded for all raw frames and failed closed for 257 non-empty flags 3 frames. Every observed failure was a row-0 output overflow by one index; production behavior was not widened or sample-special-cased.
 - Final local results: EditMode 775/775, PlayMode 1/1, both Unity wrappers exit 0 with controlled post-result shutdown; SHP/INI/CSF/PAL wrapper regressions pass in PowerShell 5.1 and 7.
 - Repository validation reports 214 Assets/214 meta, 147 matrix entries, and 95 evidence references. Copyright scans report zero violations and 13/13 ignored external probes in both hosts.
+
+## 2026-08-03 - ProjectBaseline INI composition correction
+
+- Replaced the interim whole-file winner model with ordered multi-document
+  semantic composition: `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Added deterministic expand-number parsing, per-key overlay tests, complete
+  overridden-candidate traces, and fail-closed source/layer diagnostics.
+- Re-routed the WP-02G2 Rules audit through the composed two-document result;
+  `artmd.ini` remains a one-layer regression input.
+- Kept original-runtime comparison and all intradocument syntax policies
+  unresolved and independently evidence-gated.
+- Final ProjectBaseline audits were stable across PowerShell 5.1/7: Rules has
+  22,720 resolved values, 22,709 overridden chains, five registries and 1,171
+  entries; Art remains 880 records. Final Unity XML is 824/824 and 1/1.
+
+## 2026-08-04 14:35 - PR #20 synchronized closeout
+
+### User goal
+- Synchronize the INI composition branch with current `main`, preserve all
+  merged research and architecture records, rerun local gates, and merge PR #20
+  only after Repository safety succeeds.
+
+### Work completed
+- Resolved the ADR index conflict semantically and reviewed all auto-merged
+  development records and README entries for cumulative preservation.
+- Kept the active PR diff limited to INI composition, Rules/Art audit, tests,
+  wrappers, documentation, evidence, compatibility data, and development logs.
+- Re-ran focused and full Unity tests, content audits, repository validation,
+  copyright checks, and PowerShell 5.1/7 composition audits.
+- Corrected the Unity wrapper's Windows PowerShell exit-code handshake after a
+  passed XML run exposed a null `Process.ExitCode` read.
+- Corrected CSF/PAL UTC timestamp validation for PowerShell 7 JSON date
+  coercion, then reran both audits and their dual-host wrapper regressions.
+
+### Key results
+- EditMode 694/694; PlayMode 1/1; both Unity and wrapper exit codes were zero.
+- Rules remained 22,720 resolved values and 22,709 override chains; Art remained
+  880 records. Both normalized model hashes were unchanged across shell hosts.
+- The evidence level remains `ConfiguredForProjectBaseline`, never
+  `ConfirmedByOriginalRuntime`.
+
+### Files affected
+- `Tools/Testing/Invoke-UnityTests.ps1`
+- `docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml`
+- `.dev-records/changes.md`
+- `.dev-records/timeline.md`
+
+### Next step
+- Commit and push the normal merge, verify PR #27 state, wait for PR #20
+  Repository safety, then squash merge PR #20 without starting PR #21 work.

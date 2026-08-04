@@ -65,3 +65,29 @@ path check and operation; controlled cache ancestry must remain stationary.
 `YR1001_ProjectBaseline` is patched development content. Its directory-level
 manifest is not a clean YR 1.001 golden manifest, does not inspect MIX payloads,
 and is not original-behavior comparison evidence.
+
+## Runtime discovery boundary
+
+Runtime candidates for the current ProjectBaseline originate only below the
+configured `YR1001_ProjectBaseline` root. Nested MIX provenance remains part
+of that one root. FinalAlert 2, reference/tool directories, manual unpacking,
+temporary tool output, and community tutorials are evidence or operator tools,
+not candidate sources. Matching filenames outside the authoritative root do
+not participate in resolution.
+
+This boundary is independent of later semantic composition rules. A reference
+may help formulate a policy, but it cannot become a content layer merely by
+being available on the same machine.
+
+## Future runtime mount contract
+
+The current `IniProjectBaselineLoadPlanBuilder` is a fixed audit adapter, not a
+generic runtime discovery component. The future runtime content system owns
+archive discovery and precedence. It must expose an explicit mount graph,
+pre-classified `ContentLayerDescriptor` values, and sorted
+`LogicalDocumentLayer` values to semantic consumers.
+
+INI resolution consumes those declarations and must not infer archive rights
+or priority from a provenance root filename. Filename-based recognition of
+`ra2.mix`, `ra2md.mix`, or `expandmdNN.mix` remains confined to the controlled
+ProjectBaseline audit until the generic mount/index layer exists.

@@ -239,6 +239,7 @@ foreach ($platform in $platforms) {
         $resultReadyAt = $null
         $forcedPostResultShutdown = $false
         $timedOut = $false
+        $unityExitCode = $null
 
         while (-not $process.WaitForExit(250)) {
             if ($null -eq $resultReadyAt -and
@@ -267,9 +268,13 @@ foreach ($platform in $platforms) {
             throw "$platform tests exceeded the $TimeoutSeconds second timeout."
         }
 
+        # Complete the Process exit handshake before reading ExitCode. Windows
+        # PowerShell can otherwise expose a null value after timed WaitForExit.
+        $process.WaitForExit()
         $process.Refresh()
-        if (-not $forcedPostResultShutdown -and $process.ExitCode -ne 0) {
-            throw "$platform tests failed with Unity exit code $($process.ExitCode). See the isolated log under TestResults/$runId/$platform/."
+        $unityExitCode = [int]$process.ExitCode
+        if (-not $forcedPostResultShutdown -and $unityExitCode -ne 0) {
+            throw "$platform tests failed with Unity exit code $unityExitCode. See the isolated log under TestResults/$runId/$platform/."
         }
 
         if ($forcedPostResultShutdown) {
@@ -280,6 +285,8 @@ foreach ($platform in $platforms) {
         if ($forcedPostResultShutdown) {
             Write-Warning "$platform results passed, but the launched headless Unity process required post-result shutdown after $postResultExitGraceSeconds seconds."
         }
+        "$platform Unity process exit code: $unityExitCode"
+        "$platform forced_post_result_shutdown: $($forcedPostResultShutdown.ToString().ToLowerInvariant())"
     } finally {
         $process.Dispose()
     }
