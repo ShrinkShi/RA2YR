@@ -354,3 +354,22 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 ### Verification
 - CSF and PAL regression suites pass in both hosts (11/11 and 10/10), and both
   real PowerShell 7 audits complete with Unity exit 0.
+
+## 2026-08-04 - M3-C1 local delivery blocked by host and GitHub authentication
+
+### Symptom
+- `feature/m3-c1-packed-map-compression-foundation` is pushed at `5bbe88b`, but no Draft PR exists for the branch.
+- `gh auth status` reports the configured GitHub token as invalid; ordinary `git push` cannot obtain credentials because the local prompt helper is unavailable.
+- No Unity.exe is discoverable on the host, so current-head Unity XML cannot be regenerated.
+
+### Root cause
+- External authentication/session state and the Unity installation are unavailable in the current execution environment; this is not a source-code failure.
+
+### Resolution
+- Do not fabricate a PR URL, Actions result, or current-head Unity pass result.
+- Preserve the already-pushed commits and record the exact static verification that remains reproducible.
+
+### Verification
+- Repository validation: 236 assets, 236 meta files, 148 matrix entries, 110 evidence references, 0 violations.
+- Repository validation and copyright regression suites pass under Windows PowerShell 5.1 and PowerShell 7.
+- `git diff --check` is clean and the worktree has no tracked or untracked changes.
