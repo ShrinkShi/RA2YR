@@ -450,7 +450,7 @@
   axis, signedness, domain, sparse, and dense-count candidate policies.
 - Added the packed-section adapter over the existing injected RawLzo1X pipeline;
   upstream failures stop record parsing and no LZO algorithm was added.
-- Added 126 independent synthetic NUnit execution cases plus ADR, format notes,
+- Added 127 independent synthetic NUnit execution cases plus ADR, format notes,
   compatibility evidence, matrix entry, and README links.
 
 ### Verification boundary

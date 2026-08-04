@@ -1,5 +1,10 @@
 # Backlog
 
+## M3-C2 follow-up
+- [ ] 在可用 Unity 主机上从当前 HEAD 重新生成 focused/full EditMode 与 PlayMode XML；历史 XML 不可替代。
+- [ ] 在可用 GitHub 凭据下推送 `feature/m3-c2-isomap-pack5-record-foundation` 并创建 Draft PR `format: implement IsoMapPack5 raw record foundation`。
+- [ ] 完成 M3-C2 的双 PowerShell repository validation、copyright、content wrapper regressions 和 Repository safety。
+
 ## 待处理
 - [ ] 使用 Unity 2022.3.60f1c1 从当前 HEAD 重新运行 M3-C1 focused/full Unity 门禁。
 - [ ] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 三个独立提交，更新 Draft PR #36。

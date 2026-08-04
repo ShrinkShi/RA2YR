@@ -1,5 +1,9 @@
 # IsoMapPack5 raw record foundation
 
+The current synthetic matrix contains 127 independent execution cases
+(80 `[Test]` methods and 46 parameterized `[TestCase]` executions). This count
+does not represent ProjectBaseline compatibility or original-runtime proof.
+
 This document describes the M3-C2 Core boundary. It is not a claim that the
 repository can load a complete RA2/YR map or that any coordinate or tile
 interpretation is confirmed by the original runtime.

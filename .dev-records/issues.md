@@ -391,3 +391,17 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 - Git push 已在先前交付完成；本轮修复尚未提交或推送。
 - Unity Hub 记录并确认 Unity 2022.3.60f1c1 可执行文件存在；当前 HEAD Unity 测试必须重新生成，历史 XML 不作为当前证据。
 - PR #36 保持 Draft，未 Ready、未合并；后续 M3-C2、IsoMap、Overlay、Preview、TMP、palette 和 renderer 均未开始。
+## 2026-08-04 - M3-C2 Unity and remote delivery remain environment-blocked
+
+### Symptom
+- Current M3-C2 HEAD has no newly generated Unity focused/full XML.
+- This branch has not yet completed remote push or Draft PR creation; no PR URL or Actions result is claimable.
+
+### Root cause
+The current host has unstable Unity process-launch behavior, and the GitHub credential/prompt session is unavailable. This is not evidence of a production-code failure.
+
+### Resolution
+Keep synthetic evidence and compatibility boundaries explicit, do not reuse historical XML as current-head proof, and defer remote delivery until a usable Unity/GitHub host is available.
+
+### Verification
+Current reproducible checks are limited to clean source diff validation and repository state. Unity, wrappers, copyright, and Repository safety remain unverified for this HEAD.

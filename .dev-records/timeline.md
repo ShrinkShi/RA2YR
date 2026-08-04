@@ -11,7 +11,7 @@
   均为 `6b6cf581cd2e58c05c33952d5ead2546f4842554`。
 - 实现 11-byte raw record reader、三种 trailing policy、坐标 occurrence/index
   和注入式 RawLzo1X packed adapter。
-- 将 focused synthetic tests 扩展到 126 个独立执行 case。
+- 将 focused synthetic tests 扩展到 127 个独立执行 case。
 
 ### 关键结论
 - 不选择 tile 解释，不创建 TMP/renderer/map object。
