@@ -335,3 +335,19 @@ typed projection 不能反过来替 WP-02G1 猜测 precedence，也不能用便�
 - G2 名称策略匹配多个 G1 值时，字段状态为 `Ambiguous`，单值属性为空；全部候选按稳定键排序后进入模型和哈希。
 - Ambiguous 字段不进入资源引用，也不能产生 SHP/VXL route candidate。
 - 同一 Rules registry 内相同解析 ordinal 的全部条目保留并标记 Incomplete；不同 registry 的相同 ordinal 相互独立。
+
+## 2026-08-03 - ProjectBaseline same-name INI files compose by value identity
+
+### Decision
+- The configured layer order is `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Same-name documents overlay low-to-high by `SectionName + KeyName`; they are
+  not whole-file winners, fallback-only files, or concatenated text.
+- The result preserves each value winner and all overridden candidates with
+  document layer, physical line, source, and archive provenance.
+- This policy is `ConfiguredForProjectBaseline`, not
+  `ConfirmedByOriginalRuntime`.
+
+### Independent unresolved boundaries
+Section/key comparison, duplicate sections and keys, inline semicolons,
+whitespace, and empty-value override/deletion remain separate policies. The
+cross-document composition decision does not select them implicitly.

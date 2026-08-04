@@ -574,44 +574,56 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.LoadPlanRequiresPrematerializedTrustedLayerList"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SourceIdCaseMismatchFailsAsIncompleteProvenanceWithoutHostPath"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.CompleteResolutionResultCannotBeForgedThroughPublicApi"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.BuildsExplicitLowToHighProjectBaselineLayerOrder"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.InputEnumerationOrderDoesNotChangePlanResolutionOrTrace"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
       - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
       - "docs/adr/0015-ini-runtime-resolution-policy.md"
+      - "docs/adr/0022-project-baseline-ini-ordered-semantic-composition.md"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#synthetic_validation"
     limitations:
       - id: ini.load-plan.explicit-policy-only
         status: "已知限制"
-        description: "Executable plans require caller-supplied priorities and policies with evidence labels; no stock YR load plan is selected."
+        description: "The ProjectBaseline plan is configured and executable; original-runtime confirmation and independent intradocument policies remain unresolved."
   - id: ini.container-precedence
     domain: ini
     feature: "Stock YR loose, expand, ecache, elocal, base, and nested MIX precedence"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
     tests:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.LooseAndMixCandidatesRemainDistinctLayers"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.NestedMixProvenanceIsValidatedAsACompleteChain"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.MissingPriorityReturnsAmbiguous"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.BuildsExplicitLowToHighProjectBaselineLayerOrder"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.MissingExpandNumbersAreLegalAndHigherNumberOverrides"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.DuplicateExpandNumberFailsWithStructuredDiagnostic"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.InvalidExpandNumberFailsWithStructuredDiagnostic"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
       - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#composition_layers"
     limitations:
       - id: ini.container-precedence.runtime-unresolved
         status: "已知限制"
-        description: "Official editor source and independent implementations narrow hypotheses but do not prove stock YR runtime order; rulesmd.ini and soundmd.ini winners remain ambiguous."
+        description: "ProjectBaseline uses the configured ra2/ra2md/expand01..99/loose order; it is not ConfirmedByOriginalRuntime. ecache/elocal and broader stock runtime order remain outside this configured plan."
   - id: ini.file-composition
     domain: ini
     feature: "Stock same-name INI selection/overlay and base-versus-md file composition"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
     tests:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SelectDocumentPolicyExcludesUniqueLowerDocumentValues"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.OverlayPolicyRetainsUniqueLowerDocumentValues"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.UnresolvedFileCompositionReturnsAmbiguous"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.FullCompositionOverridesPerKeyAndRetainsLowerUniqueValues"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.ResolvedValueRetainsWinnerAndEveryOverriddenLayerProvenance"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
       - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
     limitations:
       - id: ini.file-composition.runtime-unresolved
         status: "已知限制"
-        description: "Select and overlay strategies are synthetic capabilities only; stock rules.ini/rulesmd.ini, art.ini/artmd.ini, and same-name archive composition are unresolved."
+        description: "ProjectBaseline same-name documents compose per SectionName+KeyName; original-runtime confirmation, base-versus-md family composition, and intradocument identity policies remain unresolved."
   - id: ini.name-comparison
     domain: ini
     feature: "Stock section and key name comparison"
@@ -682,15 +694,17 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.DiagnosticsExposeLogicalPathsButNoAbsolutePaths"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ExactSourceIdCaseMatchesProvenance"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SourceIdCaseMismatchFailsAsIncompleteProvenanceWithoutHostPath"
-      - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.RuntimeResolutionAuditKeepsProjectBaselineWinnersUnresolved"
+      - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.RuntimeResolutionAuditRecordsConfiguredCompositionWithoutWholeFileWinner"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.TypedSourceTraceRetainsEveryDocumentLayer"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
       - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
       - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#composition_layers"
     limitations:
       - id: ini.resolution-trace.explicit-plan-only
         status: "已知限制"
-        description: "Complete traces are available for explicitly configured policies; ProjectBaseline runtime winners and typed values remain unresolved."
+        description: "Complete traces include configured ProjectBaseline document layers and per-value overrides; original-runtime comparison and unresolved intradocument policies are not promoted."
   - id: ini.override-source-tracking
     domain: ini
     feature: "Configuration override semantics and per-value source tracking"
@@ -699,13 +713,15 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EveryWinnerRetainsOverriddenCandidates"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ThreeLayersRetainTheCompleteCandidateChain"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ResolutionDoesNotModifyTheRawDocuments"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.ResolvedValueRetainsWinnerAndEveryOverriddenLayerProvenance"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
       - "docs/adr/0015-ini-runtime-resolution-policy.md"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
     limitations:
       - id: ini.override-source-tracking.runtime-policy-unresolved
         status: "已知限制"
-        description: "Per-value candidate chains are complete under an explicit policy, but stock configuration override semantics are not selected or original-runtime-verified."
+        description: "Per-value candidate chains execute the configured ProjectBaseline composition; original-runtime comparison and independent name/duplicate/comment/empty semantics remain unresolved."
   - id: ini.typed-views
     domain: ini
     feature: "Strongly typed views coexisting with preserved raw nodes"
@@ -715,9 +731,11 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.RulesAcceptsOnlyCompleteResolutionInput"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.AmbiguousResolutionIsRejectedWithoutTypedDocument"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.FailedResolutionIsRejectedWithoutTypedDocument"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.TypedSourceTraceRetainsEveryDocumentLayer"
     evidence:
       - "docs/compatibility/evidence/wp02g2-ini-typed-synthetic-20260803.yml"
       - "docs/adr/0016-minimal-rules-art-resource-views.md"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
     limitations:
       - id: ini.typed-views.explicit-complete-resolution-only
         status: "已知限制"
@@ -735,6 +753,7 @@ entries:
     evidence:
       - "docs/compatibility/evidence/wp02g2-ini-typed-synthetic-20260803.yml"
       - "docs/compatibility/evidence/wp02g2-project-baseline-20260803.yml"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
     limitations:
       - id: ini.minimal-resource-references.no-defaults-or-fallback
         status: "已知限制"
@@ -751,11 +770,12 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.RegistryOrdinalsAreScopedToTheirOwnRegistry"
     evidence:
       - "docs/compatibility/evidence/wp02g2-project-baseline-20260803.yml"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
       - "docs/formats/ini-minimal-resource-views.md"
     limitations:
       - id: ini.rules-type-registries.no-stock-winner-or-object-semantics
         status: "已知限制"
-        description: "Both rulesmd.ini candidates are reported separately under ConfiguredForTesting; stock precedence, registry duplicate behavior, unregistered sections, inheritance, and object creation remain unresolved."
+        description: "rulesmd.ini layers are composed under ConfiguredForProjectBaseline; registry duplicate behavior, unregistered sections, inheritance, object creation, and original-runtime comparison remain unresolved."
   - id: ini.art-resource-routing
     domain: ini
     feature: "Minimal explicit Art resource-routing field projection"
@@ -768,6 +788,7 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.ArtAmbiguityCanonicalOrderDoesNotDependOnResolvedValueEnumeration"
     evidence:
       - "docs/compatibility/evidence/wp02g2-project-baseline-20260803.yml"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#art_regression"
       - "docs/adr/0016-minimal-rules-art-resource-views.md"
     limitations:
       - id: ini.art-resource-routing.explicit-candidates-only

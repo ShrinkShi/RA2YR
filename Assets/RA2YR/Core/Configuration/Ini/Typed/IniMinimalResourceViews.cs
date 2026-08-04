@@ -344,7 +344,7 @@ namespace RA2YR.Core.Configuration.Ini.Typed
         {
             using (SHA256 sha = SHA256.Create())
             {
-                Append(sha, "RA2YR.INI.MINIMAL.RULES.V1");
+                Append(sha, "RA2YR.INI.MINIMAL.RULES.V2");
                 IniRulesRegistry[] values = registries.ToArray();
                 Append(sha, values.Length.ToString(CultureInfo.InvariantCulture));
                 foreach (IniRulesRegistry registry in values)
@@ -369,7 +369,7 @@ namespace RA2YR.Core.Configuration.Ini.Typed
         {
             using (SHA256 sha = SHA256.Create())
             {
-                Append(sha, "RA2YR.INI.MINIMAL.ART.V1");
+                Append(sha, "RA2YR.INI.MINIMAL.ART.V2");
                 IniArtResourceRecord[] values = records.ToArray();
                 Append(sha, values.Length.ToString(CultureInfo.InvariantCulture));
                 foreach (IniArtResourceRecord record in values)
@@ -415,6 +415,7 @@ namespace RA2YR.Core.Configuration.Ini.Typed
             foreach (IniValueSourceCandidateTrace trace in parsed.Value.SourceTrace.Candidates)
             {
                 Append(sha, trace.CandidateId);
+                Append(sha, trace.LayerId);
                 Append(sha, trace.SourceId);
                 Append(sha, trace.LogicalName.Value);
                 Append(sha, trace.SectionPhysicalLineId.ToString(CultureInfo.InvariantCulture));

@@ -393,3 +393,53 @@
 - 2026-08-03: 删除经审计无 PR、无独有提交、无仓库引用的远端临时分支 `research/m2-shp-format-dossier-merge-probe`、`noop`、`noop2`。
 - 2026-08-03: 以普通 merge `e60f7beb` 将最新 main 合入 PR #10；完成 Art ambiguity 和 duplicate registry ordinal 的 fail-closed 修复，新增 4 个 EditMode case。
 - 2026-08-03: 最终本地门禁得到 EditMode 678/678、PlayMode 1/1、WP-02G2 聚焦 51/51；PS7/PS5.1 typed audit 聚合和三个模型哈希保持不变。
+
+## 2026-08-03 - ProjectBaseline INI composition correction
+
+- Replaced the interim whole-file winner model with ordered multi-document
+  semantic composition: `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Added deterministic expand-number parsing, per-key overlay tests, complete
+  overridden-candidate traces, and fail-closed source/layer diagnostics.
+- Re-routed the WP-02G2 Rules audit through the composed two-document result;
+  `artmd.ini` remains a one-layer regression input.
+- Kept original-runtime comparison and all intradocument syntax policies
+  unresolved and independently evidence-gated.
+- Final ProjectBaseline audits were stable across PowerShell 5.1/7: Rules has
+  22,720 resolved values, 22,709 overridden chains, five registries and 1,171
+  entries; Art remains 880 records. Final Unity XML is 824/824 and 1/1.
+
+## 2026-08-04 14:35 - PR #20 synchronized closeout
+
+### User goal
+- Synchronize the INI composition branch with current `main`, preserve all
+  merged research and architecture records, rerun local gates, and merge PR #20
+  only after Repository safety succeeds.
+
+### Work completed
+- Resolved the ADR index conflict semantically and reviewed all auto-merged
+  development records and README entries for cumulative preservation.
+- Kept the active PR diff limited to INI composition, Rules/Art audit, tests,
+  wrappers, documentation, evidence, compatibility data, and development logs.
+- Re-ran focused and full Unity tests, content audits, repository validation,
+  copyright checks, and PowerShell 5.1/7 composition audits.
+- Corrected the Unity wrapper's Windows PowerShell exit-code handshake after a
+  passed XML run exposed a null `Process.ExitCode` read.
+- Corrected CSF/PAL UTC timestamp validation for PowerShell 7 JSON date
+  coercion, then reran both audits and their dual-host wrapper regressions.
+
+### Key results
+- EditMode 694/694; PlayMode 1/1; both Unity and wrapper exit codes were zero.
+- Rules remained 22,720 resolved values and 22,709 override chains; Art remained
+  880 records. Both normalized model hashes were unchanged across shell hosts.
+- The evidence level remains `ConfiguredForProjectBaseline`, never
+  `ConfirmedByOriginalRuntime`.
+
+### Files affected
+- `Tools/Testing/Invoke-UnityTests.ps1`
+- `docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml`
+- `.dev-records/changes.md`
+- `.dev-records/timeline.md`
+
+### Next step
+- Commit and push the normal merge, verify PR #27 state, wait for PR #20
+  Repository safety, then squash merge PR #20 without starting PR #21 work.

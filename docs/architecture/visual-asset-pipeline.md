@@ -79,4 +79,3 @@ Parsing or decoding a legacy file proves only that format stage. It does not
 prove palette selection, RGBA appearance, pivot, remap, shadow pairing,
 animation behavior, world scale, or gameplay compatibility. Each later stage
 requires its own evidence and compatibility entry.
-

@@ -304,3 +304,49 @@
 - Art 多重名称匹配改为真正的 `Ambiguous` 字段：无单一 `Parsed`、保留全部候选和来源链、不生成 reference 或 route。
 - Rules registry 新增按解析后整数判断的 `DuplicateRegistryOrdinal`；冲突仅限同一 registry，所有原始条目继续保留。
 - 新增 4 个 EditMode case；阶段性全量结果为 678/678，ProjectBaseline 三个规范化模型哈希和既有聚合保持不变。
+
+## 2026-08-03 - ProjectBaseline INI ordered semantic composition revision
+
+- Added a ProjectBaseline-only load-plan builder with the explicit low-to-high
+  order `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Same-name INI documents now compose per `SectionName + KeyName`; higher layers
+  override matching values while lower unique values and higher additions remain.
+- Every resolved value retains its winning layer and complete overridden
+  candidate chain, physical line IDs, source ID, and logical MIX provenance.
+- Invalid or duplicate expand numbers and non-ProjectBaseline sources fail with
+  structured diagnostics; discovery enumeration order cannot change results.
+- Rules typed auditing consumes the composed two-layer result. Intradocument
+  name, duplicate, semicolon, whitespace, and empty-value behavior remains an
+  explicit testing policy and is not original-runtime confirmation.
+- Final validation: composition 16/16, full EditMode 824/824, PlayMode 1/1,
+  INI wrapper 15/15 in both PowerShell hosts, repository validation 46/46,
+  copyright regression 22/22, and all real audit/gate exit codes zero.
+
+## 2026-08-04 - PR #20 synchronized validation closeout
+
+### Change scope
+- Merged current `main` with a normal two-parent merge and semantically retained
+  MAP/TMP research, map-compression research, visual-asset architecture, and
+  ProjectBaseline INI composition records.
+- Clarified that `IniProjectBaselineLoadPlanBuilder` is a fixed audit adapter,
+  not generic runtime archive discovery or mount authority.
+- Fixed the Unity test wrapper exit handshake so XML status, Unity exit code,
+  wrapper exit code, and post-result shutdown are reported independently.
+
+### Verification
+- Focused EditMode: load plan 16/16, composition audit 17/17, typed audit 1/1.
+- Final full Unity: EditMode 694/694 and PlayMode 1/1; Unity and wrapper exits
+  were zero, with controlled post-result shutdown in both modes.
+- ProjectBaseline Rules/Art aggregates and normalized model hashes remained
+  stable in PowerShell 5.1 and 7.
+- Repository validation passed with 194 assets, 194 meta files, 143 matrix
+  entries, and 91 evidence references; regressions passed 46/46.
+- Copyright scan passed with zero violations and regressions passed 22/22.
+- CSF and PAL wrapper timestamp validation now accepts PowerShell 7's strict
+  UTC `DateTime` coercion without weakening the PS5.1 string `Z` requirement;
+  each wrapper gained one regression case.
+
+### Risk
+- The synchronized `main` does not yet contain an SHP audit wrapper; PR #20 did
+  not migrate one from the separate SHP workstream.
+- Original-runtime INI syntax and precedence confirmation remains unimplemented.

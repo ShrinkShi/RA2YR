@@ -1,6 +1,6 @@
 # ADR 0015: Evidence-gated INI runtime resolution
 
-- Status: Accepted
+- Status: Accepted; ProjectBaseline ordering and composition amended by ADR 0022
 - Date: 2026-08-03
 
 ## Context
@@ -10,12 +10,13 @@ answer which archive wins, whether same-name files replace or overlay one
 another, or how duplicate sections, duplicate keys, case, whitespace, empty
 values, and inline semicolons behave at runtime. These are separate decisions.
 
-Static evidence does not establish one stock YR answer. FinalAlert 2 describes
+Static evidence did not establish one stock YR answer. FinalAlert 2 describes
 editor behavior, OpenRA and Chrono Divide are independent implementations,
 Ares and Phobos describe opt-in extensions, and community tutorials are
-secondary documentation. The two ProjectBaseline `rulesmd.ini` candidates and
-two `soundmd.ini` candidates are different files, while no original-runtime
-observation selects a winner.
+secondary documentation. The two ProjectBaseline `rulesmd.ini` documents and
+two `soundmd.ini` documents are different files. ADR 0022 subsequently freezes
+their project policy as ordered multi-document semantic composition without
+claiming an original-runtime observation.
 
 ## Decision
 
@@ -62,11 +63,13 @@ The generic resolver and per-value trace are usable when a caller supplies an
 explicit, evidence-labelled plan. They cannot silently turn editor, community,
 or independent-engine behavior into stock YR behavior.
 
-`rulesmd.ini` and `soundmd.ini` remain ambiguous in
-`YR1001_ProjectBaseline`. Typed Rules, Art, AI, theater, UI, sound, mission,
-and map-override views remain unimplemented. Opaque-line aggregates show that
-minimum Art and Rules views would currently discard potentially meaningful
-input, so they cannot be promoted.
+`rulesmd.ini` and `soundmd.ini` are no longer ambiguous documents under the
+configured `YR1001_ProjectBaseline` policy: their layers compose low-to-high by
+section/key identity. Original-runtime comparison and intradocument name,
+duplicate, semicolon, whitespace, and empty-value semantics remain unresolved.
+Typed AI, theater, UI, sound, mission, and map-override views remain
+unimplemented; minimal Rules/Art views remain incomplete where preserved
+Opaque or unresolved syntax can affect them.
 
 A controlled original-runtime black-box experiment is required to determine
 the unresolved stock policies. It must use a disposable copy, fixed hashes,
@@ -82,6 +85,7 @@ user authorization and was not performed in WP-02G1.
   its map-based parser is lossy.
 - Adopt OpenRA, Chrono Divide, Ares, Phobos, or community behavior as stock YR:
   rejected because those are implementations, extensions, or documentation.
-- Pick a candidate using archive number or source ID: rejected because the rule
-  would be hidden and unverified.
+- Pick one whole document using archive number or source ID: rejected because
+  ProjectBaseline uses explicit ordered semantic composition, not whole-file
+  replacement. Archive ordering must remain visible in `IniLoadPlan`.
 - Ignore Opaque lines: rejected because they can affect later semantic views.

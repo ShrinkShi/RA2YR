@@ -246,9 +246,11 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 证明 stock YR 游戏运行时采用相同规则。
 
 ### 处理
-运行时审计将 `selectedWinner` 保持为 null，证据等级标为 `Unresolved`；
-实现只接受显式策略。没有启动游戏、XCC、FinalAlert 2 或 GUI 自动化，也
-没有创建会被原版加载的测试 MOD。
+初版运行时审计将 whole-file selection 保持未决，实现只接受显式策略。
+该临时结论已由 ADR 0022 取代：ProjectBaseline 现在采用明确的有序多文档
+逐值组合，但证据等级仅为 `ConfiguredForProjectBaseline`，不声称原版运行时
+对照。没有启动游戏、XCC、FinalAlert 2 或 GUI 自动化，也没有创建会被
+原版加载的测试 MOD。
 
 ### 后续验证
 按 `docs/formats/ini-runtime-resolution.md` 中的 A/B 黑盒计划，在用户另行
@@ -300,3 +302,42 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 - 现象：Art 多重匹配虽报告 `ArtSectionAmbiguous`，仍把 `matches[0]` 作为 Present 字段并生成资源引用；Rules 的 `0` 与 `00` 也未标记解析 ordinal 冲突。
 - 根因：诊断与字段状态未形成同一 fail-closed 契约，ordinal 保留原始拼写但缺少解析身份分组。
 - 修复：引入无单值赢家的 Ambiguous 候选集合和同 registry ordinal 冲突诊断；增加枚举顺序稳定性与跨 registry 隔离测试。
+## 2026-08-04 - Unity test wrapper read a null exit code after passed XML
+
+### Symptom
+- The full EditMode XML reported 694/694 passed, Unity was no longer running,
+  and no lock file remained, but the wrapper returned shell exit 1 and printed
+  an empty Unity exit code.
+
+### Root cause
+- The wrapper used timed `WaitForExit` polling and read `Process.ExitCode`
+  without the final parameterless `WaitForExit()` handshake required to finish
+  process state collection reliably under Windows PowerShell 5.1.
+
+### Resolution
+- Call parameterless `WaitForExit()`, refresh the process, store the integer
+  exit code, and report it separately from wrapper exit and forced shutdown.
+
+### Verification
+- Final EditMode and PlayMode wrappers both returned shell exit 0, reported
+  Unity exit 0, and explicitly reported controlled post-result shutdown.
+
+## 2026-08-04 - PowerShell 7 JSON date coercion broke UTC suffix validation
+
+### Symptom
+- The CSF ProjectBaseline audit completed in Unity with exit 0 under PowerShell
+  7, but the wrapper rejected `startedUtc` because the converted JSON value no
+  longer rendered with a trailing `Z`.
+
+### Root cause
+- PowerShell 7 `ConvertFrom-Json` coerces ISO UTC strings into `DateTime`
+  values. Casting that value back to string uses host formatting and removes
+  the source JSON suffix, while Windows PowerShell 5.1 leaves it as a string.
+
+### Resolution
+- Timestamp validators now accept UTC `DateTime`/zero-offset `DateTimeOffset`
+  objects and retain the exact trailing-`Z` requirement for string inputs.
+
+### Verification
+- CSF and PAL regression suites pass in both hosts (11/11 and 10/10), and both
+  real PowerShell 7 audits complete with Unity exit 0.

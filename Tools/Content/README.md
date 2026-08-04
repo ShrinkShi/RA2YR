@@ -203,9 +203,9 @@ pwsh.exe -NoProfile -File `
 `Invoke-IniRuntimeResolutionAudit.ps1` forwards to the same locked,
 reparse-rejecting wrapper used by WP-02F, selecting
 `IniProjectBaselineAuditCommand.RunRuntimeResolution`. It mounts the fixed
-ProjectBaseline chains, keeps both `rulesmd.ini` and both `soundmd.ini`
-candidates, and publishes only candidate identities plus Opaque/semicolon
-aggregates.
+ProjectBaseline chains, records both `rulesmd.ini` and both `soundmd.ini`
+documents as deterministic low-to-high composition layers, and publishes only
+layer identities plus Opaque/semicolon aggregates.
 
 Run from the repository root:
 
@@ -215,10 +215,12 @@ Run from the repository root:
 ```
 
 The command never starts the game, XCC, or FinalAlert 2. It never selects a
-runtime winner. The complete line-level base audit remains in the configured
-repository-external Cache, while the ignored JSON below `TestResults` contains
-no source text or host path. The wrapper validates the fixed candidate hashes,
-explicit null winners, external-manifest identity, and Unity's real exit code.
+whole-file winner: same-name documents are composition layers under the
+configured ProjectBaseline order. The complete line-level base audit remains
+in the configured repository-external Cache, while the ignored JSON below
+`TestResults` contains no source text or host path. The wrapper validates the
+fixed layer hashes, deterministic priorities, explicit null whole-file winners,
+external-manifest identity, and Unity's real exit code.
 
 The shared wrapper regression suite covers both physical-document and runtime
 modes and must pass in Windows PowerShell 5.1 and PowerShell 7:
@@ -235,9 +237,12 @@ pwsh.exe -NoProfile -File `
 
 `Invoke-IniMinimalResourceAudit.ps1` reuses the locked, reparse-rejecting INI
 wrapper and selects `IniProjectBaselineAuditCommand.RunMinimalResourceTypedViews`.
-It evaluates the two fixed Rules candidates independently and the fixed Art
-candidate under a single-document `ConfiguredForTesting` plan. It does not
-select or merge a stock runtime winner.
+It composes the two fixed Rules documents low-to-high by `SectionName + KeyName`
+under `ConfiguredForProjectBaseline`, then applies explicit
+`ConfiguredForTesting` intradocument policies needed for the typed audit. The
+fixed Art document currently contributes one layer. It does not perform text
+concatenation or select a whole-file winner, and it does not claim original
+runtime comparison.
 
 ```powershell
 ./Tools/Content/Invoke-IniMinimalResourceAudit.ps1 `

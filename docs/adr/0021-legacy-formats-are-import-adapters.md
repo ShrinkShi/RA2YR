@@ -53,4 +53,3 @@ must resolve those references to a `VisualAssetId` and provider result.
 - Infer world scale, pivot, collision, shadows, or material policy in a format
   reader.
 - Put Unity `Texture2D`, `Sprite`, `Material`, or `GameObject` values in Core.
-

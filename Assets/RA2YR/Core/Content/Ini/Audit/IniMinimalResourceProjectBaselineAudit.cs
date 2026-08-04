@@ -53,14 +53,12 @@ namespace RA2YR.Core.Content.Ini.Audit
             IniGoldenSampleRecord rulesLocal = GetSample(model, RulesLocalSample);
             IniGoldenSampleRecord artLocal = GetSample(model, ArtLocalSample);
 
-            RulesAggregate expandRules = BuildRules(rulesExpand);
-            RulesAggregate localRules = BuildRules(rulesLocal);
+            RulesAggregate rulesComposition = BuildRules(rulesLocal, rulesExpand);
             ArtAggregate art = BuildArt(artLocal);
             string summary = Serialize(
                 model,
                 physicalAudit,
-                expandRules,
-                localRules,
+                rulesComposition,
                 art);
             return new IniMinimalResourceProjectBaselineAuditDelivery(summary);
         }
@@ -84,9 +82,9 @@ namespace RA2YR.Core.Content.Ini.Audit
             return matches[0];
         }
 
-        private static RulesAggregate BuildRules(IniGoldenSampleRecord sample)
+        private static RulesAggregate BuildRules(params IniGoldenSampleRecord[] samples)
         {
-            IniResolutionResult resolution = ResolveSingle(sample);
+            IniResolutionResult resolution = ResolveComposition(samples);
             IniTypedViewResult<IniRulesResourceDocument> typed =
                 IniMinimalResourceViewBuilder.BuildRules(
                     resolution,
@@ -105,8 +103,15 @@ namespace RA2YR.Core.Content.Ini.Audit
             int completeTraceCount = entries.Count(entry =>
                 HasCompleteTrace(entry.Identifier.Value));
             return new RulesAggregate(
-                sample.Specification.SampleId,
+                "rulesmd-ordered-composition",
                 typed.Status,
+                resolution.Trace.DocumentCandidates.Count,
+                resolution.Sections.Sum(section => section.Values.Count),
+                resolution.Sections.SelectMany(section => section.Values).Count(value =>
+                    value.CandidateChain.Any(candidate =>
+                        candidate.Disposition ==
+                        IniValueCandidateDisposition.OverriddenByFileComposition)),
+                CountWinnerLayers(resolution),
                 typed.Document.Registries.Count(registry => registry.Entries.Count != 0),
                 entries.Length,
                 entries.Count(entry => entry.Identifier.Status == IniTypedValueStatus.Invalid),
@@ -119,7 +124,7 @@ namespace RA2YR.Core.Content.Ini.Audit
 
         private static ArtAggregate BuildArt(IniGoldenSampleRecord sample)
         {
-            IniResolutionResult resolution = ResolveSingle(sample);
+            IniResolutionResult resolution = ResolveComposition(sample);
             IniTypedViewResult<IniArtResourceDocument> typed =
                 IniMinimalResourceViewBuilder.BuildArt(
                     resolution,
@@ -209,41 +214,63 @@ namespace RA2YR.Core.Content.Ini.Audit
                 .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
         }
 
-        private static IniResolutionResult ResolveSingle(IniGoldenSampleRecord sample)
+        private static IReadOnlyDictionary<string, int> CountWinnerLayers(
+            IniResolutionResult resolution)
         {
-            IniResolutionEvidence evidence = new IniResolutionEvidence(
+            return resolution.Sections.SelectMany(section => section.Values)
+                .GroupBy(value => value.Winner.Document.LayerId, StringComparer.Ordinal)
+                .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+        }
+
+        private static IniResolutionResult ResolveComposition(
+            params IniGoldenSampleRecord[] samples)
+        {
+            if (samples == null || samples.Length == 0 || samples.Any(value => value == null))
+            {
+                throw new ArgumentException(
+                    "A fixed ProjectBaseline composition requires non-null samples.",
+                    nameof(samples));
+            }
+
+            IniResolutionEvidence intradocumentEvidence = new IniResolutionEvidence(
                 IniResolutionEvidenceLevel.ConfiguredForTesting,
-                "wp02g2-project-baseline-explicit-policy");
-            var policy = new IniResolutionPolicy(
-                IniFileCompositionPolicy.SelectHighestPriorityDocument, evidence,
-                IniNameComparisonPolicy.OrdinalIgnoreCaseAscii, evidence,
-                IniDuplicateSectionPolicy.MergeSectionsInFileOrder, evidence,
-                IniDuplicateKeyPolicy.LastKeyWins, evidence,
-                IniInlineCommentPolicy.PreserveSemicolonInValue, evidence,
-                IniWhitespaceReadPolicy.TrimAsciiSpaceAndTab, evidence,
-                IniEmptyValuePolicy.OverridesEarlierValue, evidence);
-            var layer = new IniLoadLayer(
-                sample.Specification.SampleId + "-layer",
-                sample.Document.Provenance.SourceId,
-                IniLoadLayerKind.TestSource,
-                sample.Document.Provenance.LogicalChain,
-                0,
-                evidence);
-            var candidate = new IniCandidateDocument(
-                sample.Specification.SampleId + "-candidate",
-                layer.LayerId,
-                sample.Specification.LogicalName,
-                sample.Document);
+                "wp02g2-project-baseline-intradocument-test-policy");
+            IniResolutionPolicy policy =
+                IniProjectBaselineLoadPlanBuilder.CreateResolutionPolicy(
+                    IniNameComparisonPolicy.OrdinalIgnoreCaseAscii,
+                    intradocumentEvidence,
+                    IniDuplicateSectionPolicy.MergeSectionsInFileOrder,
+                    intradocumentEvidence,
+                    IniDuplicateKeyPolicy.LastKeyWins,
+                    intradocumentEvidence,
+                    IniInlineCommentPolicy.PreserveSemicolonInValue,
+                    intradocumentEvidence,
+                    IniWhitespaceReadPolicy.TrimAsciiSpaceAndTab,
+                    intradocumentEvidence,
+                    IniEmptyValuePolicy.OverridesEarlierValue,
+                    intradocumentEvidence);
+            IniProjectBaselineLoadPlanBuildResult build =
+                IniProjectBaselineLoadPlanBuilder.Build(
+                    "wp02g2-project-baseline-composition",
+                    IniProjectBaselineAuditService.BaselineLogicalName,
+                    samples.Select(sample => new IniProjectBaselineDocumentInput(
+                        sample.Specification.SampleId,
+                        sample.Specification.LogicalName,
+                        sample.Document)).ToArray());
+            if (!build.IsComplete)
+            {
+                throw new InvalidOperationException(
+                    "The fixed ProjectBaseline composition load plan failed closed.");
+            }
+
             IniResolutionResult result = new IniRuntimeResolver().Resolve(
-                new IniLoadPlan(
-                    sample.Specification.SampleId + "-wp02g2-plan",
-                    new[] { layer }),
-                new[] { candidate },
+                build.Plan,
+                build.Candidates,
                 policy);
             if (!result.IsComplete)
             {
                 throw new InvalidOperationException(
-                    "A fixed single-document configured test resolution was not complete.");
+                    "A fixed ProjectBaseline configured composition was not complete.");
             }
 
             return result;
@@ -252,16 +279,20 @@ namespace RA2YR.Core.Content.Ini.Audit
         private static string Serialize(
             IniProjectBaselineAuditModel model,
             IniProjectBaselineAuditDelivery physicalAudit,
-            RulesAggregate rulesExpand,
-            RulesAggregate rulesLocal,
+            RulesAggregate rulesComposition,
             ArtAggregate art)
         {
             var builder = new StringBuilder();
-            builder.Append("{\"schemaVersion\":1");
+            builder.Append("{\"schemaVersion\":2");
             builder.Append(",\"manifestType\":\"RA2YR.IniMinimalResourceProjectBaselineAuditSanitized\"");
             builder.Append(",\"baselineLogicalName\":\"YR1001_ProjectBaseline\"");
-            builder.Append(",\"auditStatus\":\"Complete\",\"policyEvidence\":\"ConfiguredForTesting\"");
-            builder.Append(",\"stockRuntimeWinnerSelected\":false");
+            builder.Append(",\"auditStatus\":\"Complete\"");
+            builder.Append(",\"policyEvidence\":{\"crossDocument\":\"ConfiguredForProjectBaseline\"");
+            builder.Append(",\"intradocument\":\"ConfiguredForTesting\"}");
+            builder.Append(",\"projectBaselineCompositionConfigured\":true");
+            builder.Append(",\"projectBaselineCompositionExecuted\":true");
+            builder.Append(",\"wholeFileWinnerSelected\":false");
+            builder.Append(",\"originalRuntimeComparisonPassed\":false");
             builder.Append(",\"sourceVersion\":");
             AppendJson(builder, model.Source.Version);
             builder.Append(",\"directoryFingerprint\":");
@@ -278,18 +309,19 @@ namespace RA2YR.Core.Content.Ini.Audit
             AppendJson(builder, model.StartedUtc.ToString("O", CultureInfo.InvariantCulture));
             builder.Append(",\"completedUtc\":");
             AppendJson(builder, model.CompletedUtc.ToString("O", CultureInfo.InvariantCulture));
-            builder.Append(",\"rulesCandidates\":[");
-            AppendRules(builder, rulesExpand);
-            builder.Append(',');
-            AppendRules(builder, rulesLocal);
-            builder.Append("],\"artCandidate\":");
+            builder.Append(",\"rulesComposition\":");
+            AppendRules(builder, rulesComposition);
+            builder.Append(",\"artCandidate\":");
             AppendArt(builder, art);
             builder.Append(",\"limitations\":[");
             AppendJson(builder,
-                "The two rulesmd.ini candidates are evaluated separately under ConfiguredForTesting and no stock runtime winner is selected.");
+                "rulesmd.ini layers are composed low-to-high by SectionName and KeyName; no whole-file winner is selected.");
             builder.Append(',');
             AppendJson(builder,
-                "Only explicit resource references are parsed; stock Rules and Art semantics, defaults, fallback, SHP, VXL, rendering, and gameplay remain unimplemented.");
+                "Name comparison, duplicate sections and keys, inline semicolons, whitespace, and empty values use an explicit ConfiguredForTesting policy and are not original-runtime confirmation.");
+            builder.Append(',');
+            AppendJson(builder,
+                "Only explicit resource references are parsed; complete stock Rules and Art semantics, defaults, fallback, SHP, VXL, rendering, and gameplay remain unimplemented.");
             builder.Append(',');
             AppendJson(builder,
                 "Incomplete typed results remain incomplete when Opaque lines, inline semicolons, or duplicate resolution policies may affect a target.");
@@ -299,10 +331,31 @@ namespace RA2YR.Core.Content.Ini.Audit
 
         private static void AppendRules(StringBuilder builder, RulesAggregate value)
         {
-            builder.Append("{\"candidateRole\":");
-            AppendJson(builder, value.CandidateRole);
+            builder.Append("{\"compositionRole\":");
+            AppendJson(builder, value.CompositionRole);
             builder.Append(",\"typedStatus\":");
             AppendJson(builder, value.Status.ToString());
+            AppendNumber(builder, "documentLayerCount", value.DocumentLayerCount);
+            AppendNumber(builder, "resolvedValueCount", value.ResolvedValueCount);
+            AppendNumber(builder, "valuesWithOverriddenCandidates",
+                value.ValuesWithOverriddenCandidates);
+            builder.Append(",\"winnerLayerCounts\":{");
+            int winnerIndex = 0;
+            foreach (KeyValuePair<string, int> item in value.WinnerLayerCounts.OrderBy(
+                         entry => entry.Key,
+                         StringComparer.Ordinal))
+            {
+                if (winnerIndex++ != 0)
+                {
+                    builder.Append(',');
+                }
+
+                AppendJson(builder, item.Key);
+                builder.Append(':');
+                builder.Append(item.Value.ToString(CultureInfo.InvariantCulture));
+            }
+
+            builder.Append('}');
             AppendNumber(builder, "registryTypeCount", value.RegistryTypeCount);
             AppendNumber(builder, "registryEntryCount", value.RegistryEntryCount);
             AppendNumber(builder, "invalidIdentifierCount", value.InvalidIdentifierCount);
@@ -435,8 +488,12 @@ namespace RA2YR.Core.Content.Ini.Audit
         private sealed class RulesAggregate
         {
             public RulesAggregate(
-                string candidateRole,
+                string compositionRole,
                 IniTypedViewStatus status,
+                int documentLayerCount,
+                int resolvedValueCount,
+                int valuesWithOverriddenCandidates,
+                IReadOnlyDictionary<string, int> winnerLayerCounts,
                 int registryTypeCount,
                 int registryEntryCount,
                 int invalidIdentifierCount,
@@ -446,8 +503,12 @@ namespace RA2YR.Core.Content.Ini.Audit
                 string modelSha256,
                 IReadOnlyDictionary<string, int> diagnosticCounts)
             {
-                CandidateRole = candidateRole;
+                CompositionRole = compositionRole;
                 Status = status;
+                DocumentLayerCount = documentLayerCount;
+                ResolvedValueCount = resolvedValueCount;
+                ValuesWithOverriddenCandidates = valuesWithOverriddenCandidates;
+                WinnerLayerCounts = winnerLayerCounts;
                 RegistryTypeCount = registryTypeCount;
                 RegistryEntryCount = registryEntryCount;
                 InvalidIdentifierCount = invalidIdentifierCount;
@@ -458,8 +519,12 @@ namespace RA2YR.Core.Content.Ini.Audit
                 DiagnosticCounts = diagnosticCounts;
             }
 
-            public string CandidateRole { get; }
+            public string CompositionRole { get; }
             public IniTypedViewStatus Status { get; }
+            public int DocumentLayerCount { get; }
+            public int ResolvedValueCount { get; }
+            public int ValuesWithOverriddenCandidates { get; }
+            public IReadOnlyDictionary<string, int> WinnerLayerCounts { get; }
             public int RegistryTypeCount { get; }
             public int RegistryEntryCount { get; }
             public int InvalidIdentifierCount { get; }

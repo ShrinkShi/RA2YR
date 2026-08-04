@@ -23,3 +23,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0016 | Fail-closed minimal Rules and Art resource views | Accepted |
 | 0017 | Ambiguous Art fields and duplicate registry ordinals remain unresolved | Accepted |
 | 0021 | Legacy formats are import adapters, not canonical runtime assets | Accepted |
+| 0022 | ProjectBaseline INI uses ordered multi-document semantic composition | Accepted as configured project policy |
