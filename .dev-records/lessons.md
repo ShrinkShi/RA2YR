@@ -74,3 +74,7 @@ Opaque 不是解析失败，也不是行为支持。先保留原始行、位置�
 二字节 code unit 不能仅凭任一字节为零就认定为 ASCII；所有语法辅助函数
 必须携带物理 encoding。资源预算也必须约束枚举发生的位置，而不是在
 `ToArray` 完成后检查集合大小。
+
+## 2026-08-03 - Repeated golden conflicts are evidence, not permission to loosen
+
+When every sampled compressed frame fails in the same narrow way, the repetition makes the conflict reproducible but does not prove the intended alternate rule. Keep the strict model, record the aggregate, and split compatibility status by directory, raw decode, synthetic RLE decode, and golden compressed-frame behavior.

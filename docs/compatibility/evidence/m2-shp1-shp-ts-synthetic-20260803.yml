@@ -1,0 +1,66 @@
+schema_version: 1
+work_package: "M2-SHP1"
+evidence_kind: "synthetic-validation"
+date_utc: "2026-08-03"
+fixture_origin: "test code constructs every SHP and MIX byte sequence independently of the production reader and decoder"
+research_matrix_required_cases: 51
+unity_test_methods_added: 97
+test_classes:
+  - name: "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests"
+    test_methods: 47
+    coverage:
+      - "header, descriptor, family marker, frame-count, directory, canvas, coordinate, empty-frame, offset, padding, tail, and budget boundaries"
+      - "Memory, seekable Stream, short-read Stream, and bounded MIX-window equivalence"
+      - "ordered immutable raw model and canonical directory hash"
+  - name: "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests"
+    test_methods: 38
+    coverage:
+      - "flags 0 and 1 exact raw indexed decoding"
+      - "flags 3 RLE-Zero valid rows, zero runs, literal sequences, truncation, overflow, underflow, dangling zero, row-length, padding, and command budgets"
+      - "flags 2, unknown flags, and 00 00 controlled unresolved results"
+      - "no dependency invention, no dead loop, and no unbounded allocation"
+  - name: "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests"
+    test_methods: 12
+    coverage:
+      - "fixed golden identities and canonical model hashes"
+      - "MIX provenance, payload hash, loose-candidate, baseline-change, and manifest-budget fail-closed behavior"
+      - "strict decode failures still produce sanitized evidence without pixel bodies"
+      - "Memory/Stream/MIX-window audit equivalence"
+power_shell_wrapper_regression:
+  script: "Tools/Content/Tests/Invoke-ShpTsProjectBaselineAudit.Tests.ps1"
+  cases: 9
+  windows_powershell_5_1_exit: 0
+  powershell_7_exit: 0
+unity_validation:
+  final_editmode_xml: "775/775 passed"
+  final_playmode_xml: "1/1 passed"
+  editmode_wrapper_exit: 0
+  playmode_wrapper_exit: 0
+  editmode_forced_post_result_shutdown: true
+  playmode_forced_post_result_shutdown: true
+repository_validation:
+  windows_powershell_5_1_exit: 0
+  powershell_7_exit: 0
+  assets: 214
+  meta_files: 214
+  matrix_entries: 147
+  evidence_references: 95
+  regression_cases: 46
+copyright_validation:
+  windows_powershell_5_1_exit: 0
+  powershell_7_exit: 0
+  violations: 0
+  ignored_external_probes: "13/13"
+  regression_cases: 22
+architecture_guards:
+  core_unityengine_reference: false
+  core_system_drawing_reference: false
+  texture2d_or_sprite_created: false
+  dependency_model_created: false
+privacy_guards:
+  original_shp_bytes_in_repository: false
+  original_index_frames_in_repository: false
+  original_pixels_or_images_in_repository: false
+  base64_or_hex_dump_in_repository: false
+  absolute_path_in_public_evidence: false
+status: "local implementation, audit, Unity, wrapper, repository, and copyright validation complete; delivery commit and Actions pending"

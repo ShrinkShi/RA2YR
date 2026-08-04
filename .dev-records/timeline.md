@@ -1,5 +1,29 @@
 # 开发时间线
 
+## 2026-08-03 18:20 - M2-SHP1F flags-3 row-width forensic probe
+
+### User goal
+- Keep the production SHP decoder unchanged while classifying the locked 257-frame row-width conflict.
+
+### Work completed
+- Added an independent bounded scalar analyzer, conditional all-row audit, sanitized evidence, and PS 5.1/7 wrapper.
+- Locked the existing row-zero aggregate before inference.
+- Analyzed 9,495 declared rows after Stage A passed its five conditions.
+
+### Key conclusion
+- Decision B: 1,331 rows equal WidthRaw and 8,164 rows equal WidthRaw+1; every frame contains both classes.
+- No production repair is recommended and flags-3 ProjectBaseline compatibility remains unimplemented.
+
+### Files affected
+- `Assets/RA2YR/Core/Content/ShpTs/Forensics/`
+- `Assets/RA2YR/Tests/EditMode/Content/ShpTs/Forensics/`
+- `Tools/Content/Invoke-ShpTsRleForensicAudit.ps1`
+- `docs/adr/0020-shp-ts-rle-forensic-probe-remains-non-production.md`
+- `docs/compatibility/evidence/m2-shp1f-rle-forensic-20260803.yml`
+
+### Follow-up
+- Run the final full repository gates, commit the forensic work independently, and keep PR #11 Draft.
+
 ## 2026-08-03 - 冻结 runtime root、社区语义参考和现代资产边界
 
 ### 用户目标
@@ -393,6 +417,16 @@
 - 2026-08-03: 删除经审计无 PR、无独有提交、无仓库引用的远端临时分支 `research/m2-shp-format-dossier-merge-probe`、`noop`、`noop2`。
 - 2026-08-03: 以普通 merge `e60f7beb` 将最新 main 合入 PR #10；完成 Art ambiguity 和 duplicate registry ordinal 的 fail-closed 修复，新增 4 个 EditMode case。
 - 2026-08-03: 最终本地门禁得到 EditMode 678/678、PlayMode 1/1、WP-02G2 聚焦 51/51；PS7/PS5.1 typed audit 聚合和三个模型哈希保持不变。
+
+## 2026-08-03 - M2-SHP1 core reader and ProjectBaseline audit
+
+- Created `feature/m2-shp-ts-core-reader` from merged main `7e43b513`.
+- Implemented the 8-byte SHP(TS) header, ordered 24-byte descriptors, raw flags 0/1 decode, strict flags 3 RLE-Zero decode, bounded inputs, immutable local indexed frames, and structured diagnostics.
+- Added 97 EditMode tests: 47 reader, 38 decoder, and 12 ProjectBaseline audit cases.
+- Audited six fixed MIX-backed SHP entries without publishing pixels or frame bodies. The aggregate contains 988 frames: raw0=1, raw1=477, flags3=510, canonical-empty=253.
+- Strict decoding succeeded for all raw frames and failed closed for 257 non-empty flags 3 frames. Every observed failure was a row-0 output overflow by one index; production behavior was not widened or sample-special-cased.
+- Final local results: EditMode 775/775, PlayMode 1/1, both Unity wrappers exit 0 with controlled post-result shutdown; SHP/INI/CSF/PAL wrapper regressions pass in PowerShell 5.1 and 7.
+- Repository validation reports 214 Assets/214 meta, 147 matrix entries, and 95 evidence references. Copyright scans report zero violations and 13/13 ignored external probes in both hosts.
 
 ## 2026-08-03 - ProjectBaseline INI composition correction
 

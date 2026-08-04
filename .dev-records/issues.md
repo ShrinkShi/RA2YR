@@ -302,6 +302,19 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 - 现象：Art 多重匹配虽报告 `ArtSectionAmbiguous`，仍把 `matches[0]` 作为 Present 字段并生成资源引用；Rules 的 `0` 与 `00` 也未标记解析 ordinal 冲突。
 - 根因：诊断与字段状态未形成同一 fail-closed 契约，ordinal 保留原始拼写但缺少解析身份分组。
 - 修复：引入无单值赢家的 Ambiguous 候选集合和同 registry ordinal 冲突诊断；增加枚举顺序稳定性与跨 registry 隔离测试。
+## 2026-08-03 - M2-SHP1 ProjectBaseline flags 3 conflict
+
+- Symptom: 257 non-empty flags 3 frames fail strict row-width validation at row 0; each produces exactly one index beyond the descriptor width.
+- Distribution: 120 even widths and 137 odd widths, across widths 14 through 202.
+- Resolution: preserve `RleOutputOverflow`, publish only aggregate evidence, and keep the audit status `CompleteWithDecodeFailures`. No clamp, padding, width expansion, or file-specific exception was added.
+- Limitation: because strict decoding stops at row 0, the observed `00 00` count of zero is not a whole-file exhaustion result.
+
+## 2026-08-03 - PowerShell 7 timestamp deserialization changed audit verification
+
+- Symptom: PowerShell 7 converted an ISO UTC JSON timestamp during `ConvertFrom-Json`, so a later textual `Z` check could reject a valid wrapper result.
+- Resolution: validate the raw JSON timestamp representation before deserialization, then accept the typed PowerShell 7 value without weakening the UTC requirement.
+- Verification: SHP wrapper regression passes 9/9 under Windows PowerShell 5.1 and PowerShell 7.
+
 ## 2026-08-04 - Unity test wrapper read a null exit code after passed XML
 
 ### Symptom
