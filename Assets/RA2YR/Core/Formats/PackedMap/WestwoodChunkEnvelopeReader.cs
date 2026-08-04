@@ -68,7 +68,16 @@ namespace RA2YR.Core.Formats.PackedMap
                 if (compressed == 0 || output == 0)
                 {
                     bool allowed = compressed == 0 && output == 0 && sentinelPolicy == ChunkSentinelPolicy.AllowZeroZeroAsTerminator;
-                    if (!allowed) { diagnostics.Add(Error(PackedMapDiagnosticCode.ChunkSentinelUnresolved, "Zero-sized chunk fields require an explicit sentinel policy.", absoluteOffset + position - 4)); break; }
+                    if (!allowed)
+                    {
+                        diagnostics.Add(Error(
+                            compressed == 0 && output == 0
+                                ? PackedMapDiagnosticCode.ChunkSentinelUnresolved
+                                : PackedMapDiagnosticCode.ChunkZeroFieldInvalid,
+                            "A one-zero chunk field is not a valid block or terminator; only explicit 0/0 sentinel policy is accepted.",
+                            absoluteOffset + position - 4));
+                        break;
+                    }
                     if (position != input.Length) diagnostics.Add(Error(PackedMapDiagnosticCode.ChunkTrailingBytes, "A sentinel chunk was followed by bytes.", absoluteOffset + position));
                     break;
                 }

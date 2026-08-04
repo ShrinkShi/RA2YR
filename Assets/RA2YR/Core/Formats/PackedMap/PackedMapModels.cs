@@ -35,6 +35,7 @@ namespace RA2YR.Core.Formats.PackedMap
         ChunkOutputBudgetExceeded,
         ChunkArithmeticOverflow,
         ChunkSentinelUnresolved,
+        ChunkZeroFieldInvalid,
         ChunkTrailingBytes,
         ChunkNoProgress,
         Format80TruncatedCommand,
@@ -52,6 +53,16 @@ namespace RA2YR.Core.Formats.PackedMap
         BackendUnavailable,
         BackendFailure,
         BackendLengthMismatch,
+        BackendInvalidCodec,
+        BackendInputBudgetExceeded,
+        BackendConsumedInputMismatch,
+        BackendIdentityMissing,
+        BackendNullOutput,
+        BackendDiagnosticError,
+        BackendProvenanceMissing,
+        BackendProvenanceMismatch,
+        BackendCancelled,
+        BackendException,
         PipelineStageFailure,
         PipelineBudgetExceeded
     }
@@ -204,7 +215,7 @@ namespace RA2YR.Core.Formats.PackedMap
         public long MaxInputBytes { get; }
     }
 
-    internal enum ChunkSentinelPolicy { RejectAllZero, AllowZeroZeroAsTerminator, AllowOneZeroField }
+    internal enum ChunkSentinelPolicy { RejectAllZero, AllowZeroZeroAsTerminator }
 
     internal sealed class WestwoodChunkEnvelope
     {
@@ -278,18 +289,25 @@ namespace RA2YR.Core.Formats.PackedMap
     internal sealed class LzoDecodeRequest
     {
         public LzoDecodeRequest(PackedCodecKind codec, byte[] compressed, int expectedLength, long maxOutputBytes, string provenance)
-            : this(codec, compressed, expectedLength, maxOutputBytes, provenance, Array.Empty<IniSourceProvenance>(), CancellationToken.None) { }
+            : this(codec, compressed, expectedLength, maxOutputBytes, compressed == null ? 0 : compressed.LongLength, provenance, Array.Empty<IniSourceProvenance>(), CancellationToken.None) { }
 
         public LzoDecodeRequest(PackedCodecKind codec, byte[] compressed, int expectedLength, long maxOutputBytes, string provenance, CancellationToken cancellationToken)
-            : this(codec, compressed, expectedLength, maxOutputBytes, provenance, Array.Empty<IniSourceProvenance>(), cancellationToken) { }
+            : this(codec, compressed, expectedLength, maxOutputBytes, compressed == null ? 0 : compressed.LongLength, provenance, Array.Empty<IniSourceProvenance>(), cancellationToken) { }
 
         public LzoDecodeRequest(PackedCodecKind codec, byte[] compressed, int expectedLength, long maxOutputBytes, string provenance, IEnumerable<IniSourceProvenance> sourceProvenance, CancellationToken cancellationToken = default(CancellationToken))
+            : this(codec, compressed, expectedLength, maxOutputBytes, compressed == null ? 0 : compressed.LongLength, provenance, sourceProvenance, cancellationToken) { }
+
+        public LzoDecodeRequest(PackedCodecKind codec, byte[] compressed, int expectedLength, long maxOutputBytes, long maxInputBytes, string provenance, IEnumerable<IniSourceProvenance> sourceProvenance, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (codec != PackedCodecKind.RawLzo1X) throw new ArgumentOutOfRangeException(nameof(codec), "The LZO contract only accepts RawLzo1X.");
             Codec = codec;
             Compressed = (byte[])(compressed ?? throw new ArgumentNullException(nameof(compressed))).Clone();
-            if (expectedLength < 0 || maxOutputBytes < 0) throw new ArgumentOutOfRangeException();
+            if (expectedLength < 0 || maxOutputBytes < 0 || maxInputBytes < 0) throw new ArgumentOutOfRangeException();
+            if (Compressed.LongLength > maxInputBytes) throw new ArgumentOutOfRangeException(nameof(compressed), "The compressed input exceeds its bounded input contract.");
+            if (expectedLength > maxOutputBytes) throw new ArgumentOutOfRangeException(nameof(expectedLength), "The declared output exceeds its bounded output contract.");
             ExpectedLength = expectedLength;
             MaxOutputBytes = maxOutputBytes;
+            MaxInputBytes = maxInputBytes;
             Provenance = BinaryDiagnosticLabel.Validate(provenance, nameof(provenance));
             IniSourceProvenance[] chain = (sourceProvenance ?? throw new ArgumentNullException(nameof(sourceProvenance))).ToArray();
             if (chain.Any(item => item == null)) throw new ArgumentException("LZO source provenance cannot contain null entries.", nameof(sourceProvenance));
@@ -300,6 +318,7 @@ namespace RA2YR.Core.Formats.PackedMap
         public byte[] Compressed { get; }
         public int ExpectedLength { get; }
         public long MaxOutputBytes { get; }
+        public long MaxInputBytes { get; }
         public string Provenance { get; }
         public IReadOnlyList<IniSourceProvenance> SourceProvenance { get; }
         public CancellationToken CancellationToken { get; }
@@ -307,11 +326,15 @@ namespace RA2YR.Core.Formats.PackedMap
     internal sealed class LzoDecodeResult
     {
         internal LzoDecodeResult(byte[] bytes, int consumed, string backendIdentity, IEnumerable<PackedMapDiagnostic> diagnostics)
-        { Bytes = bytes == null ? null : (byte[])bytes.Clone(); ConsumedInput = consumed; BackendIdentity = backendIdentity; Diagnostics = Array.AsReadOnly((diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray()); }
+            : this(bytes, consumed, backendIdentity, diagnostics, Array.Empty<IniSourceProvenance>()) { }
+
+        internal LzoDecodeResult(byte[] bytes, int consumed, string backendIdentity, IEnumerable<PackedMapDiagnostic> diagnostics, IEnumerable<IniSourceProvenance> provenance)
+        { Bytes = bytes == null ? null : (byte[])bytes.Clone(); ConsumedInput = consumed; BackendIdentity = backendIdentity; Diagnostics = Array.AsReadOnly((diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray()); IniSourceProvenance[] chain = (provenance ?? throw new ArgumentNullException(nameof(provenance))).ToArray(); if (chain.Any(item => item == null)) throw new ArgumentException("LZO result provenance cannot contain null entries.", nameof(provenance)); Provenance = Array.AsReadOnly(chain); }
         public byte[] Bytes { get; }
         public int ConsumedInput { get; }
         public string BackendIdentity { get; }
         public IReadOnlyList<PackedMapDiagnostic> Diagnostics { get; }
+        public IReadOnlyList<IniSourceProvenance> Provenance { get; }
         public bool IsSuccess => Bytes != null && Diagnostics.All(d => d.Severity != BinaryDiagnosticSeverity.Error);
     }
 }

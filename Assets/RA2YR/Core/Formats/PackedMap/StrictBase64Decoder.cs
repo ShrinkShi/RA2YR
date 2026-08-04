@@ -29,6 +29,16 @@ namespace RA2YR.Core.Formats.PackedMap
                 { diagnostics.Add(Error(value == '=' ? PackedMapDiagnosticCode.InvalidBase64Padding : PackedMapDiagnosticCode.InvalidBase64Character, "The Base64 input contains an invalid character or padding position.")); break; }
             }
             if (diagnostics.Any(d => d.Severity == BinaryDiagnosticSeverity.Error)) return new StrictBase64DecodeResult(null, diagnostics);
+            if (padding == 2 && DecodeSextet(input[input.Length - 3]) % 16 != 0)
+            {
+                diagnostics.Add(Error(PackedMapDiagnosticCode.InvalidBase64Padding, "The final one-byte Base64 quantum has non-zero pad bits."));
+                return new StrictBase64DecodeResult(null, diagnostics);
+            }
+            if (padding == 1 && DecodeSextet(input[input.Length - 2]) % 4 != 0)
+            {
+                diagnostics.Add(Error(PackedMapDiagnosticCode.InvalidBase64Padding, "The final two-byte Base64 quantum has non-zero pad bits."));
+                return new StrictBase64DecodeResult(null, diagnostics);
+            }
             long decodedLength = checked((long)(input.Length / 4) * 3 - padding);
             if (decodedLength < 0 || decodedLength > limits.MaxDecodedBytes || decodedLength > int.MaxValue)
             { diagnostics.Add(Error(PackedMapDiagnosticCode.Base64OutputBudgetExceeded, "Decoded Base64 output exceeds the configured budget.")); return new StrictBase64DecodeResult(null, diagnostics); }
@@ -40,6 +50,15 @@ namespace RA2YR.Core.Formats.PackedMap
             }
             catch (FormatException)
             { diagnostics.Add(Error(PackedMapDiagnosticCode.Base64DecodeFailure, "The Base64 input failed strict decoding.")); return new StrictBase64DecodeResult(null, diagnostics); }
+        }
+        private static int DecodeSextet(char value)
+        {
+            if (value >= 'A' && value <= 'Z') return value - 'A';
+            if (value >= 'a' && value <= 'z') return value - 'a' + 26;
+            if (value >= '0' && value <= '9') return value - '0' + 52;
+            if (value == '+') return 62;
+            if (value == '/') return 63;
+            return -1;
         }
         private static PackedMapDiagnostic Error(PackedMapDiagnosticCode code, string message) => new PackedMapDiagnostic(code, BinaryDiagnosticSeverity.Error, message);
     }

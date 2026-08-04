@@ -133,17 +133,28 @@ namespace RA2YR.Core.Formats.PackedMap
         private static bool TryParseNumericKey(string raw, out int value, List<PackedMapDiagnostic> diagnostics, PackedIniFragmentOccurrence occurrence)
         {
             value = 0;
-            if (string.IsNullOrEmpty(raw) || raw.Any(character => character < '0' || character > '9'))
+            if (string.IsNullOrEmpty(raw))
+            {
+                diagnostics.Add(Error(PackedMapDiagnosticCode.NonnumericFragmentKey, "A fragment key is not an invariant decimal integer.", occurrence));
+                return false;
+            }
+            bool negative = raw[0] == '-';
+            int digitStart = negative ? 1 : 0;
+            if (digitStart == raw.Length || raw.Skip(digitStart).Any(character => character < '0' || character > '9'))
             {
                 diagnostics.Add(Error(PackedMapDiagnosticCode.NonnumericFragmentKey, "A fragment key is not an invariant decimal integer.", occurrence));
                 return false;
             }
             if (!int.TryParse(raw, NumberStyles.None, CultureInfo.InvariantCulture, out value))
             {
-                diagnostics.Add(Error(PackedMapDiagnosticCode.FragmentKeyOverflow, "A fragment key overflows Int32.", occurrence));
+                if (negative && long.TryParse(raw, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out _))
+                    diagnostics.Add(Error(PackedMapDiagnosticCode.NegativeFragmentKey, "Negative fragment keys are not valid.", occurrence));
+                else
+                    diagnostics.Add(Error(PackedMapDiagnosticCode.FragmentKeyOverflow, "A fragment key overflows Int32.", occurrence));
                 return false;
             }
             if (value == 0) diagnostics.Add(Error(PackedMapDiagnosticCode.FragmentKeyZero, "Fragment key zero is not valid.", occurrence));
+            if (value < 0) diagnostics.Add(Error(PackedMapDiagnosticCode.NegativeFragmentKey, "Negative fragment keys are not valid.", occurrence));
             return value > 0;
         }
 
