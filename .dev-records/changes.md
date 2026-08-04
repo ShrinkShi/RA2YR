@@ -1,5 +1,26 @@
 # 变更记录
 
+## 2026-08-04 - M3-C1 contract fixes and behavioral matrix
+
+### 变更范围
+- PackedMap chunk sentinel、LZO backend/pipeline、Strict Base64、fragment collector 和 synthetic EditMode matrix。
+
+### 具体改动
+- 移除 `AllowOneZeroField`；单零字段返回 `ChunkZeroFieldInvalid`，`0/0` 只接受显式 terminator policy。
+- LZO request 验证 codec、bounded input、exact output、output budget、cancellation 和 provenance；pipeline 拒绝 consumed mismatch、长度 mismatch、空 identity、error diagnostic、null、异常、取消和不匹配 provenance。
+- Strict Base64 增加 canonical pad-bit 校验；collector 保留 raw values、source order、numeric diagnostics、预算和 provenance。
+- 测试矩阵达到 109 个独立执行 case（89 `[Test]` + 20 参数化执行 case），不使用等价 Base64 输入填充数量；pipeline 对未知 codec 先行结构化拒绝。
+
+### 验证情况
+- 最终当前 HEAD PackedMap 聚焦 EditMode `109/109`，完整 EditMode `933/933`，PlayMode `1/1`；XML 均完整且无失败/跳过/不确定项。
+- Unity 聚焦与 PlayMode 在结果写出后需要受控 post-result shutdown；Unity 退出码均为 0，零字节普通 `Temp/UnityLockfile` 已按既有规则清理。
+- Windows PowerShell 5.1 与 PowerShell 7 repository validation、copyright scan 及全部回归均 exit 0；仓库统计 236 assets/236 meta、148 matrix、110 evidence、0 violations。
+- `git diff --check` 通过；本机系统 csc 不支持项目使用的现代 C# 语法，不能替代 Unity Roslyn。
+- ProjectBaseline packed audit 仍未执行；无 LZO 算法、无原版 payload、无 IsoMap/Overlay/Preview/TMP/palette/renderer。
+
+### 风险
+- 当前修复尚未提交/推送；PR #36 body 和 Actions 状态需在可用 GitHub connector/凭据下更新，不能伪造。
+
 ## 2026-08-04 - M3-C1 core hardening
 
 - 为 chunk envelope 保存完整 provenance chain，并在 window/stream/materialized 输入路径执行显式输入预算。

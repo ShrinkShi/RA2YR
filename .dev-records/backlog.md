@@ -1,8 +1,8 @@
 # Backlog
 
 ## 待处理
-- [ ] 在修复桌面宿主的 Unity 启动环境后重新运行 M3-C1 focused/full Unity 门禁。
-- [ ] M3-C1 完成全量 Unity、双 PowerShell 仓库门禁和 Draft PR 交付。
+- [ ] 使用 Unity 2022.3.60f1c1 从当前 HEAD 重新运行 M3-C1 focused/full Unity 门禁。
+- [ ] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 三个独立提交，更新 Draft PR #36。
 - [ ] 后续独立工作包研究并实现 IsoMap/Overlay/Preview/TMP，必须重新建立格式证据。
 
 - [ ] 在授权并具备实际 backend 后设计 ProjectBaseline packed-section audit；不得在 M3-C1 伪造地图兼容性。

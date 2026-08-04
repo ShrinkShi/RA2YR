@@ -1,5 +1,35 @@
 # 开发时间线
 
+## 2026-08-04 - M3-C1 contract review fixes
+
+### 用户目标
+- 在既有 M3-C1 分支和 Draft PR #36 上修复 chunk sentinel、LZO backend 合同和行为测试矩阵，不开始后续地图/渲染工作。
+
+### 本轮处理
+- 确认 HEAD `49ca8e3`、`origin/main` `c4db651`，main 未推进；保留三个既有提交，不 rebase。
+- 删除未实现的单零字段 policy；补齐 `0/0` 显式 terminator、单零 fail-closed、LZO 精确合同和 109 个独立 synthetic case。
+- Unity Hub 安装记录指向并确认 Unity 2022.3.60f1c1；历史 XML 不作为当前 HEAD 证据。
+
+### 关键结论
+- PR #36 已由外部 connector 创建；本地 `gh auth` 仍无效，不将其误写为本地 gh 恢复。
+- ProjectBaseline packed audit、LZO 算法、IsoMap、Overlay、Preview、TMP、palette、renderer 均未实现。
+
+### 影响文件
+- `Assets/RA2YR/Core/Formats/PackedMap/PackedMapModels.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/PackedIniFragmentCollector.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/PackedSectionDecodePipeline.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/StrictBase64Decoder.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/WestwoodChunkEnvelopeReader.cs`
+- `Assets/RA2YR/Tests/EditMode/Formats/PackedMap/PackedMapCoreTests.cs`
+- `docs/formats/map-packed-compression.md`
+- `docs/compatibility/evidence/m3c1-packed-map-synthetic-20260804.yml`
+- `.dev-records/issues.md`
+- `.dev-records/changes.md`
+- `.dev-records/timeline.md`
+
+### 后续事项
+- 使用当前 HEAD 运行 Unity focused/full 和仓库门禁；完成后分三次独立提交并推送到 PR #36，保持 Draft。
+
 ## 2026-08-04 - M3-C1 packed map compression foundation
 
 - 从 `c4db6516eaa4e971f8bfe20cd3462dd397f39a55` 创建并保持独立分支 `feature/m3-c1-packed-map-compression-foundation`。

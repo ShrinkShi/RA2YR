@@ -26,6 +26,12 @@ lengths, and output over budget before invoking the .NET primitive.
 The chunk reader is codec-neutral.  A zero field is not a terminator unless an
 explicit sentinel policy allows `0/0`; one-zero fields remain unresolved.
 
+The current contract is fail-closed for both one-zero forms: `compressed=0,
+output>0` and `compressed>0, output=0` are invalid chunk fields and are never
+treated as normal blocks, padding, or implicit terminators.  `0/0` is accepted
+only by the explicit `AllowZeroZeroAsTerminator` policy; trailing bytes after
+that sentinel are diagnosed.
+
 Format80 supports the five documented command classes with explicit absolute or
 relative medium/long reference profiles, exact expected output, required
 terminator policy, bounded overlap expansion, and structured failures.  It does
@@ -35,8 +41,12 @@ All chunk results retain the supplied provenance chain. Window, Stream and
 materialized input paths apply the same maximum-input budget before allocation;
 the production core never reads an unbounded stream into memory first.
 
-LZO has a contract only.  Without a backend the pipeline returns
-`BackendUnavailable` and never produces placeholder bytes.
+LZO has a contract only.  Requests are bounded by compressed-input and output
+budgets, carry exact expected output, cancellation, backend identity, and
+provenance.  The pipeline requires exact consumed input, exact output length,
+non-empty identity, matching provenance, and no error diagnostics.  Backend
+exceptions, cancellation, null results/bytes, and unavailable backends become
+structured failures; no LZO algorithm or native dependency is present.
 
 ## Compatibility boundary
 
@@ -49,3 +59,8 @@ LZO has a contract only.  Without a backend the pipeline returns
 
 No ProjectBaseline packed payload, decoded bytes, image, coordinate, or map
 record is published or used by this work package.
+
+The synthetic behavioral matrix contains 109 independent execution cases across
+fragment policies, strict Base64, chunk envelopes, Format80 profiles, bounded
+input equivalence, and LZO backend/pipeline contracts.  This count is not
+inflated with equivalent Base64 spellings.

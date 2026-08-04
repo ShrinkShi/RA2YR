@@ -373,3 +373,21 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 - Repository validation: 236 assets, 236 meta files, 148 matrix entries, 110 evidence references, 0 violations.
 - Repository validation and copyright regression suites pass under Windows PowerShell 5.1 and PowerShell 7.
 - `git diff --check` is clean and the worktree has no tracked or untracked changes.
+
+## 2026-08-04 - M3-C1 delivery record correction and contract gaps
+
+### 现象
+- 原始记录误写为 M3-C1 没有 Draft PR。
+- 审查发现 chunk sentinel 枚举含有未实现的单零字段策略，且 LZO backend 合同未完整拒绝输入消费、输出、身份、诊断和异常边界。
+- 之前的 Base64 参数化 case 数量不能代表独立行为覆盖。
+
+### 修复
+- PR #36 已由外部 GitHub connector 创建，继续保持 Draft；本地 `gh auth` 仍无效，不能把 PR 创建归因于本地 gh 恢复。
+- 删除无效的 `AllowOneZeroField`，单零字段统一结构化失败，`0/0` 仅显式 terminator policy 接受。
+- LZO 请求和 pipeline 增加 RawLzo1X、输入/输出预算、取消、身份、精确 consumed/produced、diagnostic、provenance 和异常 fail-closed 合同；仍不实现 LZO 算法。
+- 将测试重构为 108 个独立执行 case，不使用等价 Base64 输入填充数量。
+
+### 当前验证边界
+- Git push 已在先前交付完成；本轮修复尚未提交或推送。
+- Unity Hub 记录并确认 Unity 2022.3.60f1c1 可执行文件存在；当前 HEAD Unity 测试必须重新生成，历史 XML 不作为当前证据。
+- PR #36 保持 Draft，未 Ready、未合并；后续 M3-C2、IsoMap、Overlay、Preview、TMP、palette 和 renderer 均未开始。
