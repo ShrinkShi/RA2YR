@@ -1,5 +1,43 @@
 # 变更记录
 
+## 2026-08-04 - M3-C1 core hardening
+
+- 为 chunk envelope 保存完整 provenance chain，并在 window/stream/materialized 输入路径执行显式输入预算。
+- 为 Format80 输入预算和 LZO request 增加结构化合同；collector 增加 `MaxFragments + 1` 惰性枚举停止测试。
+- 新增 provenance、预算和结果不可变性聚焦测试；未实现 LZO 算法、IsoMap/Overlay/Preview/TMP、palette 或渲染。
+
+## 2026-08-04 - M3-C1 packed map compression foundation
+
+### 变更范围
+- 新增 `PackedMap` Core 模型、诊断、预算、fragment collector、strict Base64、chunk envelope、Format80 decoder、LZO backend contract 和 pipeline。
+- 新增 122 个合成 EditMode 用例及 Unity `.meta`。
+- 新增 ADR、格式说明、合成 evidence、compatibility matrix 条目和 README 入口。
+
+### 具体改动
+- Collector 保留 occurrence/raw key/value/source/provenance，支持 source order、numeric ascending unique、strict sequential policies。
+- Base64 在调用 .NET primitive 前执行 alphabet、padding、长度、whitespace 和预算验证。
+- Chunk reader 保留 block ordinal/offset/sizes/payload，`0/0` 仅在显式 sentinel policy 下接受。
+- Format80 支持五类命令、overlap copy、exact output、terminator、trailing input 和结构化诊断。
+- LZO 无 backend 时返回 `BackendUnavailable`，不产生占位数据。
+
+### 验证情况
+- PackedMap 聚焦 EditMode XML：122/122 passed，0 failed。
+- ProjectBaseline packed audit：未运行，符合本轮边界。
+
+### 风险
+- 原版运行时 codec profile、LZO 算法和地图特定 record 语义仍未确认。
+
+## 2026-08-04 - M3-C1 packed map compression foundation
+
+### 变更范围
+- New standalone Core foundation for packed INI fragments, strict Base64, chunk envelopes, explicit Format80 profiles, LZO backend contracts and codec-neutral orchestration.
+
+### 限制
+- No ProjectBaseline packed audit, miniLZO, native plugin, IsoMap/Overlay/Preview/TMP, writer or rendering.
+
+### 验证情况
+- To be updated after focused synthetic tests and repository gates.
+
 ## 2026-08-03 - 项目级架构和来源边界冻结
 
 ### 变更范围

@@ -1,5 +1,55 @@
 # 开发时间线
 
+## 2026-08-04 - M3-C1 packed map compression foundation
+
+- 从 `c4db6516eaa4e971f8bfe20cd3462dd397f39a55` 创建并保持独立分支 `feature/m3-c1-packed-map-compression-foundation`。
+- 实现 lossless INI fragment collection、strict Base64、codec-neutral chunk envelope、显式 Format80 profiles、LZO backend contract 和分阶段 pipeline；未读取 ProjectBaseline packed 内容。
+- Unity Roslyn Core/EditMode 编译检查均为 exit 0；当前桌面宿主的 Unity wrapper 受 `Start-Process` PATH/Path 冲突阻塞，旧 focused XML 不作为本轮结果。
+
+## 2026-08-04 17:35 - M3-C1 packed map compression foundation
+
+### 用户目标
+- 从 `c4db6516eaa4e971f8bfe20cd3462dd397f39a55` 开始独立实现 packed map compression 基础。
+
+### 本轮处理
+- 新增 lossless INI fragment collection、strict Base64、codec-neutral chunk envelope、显式 Format80 decoder、LZO backend contract 和 pipeline。
+- 新增 bounded Memory/Stream/window 入口与 122 个合成 EditMode 用例。
+- 未读取 ProjectBaseline packed 内容，未实现 LZO、IsoMap、Overlay、Preview、TMP、palette 或 rendering。
+
+### 关键结论
+- Format80 只按显式 profile 解码，禁止 variant guessing、clamp、padding 和 partial success。
+- LZO 无 backend 时结构化返回 `BackendUnavailable`。
+- 当前证据等级为 synthetic/configured，不是 original runtime confirmation。
+
+### 影响文件
+- `Assets/RA2YR/Core/Formats/PackedMap/`
+- `Assets/RA2YR/Tests/EditMode/Formats/PackedMap/`
+- `docs/formats/map-packed-compression.md`
+- `docs/adr/0023-packed-map-compression-foundation.md`
+- `docs/compatibility/evidence/m3c1-packed-map-synthetic-20260804.yml`
+- `docs/compatibility/matrix.yml`
+- `README.md`
+
+### 后续事项
+- 完成全量 EditMode、PlayMode、仓库验证、版权扫描及双 PowerShell 宿主回归。
+
+## 2026-08-04 - M3-C1 packed map compression foundation started
+
+### 用户目标
+- 从 `c4db6516eaa4e971f8bfe20cd3462dd397f39a55` 开始实现通用 packed INI fragment、严格 Base64、chunk envelope、Format80 和 LZO backend contract 基础。
+
+### 本轮边界
+- 不读取 ProjectBaseline packed map 内容。
+- 不实现 miniLZO、IsoMapPack5、Overlay、Preview、TMP、palette、Unity rendering 或地图逻辑。
+- Core 继续保持 UnityEngine-free，并复用现有 bounded window/stream 抽象。
+
+### 当前处理
+- 已核对本地与远端 `main` 均为固定 SHA，并创建 `feature/m3-c1-packed-map-compression-foundation`。
+- 已阅读 map-compression 研究资料、INI lossless occurrence 模型和 bounded input 实现。
+
+### 后续事项
+- 分阶段提交模型、collector/Base64、chunk envelope、Format80、LZO contract/pipeline、测试和文档。
+
 ## 2026-08-03 18:20 - M2-SHP1F flags-3 row-width forensic probe
 
 ### User goal
