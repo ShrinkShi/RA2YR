@@ -438,3 +438,31 @@
 - The synchronized `main` does not yet contain an SHP audit wrapper; PR #20 did
   not migrate one from the separate SHP workstream.
 - Original-runtime INI syntax and precedence confirmation remains unimplemented.
+
+## 2026-08-04 - M3-C2 IsoMapPack5 raw-record foundation
+
+### Change scope
+- Added UnityEngine-free IsoMapPack5 11-byte raw records, defensive raw-byte
+  views, source offsets/order, and packed provenance.
+- Added explicit decoded-stream trailing policies, including exact four-zero
+  trailer acceptance only under its named profile.
+- Added separate coordinate occurrence/index analysis with explicit duplicate,
+  axis, signedness, domain, sparse, and dense-count candidate policies.
+- Added the packed-section adapter over the existing injected RawLzo1X pipeline;
+  upstream failures stop record parsing and no LZO algorithm was added.
+- Added 126 independent synthetic NUnit execution cases plus ADR, format notes,
+  compatibility evidence, matrix entry, and README links.
+
+### Verification boundary
+- `git diff --check` is clean.
+- Current-head Unity XML was not generated: the desktop host's PowerShell
+  process launcher fails on duplicate case-insensitive `PATH`/`Path` variables,
+  and direct Unity launches made no progress before controlled termination.
+- Historical M3-C1 XML is not used as M3-C2 evidence.
+
+### Compatibility
+- IsoMapPack5 reader: Synthetic; tile interpretation and coordinate runtime
+  semantics: Unresolved/NotConfirmed.
+- Real packed ProjectBaseline decode: NotRun; LZO remains contract-only.
+- OverlayPack, PreviewPack, TMP, palette, rendering, writer, pathfinding, and
+  gameplay remain outside this work package.

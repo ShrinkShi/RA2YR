@@ -1,5 +1,34 @@
 # 开发时间线
 
+## 2026-08-04 - M3-C2 IsoMapPack5 raw-record foundation
+
+### 用户目标
+- 从精确 main 开始 M3-C2，只实现 IsoMapPack5 raw record、trailing-data、
+  coordinate-index 和 packed-section adapter foundation。
+
+### 本轮处理
+- 创建 `feature/m3-c2-isomap-pack5-record-foundation`，基线和 `origin/main`
+  均为 `6b6cf581cd2e58c05c33952d5ead2546f4842554`。
+- 实现 11-byte raw record reader、三种 trailing policy、坐标 occurrence/index
+  和注入式 RawLzo1X packed adapter。
+- 将 focused synthetic tests 扩展到 126 个独立执行 case。
+
+### 关键结论
+- 不选择 tile 解释，不创建 TMP/renderer/map object。
+- 不实现真实 LZO，不读取 ProjectBaseline packed 内容。
+- 当前 Unity headless XML 受宿主 `PATH`/`Path` 变量冲突和无进展启动阻塞，
+  不把历史 XML 当作当前 HEAD 证据。
+
+### 影响文件
+- `Assets/RA2YR/Core/Formats/PackedMap/`
+- `Assets/RA2YR/Tests/EditMode/Formats/PackedMap/IsoMapPack5Tests.cs`
+- `docs/adr/0024-isomap-pack5-raw-record-foundation.md`
+- `docs/formats/isomap-pack5.md`
+- `docs/compatibility/evidence/m3c2-isomap-pack5-synthetic-20260805.yml`
+
+### 后续事项
+- 静态门禁通过后推送分支并创建 Draft PR；Unity 与 Repository safety 需在可用主机/连接器上重跑。
+
 ## 2026-08-04 - M3-C1 contract review fixes
 
 ### 用户目标

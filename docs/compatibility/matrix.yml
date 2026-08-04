@@ -589,6 +589,24 @@ entries:
       - id: format.map-pack-codec.map-specific-unimplemented
         status: "已知限制"
         description: "IsoMap, OverlayPack, OverlayDataPack, PreviewPack, TMP, palette, rendering, writer, and original runtime behavior remain unimplemented or unconfirmed."
+  - id: format.isomap-pack5-record
+    domain: format
+    feature: "IsoMapPack5 11-byte raw records, explicit trailing policy, and coordinate occurrence analysis"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.PackedMap.IsoMapPack5Tests"
+    evidence:
+      - "docs/compatibility/evidence/m3c2-isomap-pack5-synthetic-20260805.yml#components"
+    limitations:
+      - id: format.isomap-pack5.synthetic-only
+        status: "已知限制"
+        description: "The reader and coordinate analysis are synthetic/configured only; tile meaning, coordinate runtime semantics, and original behavior are not confirmed."
+      - id: format.isomap-pack5.packed-not-run
+        status: "已知限制"
+        description: "No real packed ProjectBaseline decode was run because the M3-C1 LZO algorithm remains unavailable by design."
+      - id: format.isomap-pack5.map-family-unimplemented
+        status: "已知限制"
+        description: "OverlayPack, OverlayDataPack, PreviewPack, TMP, theater binding, palette, rendering, writer, pathfinding, and gameplay remain unimplemented."
   - id: format.yro-wrapper
     domain: format
     feature: "YRO opaque prefix, INI body, digest, and trailing-data preservation"
