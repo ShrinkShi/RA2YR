@@ -1,6 +1,6 @@
 schema_version: 1
 evidence_id: "wp02g1g2-project-baseline-composition-20260803"
-recorded_at_utc: "2026-08-03T20:05:15.9066409Z"
+recorded_at_utc: "2026-08-04T06:29:05.0107652Z"
 scope: "Configured ProjectBaseline ordered multi-document INI composition and minimal Rules/Art audit"
 
 policy:
@@ -98,27 +98,27 @@ sanitized_runs:
   runtime_resolution:
     directory_fingerprint: "481E4AE76662001008EEF8105CC749B29B958C9C5D39D0DFE889F47A046D1E6E"
     powershell_7:
-      started_utc: "2026-08-03T19:46:37.4762435Z"
-      completed_utc: "2026-08-03T19:46:51.0006675Z"
-      sanitized_summary_sha256: "1DF1BCBADEE1872EC8337AD5E393DD20790D18A699A6ABF14458A8DFD6B76B96"
+      started_utc: "2026-08-04T06:28:51.4004295Z"
+      completed_utc: "2026-08-04T06:29:05.0107652Z"
+      sanitized_summary_sha256: "4813FEEDA1384C4D591E9D865BAC4B5543DBA58347E62D065E1CEA54CC027389"
       unity_exit: 0
     powershell_5_1:
-      started_utc: "2026-08-03T19:47:18.9223180Z"
-      completed_utc: "2026-08-03T19:47:32.3630043Z"
-      sanitized_summary_sha256: "5454DE9B0195300712D2863D8BB181CE0097851549FD7F686FAA27B7BA58E201"
+      started_utc: "2026-08-04T05:57:23.2504964Z"
+      completed_utc: "2026-08-04T05:57:44.6040076Z"
+      sanitized_summary_sha256: "5959FF7EFE6E3E73C0B5DB0639F0F532E6A73318533F851949FD8B838AC11060"
       unity_exit: 0
     stable_aggregate_equivalent: true
   minimal_resource:
     directory_fingerprint: "481E4AE76662001008EEF8105CC749B29B958C9C5D39D0DFE889F47A046D1E6E"
     powershell_7:
-      started_utc: "2026-08-03T20:04:14.9633405Z"
-      completed_utc: "2026-08-03T20:04:28.4676805Z"
-      sanitized_summary_sha256: "3CC45D822700A76E0CDD59201538AB10D0FD81B1FD25A3D6FC400C220A38916A"
+      started_utc: "2026-08-04T06:21:57.4796902Z"
+      completed_utc: "2026-08-04T06:22:11.3284145Z"
+      sanitized_summary_sha256: "C0106094208ABAD9C8E900E46CFA7C892CDEF70057E63D4B9C8E9D02E091E5B6"
       unity_exit: 0
     powershell_5_1:
-      started_utc: "2026-08-03T20:05:02.4526391Z"
-      completed_utc: "2026-08-03T20:05:15.9066409Z"
-      sanitized_summary_sha256: "F2707C077E14CA22C412CA2B75267350DCB57C528EEDCB5C3EABE7B9C27916CB"
+      started_utc: "2026-08-04T06:20:30.7377447Z"
+      completed_utc: "2026-08-04T06:20:44.6294275Z"
+      sanitized_summary_sha256: "B5656D12AFCFAE40BF492C839C922DC1DC2B78E2D30966CBE8981F4C89AE0EA3"
       unity_exit: 0
     stable_aggregate_equivalent: true
 
@@ -141,17 +141,32 @@ synthetic_validation:
     - "ConfiguredForProjectBaseline is not runtime confirmation"
 
 final_validation:
-  unity_editmode: "824/824 passed"
+  unity_editmode: "694/694 passed"
   unity_playmode: "1/1 passed"
-  unity_wrapper_exit: 0
-  forced_post_result_shutdown: false
+  unity_wrapper_exit: { editmode: 0, playmode: 0 }
+  unity_process_exit: { editmode: 0, playmode: 0 }
+  forced_post_result_shutdown: { editmode: true, playmode: true }
+  focused_tests:
+    load_plan: "16/16 passed"
+    composition_audit: "17/17 passed"
+    typed_audit: "1/1 passed"
+  content_wrappers:
+    ini_runtime_resolution_ps5_1: "passed; unityExit=0"
+    ini_runtime_resolution_ps7: "passed; unityExit=0"
+    ini_minimal_resource_ps5_1: "passed; unityExit=0"
+    ini_minimal_resource_ps7: "passed; unityExit=0"
+    csf_ps5_1: "passed; unityExit=0"
+    csf_ps7: "passed; unityExit=0"
+    pal_ps5_1: "passed; unityExit=0"
+    pal_ps7: "passed; unityExit=0"
+    mix_ps5_1: "passed; unityExit=0; auditStatus=CompleteWithArchiveFailures; known zero-byte root archive failure=1"
+    mix_ps7: "passed; unityExit=0; auditStatus=CompleteWithArchiveFailures; known zero-byte root archive failure=1"
+    shp: "not available on synchronized main; no SHP wrapper was migrated into this PR"
   repository_validation:
-    powershell_5_1: "passed; assets=226 meta=226 matrixEntries=148 evidenceReferences=109"
-    powershell_7: "passed; assets=226 meta=226 matrixEntries=148 evidenceReferences=109"
+    powershell_5_1: "passed; assets=194 meta=194 matrixEntries=143 evidenceReferences=91"
     regression: "46/46 passed"
   copyright_scan:
-    powershell_5_1: "passed; violations=0 ignoredExternalProbes=13/13"
-    powershell_7: "passed; violations=0 ignoredExternalProbes=13/13"
+    powershell_5_1: "passed; candidateFiles=535 untracked=0 violations=0 ignoredExternalProbes=13/13"
     regression: "22/22 passed"
   unity_or_xcc_processes_after_validation: 0
   unity_lockfile_present_after_validation: false

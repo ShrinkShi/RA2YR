@@ -1,5 +1,21 @@
 # 变更记录
 
+## 2026-08-03 - 项目级架构和来源边界冻结
+
+### 变更范围
+- 仅文档、第三方元数据台账和开发记录；不修改 SHP forensic 或 production decoder。
+
+### 具体改动
+- 新增 legacy visual provider ADR、现代视觉资产管线和工程可维护性规范。
+- 固定唯一 ProjectBaseline runtime root，并排除 FinalAlert 2、参考工具、手工解包和临时目录。
+- 以文件名、长度和 SHA-256 登记 18 个社区教程文件，正文不进入仓库。
+
+### 验证情况
+- 教程目录复核为 18 个文件、1,034,682 字节，元数据与登记值一致。
+
+### 风险
+- 社区教程许可证未确认，只能 reference-only；其语义不能单独证明 stock runtime 行为。
+
 ## 2026-08-01 - WP-00/WP-01 基础建设
 
 ### 变更范围
@@ -305,3 +321,32 @@
 - Final validation: composition 16/16, full EditMode 824/824, PlayMode 1/1,
   INI wrapper 15/15 in both PowerShell hosts, repository validation 46/46,
   copyright regression 22/22, and all real audit/gate exit codes zero.
+
+## 2026-08-04 - PR #20 synchronized validation closeout
+
+### Change scope
+- Merged current `main` with a normal two-parent merge and semantically retained
+  MAP/TMP research, map-compression research, visual-asset architecture, and
+  ProjectBaseline INI composition records.
+- Clarified that `IniProjectBaselineLoadPlanBuilder` is a fixed audit adapter,
+  not generic runtime archive discovery or mount authority.
+- Fixed the Unity test wrapper exit handshake so XML status, Unity exit code,
+  wrapper exit code, and post-result shutdown are reported independently.
+
+### Verification
+- Focused EditMode: load plan 16/16, composition audit 17/17, typed audit 1/1.
+- Final full Unity: EditMode 694/694 and PlayMode 1/1; Unity and wrapper exits
+  were zero, with controlled post-result shutdown in both modes.
+- ProjectBaseline Rules/Art aggregates and normalized model hashes remained
+  stable in PowerShell 5.1 and 7.
+- Repository validation passed with 194 assets, 194 meta files, 143 matrix
+  entries, and 91 evidence references; regressions passed 46/46.
+- Copyright scan passed with zero violations and regressions passed 22/22.
+- CSF and PAL wrapper timestamp validation now accepts PowerShell 7's strict
+  UTC `DateTime` coercion without weakening the PS5.1 string `Z` requirement;
+  each wrapper gained one regression case.
+
+### Risk
+- The synchronized `main` does not yet contain an SHP audit wrapper; PR #20 did
+  not migrate one from the separate SHP workstream.
+- Original-runtime INI syntax and precedence confirmation remains unimplemented.

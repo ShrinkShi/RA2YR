@@ -46,6 +46,24 @@ whitespace, or empty-value deletion/override behavior.
 - Name comparison, duplicate resolution, semicolon handling, whitespace, and
   empty-value semantics remain separately configured or unresolved.
 
+### Adapter boundary and technical debt
+
+`IniProjectBaselineLoadPlanBuilder` is a fixed adapter for controlled
+`YR1001_ProjectBaseline` audits. It is not the future generic archive-discovery
+service, runtime content index, or authority for mount precedence.
+
+A future generic runtime must receive already established content topology and
+ordering from the content system. Its INI path will consume:
+
+- an explicit mount graph;
+- pre-classified `ContentLayerDescriptor` values; and
+- already sorted `LogicalDocumentLayer` values.
+
+The generic INI resolver must not inspect a provenance root MIX filename and
+infer that archive's layer permission or priority. The current filename
+classification remains isolated to the ProjectBaseline audit adapter and must
+not become a reusable runtime-discovery shortcut.
+
 ## Evidence
 
 The fixed ProjectBaseline runtime audit orders both `rulesmd.ini` and
@@ -70,6 +88,11 @@ stock runtime evidence exists.
 Original-runtime comparison remains unimplemented. A future black-box study
 may confirm or reject the configured order and must independently test the
 remaining intradocument semantics.
+
+Replacing the audit adapter with mount-graph-driven runtime inputs is tracked
+technical debt. That replacement must preserve each winning occurrence, the
+complete overridden-candidate chain, document layer, physical line, `SourceId`,
+logical path, and MIX provenance.
 
 ## Rejected alternatives
 

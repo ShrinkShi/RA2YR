@@ -431,9 +431,12 @@ sources:
     source:
       type: "external-local-reference"
       canonical_upstream: "not recorded"
-      observed_location: "../Reference/RA2-DIY-2025/code-dictionaries-and-text-tutorials (logical external role)"
+      observed_location: "../参考资料/红警DIY2025年版教程附件/2025年版教程/代码词典和文字教程 (logical external role)"
     version_or_hash:
       edition: "2025"
+      observed_file_count: 18
+      observed_total_bytes: 1034682
+      metadata_manifest: "docs/third-party/ra2-diy-2025-community-semantic-reference.yml"
       selected_files:
         global_dictionary_sha256: "5EA3FF65DA0B60599C04EE8690EF29A4399233D62102C45C9E016F01B9A5BB07"
         rules_dictionary_sha256: "ECF9F6E244507F0E28570808DADB0D57E1503FD22D6B587C2CD8E0A6EA74E0BA"
@@ -443,7 +446,7 @@ sources:
     license:
       spdx: "LicenseRef-Unverified-Community-Tutorial"
       verification: "No redistribution or code-import license was established during WP-02G1"
-    purpose: "Community-documented INI syntax, case, comment, duplicate, registry, and explicit Art resource-field hypotheses"
+    purpose: "CommunitySemanticReference for later stock, extension-specific, and unresolved Rules/Art/AI semantic hypotheses"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -451,3 +454,4 @@ sources:
     approval_status: "approved-reference-only-no-reuse"
     notes:
       - "WP-02G2 confirmed that the pinned Rules and Art dictionaries discuss the requested registry and resource field names; no tutorial prose, examples, code, or value data was copied."
+      - "This directory is not a runtime content source and is excluded from candidate discovery."

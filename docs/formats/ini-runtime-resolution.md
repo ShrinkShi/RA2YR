@@ -86,6 +86,24 @@ This order is labelled `ConfiguredForProjectBaseline`. It is not an original
 runtime claim. Name comparison, duplicate sections/keys, inline semicolons,
 whitespace, and empty values remain independent evidence-gated dimensions.
 
+### ProjectBaseline adapter versus future runtime discovery
+
+`IniProjectBaselineLoadPlanBuilder` is intentionally limited to the controlled
+ProjectBaseline audit. It recognizes the fixed `ra2`, `ra2md`, numbered
+`expandmd01..99`, and loose layers for that audit only. It is not a generic
+archive scanner, runtime content index, or mount-authority implementation.
+
+Future runtime composition must consume an explicit mount graph,
+pre-classified `ContentLayerDescriptor` inputs, and an already sorted sequence
+of `LogicalDocumentLayer` values. INI resolution must operate on those declared
+layers; it must not derive layer permission or priority by parsing the root MIX
+filename from provenance.
+
+The current adapter still preserves the complete value trace: winning
+occurrence, overridden candidates, document layer, physical section/key lines,
+`SourceId`, logical path, and full MIX provenance. Moving classification out of
+the adapter must not weaken those guarantees.
+
 ## Evidence review
 
 - FinalAlert 2 commit `6abf0f557469baea73079c6bf6550709e2e3584e`

@@ -1,5 +1,29 @@
 # 开发时间线
 
+## 2026-08-03 - 冻结 runtime root、社区语义参考和现代资产边界
+
+### 用户目标
+- 将权威游戏安装与所有研究/工具目录严格分离，并建立面向现代资产的长期架构边界。
+
+### 本轮处理
+- 新增 ADR 0021、视觉资产管线和工程可维护性规则。
+- 登记 RA2 DIY 2025 教程目录的 18 项脱敏元数据。
+- 更新外部内容、第三方台账、README 和开发决策记录。
+
+### 关键结论
+- legacy 格式是 import adapters；simulation 只引用 `VisualAssetId`。
+- 教程目录是 `CommunitySemanticReference`，不是 runtime content source。
+
+### 影响文件
+- `docs/adr/0021-legacy-formats-are-import-adapters.md`
+- `docs/architecture/visual-asset-pipeline.md`
+- `docs/architecture/engineering-maintainability.md`
+- `docs/third-party/ra2-diy-2025-community-semantic-reference.yml`
+- 架构索引、第三方台账、README 和开发记录
+
+### 后续事项
+- 以独立提交实现 ProjectBaseline ordered multi-document INI semantic composition。
+
 ## 2026-08-01 17:26 - 启动 WP-00 和 WP-01
 
 ### 用户目标
@@ -383,3 +407,39 @@
 - Final ProjectBaseline audits were stable across PowerShell 5.1/7: Rules has
   22,720 resolved values, 22,709 overridden chains, five registries and 1,171
   entries; Art remains 880 records. Final Unity XML is 824/824 and 1/1.
+
+## 2026-08-04 14:35 - PR #20 synchronized closeout
+
+### User goal
+- Synchronize the INI composition branch with current `main`, preserve all
+  merged research and architecture records, rerun local gates, and merge PR #20
+  only after Repository safety succeeds.
+
+### Work completed
+- Resolved the ADR index conflict semantically and reviewed all auto-merged
+  development records and README entries for cumulative preservation.
+- Kept the active PR diff limited to INI composition, Rules/Art audit, tests,
+  wrappers, documentation, evidence, compatibility data, and development logs.
+- Re-ran focused and full Unity tests, content audits, repository validation,
+  copyright checks, and PowerShell 5.1/7 composition audits.
+- Corrected the Unity wrapper's Windows PowerShell exit-code handshake after a
+  passed XML run exposed a null `Process.ExitCode` read.
+- Corrected CSF/PAL UTC timestamp validation for PowerShell 7 JSON date
+  coercion, then reran both audits and their dual-host wrapper regressions.
+
+### Key results
+- EditMode 694/694; PlayMode 1/1; both Unity and wrapper exit codes were zero.
+- Rules remained 22,720 resolved values and 22,709 override chains; Art remained
+  880 records. Both normalized model hashes were unchanged across shell hosts.
+- The evidence level remains `ConfiguredForProjectBaseline`, never
+  `ConfirmedByOriginalRuntime`.
+
+### Files affected
+- `Tools/Testing/Invoke-UnityTests.ps1`
+- `docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml`
+- `.dev-records/changes.md`
+- `.dev-records/timeline.md`
+
+### Next step
+- Commit and push the normal merge, verify PR #27 state, wait for PR #20
+  Repository safety, then squash merge PR #20 without starting PR #21 work.
