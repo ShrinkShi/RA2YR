@@ -12,6 +12,7 @@ RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项�
 
 - 正式 Git 仓库、许可证、第三方来源台账和版权门禁；
 - 核心程序集与 Unity 集成层的依赖边界；
+- legacy SHP/PAL、VXL/HVA 仅作为导入 provider，simulation 只引用逻辑 `VisualAssetId`，不直接判断文件扩展名；
 - 只读外部内容配置、目录文件发现、SHA-256 和版本化 manifest；
 - `OrdinalIgnoreCase` 逻辑路径、显式来源优先级和完整 provenance chain；
 - 仓库外完整 manifest 与仓库内脱敏目录级基线证据；
@@ -49,6 +50,8 @@ Windows 是当前优先平台。核心格式、内容和确定性逻辑的设计
 原版内容、解包素材、FinalAlert 2、参考工具、缓存和本地黄金样本必须保留在正式 Git 仓库之外。Unity 工程只通过本机配置中的绝对路径或相对配置文件的路径进行只读访问，不得把这些文件复制到 `Assets`。
 
 当前开发内容源的统一逻辑名称是 `YR1001_ProjectBaseline`，其 `ContentSourceKind` 为 `Patched`。该基线包含官方地图增补包、音乐包和 Windows 兼容补丁，因此不等于纯净、未修改的 YR 1.001，也不能作为“纯净原版黄金基线”的兼容证明。
+
+当前本机只有该逻辑来源所配置的游戏安装根可参与 runtime candidate discovery。FinalAlert 2、参考资料、手工解包目录、Cache 和工具临时目录即使包含同名文件，也只属于研究或操作边界，不是运行时内容层。`代码词典和文字教程` 已登记为 `CommunitySemanticReference`，仅用于后续区分 stock、扩展和未决语义，不提交教程正文，也不参与加载优先级。
 
 本机配置步骤：
 
@@ -175,6 +178,8 @@ Tools/Testing/                  Unity 命令行测试入口
 - [逻辑内容解析与来源优先级](docs/architecture/content-resolution.md)
 - [安全有界二进制读取基础](docs/architecture/bounded-binary-reading.md)
 - [MIX 内容架构](docs/architecture/mix-content.md)
+- [现代视觉资产管线与 legacy provider 边界](docs/architecture/visual-asset-pipeline.md)
+- [工程可维护性规则](docs/architecture/engineering-maintainability.md)
 - [Westwood MIX 格式研究与验证](docs/formats/mix.md)
 - [Westwood PAL 格式研究与严格解析](docs/formats/pal.md)
 - [Westwood CSF 格式研究与严格解析](docs/formats/csf.md)

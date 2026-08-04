@@ -65,3 +65,16 @@ path check and operation; controlled cache ancestry must remain stationary.
 `YR1001_ProjectBaseline` is patched development content. Its directory-level
 manifest is not a clean YR 1.001 golden manifest, does not inspect MIX payloads,
 and is not original-behavior comparison evidence.
+
+## Runtime discovery boundary
+
+Runtime candidates for the current ProjectBaseline originate only below the
+configured `YR1001_ProjectBaseline` root. Nested MIX provenance remains part
+of that one root. FinalAlert 2, reference/tool directories, manual unpacking,
+temporary tool output, and community tutorials are evidence or operator tools,
+not candidate sources. Matching filenames outside the authoritative root do
+not participate in resolution.
+
+This boundary is independent of later semantic composition rules. A reference
+may help formulate a policy, but it cannot become a content layer merely by
+being available on the same machine.

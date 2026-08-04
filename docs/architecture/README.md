@@ -86,3 +86,9 @@ trace and fails closed for ambiguous/failed inputs. Its current Rules and Art
 surface is limited to explicit resource discovery; see
 [`../formats/ini-minimal-resource-views.md`](../formats/ini-minimal-resource-views.md)
 and ADR 0016.
+
+Legacy visual formats are import adapters rather than canonical runtime
+assets. Simulation references logical visual identities and never branches on
+`.shp` or `.vxl`; see [`visual-asset-pipeline.md`](visual-asset-pipeline.md) and
+ADR 0021. Project-wide implementation and evidence maintenance rules are in
+[`engineering-maintainability.md`](engineering-maintainability.md).
