@@ -4,9 +4,7 @@
 
 ## Purpose
 
-This dossier records public evidence for the declarative scenario graph used by Tiberian Sun, Red Alert 2, and Yuri's Revenge maps and AI definitions. It focuses on raw storage, identity, references, versioned layouts, and parser/executor boundaries.
-
-It does **not** implement a parser, opcode catalog, executor, AI, variable state machine, unit creation, or Unity integration.
+This dossier records public evidence for the declarative scenario graph used by TS, RA2, and YR maps and AI definitions. It focuses on raw storage, identity, references, versioned layouts, and parser/executor boundaries. It does not implement a parser, opcode catalog, executor, AI, variable state machine, unit creation, or Unity integration.
 
 ## Frozen layer boundary
 
@@ -22,112 +20,91 @@ lossless map INI
 → future execution adapters
 ```
 
-The following are prohibited inside Core parsing:
-
-- firing a Trigger;
-- polling an Event;
-- scheduling an Action;
-- creating a Team or unit;
-- executing a ScriptType step;
-- evaluating an AITrigger weight;
-- mutating local or global variables;
-- loading SHP, VXL, HVA, TMP, palette, or Unity assets;
-- creating a `GameObject`, coroutine, behavior tree, timer, or navigation command.
+Core parsing never fires Triggers, polls Events, schedules Actions, creates Teams or units, executes ScriptType steps, evaluates AITrigger weights, mutates variables, loads visual assets, or creates Unity objects.
 
 ## Sections in scope
 
 Primary sections:
 
-- `[Triggers]`;
-- `[Events]`;
-- `[Actions]`;
-- `[Tags]`;
-- `[CellTags]`;
-- `[TeamTypes]` and each TeamType section;
-- `[TaskForces]` and each TaskForce section;
-- `[ScriptTypes]` and each ScriptType section;
-- `[AITriggerTypes]`;
-- `[AITriggerTypesEnable]` as a related enablement layer.
+- `[Triggers]`, `[Events]`, `[Actions]`, `[Tags]`, `[CellTags]`;
+- `[TeamTypes]` and TeamType sections;
+- `[TaskForces]` and TaskForce sections;
+- `[ScriptTypes]` and ScriptType sections;
+- `[AITriggerTypes]` and related enablement data.
 
-Boundary-only sections:
-
-- `[VariableNames]` and possible local/global variable alternatives;
-- `[Houses]` and map-local house sections;
-- placement-section Tag, Group, and Follows fields;
-- `[Waypoints]`;
-- Rules type registries and map-local Rules;
-- campaign and `[Basic]` metadata.
+House, placement, waypoint, variable, Rules and campaign sections are reference boundaries only.
 
 ## Headline findings
 
-1. A common Trigger writer profile emits eight CSV tokens:
-   `owner,linkedTrigger,name,disabled,easy,normal,hard,repeating-or-reserved`.
-2. A common Tag profile emits three CSV tokens:
-   `repeat,name,triggerId`.
-3. `[Events]` starts with a declared count. WAE uses an opcode plus two base parameter slots and up to two additional configured slots; tuple width is therefore profile/opcode dependent.
-4. `[Actions]` starts with a declared count. WAE preserves a fixed tuple of one opcode plus seven raw parameter slots.
-5. Unknown Event or Action opcodes must remain raw. Editor display names and parameter labels are not protocol truth.
-6. TeamTypes are not one CSV list record. `[TeamTypes]` maps list keys to TeamType IDs; each ID has a separate key-value section.
-7. TaskForces and ScriptTypes also use list sections plus per-ID sections. Their ordered numeric child keys are semantically significant candidates.
-8. WAE and community references use up to six TaskForce entries and a two-field `count,type` entry model.
-9. Script steps use a two-field `action,argument` candidate model, distinct from Trigger Events, Trigger Actions, and placement Mission tokens.
-10. AITriggerTypes use an 18-field CSV candidate profile with two TeamType references, owner, condition fields, a comparator blob, three weights, side/state fields, and three difficulty booleans.
-11. Ares and Phobos add Event, Action, and Script opcodes. Extensions require explicit profiles and cannot be treated as vanilla.
-12. Parser output is an immutable declarative graph. A future executor is a separate module with simulation state and deterministic command interfaces.
+1. Common tool profiles use an eight-token Trigger candidate and a three-token Tag candidate.
+2. Events begin with a declared count; WAE uses an opcode, two base parameters, and profile-selected additional parameters.
+3. Actions begin with a declared count; WAE uses an opcode plus seven raw parameter slots.
+4. Unknown, negative, and extension opcodes remain raw and non-executable without an explicit catalog profile.
+5. TeamTypes, TaskForces, and ScriptTypes use list sections plus per-ID sections; order, gaps, duplicates, missing sections, and unknown members remain visible.
+6. The AITrigger 18-field layout is a strong tool/community candidate, not an original-runtime contract.
+7. FinalAlert validation and repair rules are official-tool behavior only; they do not establish runtime acceptance or defaults.
+8. Ares and Phobos opcodes and fields are extension-specific behavior and remain isolated from vanilla candidates.
+9. Parser output is an immutable declarative graph. Full Event/Action/Team/Script/AI execution requires a separate deterministic simulation module.
 
-## Evidence grades
+## Formal evidence grades
 
-Every conclusion uses one of:
+Every formal `Grade` field uses exactly one value:
 
-- `ConfirmedByOfficialRuntimeSource`;
-- `ConfirmedByOfficialEditorSource`;
-- `ConfirmedByIndependentImplementation`;
-- `CommunityDocumented`;
-- `ObservedByFutureProjectBaselineAudit`;
-- `ConfiguredForProjectPolicy`;
+- `ConfirmedByOriginalRuntimeSource`;
+- `ConfirmedByOfficialToolSource`;
+- `ConfirmedByMultipleIndependentImplementations`;
+- `ConfirmedCommunityConvention`;
+- `ImplementationSpecificBehavior`;
+- `DefensiveDesign`;
+- `ConflictingSources`;
+- `Underconfirmed`;
 - `Unresolved`.
 
-The current dossier does not claim complete `ConfirmedByOfficialRuntimeSource` coverage.
+No complete original RA2/YR runtime source was located, so no reviewed claim reaches `ConfirmedByOriginalRuntimeSource`. FinalSun/FinalAlert behavior uses `ConfirmedByOfficialToolSource`. WAE, OpenRA, MapTool, CNCMaps, CnCNet and extension projects are recorded as named `ImplementationSpecificBehavior`. Cross-tool convergence remains `Underconfirmed` unless lineage independence is demonstrated. Stable ModEnc/PPM conventions use `ConfirmedCommunityConvention`; direct tuple, parameter, identity or default conflicts use `ConflictingSources`.
+
+Raw preservation, explicit profiles, no count repair, no last-wins, no opcode fallback, no execution during parsing, bounded collections and fail-closed reference handling are `DefensiveDesign`.
+
+Future ProjectBaseline work is separate:
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+These fields do not imply that ProjectBaseline was read or observed and cannot automatically promote compatibility or become original-runtime evidence.
+
+## Normalized claim summary
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert editor catalogs, validation, repair and ID workflows | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor behavior only. | Preserve a named editor profile; do not inherit repairs. | `NotRun` |
+| WAE Trigger/Event/Action/Team/TaskForce/Script/AITrigger layouts | `ImplementationSpecificBehavior` | World-Altering Editor | Named editor implementation, including configurable extension data. | Source-pinned comparison profile. | `NotRun` |
+| Common Trigger, Tag, Action, TaskForce, Script and AITrigger shapes | `Underconfirmed` | WAE, community docs and supplementary tools | Convergence does not prove independent lineage or runtime strictness. | Explicit family/version profiles. | `NotRun` |
+| Stable community opcode and field names | `ConfirmedCommunityConvention` | ModEnc, PPM and fixed documentation | Names and descriptions are not runtime execution proof. | Provenance per catalog entry. | `NotRun` |
+| Event tuple width, Trigger tail, Action slot defaults and unknown-opcode handling | `ConflictingSources` | Official editor, WAE, community and extensions | Sources directly differ by version/profile and recovery policy. | Preserve raw/count/tail data and report ambiguity. | `NotRun` |
+| Complete runtime Event/Action evaluation, Team recruitment, Script state and AITrigger weighting | `Unresolved` | No original-runtime source located | No reliable complete state machine was found. | Future executor remains separate. | `NotRun` |
+| Immutable raw graph, no execution, explicit references and no repair | `DefensiveDesign` | Project policy | Preservation and architecture boundary. | Fail closed without deleting records. | `NotRun` |
 
 ## Core project policy
 
-The defensive default is:
-
-- preserve every section occurrence, key, raw value, token, unknown field, opcode, and parameter slot;
-- preserve duplicate IDs and dangling edges;
-- do not select an identity or parameter interpretation because a value happens to match an existing object;
-- do not repair counts, booleans, IDs, opcodes, or references;
-- do not normalize case or regenerate IDs by default;
-- require explicit version and extension profiles;
-- report structural and semantic failures separately;
-- use checked arithmetic, bounded collections, and no-progress protection.
+The defensive default preserves every section occurrence, key, value, empty/trailing token, unknown field, opcode and parameter slot; preserves duplicate IDs and dangling edges; never chooses a reference because a numeric value happens to match an object; never repairs counts, booleans, IDs, opcodes or references; requires explicit version/extension profiles; separates structural and semantic diagnostics; and uses checked arithmetic, bounded collections and no-progress protection.
 
 ## Documents
 
-- `section-and-graph-boundaries.md` — section ownership and graph layers.
-- `trigger-tag-identity-model.md` — Trigger, Tag, and identity edges.
-- `event-record-layout-and-opcodes.md` — Event count and tuple candidates.
-- `action-record-layout-and-opcodes.md` — Action count and parameter slots.
-- `parameter-and-reference-semantics.md` — ambiguous parameter typing and variables.
-- `teamtype-record-layout.md` — TeamType list and per-ID section model.
-- `taskforce-and-script-records.md` — TaskForce and ScriptType ordered entries.
-- `aitrigger-record-layout.md` — 18-field AITrigger candidate.
-- `source-comparison.md` — pinned sources and license boundaries.
-- `implementation-boundaries.md` — candidate Core models and policies.
-- `test-matrix.md` — 160 design tests.
-- `baseline-audit-request.md` — future sanitized audit request.
-- `unresolved-questions.md` — evidence gaps.
+- `section-and-graph-boundaries.md`
+- `trigger-tag-identity-model.md`
+- `event-record-layout-and-opcodes.md`
+- `action-record-layout-and-opcodes.md`
+- `parameter-and-reference-semantics.md`
+- `teamtype-record-layout.md`
+- `taskforce-and-script-records.md`
+- `aitrigger-record-layout.md`
+- `source-comparison.md`
+- `implementation-boundaries.md`
+- `test-matrix.md`
+- `baseline-audit-request.md`
+- `unresolved-questions.md`
 
 ## Explicit non-goals
 
-This research does not:
-
-- implement Trigger, Event, Action, Tag, TeamType, TaskForce, ScriptType, or AITrigger parsing code;
-- implement a formal opcode enum or switch table;
-- execute scenario logic;
-- create teams or units;
-- implement variables, AI weights, save-state, or multiplayer synchronization;
-- modify the INI parser;
-- read `ProjectBaseline`;
-- run Unity, RA2/YR, FinalAlert, WAE, XCC, or any map;
-- modify compatibility status, ADRs, formal third-party records, tests, code, or prior research.
+No parser, opcode switch, executor, AI, variables, Teams, units, save state, multiplayer synchronization, INI-parser modification, ProjectBaseline access, Unity/game/editor execution, compatibility change, ADR, code, test, asset, or map modification is included.
