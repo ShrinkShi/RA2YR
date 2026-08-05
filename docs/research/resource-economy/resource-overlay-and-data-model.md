@@ -143,14 +143,14 @@ The official editor contains an estimate shaped like:
 
 for its recognized resource ranges. Project interpretation:
 
-- evidence: `ConfirmedByOfficialEditorSource`;
+- evidence: `ConfirmedByOfficialToolSource`;
 - scope: editor map-money display/estimate;
 - not proof of harvester capacity units;
 - not proof of per-tick unloading;
 - not proof of runtime credit rounding;
 - not proof that every custom resource uses the same formula.
 
-Community reports that runtime and editor estimates may diverge remain `CommunityDocumented` or `Unresolved`.
+Stable community reports that runtime and editor estimates may diverge are `ConfirmedCommunityConvention`; the exact runtime formula remains `Unresolved`.
 
 ## 8. Missing and invalid states
 
