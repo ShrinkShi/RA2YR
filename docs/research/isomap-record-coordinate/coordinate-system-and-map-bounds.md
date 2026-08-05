@@ -28,13 +28,19 @@ The first two `Size` values are commonly zero in writers, but this dossier does 
 
 ## Rectangular canvas candidate
 
-Multiple independent tools allocate a relative/display canvas with:
+Several public tool implementations allocate a relative/display canvas with:
 
 ```text
 CanvasWidth  = 2 × W - 1
 CanvasHeight = H
 CanvasCellCount = (2 × W - 1) × H
 ```
+
+```text
+EvidenceGrade: Underconfirmed
+```
+
+The convergence of these formulas does not prove implementation independence or establish an original-runtime coordinate contract. Shared XCC/OpenRA lineage and cross-tool knowledge transfer remain possible.
 
 The rectangle contains one valid isometric cell for every `(column,row)` pair. It is a convenient normalized canvas, not the raw IsoMap coordinate system.
 
@@ -46,7 +52,7 @@ DisplayRow    = row, 0 .. H-1
 ExpandedY     = dy = 2 × row + (dx mod 2)
 ```
 
-Candidate conversion to raw record coordinates, convergent in OpenRA and CNCMaps:
+Candidate conversion to raw record coordinates, appearing in OpenRA and CNCMaps:
 
 ```text
 RawX = (dx + dy) / 2 + 1
