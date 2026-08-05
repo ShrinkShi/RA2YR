@@ -142,6 +142,9 @@ raw map and asset descriptors
 
 ## 10. 证据
 
-- EA 官方编辑器 `Vec2.h` 明确区分 `CSMap` 与 `CSProjected`，`MapData.h` 提供投影/逆投影：`ConfirmedByOfficialEditorSource`。
-- Overlay 方形存储与 IsoMap 菱形地图域的差异来自既有公开资料研究：`ConfirmedByOfficialEditorSource` + `ConfirmedByIndependentImplementation`。
-- 本文的 domain-tagged Core 结构和禁止隐式转换属于：`ConfiguredForProjectPolicy`。
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert显式区分map与projected坐标并提供投影/逆投影 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 官方编辑器类型与公式，不是原版runtime全部坐标合同。 | 保留命名editor profile。 | `NotRun` |
+| Overlay方形storage与IsoMap菱形domain存在不同坐标视图 | `Underconfirmed` | 官方编辑器、公开reader和既有研究 | 多来源收敛，但谱系独立性及runtime边界未完全证明。 | 使用domain tag和显式转换profile。 | `NotRun` |
+| 一个数值可在不同坐标domain间隐式互换 | `ConflictingSources` | 工具命名、轴顺序和目标引擎视图存在差异 | 相同数值不保证相同语义。 | 禁止隐式转换。 | `NotRun` |
+| domain-tagged Core结构、raw/derived分离和camera不进入logical depth | `DefensiveDesign` | Project policy | 架构与保真策略。 | checked conversion并保留provenance。 | `NotRun` |

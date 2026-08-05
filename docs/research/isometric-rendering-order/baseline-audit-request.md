@@ -7,7 +7,14 @@
 
 ## 1. 状态
 
-本文件只设计未来只读脱敏审计；本任务没有读取、枚举、运行或散列 ProjectBaseline。未来观察只能标记 `ObservedByFutureProjectBaselineAudit`，不得提升兼容状态或替代公开证据。
+本文件只设计未来只读脱敏审计；本任务没有读取、枚举、运行或散列 ProjectBaseline。
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+这些字段不是formal evidence grade，不表示ProjectBaseline已经被读取、Observed或Confirmed。未来aggregate observation不能替代公开来源，也不能自动提升compatibility或成为`ConfirmedByOriginalRuntimeSource`。
 
 ## 2. 目标
 
@@ -152,6 +159,8 @@ hash输入必须：
 
 ```text
 AuditVersion
+AuditStatus = NotRun
+FutureEvidenceSource = ProjectBaselineAggregateAudit
 SelectionBasis
 PublicCategoryCounts
 RangeBuckets
@@ -161,8 +170,10 @@ DiagnosticCounts
 InputModeEquivalence
 AggregateNonLinkableHash?
 RedactionSummary
-EvidenceGrade = ObservedByFutureProjectBaselineAudit
+CurrentEvidenceGrade
 ```
+
+`CurrentEvidenceGrade`只记录审计前的公开来源等级，并使用九项封闭词汇；它不能表示未来审计已经执行。
 
 ## 10. 禁止的行为
 
@@ -172,8 +183,10 @@ EvidenceGrade = ObservedByFutureProjectBaselineAudit
 - 不输出raw snippets；
 - 不自动修复；
 - 不修改compatibility status；
-- 不把audit观察标为official；
+- 不把audit观察标为official/runtime-confirmed；
 - 不将private样本制作成公开test fixture。
+
+以上均为`DefensiveDesign`审计要求。
 
 ## 11. 审计停止条件
 

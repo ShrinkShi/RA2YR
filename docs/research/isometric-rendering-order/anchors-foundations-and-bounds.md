@@ -165,7 +165,7 @@ click/drag可以使用：
 - visual alpha hit test候选；
 - footprint-derived fallback。
 
-这些是 UI policy，不回写 foundation/occupancy。OpenRA公开实现也把 mouse bounds 与 decoration bounds分开，属于独立实现证据。
+这些是 UI policy，不回写 foundation/occupancy。OpenRA公开实现把 mouse bounds 与 decoration bounds分开；这是该命名实现的行为证据，不是原版runtime规则。
 
 ## 12. Wall、gate与factory
 
@@ -201,6 +201,10 @@ click/drag可以使用：
 
 ## 15. Evidence
 
-- SHP frame offset/bounds及 TMP local offsets：`ConfirmedByOfficialEditorSource` + reader evidence。
-- foundation与custom foundation行为：`CommunityDocumented` / independent implementation；精确 vanilla runtime规则部分 `Unresolved`。
-- 多 bounds Core模型：`ConfiguredForProjectPolicy`。
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert保留SHP frame offset/bounds和TMP local offset输入 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 只确认官方编辑器/reader可见的字段和处理输入，不确认所有runtime family的ground-anchor绑定。 | 保留raw offset与frame bounds。 | `NotRun` |
+| OpenRA将mouse bounds与decoration bounds分开 | `ImplementationSpecificBehavior` | OpenRA | 单一目标引擎行为。 | 仅作UI边界比较。 | `NotRun` |
+| Foundation和custom/irregular foundation的长期社区模型 | `ConfirmedCommunityConvention` | ModEnc、Ares、Phobos、PPM | 扩展和社区约定不能自动成为vanilla runtime规则。 | 通过命名product/extension profile绑定。 | `NotRun` |
+| 原版runtime对foundation origin、image bounds和depth anchor的完整统一规则 | `Underconfirmed` | 官方编辑器输入、工具行为和社区资料 | 公开证据不足以确定所有family与版本的统一算法。 | 不从图像尺寸推断foundation。 | `NotRun` |
+| 多bounds模型、raw preservation和image-center fallback诊断 | `DefensiveDesign` | Project policy | 保真和fail-closed设计。 | 分离visual、selection、shadow、foundation和occupancy bounds。 | `NotRun` |

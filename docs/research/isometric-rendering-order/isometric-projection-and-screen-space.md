@@ -25,7 +25,13 @@ projectedY = (mapY + mapX - mapZ) * tileHeight / 2
 | TS editor | 48 | 24 | 24 | 12 |
 | RA2 editor | 60 | 30 | 30 | 15 |
 
-证据等级为 `ConfirmedByOfficialEditorSource`，不是 `ConfirmedByOfficialRuntimeSource`。编辑器 inverse 使用浮点除法、`±0.5` bias 和整型转换；不能据此断言游戏 executable 的负数、边界和 midpoint rounding 完全相同。
+```text
+EvidenceGrade: ConfirmedByOfficialToolSource
+Source: EA FinalSun / FinalAlert 2
+AuditStatus: NotRun
+```
+
+该等级只确认官方编辑器的公式、配置和inverse行为。编辑器inverse使用浮点除法、`±0.5` bias和整型转换；不能据此断言游戏executable的负数、边界、midpoint rounding、picking或所有对象族的排序完全相同。
 
 ## 3. Normalized canvas 候选
 
@@ -101,6 +107,8 @@ TMP header 中的宽高：
 - “每个 TMP 自己决定 map projection”：拒绝作为默认；
 - “renderer profile 决定 logical metric”：项目推荐；
 - physical texture upscale/downscale 与 logical metric 分离。
+
+跨工具收敛的正式等级为`Underconfirmed`：这些实现的谱系独立性与原版runtime适用性均未证明。
 
 ## 7. TMP extra graphics
 
@@ -204,6 +212,9 @@ minimap 通常使用独立 map-to-minimap transform；spectator/replay 共享 pr
 
 ## 13. 推荐决定
 
-- RA2/YR 初始候选：EA editor axis/origin family + `60×30` logical metrics + `15` level step；
-- 状态：`ConfiguredForProjectPolicy` backed by `ConfirmedByOfficialEditorSource`；
-- 任何切换到其他公式必须由 profile ID 明确，不允许自动试解和“最像截图”选择。
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert的RA2 axis/origin family、`60×30`和`15` level step | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 只确认官方编辑器行为。 | 保存为命名editor-compatible profile。 | `NotRun` |
+| 该profile是原版RA2/YR唯一projection/runtime contract | `Underconfirmed` | 官方编辑器和公开工具收敛 | 缺少原版runtime source，工具谱系也未证明独立。 | 初始候选可选，但不能自动提升。 | `NotRun` |
+| 64-bit checked arithmetic、显式rounding/profile和禁止“最像截图”选择 | `DefensiveDesign` | Project policy | 项目安全与确定性设计。 | profile ID必须显式记录。 | `NotRun` |
+| 原版runtime对负数、边界、inverse picking和midpoint的精确行为 | `Unresolved` | 未找到原版runtime source | editor inverse不足以确认runtime。 | 保留多个命名rounding profile。 | `NotRun` |

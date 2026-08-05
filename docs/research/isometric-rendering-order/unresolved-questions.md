@@ -14,8 +14,8 @@
 | P0-03 | logical tile metrics是否永远60×30，是否有theater/asset例外？ | editor与tools常见 | asset/map尺度漂移 | public corpus证据或strict configured profile |
 | P0-04 | IsoMap Level的vanilla pixel step与所有family是否统一？ | editor H/2 | object/terrain错层 | runtime evidence或project policy |
 | P0-05 | TMP HeightRaw的准确runtime语义与signedness？ | readers冲突/不完整 | 重复加高 | typed profile；默认不参与global position |
-| P0-06 | RampTypeRaw如何影响object contact、vehicle pitch/roll和shadow？ | community/independent engine | 坡面漂浮/穿插 | adapter contract + evidence |
-| P0-07 | original runtime的完整render pass与family priority？ | tools/independent renderers | 遮挡错误 | explicit project pass policy |
+| P0-06 | RampTypeRaw如何影响object contact、vehicle pitch/roll和shadow？ | community/target-engine behavior | 坡面漂浮/穿插 | adapter contract + evidence |
+| P0-07 | original runtime的完整render pass与family priority？ | tools/public renderers | 遮挡错误 | explicit project pass policy |
 | P0-08 | exact depth comparator：screenY、cell、foundation edge、Z/YAdjust如何组合？ | community与实现分散 | flicker/错层 | source proof或configurable tuple |
 | P0-09 | same-cell Unit/Infantry/Terrain/Structure的vanilla tie规则？ | underdocumented | nondeterminism | deterministic project tie policy |
 | P0-10 | SHP frame X/Y offset与family ground anchor的准确绑定？ | raw offsets已知 | object整体偏移 | family anchor profile |
@@ -25,7 +25,7 @@
 | P0-14 | TMP depth/extra depth sample的scale、compare、zero/out-of-range政策？ | implementations conflict | feet/cliff clipping错误 | renderer experiment/source；不由audit升级 |
 | P0-15 | SHP shadow family：separated frame、palette mask、frame index选择？ | community/tool evidence | shadow丢失/错帧 | per-family ShadowSource profile |
 | P0-16 | VXL shadow投影、cache和part selection？ | community flags | 多part shadow错误 | VXL shadow专项 |
-| P0-17 | high bridge deck精确elevation、under/deck layer和destroyed transition？ | explicit layers in independent engine | bridge上下错层 | bridge semantic contract |
+| P0-17 | high bridge deck精确elevation、under/deck layer和destroyed transition？ | explicit layers in target engine | bridge上下错层 | bridge semantic contract |
 | P0-18 | aircraft authored placement到runtime altitude/landing状态的初始化关系？ | map record不足 | aircraft落点错 | simulation interface |
 | P0-19 | aircraft ground shadow receiver是ground、water还是bridge deck？ | underdocumented | shadow穿桥 | receiver-layer policy |
 | P0-20 | fog/shroud与shadow/aircraft/attached effects的visibility先后？ | renderer-specific |信息泄漏/视觉错误 | explicit visibility policy |
@@ -53,15 +53,26 @@
 
 ## Evidence gates
 
-任何结论升级必须满足：
+任何结论升级必须使用以下封闭词汇，并满足对应条件：
 
-- `ConfirmedByOfficialRuntimeSource`: 可审查、明确对应目标runtime路径；
-- `ConfirmedByOfficialEditorSource`: 只描述editor；
-- `ConfirmedByIndependentImplementation`: 标明目标引擎与差异；
-- `CommunityDocumented`: 固定revision/topic；
-- baseline只可 `ObservedByFutureProjectBaselineAudit`；
-- project选择标为 `ConfiguredForProjectPolicy`；
-- 无证据保持 `Unresolved`。
+- `ConfirmedByOriginalRuntimeSource`：必须有可审查、明确对应目标原版runtime路径的实际source；
+- `ConfirmedByOfficialToolSource`：只描述FinalSun/FinalAlert等官方工具行为；
+- `ConfirmedByMultipleIndependentImplementations`：必须证明多个实现谱系独立；本专题当前没有达到该等级的claim；
+- `ConfirmedCommunityConvention`：固定revision/topic支持的长期社区约定；
+- `ImplementationSpecificBehavior`：单个renderer、reader、writer或extension行为；
+- `DefensiveDesign`：项目显式profile、raw preservation、checked arithmetic、stable tuple和fail-closed选择；
+- `ConflictingSources`：公开来源对公式、顺序、anchor、depth或layer直接冲突；
+- `Underconfirmed`：已有候选，但谱系独立性或runtime适用性不足；
+- `Unresolved`：没有足够证据形成可靠候选。
+
+Future ProjectBaseline work始终单独记录：
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+不得将未来aggregate observation当作已执行证据或原版runtime source。
 
 ## 禁止的“关闭方式”
 
@@ -87,4 +98,4 @@
 7. raw depth plane + unresolved interpretation；
 8. camera/UI/Unity adapter完全隔离。
 
-这些必须标为 `ConfiguredForProjectPolicy`，不得宣称pixel-identical vanilla。
+这些均为`DefensiveDesign`，不得宣称pixel-identical vanilla。

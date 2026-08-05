@@ -42,9 +42,17 @@ RenderTieBreakPolicy
 
 ## 3. 公开实现证据
 
-OpenRA 在固定 revision 中使用 `Pos.Y + Pos.Z + ZOffset` 作为主比较 key，并把原始提交 index 拼入 key 进行稳定排序，注释明确指出稳定排序用于避免闪烁。该行为是 `ConfirmedByIndependentImplementation`，不是 RA2/YR runtime 算法。
+OpenRA 在固定 revision 中使用 `Pos.Y + Pos.Z + ZOffset` 作为主比较 key，并把原始提交 index 拼入 key 进行稳定排序，注释明确指出稳定排序用于避免闪烁。这是该命名目标引擎的实现行为，不是 RA2/YR runtime 算法。
 
 EA editor公开坐标、frame offset和对象绘制代码提供输入候选，但未提供可证明原版 runtime 的完整统一 comparator。
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| OpenRA使用`Pos.Y + Pos.Z + ZOffset`并通过提交index稳定排序 | `ImplementationSpecificBehavior` | OpenRA | 单一目标引擎renderer行为。 | 仅作为稳定排序设计比较。 | `NotRun` |
+| FinalAlert公开projection、frame offset和对象绘制输入 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 不提供完整runtime comparator或所有family tie规则。 | 保留为source-pinned输入证据。 | `NotRun` |
+| screen/world Y、Z/YAdjust、foundation edge和source order的跨工具组合形成唯一runtime comparator | `Underconfirmed` | 多个公开工具和社区资料 | 实现模型不同，谱系独立性和runtime适用性均未证明。 | 使用显式可序列化tuple profile。 | `NotRun` |
+| 原版runtime完整depth comparator和exact tie规则 | `Unresolved` | 未找到原版runtime source | 现有证据无法形成可靠唯一算法。 | stable source ordinal与identity作为项目fallback。 | `NotRun` |
+| 稳定tuple、checked arithmetic、禁止Unity instance ID/hash/random tie | `DefensiveDesign` | Project policy | 确定性与fail-closed设计。 | 相同输入必须产生可重放排序。 | `NotRun` |
 
 ## 4. 不足的单一输入
 
@@ -209,4 +217,4 @@ logical depth用未zoom的 projected logical pixel/world coordinate。zoom、DPI
 
 ## 14. 项目候选
 
-`RenderDepthKey` 是结构化 tuple；`RenderTieBreakPolicy` 可序列化并带 evidence grade。首次实现前必须由 synthetic independent oracle测试，而不能调用 production projection/anchor/sort代码生成 expected值。
+`RenderDepthKey` 是结构化 tuple；`RenderTieBreakPolicy` 可序列化并带 evidence grade。首次实现前必须由 synthetic independent oracle测试，而不能调用 production projection/anchor/sort代码生成 expected值。该稳定排序策略为`DefensiveDesign`，不宣称复制原版runtime comparator。

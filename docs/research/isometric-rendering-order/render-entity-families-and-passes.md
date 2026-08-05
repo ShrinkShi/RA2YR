@@ -138,7 +138,10 @@ selection bracket、health bar、veterancy、hover label、target line、rally p
 
 ## 10. Evidence grade
 
-- 公开 renderer 对 terrain、world actor、shroud、overlay、annotation分阶段：`ConfirmedByIndependentImplementation`。
-- EA editor 对 TMP、overlay、object、UI绘制存在分工：`ConfirmedByOfficialEditorSource`。
-- 本 pass 枚举和 family contracts：`ConfiguredForProjectPolicy`。
-- 原版 runtime 的精确 pass list与相互顺序：`Unresolved`。
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert对TMP、overlay、object和UI绘制有分工 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 官方编辑器绘制结构，不确认原版runtime完整pass list。 | 保留为source comparison。 | `NotRun` |
+| OpenRA等公开renderer分离terrain、world actor、shroud、overlay和annotation | `ImplementationSpecificBehavior` | Named public renderers | 各自目标引擎行为，不能合并为独立runtime证明。 | 每个工具单独记录profile。 | `NotRun` |
+| 多工具存在阶段化绘制的共同趋势 | `Underconfirmed` | Public tools and community material | 共享知识传播、family差异和runtime适用性未证明。 | 不按来源数量决定pass。 | `NotRun` |
+| 原版runtime精确pass list、translucency顺序和family priority | `Unresolved` | 未找到原版runtime source | 当前没有可靠唯一候选。 | 显式render-pass profile。 | `NotRun` |
+| 本文pass枚举、family contracts和UI隔离 | `DefensiveDesign` | Project policy | 项目架构与确定性设计。 | 不保存Unity SortingLayer名称为格式语义。 | `NotRun` |

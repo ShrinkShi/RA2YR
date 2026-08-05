@@ -243,17 +243,17 @@ Every applicable case additionally checks:
 - no camera zoom in logical key;
 - no image-size-derived foundation;
 - no shadow/depth-derived occupancy;
-- no Unity object creation.
+- no Unity object creation。
 
 ## 4. Determinism repetition
 
 `DT-01..28` and `SA-01..04` repeat with:
 
-1. original collection order;
-2. reversed collection order;
-3. stable source records loaded in randomized batches;
-4. save/load reconstructed identities;
-5. alternate camera/zoom/viewport.
+1. original collection order；
+2. reversed collection order；
+3. stable source records loaded in randomized batches；
+4. save/load reconstructed identities；
+5. alternate camera/zoom/viewport。
 
 Only display-space bounds may change under camera transforms. Logical pass, elevation layer, depth tuple and tie resolution must remain byte-for-byte/canonically equal.
 
@@ -261,14 +261,19 @@ Only display-space bounds may change under camera transforms. Logical pass, elev
 
 Failures must return deterministic diagnostic/failure classes, not partial success, for:
 
-- arithmetic overflow;
-- truncated claimed depth plane;
-- MIX window escape;
-- entity/bounds/foundation/depth limits;
-- unresolved exact tie under strict policy;
-- missing authored foundation when required;
-- use of Unity/camera/UI data in Core semantics.
+- arithmetic overflow；
+- truncated claimed depth plane；
+- MIX window escape；
+- entity/bounds/foundation/depth limits；
+- unresolved exact tie under strict policy；
+- missing authored foundation when required；
+- use of Unity/camera/UI data in Core semantics。
 
 ## 6. Future audit relation
 
-ProjectBaseline cannot become a fixture source. A future sanitized audit may only report aggregate pass/layer/family/collision/diagnostic categories and input-mode equality with evidence `ObservedByFutureProjectBaselineAudit`.
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+ProjectBaseline cannot become a fixture source. A future sanitized audit may only report aggregate pass/layer/family/collision/diagnostic categories and input-mode equality. It does not create a formal evidence grade and cannot become original-runtime confirmation.

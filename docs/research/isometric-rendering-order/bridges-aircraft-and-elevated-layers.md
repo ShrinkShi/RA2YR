@@ -74,9 +74,16 @@ Overlay piece或TMP art单独都不足以建立完整bridge state。
 
 ## 5. 公开实现证据
 
-OpenRA固定 revision提供 `ElevatedBridgeLayer` custom movement layer，显式保存桥面cell center、terrain index与入口/出口。这是“显式层比screen Y更稳健”的 `ConfirmedByIndependentImplementation`，不是vanilla内部结构证明。
+OpenRA固定revision提供`ElevatedBridgeLayer` custom movement layer，显式保存桥面cell center、terrain index与入口/出口。这证明该命名目标引擎采用显式层模型，但不证明原版RA2/YR runtime内部使用相同结构。
 
-EA editor对big bridge overlay有特殊分类，证明editor也没有把桥仅当普通排序对象；仍不证明runtime算法。
+EA editor对big bridge overlay有特殊分类，确认官方编辑器不会把所有桥梁输入都视为普通排序对象；仍不确认runtime拓扑、damage transition或pathfinding算法。
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| OpenRA使用`ElevatedBridgeLayer`显式描述桥面层 | `ImplementationSpecificBehavior` | OpenRA | 单一目标引擎实现。 | 仅作分层架构比较。 | `NotRun` |
+| FinalAlert对部分big bridge overlay进行特殊分类 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 官方编辑器行为，不是runtime simulation证据。 | 保留source-pinned桥梁分类输入。 | `NotRun` |
+| 原版runtime使用唯一已知的桥上/桥下/deck排序与拓扑模型 | `Underconfirmed` | 工具、社区和目标引擎资料 | 缺少原版runtime source，工具模型也可能存在共享知识传播。 | 使用显式命名layer和profile。 | `NotRun` |
+| Ground/UnderBridge/BridgeDeck/Air显式层与禁止screen-Y猜测 | `DefensiveDesign` | Project policy | 项目稳定排序与fail-closed边界。 | 不由视觉位置推导simulation/pathfinding状态。 | `NotRun` |
 
 ## 6. Damage与destroyed
 
@@ -198,4 +205,4 @@ aircraft world visibility、ground shadow visibility、selection bracket、targe
 
 ## 16. 项目决定
 
-显式保留 `ElevationLayer`/`BridgeDeckLayer`/`UnderBridgeLayer`/`AirLayer` 候选；Core只描述，不实现bridge/pathfinding/aircraft simulation。
+显式保留`ElevationLayer`/`BridgeDeckLayer`/`UnderBridgeLayer`/`AirLayer`候选；Core只描述，不实现bridge/pathfinding/aircraft simulation。该决定为`DefensiveDesign`。

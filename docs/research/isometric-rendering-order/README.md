@@ -115,16 +115,42 @@ raw map and asset descriptors
 | `baseline-audit-request.md` | 未来 ProjectBaseline 脱敏只读审计设计 |
 | `unresolved-questions.md` | P0/P1 未决问题与停止条件 |
 
-## 6. 证据等级
+## 6. Formal evidence grades
 
-本专题只使用以下证据等级：
+所有正式 `Grade` 字段只使用以下九项封闭集合：
 
-- `ConfirmedByOfficialRuntimeSource`
-- `ConfirmedByOfficialEditorSource`
-- `ConfirmedByIndependentImplementation`
-- `CommunityDocumented`
-- `ObservedByFutureProjectBaselineAudit`
-- `ConfiguredForProjectPolicy`
+- `ConfirmedByOriginalRuntimeSource`
+- `ConfirmedByOfficialToolSource`
+- `ConfirmedByMultipleIndependentImplementations`
+- `ConfirmedCommunityConvention`
+- `ImplementationSpecificBehavior`
+- `DefensiveDesign`
+- `ConflictingSources`
+- `Underconfirmed`
 - `Unresolved`
 
-未发现可覆盖本专题的完整 RA2/YR 官方运行时源码，因此不会人为使用第一级证明运行时细节。
+`ConfirmedByOriginalRuntimeSource` 仅用于真正的原版 RA2/YR runtime 或其实际 source。本专题没有找到可支撑该等级的公开原版 runtime source。
+
+FinalSun、FinalAlert 等官方编辑器行为使用 `ConfirmedByOfficialToolSource`，不能据此确认原版 runtime。单个 renderer、reader、writer 或 extension 行为使用 `ImplementationSpecificBehavior`。多个公开工具的公式或排序模型即使收敛，只要谱系独立性或 runtime 适用性未证明，就使用 `Underconfirmed`；来源直接冲突时使用 `ConflictingSources`。
+
+项目稳定 tuple key、显式 elevation layer、raw preservation、checked arithmetic、禁止截图/视觉合理性选择、禁止从图像推断 foundation 等均属于 `DefensiveDesign`，不是外部格式事实。
+
+Future ProjectBaseline work 单独记录：
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+该状态不表示已经读取或观察 ProjectBaseline，也不能自动提升 compatibility 或成为 `ConfirmedByOriginalRuntimeSource`。
+
+## 7. Normalized claim summary
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert 使用 RA2 `60×30`、TS `48×24` 的投影配置，并按半 tile height 处理 Level | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 只确认官方编辑器公式、配置和作者工具行为；不确认原版 runtime 的全部 rounding、origin、picking 或 family comparator。 | 作为命名 editor-compatible profile 保存。 | `NotRun` |
+| `60×30` 与 `15 px per Level` 是 RA2/YR 的主要公共候选 | `Underconfirmed` | FinalAlert 与多个公开工具/社区资料 | 工具收敛不证明实现谱系独立，也不建立唯一 runtime 合同。 | 显式 profile；不得按截图自动选择。 | `NotRun` |
+| OpenRA 的 stable sort 和 elevated bridge layer | `ImplementationSpecificBehavior` | OpenRA | 目标引擎实现行为，不是 RA2/YR runtime 算法。 | 仅作比较输入。 | `NotRun` |
+| 一个唯一的原版 runtime render pass list、depth comparator 和 tie rule 已被确定 | `Unresolved` | 未找到原版 runtime source | 公开工具模型、社区规则和 editor 输入不足以确定完整算法。 | 使用可序列化稳定 tuple 与 canonical source ordinal。 | `NotRun` |
+| 公开 renderer 在 projection、pass、bridge layer 和 depth model 上存在不同实现 | `ConflictingSources` | FinalAlert、OpenRA、WAE、CNCMaps、社区资料 | 冲突可能来自目标引擎、坐标命名、family policy 或共享知识传播。 | 保留多个命名 profile，不通过视觉结果选胜者。 | `NotRun` |
+| authored foundation、raw frame offset、TMP depth bytes、occupancy 和 simulation elevation 必须分层 | `DefensiveDesign` | Project policy | 保真与架构边界，不是 runtime 事实。 | 禁止从 SHP/VXL/TMP 视觉尺寸反推 foundation、passability 或 simulation state。 | `NotRun` |

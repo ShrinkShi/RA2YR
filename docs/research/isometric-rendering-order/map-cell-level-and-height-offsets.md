@@ -33,7 +33,13 @@ screenY = (mapX + mapY - Level) * tileHeight / 2
 - TS editor: 每 Level `12` logical pixels；
 - RA2 editor: 每 Level `15` logical pixels。
 
-这属于 `ConfirmedByOfficialEditorSource`。原版 runtime 是否在所有对象族、inverse picking、cliff clipping 中使用相同舍入仍为 `Unresolved`。
+```text
+EvidenceGrade: ConfirmedByOfficialToolSource
+Source: EA FinalSun / FinalAlert 2
+AuditStatus: NotRun
+```
+
+该等级只确认官方编辑器的Level投影候选。原版runtime是否在所有对象族、inverse picking、cliff clipping和桥梁层中使用相同单位及舍入仍为`Unresolved`。
 
 `HeightOffsetPolicy` 至少包含：
 
@@ -64,6 +70,8 @@ AppliesToObjectGroundAnchor
 - 用 HeightRaw 调整全局 map origin；
 - 因 HeightRaw 与 Level 不一致而修改 raw map；
 - 把它作为 passability。
+
+该字段存在属于工具/reader证据；其唯一runtime语义为`Underconfirmed`或`Unresolved`，不能由工具数量提升。
 
 ## 4. RampTypeRaw
 
@@ -103,6 +111,8 @@ RampDescriptor
 - building 是否允许坡面放置由 simulation/rules决定；
 - renderer 不能借由视觉 ramp 修改 occupancy。
 
+以上为`DefensiveDesign`，不是runtime事实。
+
 ## 6. Building on slope
 
 需显式处理四种结果，而不是让 renderer 猜：
@@ -124,7 +134,7 @@ VXL/HVA future renderer 可能消费：
 - suspension/impact offset；
 - body/turret/barrel transforms。
 
-这些是 presentation/simulation adapter 输入，不属于 TMP reader。OpenRA 的 ramp corner interpolation是独立实现证据，不是 vanilla 算法证明。
+这些是 presentation/simulation adapter 输入，不属于 TMP reader。OpenRA 的 ramp corner interpolation是`ImplementationSpecificBehavior`，不是vanilla算法证明。
 
 ## 8. Infantry foot point与subcell
 
@@ -173,9 +183,12 @@ aircraft shadow优先 ground reference，而非 aircraft screen anchor。ramp �
 - `VisualOffsetUsedAsSimulationHeight`
 - `DepthPixelUsedAsLevel`
 
-## 12. 项目 policy
+## 12. Normalized evidence and policy
 
-- Initial RA2 editor-compatible level step: `15 logical pixels`；
-- raw `Level`、`HeightRaw`、`RampTypeRaw`、depth plane 永不合并；
-- ramp pose与simulation surface算法保持 adapter-owned；
-- 所有缺证据行为显式 `Unresolved`，不得用截图修正。
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert按half tile height投影Level | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 只确认editor profile。 | 保存为命名height profile。 | `NotRun` |
+| 多个工具/社区资料采用相近Level与ramp解释 | `Underconfirmed` | public tools、TS++/community material | 谱系独立性、signedness和runtime适用性不足。 | 不合并raw Level、HeightRaw和RampTypeRaw。 | `NotRun` |
+| OpenRA ramp corner interpolation | `ImplementationSpecificBehavior` | OpenRA | 单一目标引擎算法。 | 仅作comparison profile。 | `NotRun` |
+| 原版runtime的TMP HeightRaw、RampType和object contact统一算法 | `Unresolved` | 未找到原版runtime source | 当前没有可靠唯一候选。 | adapter-owned，未知值raw保留。 | `NotRun` |
+| `15 logical pixels`初始配置、raw字段分离、禁止视觉反推simulation | `DefensiveDesign` | Project policy | 项目保真和架构边界。 | 显式profile与checked arithmetic。 | `NotRun` |
