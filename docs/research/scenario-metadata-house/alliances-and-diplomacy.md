@@ -1,350 +1,49 @@
 # Alliances and diplomacy
 
-> **Source notice:** ChatGPT Web public-source research. ProjectBaseline was not read. This is not a Codex artifact. No GPL or unclear-license code was copied, translated, or mechanically ported. `code_imported: false`.
+> **Source notice:** ChatGPT Web public-source research. ProjectBaseline was not read. No GPL or unclear-license code was imported. `code_imported: false`.
 
 ## Scope
 
-This document models authored alliance metadata as a reference graph. It does not implement diplomacy, hostility, team assignment, Trigger actions, or multiplayer alliance locking.
+Authored alliance metadata is a raw reference graph. This document does not implement diplomacy, hostility, lobby teams, Trigger actions or runtime alliance locking.
 
-## Raw alliance source
-
-Leading public candidate:
+## Raw model
 
 ```ini
 [HouseA]
 Allies=HouseA,HouseB
 ```
 
-WAE writes `Allies` as a comma-separated list of House logical names. The official editor exposes an Allies text field and commonly generates self-alliance in its authoring defaults.
-
-Evidence:
-
-- official editor behavior: `ConfirmedByOfficialEditorSource`;
-- WAE reader/writer model: `ConfirmedByIndependentImplementation`.
-
-## Directed edge model
-
-Default representation:
-
-```text
-ScenarioAllianceEdgeRaw
-- SourceHouseIdRaw
-- TargetHouseIdRaw
-- ListOccurrence
-- TokenOccurrence
-- RawToken
-- ResolutionState
-- EvidenceGrade
-```
-
-Each token creates one directed raw edge candidate:
+Each token creates a directed candidate edge:
 
 ```text
 HouseA → HouseB
 ```
 
-The parser does not create:
+Core preserves exact text, empties, whitespace, duplicate tokens, trailing delimiters, order, case and duplicate `Allies` keys. It does not synthesize `HouseB → HouseA`, remove self edges, deduplicate, correct case or drop missing targets.
 
-```text
-HouseB → HouseA
-```
+## Evidence
 
-unless it is explicitly authored.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes and authors Allies text/defaults | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor behavior only. | Preserve an editor-compatible profile. | `NotRun` |
+| WAE reads/writes comma-separated House-name lists | `ImplementationSpecificBehavior` | World-Altering Editor | Named editor behavior. | Retain raw ordered tokens. | `NotRun` |
+| Directed ordered House-reference list is the leading authored model | `Underconfirmed` | Official editor, WAE and community docs | Runtime symmetry and malformed handling are unsourced. | Store directed raw edges first. | `NotRun` |
+| Runtime alliance symmetry, self-edge requirements and missing-target behavior | `Unresolved` | No original-runtime source located | No reliable unique contract. | Future diplomacy/session policy. | `NotRun` |
+| Sources/layers implying symmetric teams versus directed authored edges | `ConflictingSources` | Map, lobby/client and gameplay terminology | Lobby team number is not authored Allies. | Keep graph and session teams separate. | `NotRun` |
+| No reverse-edge synthesis, no repair and duplicate/case preservation | `DefensiveDesign` | Project policy | Preservation/fail-closed design. | Return diagnostics and candidates. | `NotRun` |
 
-## Raw delimiter
+## FixedAlliance boundary
 
-The leading delimiter is comma. Preserve:
+`FixedAlliance` is separate raw SpecialFlags metadata. It does not repair, symmetrize or validate the authored graph during parsing. A future session adapter may apply a named policy using the raw graph plus lobby/game-mode context.
 
-- exact raw text;
-- empty entries;
-- whitespace;
-- duplicate tokens;
-- trailing comma;
-- source order;
-- case;
-- repeated `Allies` keys.
+## Identity boundaries
 
-A semantic tokenizer may offer trimmed candidates while retaining the raw token.
+House instance, Country/HouseType, Side, lobby team, TeamType, local player and network peer are distinct. Similar names or numbers do not create alliance edges.
 
-## Self alliance
+## Diagnostics
 
-```text
-HouseA → HouseA
-```
+Suggested statuses include self edge, duplicate edge, missing target, case collision, duplicate source key, asymmetric pair, ambiguous target and unresolved sentinel. None mutates source data.
 
-Self-alliance is common in editor-created sections and may be meaningful, redundant, or required by a profile.
+## Runtime boundary
 
-Core preserves it and records:
-
-```text
-IsSelfReference = true
-```
-
-It does not delete or synthesize self edges.
-
-## Duplicate ally
-
-```ini
-Allies=HouseB,HouseB
-```
-
-Both token occurrences remain in the raw list. A graph analysis may report a duplicate directed edge but does not deduplicate the lossless view.
-
-## Missing ally
-
-```ini
-Allies=MissingHouse
-```
-
-Result:
-
-```text
-Raw edge retained
-Target resolution = MissingTarget
-```
-
-WAE may skip an unresolved allied House in its in-memory model. That is recovery behavior, not Core policy.
-
-## Case collision
-
-If `Alpha` and `ALPHA` exist or a reference uses a different case:
-
-- exact match candidate;
-- case-insensitive match candidates;
-- collision state;
-- selected profile comparison rule.
-
-No automatic case correction is written back.
-
-## Asymmetric alliance
-
-Example:
-
-```text
-A → B
-B has no A edge
-```
-
-Possible interpretations:
-
-- valid one-way authored relationship;
-- malformed incomplete symmetric alliance;
-- editor output anomaly;
-- runtime input accepted as directed;
-- runtime later symmetrizes;
-- profile-specific behavior.
-
-Project default:
-
-```text
-Preserve directed graph
-Analyze symmetry separately
-```
-
-## Symmetry analysis
-
-```text
-ScenarioAlliancePairAnalysis
-- AtoBCount
-- BtoACount
-- IsSymmetricCandidate
-- IsSelfPair
-- MissingIdentity
-- EvidenceGrade
-```
-
-Possible classifications:
-
-- symmetric;
-- asymmetric;
-- duplicate symmetric;
-- dangling;
-- case-ambiguous;
-- unresolved.
-
-No repair occurs.
-
-## `FixedAlliance`
-
-`[SpecialFlags] FixedAlliance` is a separate raw policy candidate. Community documentation associates it with preventing in-game alliance changes in multiplayer.
-
-Important separation:
-
-```text
-Authored Allies graph
-≠ alliance mutability policy
-```
-
-`FixedAlliance=yes` does not instruct the parser to:
-
-- make every authored edge reciprocal;
-- merge lobby teams;
-- remove missing allies;
-- create enemies;
-- freeze a runtime diplomacy system.
-
-It only contributes metadata for a future session/simulation policy.
-
-## Enemies and neutrality
-
-Potential sources may describe:
-
-- enemy lists;
-- neutral relations;
-- default hostility;
-- special/civilian diplomacy;
-- team numbers;
-- Trigger-driven changes.
-
-No universal inverse relation is derived from absence in `Allies`.
-
-A missing alliance edge does not itself mean explicit enemy.
-
-## Neutral and Special
-
-Neutral, Special, and civilian Houses can have authored alliance tokens, special runtime defaults, or hardcoded relationships.
-
-Core records raw edges and identity resolution. It does not impose hardcoded diplomatic defaults in this dossier.
-
-## Trigger-driven alliance changes
-
-M3-R8 records Trigger Action parameters and reference graph candidates. A future executor may apply alliance-changing actions.
-
-This dossier distinguishes:
-
-```text
-Initial authored alliance graph
-Runtime diplomacy state
-Trigger command stream
-```
-
-The parser does not simulate Trigger actions.
-
-## Multiplayer team number
-
-Lobby team number is not an authored House alliance edge.
-
-```text
-LobbyTeamNumber
-≠ TeamType
-≠ House.Allies
-≠ Country/Side
-```
-
-A future session policy may translate players assigned to the same lobby team into initial runtime alliances. That translation is external to map parsing.
-
-## Cooperative group
-
-A cooperative scenario may provide authored Houses and alliances, while a client may separately group human players.
-
-The mode descriptor records both evidence sources and does not conflate them.
-
-## TeamType distinction
-
-`TeamType` is an AI/unit-team template studied in M3-R8. It is unrelated to multiplayer lobby teams or House diplomacy despite sharing the word “team.”
-
-## Country and Side distinction
-
-Two Houses using the same Country or Side are not automatically allies.
-
-No alliance is inferred from:
-
-- same Country;
-- same Side;
-- same color;
-- adjacent start positions;
-- same owner type;
-- same player team number unless a session policy explicitly maps it.
-
-## Potential bitmask candidates
-
-Some games or internal runtime systems may use alliance bitmasks. The map-facing leading evidence is a list of House IDs.
-
-If a source exposes a numeric/bitmask alliance field, it must be modeled as a separate profile rather than reinterpreting a string list automatically.
-
-## Alliance graph result
-
-```text
-ScenarioAllianceGraph
-- HouseIdentities[]
-- DirectedRawEdges[]
-- ResolvedEdges[]
-- DanglingEdges[]
-- DuplicateEdgeGroups[]
-- SymmetryAnalysis[]
-- FixedAllianceRaw
-- Diagnostics[]
-```
-
-It is immutable and non-executable.
-
-## Consistency diagnostics
-
-Suggested diagnostics:
-
-- `AllianceEmptyToken`;
-- `AllianceDuplicateToken`;
-- `AllianceSelfReference`;
-- `AllianceMissingTarget`;
-- `AllianceCaseCollision`;
-- `AllianceDuplicateSourceProperty`;
-- `AllianceAsymmetricPair`;
-- `AllianceUnknownIdentityDomain`;
-- `FixedAllianceInvalidBoolean`;
-- `LobbyTeamVsAuthoredAllianceConflict`.
-
-Self-reference and asymmetry may be informational rather than fatal depending on policy.
-
-## Player-control interaction
-
-A local player assignment does not mutate the alliance graph. It only identifies which House/controller pair the local session controls.
-
-## Starting-state interaction
-
-Alliances can be resolved before or after start-slot binding, but do not choose start locations.
-
-## Runtime adapter boundary
-
-A future diplomacy initializer may consume:
-
-```text
-ScenarioAllianceGraph
-ScenarioSpecialFlagsRaw
-SessionPlayerAssignments
-GameModeInitializationDescriptor
-RuntimeHouseRegistry
-```
-
-and produce runtime diplomacy state under an explicit deterministic policy.
-
-The parser never performs this operation.
-
-## Roundtrip
-
-Preserve:
-
-- raw `Allies` value;
-- token order;
-- whitespace;
-- duplicates;
-- self-reference;
-- asymmetric relations;
-- missing targets;
-- case differences;
-- duplicate keys;
-- extension diplomacy fields.
-
-No default writer symmetrizes, deduplicates, sorts, or canonicalizes alliance lists.
-
-## Open evidence boundary
-
-The following remain unresolved without official runtime evidence:
-
-- whether stock runtime reads alliances directionally;
-- whether it automatically inserts reverse relationships;
-- whether self-alliance is required;
-- duplicate-token behavior;
-- missing-target behavior;
-- Neutral/Special defaults;
-- interaction with `FixedAlliance` at load time;
-- exact precedence between authored allies, lobby team assignment, and Trigger actions.
+The parser does not answer whether alliances are reciprocal in combat, shared vision/resources, victory grouping, AI cooperation or multiplayer locking. Those remain runtime/session questions.
