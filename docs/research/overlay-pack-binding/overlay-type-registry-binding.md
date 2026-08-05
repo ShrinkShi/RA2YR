@@ -21,15 +21,15 @@ OverlayTypeRaw
 
 The binding layer does not modify raw arrays and does not decide rendering, resources, wall health, bridge passability, or pathfinding.
 
-## 2. Zero-based ordinal evidence
+## 2. Normalized ordinal evidence
 
-ModEnc oldid 21267 states that `OverlayPack` stores a zero-based index into `[OverlayTypes]`. OpenRA and WAE treat the raw value as an index into an overlay-type table/list. Community tooling and editor code consistently use an ordinal concept.
-
-Evidence grade:
-
-- zero-based ordinal model: `CommunityDocumented` and `ConfirmedByIndependentImplementation`;
-- exact original runtime registry construction: `Unresolved`;
-- official editor table behavior: `ConfirmedByOfficialEditorSource` where directly observed.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| The ordinary type byte is commonly treated as a zero-based `[OverlayTypes]` ordinal | `ConfirmedCommunityConvention` | ModEnc oldid 21267, OpenRA, WAE and other community tooling | Stable toolchain convention, not original-runtime source proof. | Expose an ordinal candidate only after applying the selected storage profile. | `NotRun` |
+| FinalAlert/FinalSun's observed table handling | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2, where directly observed | Establishes official-editor behavior only. | Preserve source-specific behavior as evidence, not as the universal registry algorithm. | `NotRun` |
+| One exact stock-runtime registry construction algorithm is established | `Unresolved` | No original-runtime source located | Numeric keys, physical order, gaps, duplicates, case, and map-local composition are not fully resolved. | Require explicit composition and comparison policies. | `NotRun` |
+| WAE's sequential-list construction is the universal registry rule | `ImplementationSpecificBehavior` | World-Altering Editor | WAE appends previously unseen names and assigns sequential list indices; this is named-tool behavior. | Do not adopt it as the default ordinal model. | `NotRun` |
+| Ordinals remain stable when Art or resources are missing | `DefensiveDesign` | Project policy | Stable identity is a project preservation rule, not an external runtime fact. | Never renumber after downstream lookup failure. | `NotRun` |
 
 ## 3. Numeric keys versus section order
 
@@ -41,9 +41,9 @@ A robust registry model must preserve the distinction between:
 - value/section name;
 - cross-layer winner and suppressed values.
 
-WAE's inspected generic type loader iterates section keys, appends previously unseen names, and assigns sequential list indices; it does not use the numeric key as the assigned index. That is useful evidence of WAE behavior but is not a safe project rule and is not proof of original runtime construction.
+WAE's inspected generic type loader iterates section keys, appends previously unseen names, and assigns sequential list indices; it does not use the numeric key as the assigned index. That is `ImplementationSpecificBehavior`, not proof of original-runtime construction.
 
-The project default should instead build an explicit ordinal map from composed numeric keys and diagnose:
+The project default uses `DefensiveDesign` to build an explicit ordinal map from composed numeric keys and diagnose:
 
 - gaps;
 - duplicate normalized ordinals;
@@ -73,7 +73,7 @@ The Overlay binder must not scan archives, loose files, or map text. It consumes
 
 ## 5. Map-local Rules effects
 
-A map can contain Rules-like sections. Public tools such as WAE read map-local type lists and properties into their model, but exact vanilla runtime behavior for changing `[OverlayTypes]` ordinals from a map remains underconfirmed.
+Public tools such as WAE read map-local type lists and properties into their model, but exact vanilla runtime behavior for changing `[OverlayTypes]` ordinals from a map remains `Underconfirmed`.
 
 The project design therefore distinguishes:
 
@@ -83,11 +83,11 @@ The project design therefore distinguishes:
 - provenance for every ordinal;
 - evidence grade for whether map-local changes are allowed to add, override, or reorder entries.
 
-The map-local layer may not silently renumber existing ordinals.
+The map-local layer may not silently renumber existing ordinals. That prohibition is `DefensiveDesign`.
 
 ## 6. Gaps and missing ordinals
 
-Registry gaps are real identity gaps, not empty list positions to remove.
+Under the project preservation model, registry gaps are identity gaps, not list positions to remove.
 
 Example:
 
@@ -98,7 +98,7 @@ Example:
 
 The effective registry contains ordinal 0 and 2; ordinal 1 is missing. It must not be normalized to `0=A, 1=C`.
 
-When `OverlayTypeRaw == 1`, the result is `MissingRegistryOrdinal`, not `C` and not empty.
+When `OverlayTypeRaw == 1`, the project result is `MissingRegistryOrdinal`, not `C` and not empty. Exact original-runtime gap behavior remains `Unresolved`.
 
 ## 7. Duplicate ordinals
 
@@ -112,7 +112,7 @@ Duplicate normalized keys can arise from:
 
 The lossless INI and semantic-composition layers must distinguish same-layer duplicate keys from cross-layer overrides. The registry binder consumes their explicit result and must not apply last-wins again.
 
-If composition leaves ambiguity, the raw type has no unique bound descriptor.
+If composition leaves ambiguity, the raw type has no unique bound descriptor. Fail-closed ambiguity handling is `DefensiveDesign`; stock-runtime duplicate behavior remains `Unresolved`.
 
 ## 8. Name and case policy
 
@@ -124,7 +124,7 @@ Separate policies are required for:
 - Art section comparison;
 - resource filename lookup.
 
-Case-insensitive behavior observed on Windows or in a tool does not prove original identifier semantics. The project should preserve original spelling while using an explicit comparison profile.
+Case-insensitive behavior observed on Windows or in a tool is `ImplementationSpecificBehavior` unless stronger evidence applies. It does not prove original identifier semantics. The project preserves original spelling while using an explicit comparison profile.
 
 ## 9. Empty and unknown values
 
@@ -135,9 +135,14 @@ For the ordinary byte profile:
 - `0xFE` is a possible ordinal 254 if the effective registry contains it;
 - any other unbound raw value remains `UnknownOverlayType`.
 
-Unknown values are preserved with raw data. They are not converted to `0xFF`.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert/FinalSun treats `0xFF` as no Overlay in the ordinary byte profile | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official-editor behavior only. | Preserve the raw byte and classify through the selected empty-type profile. | `NotRun` |
+| `0xFF` is a stable ordinary-profile toolchain sentinel | `ConfirmedCommunityConvention` | ModEnc and multiple public tools | Confirms convention, not universal runtime exclusivity. | Use only in the ordinary byte profile. | `NotRun` |
+| `0x00` and `0xFE` can be ordinary ordinal candidates | `Underconfirmed` | Registry convention and public tool behavior | Runtime acceptance depends on the composed registry and no original-runtime source resolves every case. | Never treat them as empty solely by value. | `NotRun` |
+| Unknown values are preserved rather than rewritten to `0xFF` | `DefensiveDesign` | Project policy | Prevents data loss and false emptiness. | Retain raw type and data with diagnostics. | `NotRun` |
 
-For an extended 16-bit profile, the sentinel candidate is `0xFFFF`; its evidence and allowed games/extensions must be attached to the profile.
+For an extended 16-bit profile, the sentinel candidate is `0xFFFF`. Its behavior is `ImplementationSpecificBehavior` for the named extension profile unless stronger evidence is supplied.
 
 ## 10. Missing Art or image resources
 
@@ -148,7 +153,7 @@ Binding proceeds in stages:
 3. Overlay descriptor to Art section/image candidate;
 4. image candidate to resource provider result.
 
-Failure at a later stage does not renumber or unbind earlier ordinals. Missing art cannot shift later entries and cannot be used to infer a different raw ordinal.
+Failure at a later stage does not renumber or unbind earlier ordinals. Missing Art cannot shift later entries and cannot be used to infer a different raw ordinal. This is `DefensiveDesign`.
 
 ## 11. Ares/Phobos and extension boundary
 
@@ -159,7 +164,7 @@ Extensions may:
 - add new flags and semantics;
 - alter editor compatibility expectations.
 
-These must be represented by explicit extension descriptors. They do not redefine vanilla RA2/YR evidence.
+These must be represented by explicit extension descriptors. Named extension behavior is `ImplementationSpecificBehavior` and does not redefine vanilla RA2/YR evidence.
 
 No complete Ares/Phobos extension behavior is frozen in this dossier without pinned, load-bearing evidence.
 
@@ -199,7 +204,7 @@ OverlayTypeBindingResult
 
 ## 13. Forbidden binding shortcuts
 
-Do not:
+The following are `DefensiveDesign` prohibitions. Do not:
 
 - infer IDs from section enumeration order;
 - compress gaps;
@@ -210,3 +215,8 @@ Do not:
 - treat unknown high values as empty;
 - merge vanilla and extension registries without an explicit policy;
 - lose winner/suppressed provenance.
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```

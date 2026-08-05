@@ -18,33 +18,18 @@ Each section has its own:
 - exact decoded output;
 - diagnostics and provenance.
 
-The streams are paired only after both have been decoded to storage arrays.
+The streams are paired only after both have been decoded to storage arrays. Here, “independent” describes architectural section/stream ownership; it does not claim independent source lineages.
 
-## 2. Public-source agreement
+## 2. Public-source evidence
 
-### EA FinalSun / FinalAlert 2
-
-The published editor separately concatenates values from `OverlayPack` and `OverlayDataPack`, separately Base64-decodes them, and separately calls its Format80 decoder. It owns distinct `m_Overlay` and `m_OverlayData` arrays.
-
-Evidence grade: `ConfirmedByOfficialEditorSource`.
-
-### OpenRA
-
-The Gen2 map importer obtains each section independently, performs independent Base64 conversion, allocates separate `1 << 18` outputs, and invokes the LCW/Format80 path twice.
-
-Evidence grade: `ConfirmedByIndependentImplementation`, with shared XCC/community ancestry warning.
-
-### World-Altering Editor
-
-WAE requires both sections before it constructs typed overlays, but the two sections are still individually collected, decoded, and stored. Its reader returns without overlays when either section is absent.
-
-Evidence grade: `ConfirmedByIndependentImplementation`; missing-section behavior is implementation-specific.
-
-### CNCMaps and MapTool
-
-Both allocate and decode two independent arrays. CNCMaps returns early if either section is unavailable. MapTool collects two error results and only materializes overlay objects after both succeed.
-
-Evidence grade: `ConfirmedByIndependentImplementation`, subject to code-lineage notes.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalSun/FinalAlert 2 separately collects, Base64-decodes, Format80-decodes, and stores the two sections | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Confirms official-editor behavior only. The editor owns distinct `m_Overlay` and `m_OverlayData` arrays. | Preserve separate provenance and results. | `NotRun` |
+| OpenRA obtains and decodes the two sections separately | `ImplementationSpecificBehavior` | OpenRA Gen2 importer | OpenRA's behavior is source-pinned, but shared XCC/community ancestry prevents treating it as an independent runtime discovery. | Keep as a comparison implementation. | `NotRun` |
+| WAE individually collects, decodes, and stores both sections, and returns without typed overlays if either is absent | `ImplementationSpecificBehavior` | World-Altering Editor | The missing-section response belongs to WAE and is not a universal format rule. | Do not copy WAE's early return into the raw document model. | `NotRun` |
+| CNCMaps and MapTool allocate and decode two arrays before materializing typed overlays | `Underconfirmed` | CNCMaps and MapTool | The two named tools corroborate the separation, but implementation independence and stock-runtime applicability are not established. | Preserve separate array results. | `NotRun` |
+| Stock RA2/YR requires the exact same missing-section behavior as the reviewed tools | `Unresolved` | No original-runtime source located | Tools differ in when they return or materialize typed overlays. | Report section presence and failure separately. | `NotRun` |
+| A failed or missing stream is never synthesized from its partner | `DefensiveDesign` | Project policy | This is a fail-closed preservation decision, not a runtime claim. | Never fabricate an all-zero or all-`0xFF` partner array. | `NotRun` |
 
 ## 3. Numbered fragments
 
@@ -83,7 +68,7 @@ The document model must distinguish:
 
 | State | Meaning |
 |---|---|
-| both present | both streams can proceed independently |
+| both present | both streams can proceed separately |
 | type present, data absent | raw type storage may be preserved; semantic pairing unavailable |
 | type absent, data present | raw data storage may be preserved; type binding unavailable |
 | both absent | no Overlay packed documents were supplied |
@@ -96,7 +81,7 @@ No missing state authorizes creating a synthetic partner array.
 
 ## 5. Pairing boundary
 
-After successful independent decoding, an `OverlayArrayConsistencyAnalysis` may compare:
+After successful separate decoding, an `OverlayArrayConsistencyAnalysis` may compare:
 
 - selected storage profile;
 - expected and actual lengths;
@@ -111,7 +96,7 @@ The consistency analyzer reports; it does not repair.
 
 ## 6. Invalid automatic behaviors
 
-The project must not:
+The following are `DefensiveDesign` prohibitions. The project must not:
 
 - copy the length of one section to the other;
 - synthesize an all-zero data array when `OverlayDataPack` is absent;

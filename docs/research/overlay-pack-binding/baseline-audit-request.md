@@ -6,13 +6,12 @@
 
 This is a design for a future local Codex read-only audit. ChatGPT Web did not access or enumerate ProjectBaseline, did not start RA2/YR or an editor, and did not inspect original map contents.
 
-The audit should test public-source candidates without disclosing reconstructable map information. Its observations receive the evidence grade:
-
 ```text
-ObservedByFutureProjectBaselineAudit
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
 ```
 
-They must not be automatically promoted to `ConfirmedByOfficialRuntimeSource`.
+These fields describe planned work. They are not an evidence grade and do not imply that ProjectBaseline observations already exist. Current public-source claims remain `Underconfirmed` or `Unresolved` as documented elsewhere, and a future aggregate audit cannot by itself become `ConfirmedByOriginalRuntimeSource`.
 
 ## 2. Authoritative input boundary
 
@@ -194,7 +193,7 @@ The audit may publish only:
 - semantic-profile category counts;
 - storage/full-map/LocalSize/IsoMap-presence aggregate counts;
 - resource/wall/bridge broad-category aggregates;
-- diagnostics and evidence grades;
+- diagnostics and normalized evidence grades;
 - canonical aggregate hashes;
 - Memory/Stream/short-read/MIX equivalence result.
 
@@ -249,7 +248,7 @@ For unresolved coordinate, Format80, registry, or semantic profiles:
 - execute each profile only when its use is explicitly approved for comparison;
 - report separate aggregate results;
 - do not choose a winner because output has more `0xFF`, fewer diagnostics, more registry bindings, or more in-map cells;
-- require independent evidence plus aggregate observations before changing configured policy;
+- require stronger source evidence plus aggregate observations before changing project policy;
 - retain `Unresolved` when profiles remain indistinguishable.
 
 ## 10. Budget and failure reporting
@@ -287,6 +286,8 @@ The future audit must not:
 
 ```text
 AuditSchemaVersion
+AuditStatus = NotRun
+FutureEvidenceSource = ProjectBaselineAggregateAudit
 SelectionBasis
 InputProvenanceCategory
 PackedSectionSummary
@@ -297,8 +298,8 @@ RegistryBindingAggregateSummary
 SemanticCategoryAggregateSummary
 InputModeEquivalence
 Diagnostics
-EvidenceGrade = ObservedByFutureProjectBaselineAudit
+CurrentEvidenceGrade
 PolicyImpactRecommendation
 ```
 
-`PolicyImpactRecommendation` may propose follow-up review but may not alter project policy or claim original-runtime confirmation.
+`CurrentEvidenceGrade` records the public evidence available before the audit and must use the normalized closed vocabulary. `PolicyImpactRecommendation` may propose follow-up review but may not alter project policy or claim original-runtime confirmation.

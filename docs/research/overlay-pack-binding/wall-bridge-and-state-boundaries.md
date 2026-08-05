@@ -4,7 +4,7 @@
 
 ## 1. Wall and fence families
 
-A wall/fence cell can involve several independent concepts:
+A wall/fence cell can involve several separate concepts:
 
 - raw Overlay type;
 - raw OverlayData byte;
@@ -22,16 +22,20 @@ The packed arrays directly provide only type and data bytes.
 
 ## 2. Editor-derived connection behavior
 
-WAE's connected-overlay mutation examines neighboring overlay cells and replaces the current Overlay object with a selected type/frame pair. This proves that at least one editor computes connected visual frames from neighborhood context.
+WAE's connected-overlay mutation examines neighboring overlay cells and replaces the current Overlay object with a selected type/frame pair.
 
-Evidence grade: `ConfirmedByIndependentImplementation` for WAE editor behavior.
+```text
+EvidenceGrade: ImplementationSpecificBehavior
+Source: World-Altering Editor
+AuditStatus: NotRun
+```
 
-It does not prove either of these universal claims:
+This confirms that the named editor computes connected visual frames from neighborhood context. It does not prove either universal claim:
 
 - the original runtime always recomputes wall connectivity;
 - the stored data byte is always a neighbor bitmask.
 
-The original runtime may trust stored frames, recompute some families, combine both, or apply hardcoded logic.
+The original runtime may trust stored frames, recompute some families, combine both, or apply hardcoded logic. The universal runtime rule remains `Unresolved`.
 
 ## 3. Wall semantic candidates
 
@@ -49,6 +53,12 @@ WallSemanticCandidate
 ```
 
 Owner and health generally require data outside the two packed arrays or runtime-created state. They must not be invented from OverlayData.
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| Stored wall data is always a complete neighbor mask | `Unresolved` | No original-runtime source located | WAE demonstrates derived editor frames, not a universal stored bitmask. | Preserve stored data and derive connectivity separately. | `NotRun` |
+| Connected-wall frame derivation exists in a named editor | `ImplementationSpecificBehavior` | World-Altering Editor | Applies to WAE's mutation logic only. | Keep as a source-pinned semantic adapter. | `NotRun` |
+| Stored wall data and derived neighbor connectivity remain separate | `DefensiveDesign` | Project policy | Prevents overwriting raw input with contextual reconstruction. | Compare and diagnose; never rewrite during parse. | `NotRun` |
 
 ## 4. Wall diagnostics
 
@@ -87,7 +97,7 @@ BridgeSet or TMP art ≠ complete bridge simulation
 Overlay type/data ≠ complete bridge simulation
 ```
 
-This is consistent with the M3-R3 theater/TMP boundary research.
+This is consistent with the M3-R3 theater/TMP boundary research. Visual or registry evidence must not be promoted to a complete runtime bridge model.
 
 ## 6. WAE bridge placement evidence
 
@@ -98,7 +108,13 @@ WAE's bridge placement mutation demonstrates editor-specific construction:
 - placement considers map cell levels;
 - the editor stores the result as ordinary Overlay type/frame pairs.
 
-Evidence grade: `ConfirmedByIndependentImplementation` for WAE behavior. It is not original runtime source evidence.
+```text
+EvidenceGrade: ImplementationSpecificBehavior
+Source: World-Altering Editor
+AuditStatus: NotRun
+```
+
+This is not original-runtime source evidence.
 
 ## 7. Community high/low bridge observations
 
@@ -109,7 +125,13 @@ A fixed PPM discussion documents a community reverse-engineering model:
 - low bridge pieces are represented by three neighboring frames/cells;
 - specific bridge behavior is tied to hardcoded Overlay ordinals.
 
-Evidence grade: `CommunityDocumented`. It is useful for test/audit design but cannot be promoted to official runtime source.
+```text
+EvidenceGrade: ConfirmedCommunityConvention
+Source: Fixed PPM community discussion
+AuditStatus: NotRun
+```
+
+The grade confirms the documented community convention only. Exact stock-runtime applicability remains `Underconfirmed`.
 
 ## 8. Bridge semantic profiles
 
@@ -123,7 +145,13 @@ Separate profiles are required at minimum for:
 - extension-defined bridge families;
 - unknown bridge-like overlays.
 
-A profile can derive candidates but must preserve the original type/data pair and source coordinate.
+A profile can derive candidates but must preserve the original type/data pair and source coordinate. Explicit profiles and raw preservation are `DefensiveDesign`.
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| One Overlay data byte fully defines complete bridge state and simulation | `ConflictingSources` | Frame-oriented storage, WAE placement behavior, community bridge models, and separate TMP/object/pathing systems | Evidence points to multiple layers and family-specific behavior. | Keep storage, art, bridge object/state, occupancy, and pathfinding separate. | `NotRun` |
+| WAE placement describes stock-runtime bridge construction exactly | `ImplementationSpecificBehavior` | World-Altering Editor | Named editor behavior only. | Use as a comparison profile. | `NotRun` |
+| Community high/low bridge model applies universally to stock RA2/YR | `Underconfirmed` | PPM community documentation | Useful reverse-engineering candidate without original-runtime source proof. | Do not promote beyond the cited family/profile. | `NotRun` |
 
 ## 9. High and low occupancy
 
@@ -179,7 +207,7 @@ Each step retains evidence grade and diagnostics.
 
 ## 13. Forbidden shortcuts
 
-Do not:
+The following are `DefensiveDesign` prohibitions. Do not:
 
 - treat every wall data byte as a bitmask;
 - recompute and overwrite all wall frames during parse;
@@ -187,5 +215,10 @@ Do not:
 - infer bridge semantics from Art filename or rendered appearance;
 - use missing Art to renumber Overlay types;
 - construct navigation/collision in the Core parser;
-- claim WAE or PPM behavior is official runtime source;
+- claim WAE or PPM behavior is original-runtime source;
 - publish bridge positions in the future sanitized audit.
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```

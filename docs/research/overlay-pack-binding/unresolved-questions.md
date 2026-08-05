@@ -9,7 +9,14 @@
 - **P2** — useful for compatibility, diagnostics, or optimization;
 - **P3** — historical or edge-case research.
 
-All questions remain `Unresolved` unless a different evidence grade is explicitly recorded in another document.
+All questions remain `Unresolved` unless a different normalized evidence grade is explicitly recorded in another document.
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+The future audit fields describe planned aggregate work and do not imply that ProjectBaseline has been read.
 
 ## 2. Highest-priority questions
 
@@ -169,13 +176,13 @@ All questions remain `Unresolved` unless a different evidence grade is explicitl
 121. **P0:** Which sanitized aggregate can distinguish row-major from transposed views without exposing positions?
 122. **P0:** Which sanitized evidence can distinguish a strict 262144 runtime contract from prefilled-buffer tolerance?
 123. **P1:** Can command-kind aggregates distinguish Format80 profiles without disclosing compressed data?
-124. **P1:** How many independent source lineages are represented by observed local behavior?
+124. **P1:** How many demonstrably separate source lineages, rather than repositories, are represented by observed local behavior?
 125. **P1:** What sample categories are needed to avoid overfitting to resource-heavy or empty maps?
 126. **P1:** How should maps with extension-defined registries be isolated from vanilla conclusions?
 127. **P2:** Which aggregate hashes remain stable across Memory, Stream, short-read Stream, and MIX windows?
 128. **P2:** Which diagnostics are safe to publish without revealing type names or positions?
-129. **P2:** When can repeated ProjectBaseline observations justify changing `ConfiguredForProjectPolicy`?
-130. **P3:** What additional official documentation or binary-level runtime experiment would be required for `ConfirmedByOfficialRuntimeSource`?
+129. **P2:** When can repeated ProjectBaseline observations justify reviewing or changing a `DefensiveDesign` project policy?
+130. **P3:** What additional official documentation or binary-level runtime experiment would be required for `ConfirmedByOriginalRuntimeSource`?
 
 ## 14. Current policy posture
 
@@ -189,3 +196,5 @@ Until the P0 questions are resolved, the recommended project posture remains:
 - explicit absolute-position Format80 candidate from M3-R2;
 - no repairs, trial decoders, trial axes, registry compression, or unknown-byte cleanup;
 - no default canonical writer.
+
+These are project policies classified as `DefensiveDesign`; they are not original-runtime facts.

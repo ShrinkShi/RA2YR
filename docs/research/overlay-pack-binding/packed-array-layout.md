@@ -11,25 +11,33 @@ OverlayPack:     512 × 512 × 1 byte = 262144 bytes
 OverlayDataPack: 512 × 512 × 1 byte = 262144 bytes
 ```
 
-Each index represents one storage coordinate. The arrays are parallel by index but remain independent decoded artifacts.
+Each index represents one storage coordinate. The arrays are parallel by index but remain separate decoded artifacts.
 
-## 2. Evidence matrix
+## 2. Source behavior matrix
 
-| Source | Type output | Data output | Behavior |
-|---|---:|---:|---|
-| EA FinalSun/FinalAlert 2 | explicit 262144-byte target | explicit 262144-byte target | preinitializes type with `0xFF`, data with `0x00`; decoder writes into supplied storage |
-| OpenRA importer | `1 << 18` | `1 << 18` | two fixed byte arrays |
-| WAE ordinary profile | `512 × 512` bytes | `512 × 512` bytes | writer initializes type to `0xFF`, data to zero |
-| WAE extended profile | `512 × 512 × 2` bytes | `512 × 512` bytes | enabled by `NewINIFormat >= 5`; 16-bit type ordinals |
-| CNCMaps | `1 << 18` | `1 << 18` | fixed arrays |
-| MapTool | `1 << 18` | `1 << 18` | fixed arrays |
-| ModEnc oldid 21267 | 262144 bytes | 262144 bytes | community documentation |
+| Source | Type output | Data output | Grade | Notes | Policy | AuditStatus |
+|---|---:|---:|---|---|---|---|
+| EA FinalSun/FinalAlert 2 | explicit 262144-byte target | explicit 262144-byte target | `ConfirmedByOfficialToolSource` | Official editor preinitializes type with `0xFF` and data with `0x00`; this does not establish original-runtime strictness. | Preserve editor behavior as source evidence, not parser padding policy. | `NotRun` |
+| OpenRA importer | `1 << 18` | `1 << 18` | `ImplementationSpecificBehavior` | Named importer behavior with XCC/community lineage caveats. | Use only as a comparison implementation. | `NotRun` |
+| WAE ordinary profile | `512 × 512` bytes | `512 × 512` bytes | `ImplementationSpecificBehavior` | Named editor profile; writer initializes type to `0xFF` and data to zero. | Keep separate from vanilla runtime claims. | `NotRun` |
+| WAE extended profile | `512 × 512 × 2` bytes | `512 × 512` bytes | `ImplementationSpecificBehavior` | Enabled by `NewINIFormat >= 5`; this is an extension profile with 16-bit type ordinals. | Require explicit extended profile selection. | `NotRun` |
+| CNCMaps | `1 << 18` | `1 << 18` | `ImplementationSpecificBehavior` | Fixed renderer/tool arrays; not runtime proof. | Comparison only. | `NotRun` |
+| MapTool | `1 << 18` | `1 << 18` | `ImplementationSpecificBehavior` | Fixed map-tool arrays; not runtime proof. | Comparison only. | `NotRun` |
+| ModEnc oldid 21267 | 262144 bytes | 262144 bytes | `ConfirmedCommunityConvention` | Stable community documentation for the ordinary storage convention, not original-runtime source. | Cite as convention only. | `NotRun` |
 
-The fixed one-byte length is therefore `ConfirmedByOfficialEditorSource` and reinforced by several implementations. It is not yet `ConfirmedByOfficialRuntimeSource`.
+## 3. Normalized storage claims
 
-## 3. Is 512 a format boundary or a convention?
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert/FinalSun uses 262144-byte ordinary type and data targets | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Confirms official-editor behavior. | Preserve as source-pinned profile evidence. | `NotRun` |
+| Several public tools use the same one-byte 512 × 512 storage dimensions | `Underconfirmed` | OpenRA, WAE, CNCMaps, MapTool, ModEnc | The convergence is substantial, but implementation independence and stock-runtime universality are not proven. | Treat 262144 as an explicit ordinary-profile candidate. | `NotRun` |
+| WAE supports a 524288-byte extended OverlayPack type stream | `ImplementationSpecificBehavior` | World-Altering Editor | The behavior is tied to `NewINIFormat >= 5`; it is an extension profile and not an ordinary vanilla candidate. | Never infer it as vanilla from decoded length alone. | `NotRun` |
+| Every original-runtime path requires exact 262144-byte ordinary output | `Underconfirmed` | Official editor and public tool behavior | No original-runtime source establishes strict rejection or permissive padding behavior. | Enforce exact length as a project policy, not a runtime claim. | `NotRun` |
+| Exact length, no padding, no truncation, and no partial success | `DefensiveDesign` | Project policy | This is the project's fail-closed contract. | Validate before semantic pairing or binding. | `NotRun` |
 
-The evidence shows that the editor and major tools allocate a fixed 512-by-512 storage plane irrespective of scenario `Size` and `LocalSize`. This is strong evidence that the packed storage contract is fixed rather than dynamically sized to the map.
+## 4. Is 512 a format boundary or a convention?
+
+The editor and major tools allocate a fixed 512-by-512 storage plane irrespective of scenario `Size` and `LocalSize`. This supports a fixed packed-storage candidate, but it does not prove independent discovery or universal original-runtime enforcement.
 
 What remains unresolved:
 
@@ -40,7 +48,7 @@ What remains unresolved:
 
 The project strict profile does not inherit permissive tool behavior.
 
-## 4. Required length metadata
+## 5. Required length metadata
 
 Each decoded array result should record:
 
@@ -55,11 +63,11 @@ Each decoded array result should record:
 - evidence grade for the expected length;
 - source and fragment provenance.
 
-A value of 262144 is a policy input, not a hidden allocation constant inside the decoder.
+A value of 262144 is a profile input, not a hidden allocation constant inside the decoder.
 
-## 5. Strict success conditions
+## 6. Strict success conditions
 
-For the ordinary one-byte profile, successful exact decode requires:
+The following are `DefensiveDesign` conditions. For the ordinary one-byte profile, successful exact decode requires:
 
 ```text
 ActualDecodedLength == 262144
@@ -70,7 +78,7 @@ no missing output
 no output beyond budget
 ```
 
-For an explicit extended type profile:
+For an explicit WAE-compatible extended type profile:
 
 ```text
 OverlayPack actual length == 524288
@@ -79,15 +87,15 @@ OverlayDataPack actual length == 262144
 
 The two profiles may not be inferred by output length after trying multiple decoders. Profile selection must come from the caller and map/version evidence.
 
-## 6. Public leniency findings
+## 7. Public leniency findings
 
-EA's editor initializes its output buffers before decoding. A short type output can therefore leave `0xFF` bytes in the remainder, and a short data output can leave zero bytes. This is an editor safety/tolerance behavior, not proof that the original format defines implicit padding.
+EA's editor initializes its output buffers before decoding. A short type output can therefore leave `0xFF` bytes in the remainder, and a short data output can leave zero bytes. This is `ConfirmedByOfficialToolSource` for editor behavior, not proof that the original format defines implicit padding.
 
-Other community implementations similarly allocate fixed outputs and may rely on decoder APIs that do not expose exact production. These behaviors are classified as `ImplementationSpecificBehavior` in the source matrix and do not become the Core default.
+Other public implementations similarly allocate fixed outputs and may rely on decoder APIs that do not expose exact production. Those are `ImplementationSpecificBehavior` and do not become the Core default.
 
-## 7. Forbidden repairs
+## 8. Forbidden repairs
 
-The parser must not:
+The following are `DefensiveDesign` prohibitions. The parser must not:
 
 - pad short type output with `0xFF`;
 - pad short data output with `0x00`;
@@ -99,7 +107,7 @@ The parser must not:
 - interpret a 262144-byte type array as the low bytes of an extended array without explicit policy;
 - discard trailing bytes because most cells are empty.
 
-## 8. Storage representation
+## 9. Storage representation
 
 Recommended raw representation:
 
@@ -121,7 +129,7 @@ OverlayArrayRaw
 
 The model does not expose a typed Overlay object until coordinate and registry binding succeed.
 
-## 9. Roundtrip implications
+## 10. Roundtrip implications
 
 A byte-identical map roundtrip may require retention of:
 

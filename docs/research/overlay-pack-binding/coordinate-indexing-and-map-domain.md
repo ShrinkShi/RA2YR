@@ -36,7 +36,10 @@ Supporting evidence:
 - MapTool reconstructs coordinates with `x = index % 512`, `y = index / 512`;
 - ModEnc oldid 21267 documents `X + 512 × Y`.
 
-Evidence grade: `ConfirmedByIndependentImplementation` plus `CommunityDocumented`.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| Several public tools use or document `X + 512 × Y` | `Underconfirmed` | OpenRA, WAE, CNCMaps, MapTool, ModEnc | Formula convergence is useful, but implementation independence and stock-runtime applicability are not established. CNCMaps acknowledges OpenRA/XCC influence and community knowledge transfer remains possible. | Keep the formula behind an explicit coordinate profile. | `NotRun` |
+| One unique original-runtime index/axis contract has been established | `ConflictingSources` | Public row-major candidate versus EA official-editor transposed internal mapping | The representations differ, and no original-runtime source identifies the runtime-facing axis contract. | Preserve both named views; do not select by plausibility or map bounds. | `NotRun` |
 
 ## 3. Official editor transposition conflict
 
@@ -49,14 +52,22 @@ Overlay index = internalY + internalX × 512
 
 It also copies in the reverse direction using the same transposed relationship.
 
-This can mean:
+```text
+EvidenceGrade: ConfirmedByOfficialToolSource
+Source: EA FinalSun / FinalAlert 2
+AuditStatus: NotRun
+```
+
+This grade confirms the official editor's internal mapping only. It does not confirm an original-runtime coordinate contract.
+
+The mapping can mean:
 
 - the editor's internal axis labels are opposite the external Overlay storage labels;
 - its square field array is deliberately transposed for rendering;
 - the editor uses `Y + 512 × X` as an actual external storage formula;
 - an earlier coordinate conversion has already swapped axes.
 
-The public editor source proves the internal mapping but not the original runtime's external naming. The project therefore records `OfficialEditorTransposedInternalView` rather than declaring a second confirmed runtime format.
+The project therefore records `OfficialEditorTransposedInternalView` rather than declaring a second confirmed runtime format.
 
 ## 4. Candidate coordinate profiles
 
@@ -68,7 +79,7 @@ x = index mod 512
 y = floor(index / 512)
 ```
 
-This is the configured first project candidate.
+This is the configured first project candidate. The candidate evidence remains `Underconfirmed`; making it explicit and refusing fallback probing are `DefensiveDesign`.
 
 ### Profile B: explicit axis-swapped view
 
@@ -78,7 +89,7 @@ x = floor(index / 512)
 y = index mod 512
 ```
 
-This is retained for official-editor comparison and golden-audit analysis. It is not automatically tried after Profile A fails.
+This is retained for official-editor comparison and future aggregate-audit analysis. It is not automatically tried after Profile A fails.
 
 ### Profile C: caller-supplied coordinate transform
 
@@ -94,7 +105,7 @@ OpenRA and CNCMaps provide a useful candidate relationship:
 
 The normalized canvas coordinates are not themselves used directly as the storage pair. A diamond/canvas position must first convert to the raw map-cell coordinate domain.
 
-This is implementation evidence, not official runtime source.
+This remains `Underconfirmed` implementation evidence, not original-runtime source evidence.
 
 ## 6. Object-section numeric cell IDs
 
@@ -134,7 +145,7 @@ The parser reports these states and preserves bytes. Cleanup belongs to an expli
 
 ## 9. Boundaries and arithmetic
 
-Strict checks:
+The following are `DefensiveDesign` requirements:
 
 - reject storage coordinates outside 0..511 before multiplication;
 - compute `512 × Y + X` with checked arithmetic;
@@ -176,7 +187,12 @@ A normalized array view naturally orders cells by element index. That order is n
 
 ## 12. Unresolved coordinate questions
 
-The future golden audit must distinguish:
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+A future aggregate audit may investigate:
 
 - whether official maps consistently match external row-major indexing;
 - whether the EA editor's transpose is purely internal;

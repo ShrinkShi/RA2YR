@@ -46,23 +46,29 @@ Layer ownership is strict:
 
 ## 3. Primary conclusions
 
-### 3.1 Two independent logical documents
+### 3.1 Two logically separate documents
 
-`OverlayPack` and `OverlayDataPack` are separate numbered-fragment sections and separate compressed streams. The first carries a raw type identifier per storage cell; the second carries an independent raw data byte at the same storage index. A missing section, failed stream, or length mismatch is not repaired from its partner.
+`OverlayPack` and `OverlayDataPack` are separate numbered-fragment sections and separate compressed streams. The first carries a raw type identifier per storage cell; the second carries a raw data byte at the same storage index.
 
-Evidence grade: `ConfirmedByOfficialEditorSource` plus multiple implementation observations.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert/FinalSun reads the two sections and decoded arrays separately | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Establishes official-editor behavior only, not a stock-runtime contract. | Preserve separate section and stream provenance. | `NotRun` |
+| Several public tools also collect and decode the two sections separately | `Underconfirmed` | OpenRA, WAE, CNCMaps, MapTool | Cross-tool convergence is useful, but XCC/OpenRA ancestry and knowledge transfer prevent assuming independent discovery. | Keep the two results separate. | `NotRun` |
+| A missing, failed, or wrong-length stream is never synthesized from its partner | `DefensiveDesign` | Project policy | This is a fail-closed preservation rule, not an external runtime fact. | Return separate structured failure and preserve the successful partner result without fabricating data. | `NotRun` |
 
 ### 3.2 Storage length
 
-For the ordinary one-byte profile, the strongest candidate is exactly:
+For the ordinary one-byte profile, the storage candidate is exactly:
 
 ```text
 512 × 512 = 262144 bytes
 ```
 
-EA's published editor uses an explicit 262144-byte array. OpenRA, CNCMaps, MapTool, and WAE independently allocate the same one-byte storage size. Some tools prefill short output; that tolerance is editor/tool behavior and is not the strict project default.
+EA's published editor uses an explicit 262144-byte array. OpenRA, CNCMaps, MapTool, and WAE also allocate the same one-byte storage size, but this convergence does not prove independent implementation lineages or stock-runtime universality.
 
-WAE also supports an extension profile where `OverlayPack` uses two bytes per cell when `NewINIFormat >= 5`, while `OverlayDataPack` remains one byte per cell. This must not be silently conflated with the vanilla RA2/YR one-byte profile.
+WAE also supports an extension profile where `OverlayPack` uses two bytes per cell when `NewINIFormat >= 5`, while `OverlayDataPack` remains one byte per cell. This is `ImplementationSpecificBehavior` for a named extension profile and must not be conflated with the ordinary vanilla candidate.
+
+Exact-length validation, and refusal to pad, clamp, truncate, or report partial success, are `DefensiveDesign` project requirements.
 
 ### 3.3 Coordinate indexing
 
@@ -72,37 +78,62 @@ The dominant external-coordinate candidate is:
 index = X + 512 × Y
 ```
 
-OpenRA, WAE, CNCMaps, MapTool, and ModEnc use or document this form. EA's editor maps its square internal field array through `internalY + 512 × internalX`, exposing an axis/transposition conflict in naming or representation. The project therefore requires an explicit coordinate profile and never chooses an axis order because one interpretation happens to fall inside map bounds.
+OpenRA, WAE, CNCMaps, MapTool, and ModEnc use or document this form. Its formal grade remains `Underconfirmed`: the implementations are not proven to be independent and no original-runtime source establishes it as the unique contract.
+
+EA's editor maps its square internal field array through `internalY + 512 × internalX`. That internal mapping is `ConfirmedByOfficialToolSource`. The difference creates a `ConflictingSources` classification for any claim that one unique runtime-facing axis/index contract has already been established. The project retains explicit coordinate profiles and never selects one because it happens to fall inside map bounds.
 
 ### 3.4 Empty value
 
-For the ordinary byte profile, `0xFF` is a strong no-overlay sentinel. `0x00` remains the first possible registry ordinal. Values not found in the composed registry are unknown types, not automatically empty cells.
+For the ordinary byte profile, FinalAlert/FinalSun's treatment of `0xFF` as no Overlay is `ConfirmedByOfficialToolSource`. Its widespread tool/community use is a `ConfirmedCommunityConvention`; stock-runtime exclusivity remains `Underconfirmed` because no runtime source was found.
+
+`0x00` remains the first possible registry ordinal, and `0xFE` can remain an ordinal candidate when the composed registry contains it. Unknown values are not automatically empty cells.
 
 ### 3.5 Registry binding
 
-A raw type byte is interpreted against a composed `[OverlayTypes]` registry. Numeric ordinal identity, gaps, duplicate ordinals, case, source layers, map-local changes, and suppressed candidates must remain visible. Section enumeration order and asset availability may not renumber the registry.
+A raw type byte is interpreted against a composed `[OverlayTypes]` registry. The zero-based ordinal model is a `ConfirmedCommunityConvention` supported by tool behavior, while exact stock-runtime gap, duplicate, case, and map-local composition behavior remains `Underconfirmed` or `Unresolved` as documented in the registry dossier.
+
+Numeric ordinal identity, gaps, duplicate ordinals, case, source layers, map-local changes, winners, and suppressed candidates remain visible. Refusing to renumber because Art or resources are missing is `DefensiveDesign`.
 
 ### 3.6 OverlayData is not globally one semantic
 
-The only format-wide fact is one raw byte. Community tools often call it a frame index, but resources, connected walls, bridges, and hardcoded families can assign different or coupled meanings. Interpretation requires an `OverlaySemanticProfile` selected from the bound type and an evidence-bearing policy.
+The format-wide storage fact is one raw byte in the ordinary profile. `FrameIndex` is a stable community/tool candidate, not a universal runtime fact. Resources, connected walls, bridges, and extension families require separate evidence-bearing semantic profiles. Unknown values remain raw under `DefensiveDesign`.
 
-## 4. Evidence grades
+## 4. Formal evidence grades
 
-Every conclusion uses one of:
+Every formal `Grade` field uses exactly one value from this closed vocabulary:
 
-- `ConfirmedByOfficialRuntimeSource`;
-- `ConfirmedByOfficialEditorSource`;
-- `ConfirmedByIndependentImplementation`;
-- `CommunityDocumented`;
-- `ObservedByFutureProjectBaselineAudit`;
-- `ConfiguredForProjectPolicy`;
-- `Unresolved`.
+- `ConfirmedByOriginalRuntimeSource`
+- `ConfirmedByOfficialToolSource`
+- `ConfirmedByMultipleIndependentImplementations`
+- `ConfirmedCommunityConvention`
+- `ImplementationSpecificBehavior`
+- `DefensiveDesign`
+- `ConflictingSources`
+- `Underconfirmed`
+- `Unresolved`
 
-No reviewed public source qualifies as official RA2/YR runtime source. EA's repository is official editor source, not the game runtime.
+`ConfirmedByOriginalRuntimeSource` is reserved for the original RA2/YR runtime or its actual source. No reviewed claim in this dossier currently has that grade.
+
+`ConfirmedByOfficialToolSource` applies to FinalAlert, FinalSun, and other official editor/tool behavior. Official-tool evidence does not establish original-runtime behavior.
+
+`ConfirmedByMultipleIndependentImplementations` requires demonstrably independent implementation lineages. XCC, FinalAlert's bundled XCC code, OpenRA and derived lineages, and implementations influenced by the same community knowledge are not counted repeatedly.
+
+`ConfirmedCommunityConvention` records stable community or toolchain convention without promoting it to runtime fact. One named implementation is `ImplementationSpecificBehavior`; uncertain convergence is `Underconfirmed`; direct source disagreement is `ConflictingSources`.
+
+Project choices such as exact-length enforcement, raw preservation, explicit profiles, refusal to guess, and fail-closed behavior are `DefensiveDesign`. Policy details belong in `Policy` or `PolicyClassification`, not in the evidence grade.
+
+Future ProjectBaseline work is recorded as:
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+It is not an evidence grade and does not imply that ProjectBaseline was read.
 
 ## 5. Strict project defaults
 
-Until golden evidence resolves remaining conflicts, the design recommends:
+Until stronger evidence resolves remaining conflicts, the design recommends:
 
 - explicit one-byte versus extended OverlayPack profiles;
 - exact decoded-length validation;
@@ -110,7 +141,7 @@ Until golden evidence resolves remaining conflicts, the design recommends:
 - no automatic Format80 variant probing;
 - no trial axis swap;
 - raw preservation for all 262144 storage positions;
-- independent diagnostics for the two sections;
+- separate diagnostics for the two sections;
 - preservation of unknown type/data pairs and map-domain-external cells;
 - structured ambiguity for registry and semantic conflicts;
 - no default writer that destroys compressed, fragment, domain-external, or unknown data.
@@ -143,4 +174,4 @@ This research does not:
 - run Unity, RA2/YR, FinalAlert, XCC, or another editor;
 - create or modify maps;
 - modify tests, compatibility status, ADRs, formal third-party records, `.dev-records`, existing research, PR #25, PR #28, or any Codex branch;
-- claim community convention or official-editor behavior as official runtime source evidence.
+- claim community convention or official-editor behavior as original-runtime source evidence.

@@ -8,7 +8,7 @@ This document separates map storage from the resource economy and rendering syst
 
 It does not define the final RA2/YR harvest algorithm.
 
-## 2. Independent concepts
+## 2. Separate concepts
 
 The following must not be collapsed:
 
@@ -31,27 +31,13 @@ A map stores a type/data pair. It does not directly store all economic and gamep
 
 ## 3. Public-source observations
 
-### EA editor
-
-The editor keeps type and data separately and invokes resource-money accounting helpers using both values when overlays change. This proves that editor-side resource estimates depend on the pair, but does not prove the original game's exact economy formula.
-
-Evidence grade: `ConfirmedByOfficialEditorSource` for editor behavior.
-
-### OpenRA importer
-
-The importer uses a type-specific `ResourceFromOverlay` mapping and passes `OverlayDataPack` through a resource conversion helper. This demonstrates type-specific treatment rather than a universal frame-only model.
-
-Evidence grade: `ConfirmedByIndependentImplementation`.
-
-### WAE
-
-WAE's Overlay type model contains resource-family flags and a link to a Tiberium/resource descriptor. Its generic map storage still calls the data byte `FrameIndex`, showing that editor representation and runtime semantics are not necessarily identical.
-
-Evidence grade: `ConfirmedByIndependentImplementation`.
-
-### Community documentation
-
-ModEnc describes the data byte as a frame index and identifies ore/Tiberium overlays as major users of the packed sections. This is useful community convention, not a complete runtime economy specification.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert/FinalSun resource-money estimates use the Overlay type/data pair | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Confirms editor-side accounting behavior only; it does not prove the original game's economy formula. | Keep editor estimates outside the raw parser. | `NotRun` |
+| OpenRA applies a type-specific `ResourceFromOverlay` conversion | `ImplementationSpecificBehavior` | OpenRA importer | Demonstrates named-importer behavior and type-specific treatment, not stock-runtime semantics. | Preserve as a source-pinned adapter example. | `NotRun` |
+| WAE links resource-family metadata while storing the raw byte as `FrameIndex` | `ImplementationSpecificBehavior` | World-Altering Editor | Shows a distinction between editor storage naming and resource semantics. | Keep the WAE semantic profile explicit. | `NotRun` |
+| Community documentation calls the byte a frame index and associates resource families with the packed sections | `ConfirmedCommunityConvention` | ModEnc | Confirms a stable convention, not a complete runtime economy model. | Use as a candidate profile source only. | `NotRun` |
+| One universal stock-runtime mapping from data byte to stage, credits, and remaining harvest value is established | `Unresolved` | No original-runtime source located | Stored stage, rendered frame, Rules value, and mutable harvest state are separate. | Do not expose a single universal quantity. | `NotRun` |
 
 ## 4. Resource semantic profile
 
@@ -69,7 +55,7 @@ ResourceOverlaySemanticCandidate
 - Diagnostics
 ```
 
-The profile must be selected from the bound type and configured game/extension, not inferred from color, image availability, or raw data distribution.
+The profile must be selected from the bound type and configured game/extension, not inferred from color, image availability, or raw data distribution. Explicit profile selection is `DefensiveDesign`.
 
 ## 5. OverlayData and resource quantity
 
@@ -92,7 +78,7 @@ Even where a value influences visual density and harvest quantity, conversion ca
 - extension behavior;
 - simulation changes after map load.
 
-The map's raw byte is only an input.
+The map's raw byte is only an input. The broader resource-stage candidate is `Underconfirmed`; exact runtime quantity and depletion semantics remain `Unresolved`.
 
 ## 6. Growth and spread
 
@@ -117,7 +103,7 @@ Rendering may use:
 - random/variant rules;
 - animation and shadow layout.
 
-The renderer consumes semantic results. It does not decide registry ordinal or mutate raw map arrays.
+The renderer consumes semantic results. It does not decide registry ordinal or mutate raw map arrays. Art/frame evidence cannot be promoted to complete runtime resource semantics.
 
 ## 8. Harvest boundary
 
@@ -146,7 +132,7 @@ The storage layer reports presence and binding only.
 
 ## 10. Unknown resource candidates
 
-When a type appears resource-like but evidence is insufficient:
+The following are `DefensiveDesign` requirements. When a type appears resource-like but evidence is insufficient:
 
 - retain type/data raw values;
 - retain all candidate profiles;
@@ -180,4 +166,9 @@ A lossless map model must retain:
 - values that the selected resource profile cannot interpret;
 - original compressed/source provenance.
 
-A canonical writer that regenerates resource frames from a high-level quantity is a separate future feature and cannot claim byte-identical roundtrip.
+This preservation is `DefensiveDesign`. A canonical writer that regenerates resource frames from a high-level quantity is a separate future feature and cannot claim byte-identical roundtrip.
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```

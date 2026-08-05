@@ -6,14 +6,14 @@
 
 This design defines **124** research-driven tests. It is not executable test code.
 
-Evidence/policy labels:
+Test-intent labels:
 
-- `CF` — confirmed format/editor/implementation fact at the stated evidence level;
-- `PP` — configured project policy;
-- `DC` — defensive check;
-- `UA` — unresolved assumption or source conflict.
+- `CF` — exercise a format, official-tool, community, or named-implementation claim at its separately cited evidence grade;
+- `PP` — exercise an explicit project policy;
+- `DC` — exercise a defensive check or fail-closed contract;
+- `UA` — exercise an unresolved assumption or source conflict.
 
-A `CF` label does not imply official runtime source unless the cited conclusion explicitly has that grade.
+These compact labels are test-planning categories, not formal evidence grades. Formal `Grade` fields use only the normalized closed vocabulary defined in `README.md` and `source-comparison.md`. A `CF` label does not imply original-runtime confirmation.
 
 ## 2. Category totals
 
@@ -185,7 +185,7 @@ A `CF` label does not imply official runtime source unless the cited conclusion 
 | T121 | Command, chunk, and diagnostic budgets are enforced | `DC` |
 | T122 | No-progress codec or parser loop is stopped | `DC` |
 | T123 | Fixture builder does not reuse production decoder/index formulas | `PP` |
-| T124 | Future ProjectBaseline observation never auto-promotes to official runtime evidence | `PP` |
+| T124 | ProjectBaseline audit status and future source remain separate from the current evidence grade | `PP` |
 
 ## 3. Cross-cutting assertions
 
@@ -213,8 +213,13 @@ Synthetic fixture builders must not reuse production:
 - registry construction;
 - semantic-profile selection.
 
-Fixtures should be specified with literal byte windows, independently calculated expected indices, and canonical model hashes. Tests must include permutations of input enumeration and Stream read sizes.
+Fixtures should be specified with literal byte windows, separately calculated expected indices, and canonical model hashes. Tests must include permutations of input enumeration and Stream read sizes. This independence requirement concerns fixture construction from production code, not implementation-source lineage.
 
-## 5. Golden-audit boundary
+## 5. Future aggregate-audit boundary
 
-Future ProjectBaseline observations can satisfy `ObservedByFutureProjectBaselineAudit` expectations, but cannot silently relabel a test as `ConfirmedByOfficialRuntimeSource`. Public golden outputs are limited by `baseline-audit-request.md`.
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+A future authorized audit may add separately attributed aggregate observations. It cannot automatically change a current `Underconfirmed` or `Unresolved` claim, and cannot promote any claim to `ConfirmedByOriginalRuntimeSource` without actual original-runtime evidence. Public audit output remains limited by `baseline-audit-request.md`.

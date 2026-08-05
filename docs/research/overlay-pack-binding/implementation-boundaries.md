@@ -97,6 +97,8 @@ They consume a completed composed INI view and do not perform discovery or compo
 
 ## 3. Explicit policies
 
+All project-selected policies in this section are `DefensiveDesign`. That grade records fail-closed, preservation, explicit-profile, and no-guessing decisions; it does not assert external runtime behavior.
+
 ### `OverlayArrayLengthPolicy`
 
 Selects ordinary 262144-byte, extended type-array, or future profiles. It defines exact success, never hidden padding.
@@ -171,7 +173,21 @@ Owns type-specific interpretation candidates. It never mutates raw bytes.
 
 Consume completed binding/semantic results and add theater, Art, world, ownership, health, movement, and Unity-specific behavior.
 
-## 5. Diagnostics
+## 5. Evidence and policy separation
+
+Formal evidence grades use the closed vocabulary defined in `README.md` and `source-comparison.md`.
+
+- official-editor behavior is `ConfirmedByOfficialToolSource`;
+- named public implementation behavior is `ImplementationSpecificBehavior`;
+- uncertain cross-tool convergence is `Underconfirmed`;
+- stable community convention is `ConfirmedCommunityConvention`;
+- direct disagreement is `ConflictingSources`;
+- project preservation and safety contracts are `DefensiveDesign`;
+- missing reliable candidates remain `Unresolved`.
+
+No implementation success, plausible output, Art lookup, or current registry binding can upgrade a claim to `ConfirmedByOriginalRuntimeSource`.
+
+## 6. Diagnostics
 
 Diagnostics should be structured by layer and include:
 
@@ -203,7 +219,7 @@ Examples:
 - `OverlayEmptyTypeHasData`;
 - `OverlayScenarioDomainMismatch`.
 
-## 6. Limits
+## 7. Limits
 
 Candidate `OverlayPackReadLimits` fields:
 
@@ -223,7 +239,7 @@ Candidate `OverlayPackReadLimits` fields:
 
 The ordinary profile can require 262144 bytes without permitting arbitrary file-driven allocation.
 
-## 7. Arithmetic and progress
+## 8. Arithmetic and progress
 
 All offset, length, element-width, and coordinate calculations use checked arithmetic.
 
@@ -236,7 +252,7 @@ Every parser loop must:
 
 No no-progress loop or file-driven unbounded enumeration is allowed.
 
-## 8. Input-mode equivalence
+## 9. Input-mode equivalence
 
 Memory, seekable Stream, short-read Stream, and MIX-window input must use one parsing state machine and produce equivalent:
 
@@ -248,7 +264,7 @@ Memory, seekable Stream, short-read Stream, and MIX-window input must use one pa
 
 The MIX window supplies bytes and provenance only. It does not choose Format80 profile, coordinate profile, or global priority.
 
-## 9. Fixture independence
+## 10. Fixture independence
 
 Synthetic fixture builders must not reuse production:
 
@@ -257,9 +273,9 @@ Synthetic fixture builders must not reuse production:
 - registry builder;
 - semantic profile selector.
 
-Fixtures should specify independent literal bytes, expected indices, and expected model hashes.
+Fixtures should specify clean-room literal bytes, separately calculated expected indices, and expected model hashes. Here, independence describes fixture construction from production code, not source-lineage evidence.
 
-## 10. Roundtrip design
+## 11. Roundtrip design
 
 Default read-only Core preserves enough for future decisions. It does not expose a default writer.
 
@@ -273,11 +289,11 @@ Potential future writer modes:
 
 Each mode has a different guarantee and must not be called simply “roundtrip.”
 
-## 11. Unity boundary
+## 12. Unity boundary
 
 Core has no dependency on `UnityEngine`. Unity adapters may later convert bound results to textures, meshes, tilemaps, colliders, or navigation, but those outputs are disposable derived views and cannot become source truth.
 
-## 12. Maintainability rules
+## 13. Maintainability rules
 
 - centralize storage and priority profiles;
 - keep sorting/index rules in one component;
@@ -288,3 +304,8 @@ Core has no dependency on `UnityEngine`. Unity adapters may later convert bound 
 - do not scatter magic values `512`, `262144`, `0xFF`, or `0xFFFF` outside profile descriptors;
 - do not place global priority inside MIX or Format80 readers;
 - do not let typed Rules/Art views read raw packed sections.
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
