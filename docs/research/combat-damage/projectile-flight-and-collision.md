@@ -1,202 +1,35 @@
 # Projectile flight and collision
 
-> **来源与许可证声明**
->
-> 本文件由 **ChatGPT 网页版**基于公开资料独立研究完成；未读取 ProjectBaseline；不是 Codex 产物；GPL 或许可证不明的实现仅作行为、接口与冲突参考，未复制、翻译或机械移植其代码、公式实现、switch 表或测试夹具。`code_imported: false`。
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-
-## 1. Projectile raw fields
-
-Candidate fields:
+## Separation
 
 ```text
-Image
-Inviso
-Arcing
-ROT
-AA
-AG
-Shadow
-Proximity
-Ranged
-SubjectToCliffs
-SubjectToElevation
-SubjectToWalls
-VeryHigh
-Level
-Cluster
-CourseLockDuration
-Elasticity
-Acceleration
-Dropping
-Floater
-Parachuted
-Degenerates
-Arm
-High
-Airburst
-AirburstWeapon
-ShrapnelWeapon
-ShrapnelCount
-extension fields
-```
-
-Field presence does not prove stock applicability. Provider and product profile are mandatory.
-
-## 2. Required model split
-
-```text
-ProjectileTypeDefinition
-ProjectileSpawnCommand
-ProjectileFlightProfileCandidate
+ProjectileDefinitionRaw
+ProjectileCommand
 ProjectileRuntimeState
-ProjectilePresentation
-TargetTrackingCandidate
+Tracking/FlightProfile
 CollisionQuery
 ImpactCommand
+RenderedProjectile
 ```
 
-`Image` is a visual reference, never a collision shape.
+`Image`, `Inviso`, `Arcing`, `ROT`, velocity, acceleration, height and subject-to fields are authored candidates, not Unity physics configuration or an algorithm selector by themselves.
 
-## 3. Flight families
+## Evidence
 
-Preserve candidates rather than selecting one physics algorithm:
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes Projectile fields and editor validation | `ConfirmedByOfficialToolSource` | EA editor | Official tool only. | Named editor profile. | `NotRun` |
+| OpenRA/Chrono Divide/extensions implement flight/collision profiles | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific algorithms. | Comparison profiles. | `NotRun` |
+| Common Inviso/Arcing/ROT/subject-to terminology | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw fields/product applicability. | `NotRun` |
+| Several projectile families and tracking/collision candidates | `Underconfirmed` | Tools/community | Exact runtime mapping and independent lineage unproven. | Explicit profile selection. | `NotRun` |
+| ROT/tracking, gravity, speed, detonation and terrain/bridge collision | `ConflictingSources` | Engines/extensions/community | Public algorithms differ directly. | Preserve alternatives; no trial simulation. | `NotRun` |
+| Exact runtime integration, substeps, collision shape/order, range termination and save state | `Unresolved` | No runtime source | No complete contract. | Future deterministic simulation adapter. | `NotRun` |
+| Logical collision, stable projectile/impact IDs and no Image/Unity inference | `DefensiveDesign` | Project policy | Determinism/architecture. | Renderer and physics adapters are non-authoritative. | `NotRun` |
 
-- immediate/invisible delivery;
-- straight;
-- guided/homing;
-- arcing;
-- ballistic;
-- dropping/falling;
-- floating/parachuted;
-- cluster/airburst;
-- spawned or shrapnel child;
-- beam/laser presentation with separate logical impact;
-- aircraft-as-missile extension;
-- custom trajectory extension.
+## Contracts
 
-`Inviso=yes` is not automatically hitscan. `Arcing=yes` is not automatically a Unity ballistic body. `ROT=0` is not interpreted as stationary.
+`ProjectileCommand` carries source, weapon, target snapshot, launch tick/position, facing and stable ordinals. Runtime state carries deterministic position/velocity/profile/RNG/state. `CollisionQuery` explicitly identifies terrain, target, bridge/elevation and object candidates. `ImpactCommand` records reason, logical position, target/cell candidates and stable order.
 
-## 4. Spawn contract
-
-`ProjectileSpawnCommand` candidate inputs:
-
-```text
-StableProjectileIdentity
-SourceActorIdentity
-WeaponUsageIdentity
-ShotOrdinal
-BurstOrdinal
-SourcePosition
-MuzzleAnchor
-SourceFacing
-TargetSnapshot
-PassiveTargetPosition
-DamageModifierSnapshot
-RangeModifierSnapshot
-ProductProfile
-RandomDrawInputs
-```
-
-No renderer completion or GameObject identity enters this contract.
-
-## 5. Tracking
-
-Separate:
-
-```text
-AuthoredTarget
-CurrentTrackedTarget
-LastKnownTargetPosition
-PassiveTargetPosition
-CourseLockState
-TrackingTurnCandidate
-RetargetCandidate
-TargetLostPolicy
-```
-
-Target disappearance, movement, cloak, limbo, death, ownership change and layer transition are simulation events, not parser behavior.
-
-## 6. Collision
-
-`CollisionQuery` requires explicit dimensions:
-
-```text
-ProjectileSegmentOrVolume
-SourceLayer
-CurrentLayer
-TargetLayer
-TerrainSurface
-Cliff/Wall candidates
-BridgeDeck/UnderBridge candidates
-Actor hit candidates
-Map boundary
-Proximity radius
-Collision ordering policy
-```
-
-Do not derive collision from SHP/VXL pixels or use Unity Physics overlap as source semantics.
-
-## 7. Layer handling
-
-Candidate impact layers:
-
-```text
-Ground
-UnderBridge
-BridgeDeck
-Air
-Submerged
-Subterranean
-UnknownExtensionLayer
-```
-
-A projectile may travel visually over one layer while applying an impact to another. `High`, `VeryHigh`, placement `High`, aircraft altitude and bridge layer are distinct inputs.
-
-## 8. Map edges and lifetime
-
-Preserve candidates for:
-
-- range exhausted;
-- explicit projectile range;
-- target reached;
-- terrain hit;
-- blocker hit;
-- proximity;
-- map edge;
-- lifetime/degeneration;
-- bounce/elasticity;
-- parent removed;
-- target invalidated.
-
-No implicit destruction based on visual leaving the viewport.
-
-## 9. Independent implementation evidence
-
-OpenRA separates `WeaponInfo`, `ProjectileArgs`, projectile type, runtime projectile, collision/blocker queries, impact and rendering. Its specific world units, interpolation, random distribution and collision algorithms remain implementation-specific reference only.
-
-## 10. Safety limits
-
-`CombatReadLimits` candidates include:
-
-- max projectile types;
-- max fields per projectile;
-- max child/cluster references;
-- max flight profile candidates;
-- max collision categories;
-- max lifetime/range numeric magnitude;
-- max diagnostics;
-- max reference depth/cycles.
-
-
-## Evidence grades
-
-- `ConfirmedByOfficialRuntimeSource`
-- `ConfirmedByOfficialEditorSource`
-- `ConfirmedByIndependentImplementation`
-- `CommunityDocumented`
-- `ObservedByFutureProjectBaselineAudit`
-- `ConfiguredForProjectPolicy`
-- `Unresolved`
-
-没有完整公开的 RA2/YR 原版战斗运行时源码。官方 FinalSun/FinalAlert 2 只能提供编辑器、字段目录和 authoring 行为证据，不能替代 `gamemd.exe` 运行时证据。
+Line-of-fire, obstacle tests, proximity, multi-cell buildings, bridge layers and terrain interaction require explicit world-query profiles. Missing Art does not remove the logical projectile; an invisible projectile can still be simulated without a rendered object.

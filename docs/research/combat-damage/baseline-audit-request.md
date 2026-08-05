@@ -1,143 +1,56 @@
 # Future ProjectBaseline sanitized audit request
 
-> **来源与许可证声明**
->
-> 本文件由 **ChatGPT 网页版**基于公开资料独立研究完成；未读取 ProjectBaseline；不是 Codex 产物；GPL 或许可证不明的实现仅作行为、接口与冲突参考，未复制、翻译或机械移植其代码、公式实现、switch 表或测试夹具。`code_imported: false`。
-
+> **Source notice:** This audit was not run and ProjectBaseline was not read. `code_imported: false`.
 
 ## Status
 
-Design only. This audit was not run and no ProjectBaseline data was read.
-
-## Evidence label
-
-All future observations use only:
-
 ```text
-ObservedByFutureProjectBaselineAudit
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
 ```
 
-They do not automatically promote compatibility.
+These fields are not an evidence grade. Future aggregates cannot become original-runtime evidence, alter policy or promote compatibility.
 
-## SelectionBasis
+## Allowed aggregates
 
-A future local agent may select broad anonymous categories such as:
+Broad product/type categories; Weapon/Projectile/Warhead/Armor section presence; anonymous reference-binding states; numeric-field presence and coarse magnitude/sign buckets; Armor/Verses length and spelling categories; projectile/targeting/area-effect/ammo/status categories; duplicate/case/dangling diagnostics; bounded-input outcomes; non-linkable aggregate hashes; Memory/Stream/short-read/MIX equivalence.
 
-- type family;
-- scenario/rules layer category;
-- stock-looking versus extension-looking section shape;
-- weapon/projectile/warhead presence combinations;
-- armor/Verses shape categories;
-- special-effect categories.
+## Forbidden output
 
-Selection criteria must not contain names or paths in public output.
+No type, Weapon, Projectile, Warhead or Armor names; Rules/Art text; exact Damage/ROF/Range/Burst/Verses/projectile fields; complete reference graphs; ordered shots/impacts; Trigger or AI records; object/resource names; positions/topology; SHP/VXL/audio references; screenshots; bytes/hex/Base64; per-type/per-record/per-map hashes; or reconstructable combat configuration.
 
-## Allowed public aggregates
+## Discipline
 
-- broad type/category counts;
-- Weapon/Projectile/Warhead section presence;
-- reference binding status counts;
-- duplicate/case-collision/dangling counts;
-- numeric-field presence and coarse shape buckets;
-- Damage/ROF/Range/Burst presence;
-- projectile profile categories;
-- armor/Verses length distributions;
-- percentage spelling categories;
-- CellSpread/falloff presence categories;
-- targeting capability categories;
-- ammo/reload field-presence categories;
-- special-effect category counts;
-- diagnostics by code/severity;
-- bounded-input results;
-- Memory/Stream/short-read/MIX equivalence;
-- non-linkable aggregate hash.
+Compare only preselected product, armor, Verses, projectile, collision, damage-order, rounding, targeting, CellSpread, friendly-fire, ammo/reload and status profiles. Never select by successful lookup, familiar damage result, rendered appearance or fewer diagnostics. Multiple successful profiles remain ambiguous.
 
-## Forbidden public output
+## Safety
 
-- type, Weapon, Projectile, Warhead or Armor names;
-- INI text or exact section/key/value records;
-- full reference graph;
-- exact Damage, ROF, Range, MinimumRange or Burst;
-- exact Verses or armor order from samples;
-- exact projectile parameters;
-- Trigger IDs/opcodes/parameters;
-- object/resource names;
-- SHP/VXL/audio references;
-- positions, maps or graph topology;
-- screenshots/rendered effects;
-- per-type/per-resource/per-map hash;
-- hex/Base64;
-- absolute paths/usernames;
-- information sufficient to reconstruct Rules configurations.
+Read-only, bounded files/bytes/sections/tokens/diagnostics/runtime, no network, no game/editor/Unity execution, no combat simulation, no resource extraction and no ProjectBaseline modification. These are `DefensiveDesign` requirements.
 
-## Coarse buckets
-
-Examples only:
+## Report
 
 ```text
-numeric sign: negative / zero / positive / invalid
-magnitude: tiny / small / medium / large / extreme
-list length: 0 / 1 / 2..5 / 6..10 / 11 / 12+
-binding: unique / missing / ambiguous / extension
-projectile: invisible-like / arcing-like / guided-like / mixed / unknown
-effect: conventional / fire / radiation / control / temporal / EMP / other
+AuditMetadata
+- AuditStatus = NotRun
+- FutureEvidenceSource = ProjectBaselineAggregateAudit
+- SelectionBasis
+- SelectedProfiles
+
+CombatAggregate
+- SectionAndBindingCounts
+- NumericShapeBuckets
+- ArmorVersesCategories
+- ProjectileTargetingCategories
+- DamageAmmoStatusCategories
+- DiagnosticCounts
+- InputModeEquivalence
+- AggregateHash
+- CurrentEvidenceGrade
+
+DisclosureReview
+- ForbiddenFieldCheck
+- MinimumGroupSizeCheck
+- ReconstructabilityReview
 ```
 
-Never publish exact bucket thresholds if combined with counts that could identify a type.
-
-## Input-mode equivalence
-
-The future audit should compare canonical aggregate results across:
-
-- memory;
-- seekable stream;
-- deliberate short-read stream;
-- exact MIX entry window.
-
-No read may escape the MIX window.
-
-## Hashing
-
-Use a one-run aggregate salt or a project-approved non-linkable aggregation strategy. Do not publish per-record hashes or stable hashes reusable for cross-dataset matching.
-
-## Audit output structure
-
-```text
-AuditVersion
-SelectionBasisCategory
-ProductProfileCategories
-AggregateCounts
-ShapeHistograms
-BindingCategories
-DiagnosticCounts
-InputModeEquivalence
-NonLinkableAggregateHash
-EvidenceGrade
-```
-
-## Prohibited actions
-
-The audit does not:
-
-- execute the game/editor;
-- fire weapons;
-- simulate projectiles;
-- calculate damage against real types;
-- render effects;
-- publish configuration;
-- change compatibility;
-- modify ProjectBaseline;
-- create Unity objects.
-
-
-## Evidence grades
-
-- `ConfirmedByOfficialRuntimeSource`
-- `ConfirmedByOfficialEditorSource`
-- `ConfirmedByIndependentImplementation`
-- `CommunityDocumented`
-- `ObservedByFutureProjectBaselineAudit`
-- `ConfiguredForProjectPolicy`
-- `Unresolved`
-
-没有完整公开的 RA2/YR 原版战斗运行时源码。官方 FinalSun/FinalAlert 2 只能提供编辑器、字段目录和 authoring 行为证据，不能替代 `gamemd.exe` 运行时证据。
+Stop without publication if identities/exact values cannot be removed, a category identifies configuration, a hash is linkable, limits fail, input modes diverge without bounded diagnostics, or any operation would modify ProjectBaseline.
