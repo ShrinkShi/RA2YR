@@ -159,11 +159,11 @@ TheaterTileRegistry
 
 ## 10. Evidence status
 
-| Claim | Status |
-|---|---|
-| cumulative global IDs | `ConfirmedByOfficialToolAndReimplementation` |
-| `TilesInSet` reserves ranges | strong implementation/community evidence |
-| filename uses 1-based two-digit number | `ConfirmedCommunityConvention` |
-| variations are `a..f` | WAE implementation-specific |
-| missing file shifts later IDs | rejected by recommended model |
-| gap handling in original runtime | `Unresolved` |
+| Claim | Grade | Notes |
+|---|---|---|
+| cumulative global IDs | `ConfirmedByOfficialToolSource` | Official editor/tool evidence is primary; WAE and community documentation corroborate without proving runtime behavior. |
+| `TilesInSet` reserves ranges | `ConfirmedCommunityConvention` | Long-standing tool/community behavior supports the rule; original-runtime handling remains unconfirmed. |
+| filename uses 1-based two-digit number | `ConfirmedCommunityConvention` | Widely documented and implemented as a naming convention. |
+| variations are `a..f` | `ImplementationSpecificBehavior` | WAE scan range only; not a universal runtime rule. |
+| missing file shifts later IDs | `DefensiveDesign` | The project model explicitly preserves declared ranges and refuses asset-dependent renumbering. |
+| gap handling in original runtime | `Unresolved` | No original-runtime source was reviewed. |

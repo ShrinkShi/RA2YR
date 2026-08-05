@@ -35,7 +35,7 @@ Total: `0x34 = 52` bytes.
 
 ## 3. Why 52, not 48
 
-Three independent lines converge on 52:
+Three implementation lines converge on 52:
 
 - XCC's packed `t_tmp_image_header` totals 52 bytes.
 - OpenRA's detector reads `z_ofs` at offset 12 and expects `z_ofs == tileWidth × tileHeight / 2 + 52`.
@@ -170,12 +170,12 @@ Defensive validation should check:
 
 ## 10. Evidence status
 
-| Claim | Status |
-|---|---|
-| header is 52 bytes | `ConfirmedByMultipleIndependentImplementations` with shared-lineage caveat |
-| listed byte offsets | `ConfirmedByMultipleImplementations` |
-| offset base is cell start | strong candidate, `Underconfirmed` for all fields |
-| bits 0..2 flag names | `ConfirmedCommunityConvention` / multiple implementations |
-| height/terrain/ramp names | `ConfirmedCommunityConvention` |
-| exact original runtime semantics | `Unresolved` |
-| radar component order and use | `Underconfirmed` |
+| Claim | Grade | Notes |
+|---|---|---|
+| header is 52 bytes | `ConfirmedByMultipleIndependentImplementations` | XCC and OpenRA provide independent structural evidence; FinalAlert/openra2 shared XCC lineage is not counted again, and WAE supplies additional corroboration. |
+| listed byte offsets | `Underconfirmed` | The complete field map is strongest in XCC-lineage structures and matching WAE reads; independent confirmation of every field is incomplete. |
+| offset base is cell start | `Underconfirmed` | Strong candidate from XCC-style offsets, but authority and behavior for every field remain unresolved. |
+| bits 0..2 flag names | `ConfirmedCommunityConvention` | Multiple tools use the names, but shared lineage and conflicting consumption behavior prevent an independence claim. |
+| height/terrain/ramp names | `ConfirmedCommunityConvention` | Tool and community naming only; original-runtime semantics are not established. |
+| exact original runtime semantics | `Unresolved` | No original-runtime source was reviewed. |
+| radar component order and use | `Underconfirmed` | Raw triples are preserved; exact component semantics and runtime use remain unproven. |

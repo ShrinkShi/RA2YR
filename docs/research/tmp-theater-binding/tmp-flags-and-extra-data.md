@@ -162,11 +162,11 @@ Canonicalization requires stronger evidence than read support and is outside thi
 
 ## 10. Evidence status
 
-| Claim | Status |
-|---|---|
-| bit 0 means extra data | `ConfirmedByMultipleImplementations` |
-| bit 1 means Z data | `ConfirmedByMultipleImplementations`, consumption conflicts |
-| bit 2 means damaged data | `ConfirmedCommunityConvention`; body unresolved |
-| high bits may be trash | `ImplementationSpecificObservation` from WAE |
-| extra plane length is width×height | `ConfirmedByMultipleImplementations` |
-| extra depth values are limited to 0..31 | renderer/tool observation, not raw-format validity |
+| Claim | Grade | Notes |
+|---|---|---|
+| bit 0 means extra data | `ConfirmedByMultipleIndependentImplementations` | XCC and OpenRA independently expose compatible extra-data behavior; other XCC-derived tools are corroborating only. |
+| bit 1 means Z data | `ConflictingSources` | The label is conventional, but WAE gates the plane on the bit while OpenRA consumes diamond depth unconditionally. |
+| bit 2 means damaged data | `ConfirmedCommunityConvention` | The name is widespread; the damaged-data body and runtime behavior remain unresolved. |
+| high bits may be trash | `ImplementationSpecificBehavior` | WAE reports this behavior; it is not a universal runtime rule. |
+| extra plane length is width×height | `ConfirmedByMultipleIndependentImplementations` | Independent readers agree on the rectangle-area length. |
+| extra depth values are limited to 0..31 | `ImplementationSpecificBehavior` | OpenRA renderer filtering only; not raw-format validity. |

@@ -194,12 +194,12 @@ No input path may load the whole enclosing MIX or allow a plane to escape its lo
 
 ## 12. Evidence status
 
-| Claim | Status |
-|---|---|
-| diamond length `W×H/2` | `ConfirmedByMultipleImplementations` |
-| row widths change by four | `ConfirmedByMultipleImplementations` |
-| depth diamond uses same length | strong multiple-implementation candidate |
-| extra length `width×height` | `ConfirmedByMultipleImplementations` |
-| all files place planes sequentially | `ConflictingSources` / `Underconfirmed` |
-| stored offsets are authoritative | strongest design candidate, runtime behavior unresolved |
-| depth values encode movement height | rejected boundary |
+| Claim | Grade | Notes |
+|---|---|---|
+| diamond length `W×H/2` | `ConfirmedByMultipleIndependentImplementations` | XCC and OpenRA independently agree; WAE supplies additional tool corroboration. |
+| row widths change by four | `ConfirmedByMultipleIndependentImplementations` | Independent XCC/OpenRA rendering logic agrees on the encoded row schedule. |
+| depth diamond uses same length | `Underconfirmed` | Multiple tools agree on the candidate length, but depth-presence and consumption rules conflict. |
+| extra length `width×height` | `ConfirmedByMultipleIndependentImplementations` | Independent implementations agree on the rectangular area length. |
+| all files place planes sequentially | `ConflictingSources` | Stored-offset and sequential-reader behavior differ. |
+| stored offsets are authoritative | `Underconfirmed` | Strong design candidate; original-runtime authority remains unresolved. |
+| depth values encode movement height | `DefensiveDesign` | Core explicitly rejects this inference and keeps render depth separate from movement semantics. |

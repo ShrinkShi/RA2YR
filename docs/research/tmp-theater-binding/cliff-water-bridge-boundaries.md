@@ -156,11 +156,11 @@ Suggested diagnostics:
 
 ## 12. Evidence status
 
-| Claim | Status |
-|---|---|
-| special set keys bind TileSets | official editor + reimplementation evidence |
-| extra data means cliff | rejected overgeneralization |
-| bridge behavior is TMP-only | rejected boundary |
-| water behavior equals TerrainType byte | underconfirmed/incomplete |
-| overlay participates in bridge state | strong community/tool evidence |
-| exact original runtime combination order | `Unresolved` |
+| Claim | Grade | Notes |
+|---|---|---|
+| special set keys bind TileSets | `ConfirmedByOfficialToolSource` | Official editor evidence is primary; reimplementations supply corroboration only. |
+| extra data means cliff | `DefensiveDesign` | The project rejects this overgeneralization. |
+| bridge behavior is TMP-only | `DefensiveDesign` | The project keeps TMP, overlays, rendering, and runtime state separate. |
+| water behavior equals TerrainType byte | `Underconfirmed` | The raw byte is only one candidate among registry, overlay, locomotion, and runtime inputs. |
+| overlay participates in bridge state | `ConfirmedCommunityConvention` | Long-standing tool and community evidence supports the cross-format role. |
+| exact original runtime combination order | `Unresolved` | No original-runtime source was reviewed. |

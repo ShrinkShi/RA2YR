@@ -81,9 +81,10 @@ The TMP reader does not scan MIX archives, parse theater INIs, allocate global t
 
 ## 7. Evidence labels
 
-Material conclusions use one of:
+Material conclusions use exactly one normalized grade:
 
-- `ConfirmedByOriginalOrOfficialSource`
+- `ConfirmedByOriginalRuntimeSource`
+- `ConfirmedByOfficialToolSource`
 - `ConfirmedByMultipleIndependentImplementations`
 - `ConfirmedCommunityConvention`
 - `ImplementationSpecificBehavior`
@@ -92,7 +93,13 @@ Material conclusions use one of:
 - `Underconfirmed`
 - `Unresolved`
 
-Official FinalAlert 2 source is official **editor/tool** evidence. It is not automatically evidence of the original game runtime, and its TMP support inherits XCC code.
+Grade fields contain only one label from this closed vocabulary. Source details, caveats, conflicts, and implementation notes belong in separate Evidence or Notes fields.
+
+`ConfirmedByOriginalRuntimeSource` is reserved for evidence from the original game runtime or its actual source. No reviewed FinalAlert/FinalSun evidence is promoted to this grade.
+
+`ConfirmedByOfficialToolSource` covers official editors and tools such as FinalAlert/FinalSun. Official-tool behavior does not automatically establish original-runtime behavior.
+
+`ConfirmedByMultipleIndependentImplementations` requires demonstrably independent implementation lineages. FinalAlert's bundled XCC TMP support, the openra2 XCC port, and other shared XCC/OpenRA descendants are not counted as independent confirmations merely because they appear in separate repositories.
 
 ## 8. Non-goals
 

@@ -154,11 +154,11 @@ Such behavior is not binary parsing and is not evidence that the original runtim
 
 ## 10. Evidence status
 
-| Claim | Status |
-|---|---|
-| TMP height is local cell elevation/visual offset | multiple tool implementations |
-| RampType 0..20 table | TS++/community-derived candidate |
-| TerrainType exact enum order | `Underconfirmed` |
-| depth plane controls movement height | rejected boundary |
-| map Level and TMP height are identical | rejected boundary |
-| final corner algorithm | `Unresolved` pending source and local audit |
+| Claim | Grade | Notes |
+|---|---|---|
+| TMP height is local cell elevation/visual offset | `Underconfirmed` | Multiple tools use this interpretation, but the reviewed evidence does not establish independent lineage or original-runtime semantics. |
+| RampType 0..20 table | `Underconfirmed` | TS++/community-derived candidate; not original RA2/YR runtime proof. |
+| TerrainType exact enum order | `Underconfirmed` | Field naming exists, but exact value mapping is not independently confirmed. |
+| depth plane controls movement height | `DefensiveDesign` | Core rejects this inference and keeps render depth separate. |
+| map Level and TMP height are identical | `DefensiveDesign` | The project explicitly preserves these as separate domains. |
+| final corner algorithm | `Unresolved` | Requires stronger source evidence and later audit. |

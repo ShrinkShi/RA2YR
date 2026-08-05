@@ -138,11 +138,11 @@ These modern assets can be supplied by a higher provider, but their logical bind
 
 ## 10. Evidence status
 
-| Claim | Status |
-|---|---|
-| TMP has no internal palette | `ConfirmedByMultipleImplementations` |
-| ISO palette colors TMP | `ConfirmedCommunityConvention` / tool behavior |
-| unit palette is separate | `ConfirmedCommunityConvention` |
-| listed LAT pairs | official editor and reimplementation evidence |
-| radar fields are two RGB triples | strong conventional naming; exact runtime use underconfirmed |
-| NEWURBAN palette/fallback rules | profile/editor-specific, audit required |
+| Claim | Grade | Notes |
+|---|---|---|
+| TMP has no internal palette | `ConfirmedByMultipleIndependentImplementations` | Independent TMP readers expose indexed bytes without embedded palette data. |
+| ISO palette colors TMP | `ConfirmedCommunityConvention` | Long-standing tool and modding behavior agrees; this is not original-runtime source proof. |
+| unit palette is separate | `ConfirmedCommunityConvention` | Widely documented theater resource convention. |
+| listed LAT pairs | `ConfirmedByOfficialToolSource` | Official editor evidence is primary; reimplementations corroborate the relationships. |
+| radar fields are two RGB triples | `Underconfirmed` | Strong conventional naming exists, but component order and exact runtime use are not established. |
+| NEWURBAN palette/fallback rules | `ImplementationSpecificBehavior` | Profile/editor-specific behavior requiring separate audit. |

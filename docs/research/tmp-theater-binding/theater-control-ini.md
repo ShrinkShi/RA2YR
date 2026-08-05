@@ -156,7 +156,7 @@ WAE documents an FA2-specific fallback from `.ubn` to `.urb` because some Marble
 
 Project treatment:
 
-- record it as `ImplementationSpecificBehavior` / editor compatibility profile;
+- record it as `ImplementationSpecificBehavior` in an editor compatibility profile;
 - disable it in the strict vanilla resource resolver unless ProjectBaseline evidence or original-runtime evidence confirms it;
 - preserve both primary and fallback candidates and their provenance;
 - never silently relabel an `.urb` asset as an `.ubn` asset.
@@ -185,11 +185,11 @@ Suggested diagnostics:
 
 ## 11. Evidence status
 
-| Claim | Status |
-|---|---|
-| theater control has General + TileSet sections | `ConfirmedByOfficialToolAndReimplementations` |
-| four-digit TileSet naming | `ConfirmedCommunityConvention` / implementations |
-| stop at first missing TileSet | `ImplementationSpecificBehavior` in WAE |
-| special set keys listed above | official editor + community evidence |
-| all six theater profile names and exact files | community/installation convention; audit required |
-| map-local theater control changes | `Unresolved` / extension-profile only |
+| Claim | Grade | Notes |
+|---|---|---|
+| theater control has General + TileSet sections | `ConfirmedByOfficialToolSource` | FinalAlert/FinalSun editor source is the primary evidence; reimplementations corroborate but do not upgrade this to runtime evidence. |
+| four-digit TileSet naming | `ConfirmedCommunityConvention` | Tool implementations and long-standing modding documentation agree. |
+| stop at first missing TileSet | `ImplementationSpecificBehavior` | Observed in WAE only; not adopted as project or runtime behavior. |
+| special set keys listed above | `ConfirmedByOfficialToolSource` | Official editor evidence is primary; community documentation supplies additional context. |
+| all six theater profile names and exact files | `Underconfirmed` | Community and installation conventions exist, but exact effective files require audit. |
+| map-local theater control changes | `Unresolved` | Only extension-profile candidates are known. |
