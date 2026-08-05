@@ -42,4 +42,3 @@ Every format or behavior PR updates the relevant:
 Status is promoted only after the corresponding evidence exists. Research,
 audit observations, and configured project policy are not silently relabeled
 as original-runtime confirmation.
-

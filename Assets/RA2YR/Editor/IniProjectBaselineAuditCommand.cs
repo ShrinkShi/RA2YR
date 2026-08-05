@@ -331,9 +331,12 @@ namespace RA2YR.Editor
             if (!summary.Contains(
                     "\"manifestType\":\"RA2YR.IniRuntimeResolutionAuditSanitized\"") ||
                 !summary.Contains("\"baselineLogicalName\":\"YR1001_ProjectBaseline\"") ||
-                !summary.Contains("\"candidateSets\":[") ||
+                !summary.Contains("\"compositionSets\":[") ||
                 !summary.Contains("\"syntaxAudits\":[") ||
-                !summary.Contains("\"projectBaselineRuntimeWinnerSelected\":false") ||
+                !summary.Contains("\"compositionStatus\":\"ConfiguredForProjectBaseline\"") ||
+                !summary.Contains("\"projectBaselineCompositionConfigured\":true") ||
+                !summary.Contains("\"wholeFileWinnerSelected\":false") ||
+                !summary.Contains("\"originalRuntimeComparisonPassed\":false") ||
                 !summary.Contains("\"blackBoxAuthorization\":\"not-granted-not-executed\"") ||
                 summary.Contains("\"rawBytes\":") ||
                 summary.Contains("\"lineRecords\":[") ||
@@ -378,9 +381,13 @@ namespace RA2YR.Editor
             if (!summary.Contains(
                     "\"manifestType\":\"RA2YR.IniMinimalResourceProjectBaselineAuditSanitized\"") ||
                 !summary.Contains("\"baselineLogicalName\":\"YR1001_ProjectBaseline\"") ||
-                !summary.Contains("\"policyEvidence\":\"ConfiguredForTesting\"") ||
-                !summary.Contains("\"stockRuntimeWinnerSelected\":false") ||
-                !summary.Contains("\"rulesCandidates\":[") ||
+                !summary.Contains("\"crossDocument\":\"ConfiguredForProjectBaseline\"") ||
+                !summary.Contains("\"intradocument\":\"ConfiguredForTesting\"") ||
+                !summary.Contains("\"projectBaselineCompositionConfigured\":true") ||
+                !summary.Contains("\"projectBaselineCompositionExecuted\":true") ||
+                !summary.Contains("\"wholeFileWinnerSelected\":false") ||
+                !summary.Contains("\"originalRuntimeComparisonPassed\":false") ||
+                !summary.Contains("\"rulesComposition\":{") ||
                 !summary.Contains("\"artCandidate\":") ||
                 summary.Contains("\"sectionName\":") ||
                 summary.Contains("\"keyName\":") ||

@@ -253,16 +253,30 @@ function Assert-LogicalPath {
 
 function Assert-IsoUtcTimestamp {
     param(
-        [Parameter(Mandatory)][string] $Value,
+        [Parameter(Mandatory)][object] $Value,
         [Parameter(Mandatory)][string] $Context
     )
 
-    if ($Value -notmatch 'Z$') {
+    if ($Value -is [DateTimeOffset]) {
+        if ($Value.Offset -ne [TimeSpan]::Zero) {
+            throw "The $Context timestamp is not explicitly UTC."
+        }
+        return
+    }
+    if ($Value -is [DateTime]) {
+        if ($Value.Kind -ne [DateTimeKind]::Utc) {
+            throw "The $Context timestamp is not explicitly UTC."
+        }
+        return
+    }
+
+    $text = [string]$Value
+    if ($text -notmatch 'Z$') {
         throw "The $Context timestamp is not explicitly UTC."
     }
     $parsed = [DateTimeOffset]::MinValue
     if (-not [DateTimeOffset]::TryParse(
-        $Value,
+        $text,
         [Globalization.CultureInfo]::InvariantCulture,
         [Globalization.DateTimeStyles]::RoundtripKind,
         [ref]$parsed)) {
@@ -333,8 +347,8 @@ function Assert-SanitizedSummary {
     }
     Assert-LowerSha256 -Value ([string]$Summary.directoryFingerprint) `
         -Context 'directoryFingerprint'
-    Assert-IsoUtcTimestamp -Value ([string]$Summary.startedUtc) -Context 'startedUtc'
-    Assert-IsoUtcTimestamp -Value ([string]$Summary.completedUtc) -Context 'completedUtc'
+    Assert-IsoUtcTimestamp -Value $Summary.startedUtc -Context 'startedUtc'
+    Assert-IsoUtcTimestamp -Value $Summary.completedUtc -Context 'completedUtc'
 
     Assert-ExactJsonProperties -Object $Summary.externalManifest `
         -Context 'externalManifest' `

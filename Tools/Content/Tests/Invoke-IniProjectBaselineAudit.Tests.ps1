@@ -75,50 +75,77 @@ function New-SyntheticSummary {
     }
 }
 
-function New-SyntheticRuntimeCandidate {
-    param($Name, $Hash, $RootArchive)
+function New-SyntheticRuntimeLayer {
+    param($Name, $Hash, $RootArchive, $LayerId, $LayerKind, $Priority, $ExpandNumber)
+    $provenanceLayers = if ($RootArchive -ceq 'ra2md.mix') {
+        @(
+            [pscustomobject]@{
+                archive = $RootArchive; entryId = '0x00000002'; resolvedName = 'localmd.mix'
+            },
+            [pscustomobject]@{
+                archive = "$RootArchive/localmd.mix"; entryId = '0x00000001'; resolvedName = $Name
+            }
+        )
+    } else {
+        @([pscustomobject]@{
+            archive = $RootArchive; entryId = '0x00000001'; resolvedName = $Name
+        })
+    }
     [pscustomobject]@{
         logicalName = $Name; mixId = '0x00000001'
+        layerId = $LayerId; layerKind = $LayerKind; priority = $Priority
+        expandNumber = $ExpandNumber
         provenance = [pscustomobject]@{
             sourceId = 'YR1001_ProjectBaseline'; rootArchive = $RootArchive
-            layers = @([pscustomobject]@{
-                archive = $RootArchive; entryId = '0x00000001'; resolvedName = $Name
-            })
+            layers = $provenanceLayers
         }
         length = 1; sha256 = $Hash
     }
 }
 
 function New-SyntheticRuntimeSummary {
-    $rulesA = New-SyntheticRuntimeCandidate 'rulesmd.ini' `
-        '3d341ef8a13a4b5ab24af2eef48ac94931ac2bb87d950fe3330a07e2d25672ef' `
-        'expandmd01.mix'
-    $rulesB = New-SyntheticRuntimeCandidate 'rulesmd.ini' `
+    $rulesBase = New-SyntheticRuntimeLayer 'rulesmd.ini' `
         '06761dd7f714e7d9400216ec3c06109ec5c1461f6a0727be7401eb9d8b0f6d05' `
-        'ra2md.mix'
-    $soundA = New-SyntheticRuntimeCandidate 'soundmd.ini' `
-        '0a8e85381aef1a0f97074c953bfe99504da00c6220fae1a023a1afd857023232' `
-        'expandmd01.mix'
-    $soundB = New-SyntheticRuntimeCandidate 'soundmd.ini' `
+        'ra2md.mix' 'projectbaseline-ra2md' 'NestedMix' 200 $null
+    $rulesExpand = New-SyntheticRuntimeLayer 'rulesmd.ini' `
+        '3d341ef8a13a4b5ab24af2eef48ac94931ac2bb87d950fe3330a07e2d25672ef' `
+        'expandmd01.mix' 'projectbaseline-expandmd01' 'ExpandMix' 301 1
+    $soundBase = New-SyntheticRuntimeLayer 'soundmd.ini' `
         'd1be76491a0888396b4d0e53f4857f33879a5afd40a8bcea65ea1d1a3096d419' `
-        'ra2md.mix'
+        'ra2md.mix' 'projectbaseline-ra2md' 'NestedMix' 200 $null
+    $soundExpand = New-SyntheticRuntimeLayer 'soundmd.ini' `
+        '0a8e85381aef1a0f97074c953bfe99504da00c6220fae1a023a1afd857023232' `
+        'expandmd01.mix' 'projectbaseline-expandmd01' 'ExpandMix' 301 1
     [pscustomobject]@{
         schemaVersion = 1; manifestType = 'RA2YR.IniRuntimeResolutionAuditSanitized'
         baselineLogicalName = 'YR1001_ProjectBaseline'; auditStatus = 'Complete'
         directoryFingerprint = ('b' * 64)
-        candidateSets = @(
-            [pscustomobject]@{ logicalName = 'rulesmd.ini'; candidateCount = 2
-                candidates = @($rulesA, $rulesB); selectedWinner = $null
-                winnerEvidence = 'Unresolved' },
-            [pscustomobject]@{ logicalName = 'soundmd.ini'; candidateCount = 2
-                candidates = @($soundA, $soundB); selectedWinner = $null
-                winnerEvidence = 'Unresolved' }
+        policyEvidence = [pscustomobject]@{
+            containerPrecedence = [pscustomobject]@{
+                level = 'ConfiguredForProjectBaseline'
+                configuresProjectBaseline = $true; confirmsRuntime = $false
+            }
+            fileComposition = [pscustomobject]@{
+                level = 'ConfiguredForProjectBaseline'
+                configuresProjectBaseline = $true; confirmsRuntime = $false
+            }
+        }
+        compositionSets = @(
+            [pscustomobject]@{ logicalName = 'rulesmd.ini'; documentLayerCount = 2
+                layers = @($rulesBase, $rulesExpand); wholeFileWinner = $null
+                documentRole = 'CompositionLayer'
+                compositionStatus = 'ConfiguredForProjectBaseline'; layerOrder = 'low-to-high' },
+            [pscustomobject]@{ logicalName = 'soundmd.ini'; documentLayerCount = 2
+                layers = @($soundBase, $soundExpand); wholeFileWinner = $null
+                documentRole = 'CompositionLayer'
+                compositionStatus = 'ConfiguredForProjectBaseline'; layerOrder = 'low-to-high' }
         )
         syntaxAudits = @(1, 2, 3, 4)
         runtimeBoundary = [pscustomobject]@{
             genericExplicitLoadPlanExecutable = $true
             perValueCandidateChainImplemented = $true
-            projectBaselineRuntimeWinnerSelected = $false
+            projectBaselineCompositionConfigured = $true
+            wholeFileWinnerSelected = $false
             originalRuntimeComparisonPassed = $false
             blackBoxAuthorization = 'not-granted-not-executed'
         }
@@ -131,32 +158,35 @@ function New-SyntheticRuntimeSummary {
 
 function New-SyntheticMinimalSummary {
     $trace = [pscustomobject]@{ complete = 2; total = 2 }
-    $ruleA = [pscustomobject]@{
-        candidateRole = 'rulesmd-expandmd01'; typedStatus = 'Incomplete'
+    $rules = [pscustomobject]@{
+        compositionRole = 'rulesmd-ordered-composition'; typedStatus = 'Incomplete'
+        documentLayerCount = 2; resolvedValueCount = 2
+        valuesWithOverriddenCandidates = 1
+        winnerLayerCounts = [pscustomobject]@{ 'projectbaseline-expandmd01' = 2 }
         registryTypeCount = 5; registryEntryCount = 2
         invalidIdentifierCount = 0; failedIdentifierCount = 0
         sourceTraceCoverage = $trace; normalizedModelSha256 = ('d' * 64)
         diagnosticCounts = [pscustomobject]@{}
     }
-    $ruleB = [pscustomobject]@{
-        candidateRole = 'rulesmd-localmd'; typedStatus = 'Incomplete'
-        registryTypeCount = 5; registryEntryCount = 2
-        invalidIdentifierCount = 0; failedIdentifierCount = 0
-        sourceTraceCoverage = $trace; normalizedModelSha256 = ('e' * 64)
-        diagnosticCounts = [pscustomobject]@{}
-    }
     [pscustomobject]@{
-        schemaVersion = 1
+        schemaVersion = 2
         manifestType = 'RA2YR.IniMinimalResourceProjectBaselineAuditSanitized'
         baselineLogicalName = 'YR1001_ProjectBaseline'; auditStatus = 'Complete'
-        policyEvidence = 'ConfiguredForTesting'; stockRuntimeWinnerSelected = $false
+        policyEvidence = [pscustomobject]@{
+            crossDocument = 'ConfiguredForProjectBaseline'
+            intradocument = 'ConfiguredForTesting'
+        }
+        projectBaselineCompositionConfigured = $true
+        projectBaselineCompositionExecuted = $true
+        wholeFileWinnerSelected = $false
+        originalRuntimeComparisonPassed = $false
         sourceVersion = 'synthetic'; directoryFingerprint = ('b' * 64)
         baseIniAuditExternalManifest = [pscustomobject]@{
             schemaVersion = 1; cacheRelativePath = 'wp02f/ini-audits/test/manifest.json'
             length = 1; sha256 = ('c' * 64)
         }
         startedUtc = '2026-08-03T00:00:00Z'; completedUtc = '2026-08-03T00:00:01Z'
-        rulesCandidates = @($ruleA, $ruleB)
+        rulesComposition = $rules
         artCandidate = [pscustomobject]@{
             candidateRole = 'artmd-localmd'; typedStatus = 'Incomplete'
             recordCount = 1; explicitImageCount = 1
@@ -236,7 +266,7 @@ Invoke-Case 'Runtime audit mode is exposed through the same safety wrapper' {
 Invoke-Case 'Minimal resource mode is exposed through the same safety wrapper' {
     foreach ($required in @(
         'RunMinimalResourceTypedViews', 'wp02g2-ini-minimal-resource-summary.json',
-        'stockRuntimeWinnerSelected', 'ConfiguredForTesting')) {
+        'projectBaselineCompositionExecuted', 'ConfiguredForTesting')) {
         if (-not $wrapperText.Contains($required)) { throw "Missing minimal gate: $required" }
     }
     if (-not $editorText.Contains('RunMinimalResourceTypedViewAudit(')) {
@@ -293,11 +323,11 @@ Invoke-Case 'Synthetic runtime resolution summary passes' {
     $script:runtimeResolutionAudit = $false
     $script:manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
 }
-Invoke-Case 'Runtime winner selection fails closed' {
+Invoke-Case 'Runtime whole-file winner selection fails closed' {
     $script:manifestType = 'RA2YR.IniRuntimeResolutionAuditSanitized'
     $script:runtimeResolutionAudit = $true
     $summary = New-SyntheticRuntimeSummary
-    $summary.candidateSets[0].selectedWinner = $summary.candidateSets[0].candidates[0]
+    $summary.compositionSets[0].wholeFileWinner = $summary.compositionSets[0].layers[1]
     Assert-Throws { Assert-SanitizedSummary $summary ($summary | ConvertTo-Json -Depth 8 -Compress) }
     $script:runtimeResolutionAudit = $false
     $script:manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
@@ -311,11 +341,11 @@ Invoke-Case 'Synthetic minimal resource summary passes' {
     $script:minimalResourceAudit = $false
     $script:manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
 }
-Invoke-Case 'Minimal resource stock winner selection fails closed' {
+Invoke-Case 'Minimal resource whole-file winner selection fails closed' {
     $script:manifestType = 'RA2YR.IniMinimalResourceProjectBaselineAuditSanitized'
     $script:minimalResourceAudit = $true
     $summary = New-SyntheticMinimalSummary
-    $summary.stockRuntimeWinnerSelected = $true
+    $summary.wholeFileWinnerSelected = $true
     Assert-Throws { Assert-SanitizedSummary $summary ($summary | ConvertTo-Json -Depth 8 -Compress) }
     $script:minimalResourceAudit = $false
     $script:manifestType = 'RA2YR.IniProjectBaselineAuditSanitized'
