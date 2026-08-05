@@ -2,27 +2,16 @@
 
 > **Source notice:** ChatGPT Web public-source research only. ProjectBaseline was not read. This is not a Codex Agent artifact. No GPL or unclear-license code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
 
-## Purpose
+## Purpose and status
 
-This document specifies a future read-only Codex audit that can test public-source hypotheses against the user's local baseline without exposing maps or reconstructable placement data.
-
-This audit was not run by ChatGPT Web.
-
-## Evidence grade
-
-Every local result must be labeled:
+This document specifies a future read-only Codex audit that can test public-source hypotheses against the user's local baseline without exposing maps or reconstructable placement data. This audit was not run by ChatGPT Web.
 
 ```text
-ObservedByFutureProjectBaselineAudit
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
 ```
 
-It must not automatically become:
-
-```text
-ConfirmedByOfficialRuntimeSource
-```
-
-Local observations can support project policies and identify fixtures for private testing, but they do not prove universal runtime behavior.
+These fields are not a formal evidence grade and do not imply that ProjectBaseline was read, observed, or confirmed. Local observations cannot automatically become `ConfirmedByOriginalRuntimeSource`, change project policy, or promote compatibility.
 
 ## Selection basis
 
@@ -31,19 +20,10 @@ The local audit should select aggregate samples across:
 - all six theater categories where present;
 - campaign and skirmish/standard multiplayer categories;
 - small, medium, and large map-size buckets;
-- Structure-heavy maps;
-- Unit-heavy maps;
-- Infantry-heavy maps;
-- maps containing Aircraft placements;
-- maps containing Terrain objects;
-- maps containing Smudges;
-- maps with Waypoints and CellTags;
+- Structure-, Unit-, Infantry-, Aircraft-, Terrain-, Smudge-, Waypoint-, and CellTag-bearing maps;
 - neutral/civilian/special owner categories;
-- maps with unknown or extension type candidates;
-- out-of-domain record candidates;
-- duplicate-key candidates;
-- unknown trailing fields;
-- dangling reference candidates.
+- unknown or extension type candidates;
+- out-of-domain, duplicate-key, unknown-tail, and dangling-reference candidates.
 
 The report publishes selection rules and aggregate counts, never map names.
 
@@ -62,180 +42,120 @@ bounded map source
 → canonical aggregate hashes
 ```
 
-The audit must use the future production parser only for one side of equivalence checks. Independent probe calculations or fixture formulas must be used where comparison is intended.
+The audit must not auto-select profiles by success count or plausibility.
 
 ## Allowed public output
 
 ### Selection and provenance
 
 - `SelectionBasis`;
-- theater category counts;
-- campaign/skirmish/other map-category counts;
+- theater and campaign/skirmish/other category counts;
 - source container/provenance categories without filenames or paths;
 - map-size bucket counts without individual tuples.
 
-### Section presence and record aggregates
+### Section and record aggregates
 
-- presence counts for Structures, Units, Infantry, Aircraft, Terrain, Smudge, Waypoints, and CellTags;
-- total and per-category record-count ranges, sums, and coarse histograms;
-- duplicate-section occurrence counts;
-- zero-record and nonzero-record categories.
+- presence and record-count aggregates for Structures, Units, Infantry, Aircraft, Terrain, Smudge, Waypoints, and CellTags;
+- duplicate-section counts;
+- zero/nonzero-record categories;
+- raw field-count and empty/trailing-token histograms;
+- unknown-tail, duplicate-key, normalized-collision, gap, nonnumeric-key, and key-length aggregates.
 
-### Token and key aggregates
-
-- raw field-count histograms per section family;
-- minimum/maximum/coarse token-count buckets;
-- empty-token and trailing-empty-token counts;
-- unknown trailing-field counts;
-- duplicate raw key counts;
-- normalized numeric collision counts;
-- gap counts;
-- nonnumeric key counts;
-- key-length ranges.
-
-No key text is published.
+No key or token text is published.
 
 ### Coordinate aggregates
 
-- coordinate decode success/failure counts under explicitly named profiles;
-- aggregate X/Y minima and maxima by coarse category;
-- negative/overflow counts;
-- inside Size/outside Size counts;
-- inside/outside LocalSize counts;
-- IsoMap cell present/missing counts;
+- decode success/failure counts under named profiles;
+- coarse X/Y minima/maxima and negative/overflow counts;
+- Size/LocalSize/IsoMap-presence categories;
 - axis-profile ambiguity counts;
-- Infantry subcell range and frequency summary in coarse buckets;
-- multiple-infantry/cooccupancy category counts.
+- Infantry subcell coarse ranges and cooccupancy counts.
 
 No coordinate sequence or per-map coordinate set is published.
 
 ### Owner and type binding aggregates
 
-- owner binding status counts: unique, special candidate, unknown, duplicate;
-- type registry binding success/failure counts by family;
-- registry gap and duplicate category counts;
-- typed section missing counts;
-- map-local contribution counts;
-- missing Art/visual binding counts;
+- owner binding status counts;
+- type registry binding success/failure by family;
+- registry gap/duplicate categories;
+- map-local contribution and missing Art/visual-binding counts;
 - extension-profile candidate counts.
 
 Owner and type names are forbidden.
 
 ### State aggregates
 
-- health raw minima/maxima and coarse buckets;
-- counts below 0, in 0..256, and above 256;
-- facing raw range and coarse buckets;
-- recognized/unknown/empty mission category counts;
-- veterancy and group coarse ranges;
-- High and Follows presence/sentinel/ambiguity counts;
-- structure upgrade-count consistency categories;
-- recruitment flag combination counts.
+- coarse health, facing, mission, veterancy, group, High, Follows, upgrade, recruitment and unknown-tail categories;
+- recognized/unknown/empty mission counts;
+- sentinel/ambiguity counts.
 
 No raw mission or state token list is published.
 
 ### Reference and overlap aggregates
 
-- Tag-reference present/none/dangling/ambiguous counts;
-- CellTag reference counts;
-- missing Trigger second-stage counts;
-- Follows reference-basis classification counts;
-- duplicate waypoint counts;
-- overlap/cooccupancy category counts;
-- cycle-candidate counts;
-- total diagnostic counts by code/severity.
+- Tag, CellTag, Trigger, Follows, waypoint and opaque-reference status counts;
+- duplicate/cycle/overlap/cooccupancy categories;
+- diagnostic counts by code and severity.
 
 ### Hashes and equivalence
 
 Allowed hashes must be aggregate and non-reconstructable:
 
-- canonical aggregate hash of sorted category/count tuples;
-- category-level parser result hashes after removing names, paths, values, coordinates, and order-sensitive source data;
+- canonical aggregate hashes of sorted category/count tuples;
+- category-level result hashes after removing names, paths, values, coordinates and source-order data;
 - Memory/Stream/short-read Stream/MIX equivalence booleans and aggregate mismatch counts.
 
-Do not publish per-map, per-record, per-owner, per-type, or per-section-value hashes.
+No per-map, per-record, per-owner, per-type or per-section-value hashes.
 
 ## Forbidden public output
 
 The audit must not expose:
 
-- map names;
-- scenario titles;
-- file names;
-- container entry names;
-- absolute or relative local paths;
-- usernames, machine names, or volume labels;
-- INI section bodies;
-- placement record text;
-- raw key text;
-- raw token text;
-- owner names or complete owner lists;
-- type names or complete type lists;
-- object names;
-- coordinates or coordinate sequences;
-- per-object tuples;
-- per-map field histograms where they identify a map;
-- waypoint IDs or values;
-- Tag/Trigger IDs;
-- TeamType, TaskForce, ScriptType, or AITrigger IDs;
+- map/scenario/file/container names or paths;
+- usernames, machine names or volume labels;
+- INI bodies, placement records, raw keys or raw tokens;
+- owner/type/object names or complete lists;
+- coordinates, object positions, per-object tuples or map layouts;
+- waypoint, Tag, Trigger, TeamType, TaskForce, ScriptType or AITrigger IDs;
 - type-to-Art/SHP/VXL/HVA mappings;
-- unit, infantry, aircraft, building, terrain, smudge, or CellTag positions;
-- map layouts;
-- overlay arrays;
-- IsoMap, TMP, palette, SHP, VXL, HVA, or Preview contents;
-- images, screenshots, thumbnails, or rendered maps;
-- Base64 or hex dumps;
-- compressed or decoded bytes;
-- per-object, per-record, per-map, or per-resource hashes;
-- any information sufficient to reconstruct or identify a map.
+- Overlay, IsoMap, TMP, palette, SHP, VXL, HVA or Preview content;
+- images, screenshots, thumbnails or rendered maps;
+- Base64, hex, compressed or decoded bytes;
+- per-object, per-record, per-map or per-resource hashes;
+- any reconstructable or identifying information.
 
-## Minimum privacy thresholds
+## Privacy thresholds
 
-Aggregate categories should be suppressed or merged when they contain too few samples and could identify a map. The local audit should define a minimum publication group size before execution.
-
-Rare unknown type, owner, mission, or extension categories should be reported only as counts in a broad “other/unknown” bucket.
+Small categories that could identify a map must be suppressed or merged. Rare unknown type, owner, mission or extension categories are reported only as broad counts. The minimum publication group size is configured before execution.
 
 ## Audit profile comparisons
 
-Run explicit, non-auto-selecting comparisons for:
+Run explicit comparisons for:
 
-- lossless token preservation versus common tool `RemoveEmptyEntries` behavior;
-- `Y*1000+X` versus `X*1000+Y` coordinate profiles;
-- raw key versus source-occurrence Follows target profiles;
-- case-sensitive versus case-insensitive owner/type candidate matching;
-- strict minimum field counts versus unknown-tail preservation;
-- strict unknown owner/type retention versus editor skip/fabrication behavior.
+- lossless token preservation versus tool empty-token deletion;
+- `Y*1000+X` versus `X*1000+Y`;
+- raw key versus source-occurrence Follows profiles;
+- case-sensitive versus case-insensitive owner/type matching;
+- strict field counts versus unknown-tail preservation;
+- strict unresolved owner/type retention versus editor skip/fabrication.
 
-If two profiles both succeed, report ambiguity. Do not vote based on success counts or plausibility.
+If two profiles succeed, report ambiguity. Do not select by plausibility.
 
 ## Required sample roles
 
-The private local run should ensure coverage of:
-
-- records with no optional references;
-- records with Tags;
-- records with `None`/`<none>` variants;
-- health/facing boundary values;
-- Unit High/Follows fields;
-- Infantry nonzero subcells;
-- Structure upgrades;
-- Terrain key-as-cell;
-- Smudge value coordinates;
-- waypoint and CellTag cell identities;
-- map-local type and house candidates;
-- missing Art candidates;
-- duplicate and gap candidates if present.
+Private coverage should include records with and without optional references, Tag sentinels, health/facing boundaries, Unit High/Follows, Infantry subcells, Structure upgrades, Terrain cell keys, Smudge coordinates, Waypoint and CellTag identities, map-local type/house candidates, missing Art, duplicates and gaps where present.
 
 ## Execution safety
 
 - read-only access;
-- no map save or editor launch;
-- no Unity, RA2/YR, FinalAlert, WAE, or XCC execution;
+- no map save, editor launch, Unity, RA2/YR, FinalAlert, WAE or XCC execution;
 - no extraction or publication of original assets;
-- bounded file count, bytes, records, tokens, diagnostics, and runtime;
+- bounded file count, bytes, records, tokens, diagnostics and runtime;
 - no network upload of baseline content;
 - temporary outputs contain only sanitized aggregates;
-- temporary raw data is deleted locally after aggregate generation.
+- temporary raw data is deleted locally after aggregation.
+
+These are `DefensiveDesign` audit requirements.
 
 ## Suggested report schema
 
@@ -243,6 +163,8 @@ The private local run should ensure coverage of:
 AuditMetadata
 - ToolVersion
 - PolicyIds
+- AuditStatus = NotRun
+- FutureEvidenceSource = ProjectBaselineAggregateAudit
 - SelectionBasis
 - SampleCategoryCounts
 
@@ -260,6 +182,7 @@ PlacementAggregate
 - DiagnosticCounts
 - AggregateHash
 - InputEquivalence
+- CurrentEvidenceGrade
 
 PrivacyReview
 - ForbiddenFieldCheck
@@ -267,12 +190,14 @@ PrivacyReview
 - ReconstructabilityReview
 ```
 
+`CurrentEvidenceGrade` records only the pre-audit public-source grade from the nine-item vocabulary.
+
 ## Stop conditions
 
 The audit must stop without publication if:
 
 - sanitization cannot remove raw values or paths;
-- a generated hash is per-map or linkable to public map data;
+- a hash is per-map or linkable to public map data;
 - a result includes coordinate or identity sequences;
 - bounded allocation or runtime limits are exceeded;
 - parser output cannot be aggregated without retaining source records;

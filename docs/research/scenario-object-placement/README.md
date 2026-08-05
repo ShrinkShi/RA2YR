@@ -46,26 +46,48 @@ The layers are intentionally separate:
 ## Leading conclusions
 
 1. **There is no safe universal placement CSV structure.** Structures, vehicles, infantry, aircraft, terrain objects, smudges, waypoints, and cell tags use different key and value contracts.
-2. **The common RA2/YR writer layouts are strong editor/community evidence, not official runtime source.** Public WAE and MapTool implementations agree on the familiar 17-field structure, 14-field unit, 14-field infantry, and 12-field aircraft forms, while also applying destructive token splitting and repairs that this project must not inherit.
-3. **Placement keys are not uniformly identities.** WAE writes sequential numeric keys for techno and smudge records, cell IDs as keys for terrain and cell tags, and waypoint IDs as keys for waypoints. A future parser must preserve raw key spelling and occurrence order rather than renumbering.
-4. **`Y × 1000 + X` is a strong scenario-cell encoding candidate.** WAE writes this form for terrain keys, cell-tag keys, and waypoint values. It is distinct from Overlay storage indexing, IsoMap records, TMP subtile indices, screen coordinates, and Unity coordinates.
+2. **The common RA2/YR writer layouts are editor/community candidates, not runtime proof.** WAE and MapTool use familiar 17-field Structure, 14-field Unit, 14-field Infantry, and 12-field Aircraft forms while also applying destructive token splitting and repairs that this project must not inherit.
+3. **Placement keys are not uniformly identities.** WAE writes sequential numeric keys for techno and smudge records, cell IDs as keys for terrain and cell tags, and waypoint IDs as keys for waypoints. Core preserves raw key spelling and occurrence order rather than renumbering.
+4. **`Y × 1000 + X` is the leading scenario-cell candidate, graded `Underconfirmed`.** WAE uses it for Terrain keys, CellTag keys, and Waypoint values; ModEnc documents the convention. Shared community knowledge and lack of runtime source prevent promotion.
 5. **Owner and type binding are semantic stages.** Raw owner/type tokens remain valid source data even when a house, Rules type, or Art resource cannot be resolved.
 6. **Health, facing, mission, veterancy, group, high/bridge state, follows, and recruitment flags remain raw first.** Editor clamping and default substitution are not parser semantics.
 7. **Tag, trigger, team, follows, and script relations form an opaque reference graph here.** This dossier does not execute or fully decode them.
 
-## Evidence grades
+## Formal evidence grades
 
-Every claim uses one of these grades:
+Every formal `Grade` field uses exactly one value from this closed vocabulary:
 
-- `ConfirmedByOfficialRuntimeSource`;
-- `ConfirmedByOfficialEditorSource`;
-- `ConfirmedByIndependentImplementation`;
-- `CommunityDocumented`;
-- `ObservedByFutureProjectBaselineAudit`;
-- `ConfiguredForProjectPolicy`;
+- `ConfirmedByOriginalRuntimeSource`;
+- `ConfirmedByOfficialToolSource`;
+- `ConfirmedByMultipleIndependentImplementations`;
+- `ConfirmedCommunityConvention`;
+- `ImplementationSpecificBehavior`;
+- `DefensiveDesign`;
+- `ConflictingSources`;
+- `Underconfirmed`;
 - `Unresolved`.
 
-No complete RA2/YR game runtime source was found for these records. Official FinalSun/FinalAlert 2 source is classified as editor evidence only.
+No complete RA2/YR game runtime source was found for these records, so no claim in this dossier reaches `ConfirmedByOriginalRuntimeSource`. FinalSun/FinalAlert evidence is `ConfirmedByOfficialToolSource`. WAE, MapTool, OpenRA, CNCMaps and other named implementations are graded individually as `ImplementationSpecificBehavior`; cross-tool agreement remains `Underconfirmed` unless independence is proven. Stable ModEnc/community field conventions use `ConfirmedCommunityConvention`. Raw preservation, explicit profiles, no clamp/default repair, and fail-closed behavior are `DefensiveDesign`.
+
+Future ProjectBaseline work is recorded separately:
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+These fields do not imply that ProjectBaseline was read or observed and cannot automatically become original-runtime evidence.
+
+## Normalized claim summary
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes map-local type lookup and placed-object editor fields | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor behavior only. | Preserve source-specific editor profile. | `NotRun` |
+| WAE/MapTool field layouts and repair/default behavior | `ImplementationSpecificBehavior` | Named tools | Single-tool behavior; destructive repair is not inherited. | Raw tokens remain primary. | `NotRun` |
+| Common 17/14/14/12 techno layouts | `Underconfirmed` | WAE, MapTool, ModEnc | Cross-tool convergence exists but lineage independence and runtime strictness are not proven. | Explicit family layout profiles. | `NotRun` |
+| `Y × 1000 + X` scenario-cell convention | `Underconfirmed` | WAE and ModEnc | Strong tool/community candidate, not an original-runtime contract. | Never choose by map-bound plausibility. | `NotRun` |
+| Unique original-runtime meanings for malformed health/facing/mission/tails and Follows basis | `Unresolved` | No original-runtime source located | Tool defaults and normalizations differ. | Preserve raw and return ambiguity. | `NotRun` |
+| Lossless tokens, duplicate preservation, explicit binding and no Unity/runtime object creation | `DefensiveDesign` | Project policy | Preservation and architecture decisions. | Fail closed without deleting or repairing records. | `NotRun` |
 
 ## Default project policies
 

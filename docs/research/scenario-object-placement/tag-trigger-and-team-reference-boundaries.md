@@ -38,7 +38,7 @@ Placement TagRaw
 
 Only the first opaque edges belong here. Event and action records remain uninterpreted.
 
-WAE looks up a Tag by ID and logs a missing target without attaching it. A strict Core result preserves the raw Tag and returns `DanglingTagReference`; it does not clear the field.
+WAE looks up a Tag by ID and logs a missing target without attaching it. This is `ImplementationSpecificBehavior`. A strict Core result preserves the raw Tag and returns `DanglingTagReference`; it does not clear the field. That preservation rule is `DefensiveDesign`.
 
 ## CellTags
 
@@ -104,9 +104,13 @@ A reference to a missing waypoint remains opaque and dangling.
 - runtime list index;
 - another numeric state.
 
-WAE writes the current in-memory Units list index and uses `-1` for no target. The project records that as `ConfirmedByIndependentImplementation`, not a universal runtime contract.
+WAE writes the current in-memory Units list index and uses `-1` for no target.
 
-Resolver policy must explicitly choose a basis. If multiple bases yield different targets, the result is `AmbiguousReferenceBasis`.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| WAE writes an in-memory Units list index and `-1` sentinel | `ImplementationSpecificBehavior` | World-Altering Editor | Named writer behavior only. | Preserve as a WAE profile. | `NotRun` |
+| Original-runtime Follows target identity basis | `Unresolved` | No original-runtime source located | Numeric key, occurrence, writer order and runtime index can disagree. | Resolver must require explicit basis. | `NotRun` |
+| Multiple candidate bases resolve to different targets | `ConflictingSources` | Tool behavior and identity candidates | A successful lookup is not proof. | Return `AmbiguousReferenceBasis`; never plausibility-select. | `NotRun` |
 
 ## Group
 
@@ -190,4 +194,4 @@ Suggested statuses:
 
 ## Round-trip
 
-Lossless round-trip preserves raw IDs, casing, sentinel spelling, unresolved targets, duplicate sections, and source order. A future canonical writer cannot rename Tags or renumber records without an explicit graph-aware migration policy.
+Lossless round-trip preserves raw IDs, casing, sentinel spelling, unresolved targets, duplicate sections, and source order. A future canonical writer cannot rename Tags or renumber records without an explicit graph-aware migration policy. This is `DefensiveDesign`.

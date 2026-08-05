@@ -21,7 +21,7 @@ A conversion between two spaces is an explicit operation with a profile and diag
 
 ## Strong scenario-cell candidate
 
-The strongest public editor and community candidate is:
+The leading public tool and community candidate is:
 
 ```text
 ScenarioCellId = Y × 1000 + X
@@ -40,7 +40,14 @@ WAE writes this formula for:
 - `[CellTags]` keys;
 - `[Waypoints]` values.
 
-Its Terrain loader takes the last three decimal digits as X and the preceding digits as Y. ModEnc documents CellTags and Waypoints as combined map coordinates. The evidence grade is `ConfirmedByIndependentImplementation` plus `CommunityDocumented`, not official runtime source.
+Its Terrain loader takes the last three decimal digits as X and the preceding digits as Y. ModEnc documents CellTags and Waypoints as combined map coordinates.
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| WAE writes and reads `Y × 1000 + X` for the named sections | `ImplementationSpecificBehavior` | World-Altering Editor | Named editor behavior only. | Keep as source-pinned profile. | `NotRun` |
+| ModEnc documents combined scenario-cell coordinates | `ConfirmedCommunityConvention` | ModEnc | Stable community convention, not runtime proof. | Retain as documentation evidence. | `NotRun` |
+| `Y × 1000 + X` is the leading RA2/YR external scenario-cell candidate | `Underconfirmed` | WAE and ModEnc | Shared community knowledge and no original-runtime source prevent stronger confirmation. | Explicit profile only. | `NotRun` |
+| A unique original-runtime axis/radix contract is established | `Unresolved` | No original-runtime source located | Official editor internal axis naming and malformed behavior remain unsourced. | Never choose by bounds or lookup plausibility. | `NotRun` |
 
 ## Competing axis candidate
 
@@ -59,6 +66,8 @@ The project must not choose between the two based on:
 - which result has a known terrain type;
 - which result produces fewer overlap diagnostics;
 - which result renders plausibly.
+
+This prohibition is `DefensiveDesign`.
 
 ## Radix and numeric domain
 
@@ -150,7 +159,7 @@ The Infantry `SubCell` token is an occupancy slot within a scenario cell. It is 
 - a formation group number;
 - a waypoint ID.
 
-Public editors expose finite subcell enumerations and can place multiple infantry in one scenario cell. Exact runtime-valid values and invalid-value behavior remain unresolved.
+Public editors expose finite subcell enumerations and can place multiple infantry in one scenario cell. Exact runtime-valid values and invalid-value behavior remain `Unresolved`.
 
 The raw model is:
 
@@ -163,7 +172,7 @@ InfantrySubCellRaw
 - EvidenceGrade
 ```
 
-No modulo, clamp, fallback slot, or automatic collision resolution occurs in Core.
+No modulo, clamp, fallback slot, or automatic collision resolution occurs in Core. These are `DefensiveDesign` requirements.
 
 ## High/bridge state
 
