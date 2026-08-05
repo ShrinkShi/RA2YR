@@ -1,8 +1,21 @@
 # IsoMapPack5 raw record foundation
 
-The current synthetic matrix contains 127 independent execution cases
-(81 `[Test]` methods and 46 parameterized `[TestCase]` executions). This count
-does not represent ProjectBaseline compatibility or original-runtime proof.
+The current synthetic matrix defines 127 NUnit executions (81 `[Test]`
+declarations and 46 parameterized `[TestCase]` executions). The current-HEAD
+executed count is 0 and passed count is unknown until a new XML result is
+generated; parameterized boundary cases are tracked separately from distinct
+behavior contracts. This count does not represent ProjectBaseline compatibility
+or original-runtime proof.
+
+`SourceOffset` is the absolute offset within the decoded IsoMapPack5 stream (or
+the bounded input window origin plus that stream-relative offset). It is not a
+physical offset into an outer MIX archive unless the caller supplies that
+mapping as provenance.
+
+The current evidence covers Memory, seekable Stream, short-read Stream, and
+bounded ReadOnlyDataWindow paths. No real MIX entry fixture has been executed
+on this head; any earlier MIX-window wording is therefore treated as bounded
+window coverage, not ProjectBaseline or archive-entry proof.
 
 This document describes the M3-C2 Core boundary. It is not a claim that the
 repository can load a complete RA2/YR map or that any coordinate or tile

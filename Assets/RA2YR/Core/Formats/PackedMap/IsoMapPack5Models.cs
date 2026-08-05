@@ -27,6 +27,38 @@ namespace RA2YR.Core.Formats.PackedMap
         BinaryReadFailure
     }
 
+    internal enum IsoMapCompletionStatus
+    {
+        Succeeded,
+        Failed
+    }
+
+    internal sealed class IsoMapExecutionState
+    {
+        private BinaryDiagnosticSeverity highestSeverity = BinaryDiagnosticSeverity.Info;
+        private bool hasFatalError;
+        private int suppressedDiagnosticCount;
+
+        public IsoMapCompletionStatus CompletionStatus => hasFatalError
+            ? IsoMapCompletionStatus.Failed
+            : IsoMapCompletionStatus.Succeeded;
+
+        public bool HasFatalError => hasFatalError;
+        public BinaryDiagnosticSeverity HighestObservedSeverity => highestSeverity;
+        public int SuppressedDiagnosticCount => suppressedDiagnosticCount;
+
+        internal void Observe(BinaryDiagnosticSeverity severity)
+        {
+            if ((int)severity > (int)highestSeverity) highestSeverity = severity;
+            if (severity == BinaryDiagnosticSeverity.Error) hasFatalError = true;
+        }
+
+        internal void SuppressOne()
+        {
+            if (suppressedDiagnosticCount < int.MaxValue) suppressedDiagnosticCount++;
+        }
+    }
+
     internal sealed class IsoMapDiagnostic
     {
         internal IsoMapDiagnostic(
@@ -85,16 +117,18 @@ namespace RA2YR.Core.Formats.PackedMap
 
     internal sealed class IsoMapPack5TrailingData
     {
+        private readonly byte[] bytes;
+
         internal IsoMapPack5TrailingData(long absoluteOffset, byte[] bytes, IsoMapTrailingClassification classification)
         {
             if (absoluteOffset < 0) throw new ArgumentOutOfRangeException(nameof(absoluteOffset));
             AbsoluteOffset = absoluteOffset;
-            Bytes = (byte[])(bytes ?? throw new ArgumentNullException(nameof(bytes))).Clone();
+            this.bytes = (byte[])(bytes ?? throw new ArgumentNullException(nameof(bytes))).Clone();
             Classification = classification;
         }
 
         public long AbsoluteOffset { get; }
-        public byte[] Bytes { get; }
+        public byte[] Bytes => (byte[])bytes.Clone();
         public IsoMapTrailingClassification Classification { get; }
     }
 
@@ -169,17 +203,26 @@ namespace RA2YR.Core.Formats.PackedMap
         internal IsoMapPack5RecordReadResult(
             IEnumerable<IsoMapPack5RecordRaw> records,
             IsoMapPack5TrailingData trailing,
-            IEnumerable<IsoMapDiagnostic> diagnostics)
+            IEnumerable<IsoMapDiagnostic> diagnostics,
+            IsoMapExecutionState execution = null)
         {
             Records = Array.AsReadOnly((records ?? throw new ArgumentNullException(nameof(records))).ToArray());
             Trailing = trailing;
-            Diagnostics = Array.AsReadOnly((diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray());
+            IsoMapDiagnostic[] diagnosticArray = (diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray();
+            Diagnostics = Array.AsReadOnly(diagnosticArray);
+            Execution = execution ?? new IsoMapExecutionState();
+            foreach (IsoMapDiagnostic diagnostic in diagnosticArray) Execution.Observe(diagnostic.Severity);
         }
 
         public IReadOnlyList<IsoMapPack5RecordRaw> Records { get; }
         public IsoMapPack5TrailingData Trailing { get; }
         public IReadOnlyList<IsoMapDiagnostic> Diagnostics { get; }
-        public bool IsSuccess => Diagnostics.All(item => item.Severity != BinaryDiagnosticSeverity.Error);
+        public IsoMapExecutionState Execution { get; }
+        public IsoMapCompletionStatus CompletionStatus => Execution.CompletionStatus;
+        public bool HasFatalError => Execution.HasFatalError;
+        public BinaryDiagnosticSeverity HighestObservedSeverity => Execution.HighestObservedSeverity;
+        public int SuppressedDiagnosticCount => Execution.SuppressedDiagnosticCount;
+        public bool IsSuccess => CompletionStatus == IsoMapCompletionStatus.Succeeded;
     }
 
     internal readonly struct IsoMapCoordinateKey : IEquatable<IsoMapCoordinateKey>
@@ -292,17 +335,25 @@ namespace RA2YR.Core.Formats.PackedMap
 
     internal sealed class IsoMapCoordinateAnalysis
     {
-        internal IsoMapCoordinateAnalysis(IsoMapCoordinateIndex index, IEnumerable<IsoMapDiagnostic> diagnostics, bool denseCountCandidate)
+        internal IsoMapCoordinateAnalysis(IsoMapCoordinateIndex index, IEnumerable<IsoMapDiagnostic> diagnostics, bool denseCountCandidate, IsoMapExecutionState execution = null)
         {
             Index = index ?? throw new ArgumentNullException(nameof(index));
-            Diagnostics = Array.AsReadOnly((diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray());
+            IsoMapDiagnostic[] diagnosticArray = (diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray();
+            Diagnostics = Array.AsReadOnly(diagnosticArray);
             DenseCountCandidate = denseCountCandidate;
+            Execution = execution ?? new IsoMapExecutionState();
+            foreach (IsoMapDiagnostic diagnostic in diagnosticArray) Execution.Observe(diagnostic.Severity);
         }
 
         public IsoMapCoordinateIndex Index { get; }
         public IReadOnlyList<IsoMapDiagnostic> Diagnostics { get; }
         public bool DenseCountCandidate { get; }
-        public bool IsSuccess => Diagnostics.All(item => item.Severity != BinaryDiagnosticSeverity.Error);
+        public IsoMapExecutionState Execution { get; }
+        public IsoMapCompletionStatus CompletionStatus => Execution.CompletionStatus;
+        public bool HasFatalError => Execution.HasFatalError;
+        public BinaryDiagnosticSeverity HighestObservedSeverity => Execution.HighestObservedSeverity;
+        public int SuppressedDiagnosticCount => Execution.SuppressedDiagnosticCount;
+        public bool IsSuccess => CompletionStatus == IsoMapCompletionStatus.Succeeded;
     }
 
     internal sealed class IsoMapPack5PackedReadPolicy
@@ -330,18 +381,28 @@ namespace RA2YR.Core.Formats.PackedMap
 
     internal sealed class IsoMapPack5PackedReadResult
     {
-        internal IsoMapPack5PackedReadResult(PackedSectionDecodeResult packed, IsoMapPack5RecordReadResult records, IsoMapCoordinateAnalysis coordinates, IEnumerable<IsoMapDiagnostic> diagnostics)
+        internal IsoMapPack5PackedReadResult(PackedSectionDecodeResult packed, IsoMapPack5RecordReadResult records, IsoMapCoordinateAnalysis coordinates, IEnumerable<IsoMapDiagnostic> diagnostics, IsoMapExecutionState execution = null)
         {
             Packed = packed;
             Records = records;
             Coordinates = coordinates;
-            Diagnostics = Array.AsReadOnly((diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray());
+            IsoMapDiagnostic[] diagnosticArray = (diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray();
+            Diagnostics = Array.AsReadOnly(diagnosticArray);
+            Execution = execution ?? new IsoMapExecutionState();
+            foreach (IsoMapDiagnostic diagnostic in diagnosticArray) Execution.Observe(diagnostic.Severity);
         }
 
         public PackedSectionDecodeResult Packed { get; }
         public IsoMapPack5RecordReadResult Records { get; }
         public IsoMapCoordinateAnalysis Coordinates { get; }
         public IReadOnlyList<IsoMapDiagnostic> Diagnostics { get; }
-        public bool IsSuccess => Packed != null && Packed.IsSuccess && Records != null && Records.IsSuccess && (Coordinates == null || Coordinates.IsSuccess) && Diagnostics.All(item => item.Severity != BinaryDiagnosticSeverity.Error);
+        public IsoMapExecutionState Execution { get; }
+        public IsoMapCompletionStatus CompletionStatus => Execution.CompletionStatus;
+        public bool HasFatalError => Execution.HasFatalError;
+        public BinaryDiagnosticSeverity HighestObservedSeverity => Execution.HighestObservedSeverity;
+        public int SuppressedDiagnosticCount => Execution.SuppressedDiagnosticCount;
+        public bool IsSuccess => CompletionStatus == IsoMapCompletionStatus.Succeeded &&
+            Packed != null && Packed.IsSuccess && Records != null && Records.IsSuccess &&
+            (Coordinates == null || Coordinates.IsSuccess);
     }
 }

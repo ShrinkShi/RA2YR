@@ -51,3 +51,5 @@
 - [x] 完成固定 XCC Mixer 的 A-D 合成语义往返验证。
 - [x] 实现 PAL 原始数据解析并完成三个 ProjectBaseline 黄金样本验证。
 - [x] 实现 CSF v3 严格只读解析并完成 `ra2md.csf` ProjectBaseline 黄金样本验证。
+## 待处理
+- [ ] 在 PR #42 修复提交后重新运行 focused/full EditMode、PlayMode、PS5.1/PS7 validation、copyright、wrappers 和 Repository safety。

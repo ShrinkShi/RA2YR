@@ -453,6 +453,22 @@
 - Added 127 independent synthetic NUnit execution cases plus ADR, format notes,
   compatibility evidence, matrix entry, and README links.
 
+## 2026-08-05 - PR #42 review correction scope
+
+### 变更范围
+- 修复 IsoMapPack5 reader/coordinate analyzer 的诊断预算 fail-open 风险。
+- 冻结三种 duplicate policy 的成功/失败语义，补充零诊断预算覆盖。
+- 修复测试中的强类型字节拼接、显式 section 传递、独立 backend length mismatch 覆盖和真实 assembly 引用边界检查。
+- 修复 trailer 防御性返回与 checked offset overflow 诊断。
+- 更正 M3-C2 evidence 的测试计数和当前 HEAD 执行状态。
+
+### 验证情况
+- 当前尚未生成修复后 Unity XML；未将历史 XML 作为当前 HEAD 证据。
+- Repository safety 需要在新提交后重新运行。
+
+### 风险
+- Unity、PS5.1/PS7、wrapper 和 copyright 门禁需在新 HEAD 上重新执行。
+
 ### Verification boundary
 - `git diff --check` is clean.
 - Current-head Unity XML was not generated: the desktop host's PowerShell

@@ -604,6 +604,9 @@ entries:
       - id: format.isomap-pack5.packed-not-run
         status: "已知限制"
         description: "No real packed ProjectBaseline decode was run because the M3-C1 LZO algorithm remains unavailable by design."
+      - id: format.isomap-pack5.mix-entry-not-run
+        status: "已知限制"
+        description: "Current-head evidence covers bounded ReadOnlyDataWindow input; no real or synthetic MIX entry fixture was executed in this review correction."
       - id: format.isomap-pack5.map-family-unimplemented
         status: "已知限制"
         description: "OverlayPack, OverlayDataPack, PreviewPack, TMP, theater binding, palette, rendering, writer, pathfinding, and gameplay remain unimplemented."

@@ -6,19 +6,23 @@ source_payload_published: false
 code_imported: false
 gpl_reference_only: true
 tests:
-  independent_execution_cases: 127
+  defined_nunit_executions: 127
   test_attributes: 81
   test_case_attributes: 46
-  equivalent_value_fillers_used: false
+  behavior_contract_declarations: 87
+  current_head_executed: 0
+  current_head_passed: unknown
 components:
   record_reader: synthetic_raw_11_byte_records
   trailing_policy: reject_preserve_or_exact_four_zero_profile
   coordinate_index: explicit_duplicate_and_domain_policies
   packed_adapter: injected_raw_lzo1x_contract_only
-  inputs: memory_stream_short_read_and_mix_window_paths
+  inputs: memory_stream_short_read_and_bounded_window_paths
 verification:
   current_head_unity_focus: blocked_by_host_start_process_environment
   current_head_xml_published: false
+  current_head_executed: 0
+  current_head_passed: unknown
   historical_xml_reused_as_current_evidence: false
   static_diff_check: passed
 compatibility:

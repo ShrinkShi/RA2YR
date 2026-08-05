@@ -33,14 +33,15 @@ namespace RA2YR.Core.Formats.PackedMap
             }
 
             var diagnostics = new List<IsoMapDiagnostic>();
+            var execution = new IsoMapExecutionState();
             var records = new List<IsoMapPack5RecordRaw>();
             int fullRecordCount = input.Length / RecordWidth;
             int remainder = input.Length % RecordWidth;
             if (fullRecordCount > limits.MaxRecords)
             {
-                Add(diagnostics, limits, Error(source, chain, IsoMapDiagnosticCode.RecordBudgetExceeded,
+                Add(diagnostics, limits, execution, Error(source, chain, IsoMapDiagnosticCode.RecordBudgetExceeded,
                     absoluteOffset, -1, null, "record", "Record count exceeds the configured budget."));
-                return new IsoMapPack5RecordReadResult(records, null, diagnostics);
+                return new IsoMapPack5RecordReadResult(records, null, diagnostics, execution);
             }
 
             for (int ordinal = 0; ordinal < fullRecordCount; ordinal++)
@@ -49,9 +50,9 @@ namespace RA2YR.Core.Formats.PackedMap
                 try { recordOffset = checked(absoluteOffset + checked((long)ordinal * RecordWidth)); }
                 catch (OverflowException)
                 {
-                    Add(diagnostics, limits, Error(source, chain, IsoMapDiagnosticCode.CoordinateArithmeticOverflow,
+                    Add(diagnostics, limits, execution, Error(source, chain, IsoMapDiagnosticCode.CoordinateArithmeticOverflow,
                         absoluteOffset, ordinal, null, "record", "Record offset arithmetic overflowed."));
-                    return new IsoMapPack5RecordReadResult(records, null, diagnostics);
+                    return new IsoMapPack5RecordReadResult(records, null, diagnostics, execution);
                 }
                 byte[] raw = new byte[RecordWidth];
                 Buffer.BlockCopy(input, checked(ordinal * RecordWidth), raw, 0, RecordWidth);
@@ -61,19 +62,29 @@ namespace RA2YR.Core.Formats.PackedMap
             IsoMapPack5TrailingData trailing = null;
             if (remainder != 0)
             {
-                long trailingOffset = checked(absoluteOffset + checked((long)fullRecordCount * RecordWidth));
+                long trailingOffset;
+                try
+                {
+                    trailingOffset = checked(absoluteOffset + checked((long)fullRecordCount * RecordWidth));
+                }
+                catch (OverflowException)
+                {
+                    Add(diagnostics, limits, execution, Error(source, chain, IsoMapDiagnosticCode.CoordinateArithmeticOverflow,
+                        absoluteOffset, -1, null, "trailing", "Trailing offset arithmetic overflowed."));
+                    return new IsoMapPack5RecordReadResult(records, null, diagnostics, execution);
+                }
                 if (remainder > limits.MaxTrailingBytes)
                 {
-                    Add(diagnostics, limits, Error(source, chain, IsoMapDiagnosticCode.TrailingBudgetExceeded,
+                    Add(diagnostics, limits, execution, Error(source, chain, IsoMapDiagnosticCode.TrailingBudgetExceeded,
                         trailingOffset, -1, null, "trailing", "Trailing bytes exceed the configured budget."));
-                    return new IsoMapPack5RecordReadResult(records, null, diagnostics);
+                    return new IsoMapPack5RecordReadResult(records, null, diagnostics, execution);
                 }
 
                 byte[] trailingBytes = new byte[remainder];
                 Buffer.BlockCopy(input, fullRecordCount * RecordWidth, trailingBytes, 0, remainder);
                 if (trailingPolicy == IsoMapPack5TrailingPolicy.RejectAnyRemainder)
                 {
-                    Add(diagnostics, limits, Error(source, chain, IsoMapDiagnosticCode.UnexpectedTrailingBytes,
+                    Add(diagnostics, limits, execution, Error(source, chain, IsoMapDiagnosticCode.UnexpectedTrailingBytes,
                         trailingOffset, -1, null, "trailing", "Decoded stream is not an exact multiple of 11 bytes."));
                     trailing = new IsoMapPack5TrailingData(trailingOffset, trailingBytes, IsoMapTrailingClassification.RejectedRemainder);
                 }
@@ -85,14 +96,14 @@ namespace RA2YR.Core.Formats.PackedMap
                     }
                     else
                     {
-                        Add(diagnostics, limits, Error(source, chain, IsoMapDiagnosticCode.InvalidFourZeroTrailer,
+                        Add(diagnostics, limits, execution, Error(source, chain, IsoMapDiagnosticCode.InvalidFourZeroTrailer,
                             trailingOffset, -1, null, "trailing", "Only an exact four-byte all-zero trailer is permitted."));
                         trailing = new IsoMapPack5TrailingData(trailingOffset, trailingBytes, IsoMapTrailingClassification.RejectedRemainder);
                     }
                 }
                 else if (trailingPolicy == IsoMapPack5TrailingPolicy.PreserveRemainderWithDiagnostic)
                 {
-                    Add(diagnostics, limits, Warning(source, chain, IsoMapDiagnosticCode.UnexpectedTrailingBytes,
+                    Add(diagnostics, limits, execution, Warning(source, chain, IsoMapDiagnosticCode.UnexpectedTrailingBytes,
                         trailingOffset, -1, null, "trailing", "Trailing bytes were preserved under the explicit preserve policy."));
                     trailing = new IsoMapPack5TrailingData(trailingOffset, trailingBytes, IsoMapTrailingClassification.PreservedRemainder);
                 }
@@ -102,7 +113,7 @@ namespace RA2YR.Core.Formats.PackedMap
                 }
             }
 
-            return new IsoMapPack5RecordReadResult(records, trailing, diagnostics);
+            return new IsoMapPack5RecordReadResult(records, trailing, diagnostics, execution);
         }
 
         public IsoMapPack5RecordReadResult Read(
@@ -187,13 +198,16 @@ namespace RA2YR.Core.Formats.PackedMap
             BinaryDiagnosticCode? binaryCode = null)
         {
             var diagnostics = new List<IsoMapDiagnostic>();
-            Add(diagnostics, limits, Error(source, provenance, code, offset, ordinal, coordinate, stage, message, binaryCode));
-            return new IsoMapPack5RecordReadResult(Array.Empty<IsoMapPack5RecordRaw>(), null, diagnostics);
+            var execution = new IsoMapExecutionState();
+            Add(diagnostics, limits, execution, Error(source, provenance, code, offset, ordinal, coordinate, stage, message, binaryCode));
+            return new IsoMapPack5RecordReadResult(Array.Empty<IsoMapPack5RecordRaw>(), null, diagnostics, execution);
         }
 
-        private static void Add(IList<IsoMapDiagnostic> diagnostics, IsoMapPack5ReadLimits limits, IsoMapDiagnostic diagnostic)
+        private static void Add(IList<IsoMapDiagnostic> diagnostics, IsoMapPack5ReadLimits limits, IsoMapExecutionState execution, IsoMapDiagnostic diagnostic)
         {
+            execution.Observe(diagnostic.Severity);
             if (diagnostics.Count < limits.MaxDiagnostics) diagnostics.Add(diagnostic);
+            else execution.SuppressOne();
         }
 
         private static IsoMapDiagnostic Error(BinarySourceContext source, IEnumerable<IniSourceProvenance> provenance, IsoMapDiagnosticCode code, long offset, int ordinal, IsoMapCoordinateKey? coordinate, string stage, string message, BinaryDiagnosticCode? binaryCode = null)

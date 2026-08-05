@@ -586,3 +586,8 @@
 ### Next step
 - Commit and push the normal merge, verify PR #27 state, wait for PR #20
   Repository safety, then squash merge PR #20 without starting PR #21 work.
+# 2026-08-05 PR #42 审查修复
+
+- 在 `feature/m3-c2-isomap-pack5-record-foundation` 上继续修复 active diff 审查问题；保持原五个提交不变。
+- 修复诊断预算 fail-open、duplicate policy、trailer 防御性返回、offset overflow 和测试 helper 确定性问题。
+- 当前 HEAD 的 Unity/包装器/版权/Repository safety 结果尚待新提交后重新执行，未使用历史 XML 冒充证据。

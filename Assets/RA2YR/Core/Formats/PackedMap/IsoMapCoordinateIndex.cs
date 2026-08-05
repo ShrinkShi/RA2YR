@@ -20,6 +20,7 @@ namespace RA2YR.Core.Formats.PackedMap
             limits = limits ?? new IsoMapPack5ReadLimits();
             source = source ?? new BinarySourceContext("isomap-coordinate-index", "isomap-pack5-input", LogicalContentPath.Parse("isomap-pack5-input"));
             var diagnostics = new List<IsoMapDiagnostic>();
+            var execution = new IsoMapExecutionState();
             var occurrences = new List<IsoMapCoordinateOccurrence>();
             var groups = new List<IsoMapCoordinateDuplicateGroup>();
             var byKey = new Dictionary<IsoMapCoordinateKey, List<IsoMapCoordinateOccurrence>>();
@@ -28,20 +29,19 @@ namespace RA2YR.Core.Formats.PackedMap
             {
                 if (record == null)
                 {
-                    Add(diagnostics, limits, Error(source, Array.Empty<IniSourceProvenance>(), IsoMapDiagnosticCode.NoProgress, -1, ordinal, null, "coordinate", "A null record cannot be indexed."));
-                    ordinal++;
-                    continue;
+                    Add(diagnostics, limits, execution, Error(source, DefaultProvenance(source), IsoMapDiagnosticCode.NoProgress, -1, ordinal, null, "coordinate", "A null record cannot be indexed."));
+                    break;
                 }
                 if (occurrences.Count >= limits.MaxCoordinateEntries)
                 {
-                    Add(diagnostics, limits, Error(source, record.Provenance, IsoMapDiagnosticCode.CoordinateBudgetExceeded, record.SourceOffset, ordinal, null, "coordinate", "Coordinate occurrence budget exceeded."));
+                    Add(diagnostics, limits, execution, Error(source, record.Provenance, IsoMapDiagnosticCode.CoordinateBudgetExceeded, record.SourceOffset, ordinal, null, "coordinate", "Coordinate occurrence budget exceeded."));
                     break;
                 }
                 IsoMapCoordinateKey key = new IsoMapCoordinateKey(record.XRawU16LittleEndian, record.YRawU16LittleEndian);
                 bool outOfDomain = IsOutOfDomain(key, profile);
                 if (outOfDomain)
                 {
-                    Add(diagnostics, limits, Warning(source, record.Provenance, IsoMapDiagnosticCode.OutOfDomainCoordinate, record.SourceOffset, ordinal, key, "coordinate", "Coordinate is outside the explicit validation profile domain."));
+                    Add(diagnostics, limits, execution, Warning(source, record.Provenance, IsoMapDiagnosticCode.OutOfDomainCoordinate, record.SourceOffset, ordinal, key, "coordinate", "Coordinate is outside the explicit validation profile domain."));
                 }
                 List<IsoMapCoordinateOccurrence> list;
                 if (!byKey.TryGetValue(key, out list))
@@ -55,17 +55,20 @@ namespace RA2YR.Core.Formats.PackedMap
                 ordinal++;
             }
 
-            foreach (KeyValuePair<IsoMapCoordinateKey, List<IsoMapCoordinateOccurrence>> entry in byKey)
+            foreach (KeyValuePair<IsoMapCoordinateKey, List<IsoMapCoordinateOccurrence>> entry in byKey
+                .OrderBy(item => item.Value[0].FirstOccurrenceOrdinal)
+                .ThenBy(item => item.Key.XRaw)
+                .ThenBy(item => item.Key.YRaw))
             {
                 if (entry.Value.Count < 2) continue;
                 if (groups.Count >= limits.MaxDuplicateGroups)
                 {
-                    Add(diagnostics, limits, Error(source, entry.Value[0].Record.Provenance, IsoMapDiagnosticCode.CoordinateBudgetExceeded, entry.Value[0].Record.SourceOffset, entry.Value[0].SourceOrdinal, entry.Key, "coordinate", "Duplicate-group budget exceeded."));
+                    Add(diagnostics, limits, execution, Error(source, entry.Value[0].Record.Provenance, IsoMapDiagnosticCode.CoordinateBudgetExceeded, entry.Value[0].Record.SourceOffset, entry.Value[0].SourceOrdinal, entry.Key, "coordinate", "Duplicate-group budget exceeded."));
                     break;
                 }
                 bool conflicting = entry.Value.Skip(1).Any(item => !item.Record.GetRawBytesCopy().SequenceEqual(entry.Value[0].Record.GetRawBytesCopy()));
                 groups.Add(new IsoMapCoordinateDuplicateGroup(entry.Key, entry.Value, conflicting));
-                Add(diagnostics, limits, ErrorOrWarning(duplicatePolicy, conflicting, source, entry.Value[0].Record.Provenance, entry.Value[0].Record.SourceOffset, entry.Value[0].SourceOrdinal, entry.Key));
+                Add(diagnostics, limits, execution, ErrorOrWarning(duplicatePolicy, conflicting, source, entry.Value[0].Record.Provenance, entry.Value[0].Record.SourceOffset, entry.Value[0].SourceOrdinal, entry.Key));
             }
 
             bool denseCandidate = profile != null && profile.ConfiguredDenseCountCandidate;
@@ -77,10 +80,10 @@ namespace RA2YR.Core.Formats.PackedMap
                 }
                 catch (OverflowException)
                 {
-                    Add(diagnostics, limits, Error(source, Array.Empty<IniSourceProvenance>(), IsoMapDiagnosticCode.CoordinateArithmeticOverflow, -1, -1, null, "coordinate", "Dense-count candidate arithmetic overflowed."));
+                    Add(diagnostics, limits, execution, Error(source, DefaultProvenance(source), IsoMapDiagnosticCode.CoordinateArithmeticOverflow, -1, -1, null, "coordinate", "Dense-count candidate arithmetic overflowed."));
                 }
             }
-            return new IsoMapCoordinateAnalysis(new IsoMapCoordinateIndex(occurrences, groups), diagnostics, denseCandidate);
+            return new IsoMapCoordinateAnalysis(new IsoMapCoordinateIndex(occurrences, groups), diagnostics, denseCandidate, execution);
         }
 
         private static bool IsOutOfDomain(IsoMapCoordinateKey key, IsoMapCoordinateValidationProfile profile)
@@ -99,13 +102,18 @@ namespace RA2YR.Core.Formats.PackedMap
         private static IsoMapDiagnostic ErrorOrWarning(IsoMapCoordinateDuplicatePolicy policy, bool conflicting, BinarySourceContext source, IEnumerable<IniSourceProvenance> provenance, long offset, int ordinal, IsoMapCoordinateKey key)
         {
             IsoMapDiagnosticCode code = conflicting ? IsoMapDiagnosticCode.ConflictingDuplicateCoordinate : IsoMapDiagnosticCode.DuplicateCoordinate;
-            BinaryDiagnosticSeverity severity = policy == IsoMapCoordinateDuplicatePolicy.RejectAnyDuplicate ? BinaryDiagnosticSeverity.Error : BinaryDiagnosticSeverity.Warning;
+            BinaryDiagnosticSeverity severity = policy == IsoMapCoordinateDuplicatePolicy.RejectAnyDuplicate ||
+                (policy == IsoMapCoordinateDuplicatePolicy.AllowByteIdenticalDuplicatesButDiagnose && conflicting)
+                ? BinaryDiagnosticSeverity.Error
+                : BinaryDiagnosticSeverity.Warning;
             return new IsoMapDiagnostic(severity, code, source, provenance, offset, ordinal, key, "coordinate", conflicting ? "Duplicate coordinate has conflicting raw payload." : "Duplicate coordinate occurrence was preserved.");
         }
 
-        private static void Add(IList<IsoMapDiagnostic> diagnostics, IsoMapPack5ReadLimits limits, IsoMapDiagnostic diagnostic)
+        private static void Add(IList<IsoMapDiagnostic> diagnostics, IsoMapPack5ReadLimits limits, IsoMapExecutionState execution, IsoMapDiagnostic diagnostic)
         {
+            execution.Observe(diagnostic.Severity);
             if (diagnostics.Count < limits.MaxDiagnostics) diagnostics.Add(diagnostic);
+            else execution.SuppressOne();
         }
 
         private static IsoMapDiagnostic Error(BinarySourceContext source, IEnumerable<IniSourceProvenance> provenance, IsoMapDiagnosticCode code, long offset, int ordinal, IsoMapCoordinateKey? coordinate, string stage, string message)
@@ -113,5 +121,8 @@ namespace RA2YR.Core.Formats.PackedMap
 
         private static IsoMapDiagnostic Warning(BinarySourceContext source, IEnumerable<IniSourceProvenance> provenance, IsoMapDiagnosticCode code, long offset, int ordinal, IsoMapCoordinateKey coordinate, string stage, string message)
             => new IsoMapDiagnostic(BinaryDiagnosticSeverity.Warning, code, source, provenance, offset, ordinal, coordinate, stage, message);
+
+        private static IReadOnlyList<IniSourceProvenance> DefaultProvenance(BinarySourceContext source)
+            => new[] { new IniSourceProvenance(source.LogicalSourceId, new[] { source.LogicalPath }) };
     }
 }
