@@ -229,8 +229,12 @@ DynamicBlockerCost
 
 ## 15. Evidence
 
-- EA editor的slope工具和raw字段：`ConfirmedByOfficialEditorSource`，不等于runtime path规则。
-- OpenRA ramp/height transition：`ConfirmedByIndependentImplementation`。
-- ModEnc land/SpeedType与PPM shore/bridge讨论：`CommunityDocumented`。
-- exact vanilla YR ramp、shore和cliff edge算法：`Unresolved`。
-- descriptor separation：`ConfiguredForProjectPolicy`。
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert公开slope工具与raw terrain/ramp字段 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 不确认runtime path edge规则。 | 保留editor profile。 | `NotRun` |
+| OpenRA ramp/height transition | `ImplementationSpecificBehavior` | OpenRA | 单一目标引擎算法。 | 仅作comparison profile。 | `NotRun` |
+| ModEnc land/SpeedType与PPM shore/bridge长期说明 | `ConfirmedCommunityConvention` | Fixed community sources | 社区约定不能提升为runtime事实。 | 保留product/profile限制。 | `NotRun` |
+| 多来源对WaterBeach、shore、ramp、cliff和bridge-over-water规则 | `ConflictingSources` | Community, extensions and tools | 产品与行为说明存在直接差异。 | 不自动选择transition。 | `NotRun` |
+| `Row/Level/RampType`跨工具候选与stock适用性 | `Underconfirmed` | Official tool plus public implementations | 谱系独立性和runtime适用性不足。 | 显式surface-transition profile。 | `NotRun` |
+| exact vanilla YR ramp、shore、cliff和cost算法 | `Unresolved` | No original-runtime source located | 无可靠唯一候选。 | future pathfinding adapter负责。 | `NotRun` |
+| descriptor separation、禁止palette/visual推断和checked cost | `DefensiveDesign` | Project policy | 项目安全与保真策略。 | surface、transition和simulation state分层。 | `NotRun` |

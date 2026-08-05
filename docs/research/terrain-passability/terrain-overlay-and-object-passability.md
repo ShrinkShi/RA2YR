@@ -144,7 +144,7 @@ LAT transition是TileSet关系，不等于一种唯一movement type；transition
 
 ## 5. Rules land and speed tables
 
-社区文档显示 `[LandTypes]`/Rules terrain speed百分比会按 `SpeedType` 选择不同值；这可作为 `CommunityDocumented` 候选，而非完整runtime证明。
+社区文档显示 `[LandTypes]`/Rules terrain speed百分比会按 `SpeedType` 选择不同值；该长期约定为`ConfirmedCommunityConvention`，不是完整runtime证明。
 
 推荐：
 
@@ -330,10 +330,12 @@ visual bridge与movement bridge必须是不同descriptor。
 
 ## 15. Evidence summary
 
-| Claim | Grade |
-|---|---|
-| official editor exposes raw tile/height/terrain fields | `ConfirmedByOfficialEditorSource` |
-| public implementations bind terrain types and movement costs separately | `ConfirmedByIndependentImplementation` |
-| ModEnc land/speed tables and Overlay family behavior | `CommunityDocumented` |
-| exact stock YR precedence among TMP/theater/Rules/Overlay | `Unresolved` |
-| project multi-state passability model | `ConfiguredForProjectPolicy` |
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert公开raw tile/height/terrain字段 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 只确认official editor输入。 | 保留raw values。 | `NotRun` |
+| 单个公开实现分离terrain types、cost和occupancy | `ImplementationSpecificBehavior` | Named tools/target engines | 单一实现行为。 | 单独记录source profile。 | `NotRun` |
+| 多工具分离terrain、speed、overlay和occupancy的趋势 | `Underconfirmed` | Public tools/community | 谱系独立性和runtime适用性不足。 | 不按工具数量提升。 | `NotRun` |
+| ModEnc land/speed tables与Overlay family长期约定 | `ConfirmedCommunityConvention` | Fixed community documentation | 不能确认runtime优先级。 | product/profile显式。 | `NotRun` |
+| TMP/theater/Rules/Overlay优先级和视觉terrain到passability的映射 | `ConflictingSources` | Tools/community/extensions | 来源对语义和优先级存在差异。 | 禁止单字段或视觉推断。 | `NotRun` |
+| exact stock YR precedence、dynamic gate/bridge和final passability | `Unresolved` | No original-runtime source located | 当前无可靠唯一候选。 | future simulation adapter负责。 | `NotRun` |
+| multi-state passability、raw preservation、missing-art和buildability分离 | `DefensiveDesign` | Project policy | 项目保真与安全策略。 | Unknown不自动Clear/passable/blocked。 | `NotRun` |

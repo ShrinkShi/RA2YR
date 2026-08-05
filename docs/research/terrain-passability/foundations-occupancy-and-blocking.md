@@ -291,7 +291,11 @@ OccupancyClassOrdinal
 
 ## 20. Evidence
 
-- placement/foundation字段：official editor/community/extension分级；
-- OpenRA将moving、stationary、crushable、temporary等cell flags分开：independent implementation evidence；
-- exact vanilla gate/crush path planning：`Unresolved`；
-- multi-mask model：`ConfiguredForProjectPolicy`。
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert公开placement/foundation相关编辑输入 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 只确认官方editor字段和工具行为。 | 保留authored fields/provenance。 | `NotRun` |
+| OpenRA分离moving、stationary、crushable和temporary cell flags | `ImplementationSpecificBehavior` | OpenRA | 单一目标引擎设计。 | 仅作occupancy模型比较。 | `NotRun` |
+| Ares/Phobos gate、custom foundation和TerrainType扩展 | `ImplementationSpecificBehavior` | Named extension projects | extension profile，不能反推vanilla。 | 显式隔离extension。 | `NotRun` |
+| 原版runtime gate/crush/destroy、reservation和path planning规则 | `Unresolved` | No original-runtime source located | 现有工具/社区资料不足以形成可靠统一算法。 | future simulation/pathfinding adapter负责。 | `NotRun` |
+| Foundation、movement blocker、buildability、dynamic occupancy和visual bounds的关系 | `ConflictingSources` | Editor/tool/community/extension models | 模型与优先级存在差异。 | 不合并mask，不从Art推断occupancy。 | `NotRun` |
+| multi-mask、raw preservation、stable ordering和fail-closed occupancy | `DefensiveDesign` | Project policy | 项目保真与确定性设计。 | 不last-wins、不把initial placement固化为永久occupancy。 | `NotRun` |

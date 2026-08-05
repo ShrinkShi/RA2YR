@@ -184,7 +184,7 @@ Diagnostics
 - LAT transition；
 - custom extension。
 
-文件名只允许作为显式 `FilenameHeuristicProfile`，等级最多 `CommunityDocumented` 或 `ConfiguredForProjectPolicy`。
+文件名只允许作为显式 `FilenameHeuristicProfile`。稳定社区命名最多为`ConfirmedCommunityConvention`；项目选择是否启用该启发式为`DefensiveDesign`，不能把文件名直接当作runtime passability事实。
 
 ## 7. Missing asset policy
 
@@ -228,6 +228,8 @@ UnboundGlobalTileId
 - conflicting不 last-wins；
 - graph builder fail-closed或隔离该 cell；
 - writer不规范化。
+
+这些为`DefensiveDesign`。
 
 ## 9. Missing cell policy
 
@@ -313,3 +315,13 @@ movement edge需要同时检查：
 - raw Level/final byte；
 - unresolved binding；
 - selected semantic profile作为外部 metadata，而不是回写 raw值。
+
+## 14. Evidence boundary
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert公开IsoMap/TMP raw cell字段 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 只确认官方editor/reader输入。 | 保留raw fields。 | `NotRun` |
+| 多工具把TMP terrain、theater role和surface binding分层 | `Underconfirmed` | Public tools/community | 收敛不证明独立谱系或runtime优先级。 | 保留candidate/conflict sets。 | `NotRun` |
+| 文件名、颜色或extra/depth可唯一决定runtime surface/passability | `ConflictingSources` | Tool heuristics and semantic sources | 视觉与语义来源可能不一致。 | 禁止视觉/filename自动选择。 | `NotRun` |
+| 原版runtime对TerrainTypeRaw、RampTypeRaw和HeightRaw的完整语义 | `Unresolved` | No original-runtime source located | 当前无可靠唯一候选。 | raw保留，typed interpretation显式。 | `NotRun` |
+| duplicate/missing/missing-art fail-closed与bounded topology | `DefensiveDesign` | Project policy | 保真和安全设计。 | 不last-wins、不自动Clear/blocked/passable。 | `NotRun` |

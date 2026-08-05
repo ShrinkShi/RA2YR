@@ -9,13 +9,12 @@
 
 本文件只设计未来只读审计。**本任务未读取、枚举或运行 ProjectBaseline。**
 
-任何未来结果只能标记：
-
 ```text
-ObservedByFutureProjectBaselineAudit
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
 ```
 
-不得提升compatibility或runtime证据。
+这些字段不是formal evidence grade，不表示ProjectBaseline已经被读取、Observed或Confirmed。未来结果不得自动提升compatibility、项目policy或`ConfirmedByOriginalRuntimeSource`。
 
 ## 2. Purpose
 
@@ -212,11 +211,15 @@ InputModeMismatch
 - 创建地图；
 - 提交原始审计数据到仓库。
 
+这些为`DefensiveDesign`审计约束。
+
 ## 12. Public report template
 
 ```text
 SelectionBasis
 SchemaVersion
+AuditStatus = NotRun
+FutureEvidenceSource = ProjectBaselineAggregateAudit
 ProfileVersions
 BroadCategories
 AggregateCounts
@@ -225,6 +228,8 @@ ConflictCounts
 DiagnosticCounts
 InputModeEquivalence
 NonLinkableAggregateHash
-EvidenceGrade = ObservedByFutureProjectBaselineAudit
+CurrentEvidenceGrade
 Limitations
 ```
+
+`CurrentEvidenceGrade`只记录审计前公开来源的九项规范等级；它不表示审计已经执行。

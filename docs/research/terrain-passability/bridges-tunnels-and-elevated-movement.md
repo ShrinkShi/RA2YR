@@ -43,7 +43,7 @@ Diagnostics
 
 ## 3. Low bridge
 
-社区资料候选表明low bridge overlay可改变覆盖cell的ground/land行为，但未必增加Level。该结论只标 `CommunityDocumented`。
+社区资料候选表明low bridge overlay可改变覆盖cell的ground/land行为，但未必增加Level。该长期约定使用`ConfirmedCommunityConvention`，不能据此确认stock runtime完整行为。
 
 `LowBridgeDescriptor`至少分：
 
@@ -135,7 +135,7 @@ bridge elevation与：
 
 分别保存。
 
-社区资料中的固定“高桥增加若干height”属于低等级candidate；项目Core不硬编码。
+社区资料中的固定“高桥增加若干height”属于`Underconfirmed`候选；项目Core不硬编码。
 
 ## 9. Tunnels and Tube metadata
 
@@ -187,7 +187,7 @@ AuthoredTunnelMetadata
 - budget overflow；
 - TS-only evidence。
 
-RA2/YR stock适用性不足时标 `Unresolved`。
+RA2/YR stock适用性不足时标`Unresolved`。
 
 ## 11. Subterranean locomotor
 
@@ -236,9 +236,9 @@ aircraft/jumpjet需要：
 
 地图 `[Aircraft]` placement只提供initial authored reference。
 
-## 14. Independent implementation evidence
+## 14. Public implementation evidence
 
-OpenRA公开实现把Tunnel、Subterranean、Jumpjet、ElevatedBridge作为custom movement layers，并把bridge入口、layer terrain与cell center分开。这是 `ConfirmedByIndependentImplementation`，不是stock runtime事实。
+OpenRA公开实现把Tunnel、Subterranean、Jumpjet、ElevatedBridge作为custom movement layers，并把bridge入口、layer terrain与cell center分开。这是`ImplementationSpecificBehavior`，不是stock runtime事实，也不能与共享社区知识重复计为独立runtime发现。
 
 ## 15. Deterministic expansion
 
@@ -253,10 +253,11 @@ bridge/tunnel expansion应：
 
 ## 16. Evidence summary
 
-| Topic | Grade |
-|---|---|
-| EA editor Tube metadata and direction model | `ConfirmedByOfficialEditorSource` |
-| explicit custom movement layers in OpenRA | `ConfirmedByIndependentImplementation` |
-| high/low bridge storage and behavior reports | `CommunityDocumented` |
-| exact stock YR bridge destruction graph | `Unresolved` |
-| explicit multi-layer Core model | `ConfiguredForProjectPolicy` |
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert公开Tube metadata和direction编辑模型 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 只确认editor对authored metadata的处理。 | 保留raw record与source profile。 | `NotRun` |
+| OpenRA显式custom movement layers | `ImplementationSpecificBehavior` | OpenRA | 单一目标引擎行为。 | 仅作比较profile。 | `NotRun` |
+| high/low bridge storage与行为的长期社区说明 | `ConfirmedCommunityConvention` | ModEnc/PPM/community | 不能确认stock runtime完整拓扑。 | 显式bridge product profile。 | `NotRun` |
+| 多来源对bridge elevation、expansion、damage和under-layer规则的解释 | `ConflictingSources` | editor、target engines、community | 直接存在模型与适用范围差异。 | 保留多个candidate，不自动选择。 | `NotRun` |
+| exact stock YR bridge destruction、Tube和subterranean graph | `Unresolved` | No original-runtime source located | 无可靠唯一候选。 | future runtime adapter负责dynamic delta。 | `NotRun` |
+| explicit multi-layer Core model与deterministic expansion | `DefensiveDesign` | Project policy | 项目保真和安全策略。 | 禁止screen-Y或visual frame推导graph。 | `NotRun` |

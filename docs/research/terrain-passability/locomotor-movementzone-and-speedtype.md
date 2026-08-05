@@ -5,7 +5,7 @@
 > 本文件由 **ChatGPT 网页版**基于公开资料独立研究完成；未读取 ProjectBaseline；不是 Codex 产物；GPL 或许可证不明实现仅作行为、格式事实与冲突参考，未复制、翻译、逐句改写或机械移植代码、寻路算法、Locomotor 实现或测试夹具。`code_imported: false`。
 
 
-## 1. Three independent inputs
+## 1. Three logically separate inputs
 
 ```text
 SpeedTypeRaw
@@ -17,7 +17,7 @@ SpeedTypeRaw
 - `MovementZone`：路径域、特殊可达规则、crusher/destroyer等策略候选；
 - `Locomotor`：运动机制实现引用/家族候选。
 
-三者可能相互约束，但不能合并为单一枚举。
+三者可能相互约束，但不能合并为单一枚举。此处“separate”描述逻辑输入层，不主张来源谱系独立。
 
 ## 2. Raw token contract
 
@@ -306,9 +306,10 @@ lookup可配置为case-insensitive，但roundtrip必须保留original case。unk
 
 ## 11. Runtime special cases
 
-社区讨论表明部分行为可能硬绑定MovementZone，例如docking、beach或path selection。由于缺少完整official runtime source：
+社区讨论表明部分行为可能硬绑定MovementZone，例如docking、beach或path selection。由于缺少完整original-runtime source：
 
-- 记录为 `CommunityDocumented`；
+- 长期稳定社区约定使用`ConfirmedCommunityConvention`；
+- runtime适用范围不足的具体行为保持`Underconfirmed`；
 - 不推导通用算法；
 - 不从TS无条件迁移到YR；
 - 不从Ares/Phobos无条件迁移到vanilla。
@@ -332,10 +333,11 @@ MovementCapabilityProfile
 
 ## 13. Evidence grades
 
-| Claim | Grade |
-|---|---|
-| tokens documented by ModEnc/community | `CommunityDocumented` |
-| independent engines separate terrain speed and occupancy | `ConfirmedByIndependentImplementation` |
-| exact stock runtime CLSID behavior | mostly `Unresolved` |
-| extension tokens/behaviors | source-specific `CommunityDocumented` |
-| capability-profile abstraction | `ConfiguredForProjectPolicy` |
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| MovementZone、SpeedType和Locomotor token的长期社区列表 | `ConfirmedCommunityConvention` | ModEnc/community fixed pages | 约定不证明完整性、ordinal或全部产品适用性。 | 原token与product profile保留。 | `NotRun` |
+| 单个公开目标引擎分离terrain speed、capability和occupancy | `ImplementationSpecificBehavior` | Named target engines | 单一实现行为。 | 仅作比较profile。 | `NotRun` |
+| 多工具/社区对terrain speed与movement domain分离的共同趋势 | `Underconfirmed` | Public tools/community | 谱系独立性和stock runtime适用性不足。 | 不按来源数量提升。 | `NotRun` |
+| 来源对WaterBeach/FloatBeach、crusher、defaults和product applicability的说明 | `ConflictingSources` | Community and extension sources | 直接存在版本和语义差异。 | 保留candidate/conflict set。 | `NotRun` |
+| exact stock runtime CLSID、fallback、path和execution行为 | `Unresolved` | No original-runtime source located | 无可靠完整候选。 | future simulation adapter负责。 | `NotRun` |
+| raw token、explicit capability profile、no default repair和fail-closed binding | `DefensiveDesign` | Project policy | 项目保真与安全策略。 | missing/unknown不自动Normal或100%。 | `NotRun` |

@@ -366,16 +366,52 @@ MovementDeterminismPolicy
 MovementRoundtripPolicy
 ```
 
-## 15. Evidence discipline
+## 15. Formal evidence discipline
 
-- EA FinalSun/FinalAlert 2：official editor evidence，不是runtime；
-- OpenRA等：independent implementation evidence，不是stock事实；
-- ModEnc、PPM、RA2 DIY：community documentation；
-- Ares/Phobos：extension evidence；
-- ProjectBaseline未来观察：只能`ObservedByFutureProjectBaselineAudit`；
-- complete stock runtime算法：多数保持`Unresolved`。
+所有正式 `Grade` 字段只使用：
 
-## 16. Test and audit
+```text
+ConfirmedByOriginalRuntimeSource
+ConfirmedByOfficialToolSource
+ConfirmedByMultipleIndependentImplementations
+ConfirmedCommunityConvention
+ImplementationSpecificBehavior
+DefensiveDesign
+ConflictingSources
+Underconfirmed
+Unresolved
+```
+
+- `ConfirmedByOriginalRuntimeSource`仅用于真正的原版RA2/YR runtime或其实际source；本专题没有达到该等级的claim。
+- FinalSun/FinalAlert只使用`ConfirmedByOfficialToolSource`。
+- OpenRA、WAE、CNCMaps等单一工具或目标引擎行为使用`ImplementationSpecificBehavior`。
+- 多个工具收敛但谱系独立性或runtime适用性不足时使用`Underconfirmed`，不得重复计算XCC/OpenRA/社区共享知识。
+- ModEnc、PPM、RA2 DIY长期稳定约定使用`ConfirmedCommunityConvention`，不能提升为runtime事实。
+- 工具、社区和extension对surface、bridge、MovementZone、SpeedType或occupancy存在直接分歧时使用`ConflictingSources`。
+- 原版runtime完整Locomotor、cost、pathfinding、bridge destruction和dynamic occupancy算法保持`Unresolved`。
+- raw preservation、multi-state passability、显式profile、checked arithmetic、禁止视觉推断、fail-closed和deterministic graph ordering使用`DefensiveDesign`。
+
+Future ProjectBaseline work单独记录：
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+该状态不表示已读取、观察或确认ProjectBaseline，未来aggregate observation也不能自动成为`ConfirmedByOriginalRuntimeSource`或提升compatibility。
+
+## 16. Normalized claim summary
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert公开IsoMap、TMP terrain/height、slope和Tube等编辑输入 | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | 只确认editor字段和工具行为，不确认runtime passability/path规则。 | 保留raw字段与source profile。 | `NotRun` |
+| OpenRA显式分离terrain cost、occupancy和custom movement layers | `ImplementationSpecificBehavior` | OpenRA | 单一目标引擎设计。 | 仅作比较profile。 | `NotRun` |
+| 多个公开工具将terrain、movement属性和occupancy分开 | `Underconfirmed` | Public tools/community | 收敛不证明谱系独立或原版runtime等价。 | 分层绑定并保留冲突。 | `NotRun` |
+| TMP terrain byte、theater role、Rules land type、Overlay和视觉外观可直接唯一决定runtime passability | `ConflictingSources` | Tools/community/extension evidence | 来源对优先级和语义存在差异。 | 不用单字段或视觉结果生成最终通行状态。 | `NotRun` |
+| 原版runtime完整Locomotor、MovementZone、SpeedType、cost、bridge和dynamic occupancy算法 | `Unresolved` | No original-runtime source located | 当前没有可靠唯一候选。 | 由未来simulation/pathfinding adapter消费显式profile。 | `NotRun` |
+| multi-state query、raw preservation、stable graph和movement/buildability分离 | `DefensiveDesign` | Project policy | 项目保真与安全策略。 | 禁止padding、clamp、trial inference和视觉推断。 | `NotRun` |
+
+## 17. Test and audit
 
 `test-matrix.md`设计174项：
 
@@ -389,7 +425,7 @@ MovementRoundtripPolicy
 
 `baseline-audit-request.md`只设计脱敏aggregate审计，不运行、不读取ProjectBaseline。
 
-## 17. Files
+## 18. Files
 
 ```text
 README.md

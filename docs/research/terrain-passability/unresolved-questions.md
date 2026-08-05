@@ -96,13 +96,24 @@
 
 ## 5. Resolution requirements
 
-P0项只能由以下之一提升：
+P0项只能按以下规范升级：
 
-- official runtime source；
-- official editor source（仅能确认editor行为）；
-- 多个真正独立实现加严格冲突分析；
-- 固定community资料（仍只到CommunityDocumented）；
-- future sanitized baseline observation（只到ObservedByFutureProjectBaselineAudit）；
-- explicit project policy。
+- 真正原版runtime/source可达到`ConfirmedByOriginalRuntimeSource`；
+- FinalSun/FinalAlert仅达到`ConfirmedByOfficialToolSource`；
+- 单个工具、目标引擎或extension行为使用`ImplementationSpecificBehavior`；
+- 多个实现只有在谱系独立性得到证明时才可使用`ConfirmedByMultipleIndependentImplementations`，否则为`Underconfirmed`；
+- 固定community资料最多形成`ConfirmedCommunityConvention`，不能自动成为runtime事实；
+- 公开来源直接冲突时使用`ConflictingSources`；
+- project显式profile、raw preservation、fail-closed与no visual probing使用`DefensiveDesign`；
+- 无足够证据保持`Unresolved`。
 
-不得用截图、颜色、文件名或单个mod经验“证明”。
+Future ProjectBaseline work保持：
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+未来aggregate observation不能替代公开来源或自动升级compatibility。
+
+不得用截图、颜色、文件名、单个mod经验或“转换后落在地图内”证明结论。
