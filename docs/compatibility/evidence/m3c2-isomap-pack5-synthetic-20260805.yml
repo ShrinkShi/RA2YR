@@ -12,7 +12,7 @@ tests:
   behavior_contract_declarations: 96
   current_head_executed: 0
   current_head_passed: unknown
-  current_head_commit: 7a39698efbe28ab173bbbca23f4613e141fa9980
+  current_head_commit: 46d097f50274439ef35c4f48194ffd2c87a2fc3d
 components:
   record_reader: synthetic_raw_11_byte_records
   trailing_policy: reject_preserve_or_exact_four_zero_profile
