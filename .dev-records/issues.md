@@ -246,9 +246,11 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 证明 stock YR 游戏运行时采用相同规则。
 
 ### 处理
-运行时审计将 `selectedWinner` 保持为 null，证据等级标为 `Unresolved`；
-实现只接受显式策略。没有启动游戏、XCC、FinalAlert 2 或 GUI 自动化，也
-没有创建会被原版加载的测试 MOD。
+初版运行时审计将 whole-file selection 保持未决，实现只接受显式策略。
+该临时结论已由 ADR 0022 取代：ProjectBaseline 现在采用明确的有序多文档
+逐值组合，但证据等级仅为 `ConfiguredForProjectBaseline`，不声称原版运行时
+对照。没有启动游戏、XCC、FinalAlert 2 或 GUI 自动化，也没有创建会被
+原版加载的测试 MOD。
 
 ### 后续验证
 按 `docs/formats/ini-runtime-resolution.md` 中的 A/B 黑盒计划，在用户另行
@@ -300,3 +302,92 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 - 现象：Art 多重匹配虽报告 `ArtSectionAmbiguous`，仍把 `matches[0]` 作为 Present 字段并生成资源引用；Rules 的 `0` 与 `00` 也未标记解析 ordinal 冲突。
 - 根因：诊断与字段状态未形成同一 fail-closed 契约，ordinal 保留原始拼写但缺少解析身份分组。
 - 修复：引入无单值赢家的 Ambiguous 候选集合和同 registry ordinal 冲突诊断；增加枚举顺序稳定性与跨 registry 隔离测试。
+## 2026-08-03 - M2-SHP1 ProjectBaseline flags 3 conflict
+
+- Symptom: 257 non-empty flags 3 frames fail strict row-width validation at row 0; each produces exactly one index beyond the descriptor width.
+- Distribution: 120 even widths and 137 odd widths, across widths 14 through 202.
+- Resolution: preserve `RleOutputOverflow`, publish only aggregate evidence, and keep the audit status `CompleteWithDecodeFailures`. No clamp, padding, width expansion, or file-specific exception was added.
+- Limitation: because strict decoding stops at row 0, the observed `00 00` count of zero is not a whole-file exhaustion result.
+
+## 2026-08-03 - PowerShell 7 timestamp deserialization changed audit verification
+
+- Symptom: PowerShell 7 converted an ISO UTC JSON timestamp during `ConvertFrom-Json`, so a later textual `Z` check could reject a valid wrapper result.
+- Resolution: validate the raw JSON timestamp representation before deserialization, then accept the typed PowerShell 7 value without weakening the UTC requirement.
+- Verification: SHP wrapper regression passes 9/9 under Windows PowerShell 5.1 and PowerShell 7.
+
+## 2026-08-04 - Unity test wrapper read a null exit code after passed XML
+
+### Symptom
+- The full EditMode XML reported 694/694 passed, Unity was no longer running,
+  and no lock file remained, but the wrapper returned shell exit 1 and printed
+  an empty Unity exit code.
+
+### Root cause
+- The wrapper used timed `WaitForExit` polling and read `Process.ExitCode`
+  without the final parameterless `WaitForExit()` handshake required to finish
+  process state collection reliably under Windows PowerShell 5.1.
+
+### Resolution
+- Call parameterless `WaitForExit()`, refresh the process, store the integer
+  exit code, and report it separately from wrapper exit and forced shutdown.
+
+### Verification
+- Final EditMode and PlayMode wrappers both returned shell exit 0, reported
+  Unity exit 0, and explicitly reported controlled post-result shutdown.
+
+## 2026-08-04 - PowerShell 7 JSON date coercion broke UTC suffix validation
+
+### Symptom
+- The CSF ProjectBaseline audit completed in Unity with exit 0 under PowerShell
+  7, but the wrapper rejected `startedUtc` because the converted JSON value no
+  longer rendered with a trailing `Z`.
+
+### Root cause
+- PowerShell 7 `ConvertFrom-Json` coerces ISO UTC strings into `DateTime`
+  values. Casting that value back to string uses host formatting and removes
+  the source JSON suffix, while Windows PowerShell 5.1 leaves it as a string.
+
+### Resolution
+- Timestamp validators now accept UTC `DateTime`/zero-offset `DateTimeOffset`
+  objects and retain the exact trailing-`Z` requirement for string inputs.
+
+### Verification
+- CSF and PAL regression suites pass in both hosts (11/11 and 10/10), and both
+  real PowerShell 7 audits complete with Unity exit 0.
+
+## 2026-08-04 - M3-C1 local delivery blocked by host and GitHub authentication
+
+### Symptom
+- `feature/m3-c1-packed-map-compression-foundation` is pushed at `5bbe88b`, but no Draft PR exists for the branch.
+- `gh auth status` reports the configured GitHub token as invalid; ordinary `git push` cannot obtain credentials because the local prompt helper is unavailable.
+- No Unity.exe is discoverable on the host, so current-head Unity XML cannot be regenerated.
+
+### Root cause
+- External authentication/session state and the Unity installation are unavailable in the current execution environment; this is not a source-code failure.
+
+### Resolution
+- Do not fabricate a PR URL, Actions result, or current-head Unity pass result.
+- Preserve the already-pushed commits and record the exact static verification that remains reproducible.
+
+### Verification
+- Repository validation: 236 assets, 236 meta files, 148 matrix entries, 110 evidence references, 0 violations.
+- Repository validation and copyright regression suites pass under Windows PowerShell 5.1 and PowerShell 7.
+- `git diff --check` is clean and the worktree has no tracked or untracked changes.
+
+## 2026-08-04 - M3-C1 delivery record correction and contract gaps
+
+### 现象
+- 原始记录误写为 M3-C1 没有 Draft PR。
+- 审查发现 chunk sentinel 枚举含有未实现的单零字段策略，且 LZO backend 合同未完整拒绝输入消费、输出、身份、诊断和异常边界。
+- 之前的 Base64 参数化 case 数量不能代表独立行为覆盖。
+
+### 修复
+- PR #36 已由外部 GitHub connector 创建，继续保持 Draft；本地 `gh auth` 仍无效，不能把 PR 创建归因于本地 gh 恢复。
+- 删除无效的 `AllowOneZeroField`，单零字段统一结构化失败，`0/0` 仅显式 terminator policy 接受。
+- LZO 请求和 pipeline 增加 RawLzo1X、输入/输出预算、取消、身份、精确 consumed/produced、diagnostic、provenance 和异常 fail-closed 合同；仍不实现 LZO 算法。
+- 将测试重构为 108 个独立执行 case，不使用等价 Base64 输入填充数量。
+
+### 当前验证边界
+- Git push 已在先前交付完成；本轮修复尚未提交或推送。
+- Unity Hub 记录并确认 Unity 2022.3.60f1c1 可执行文件存在；当前 HEAD Unity 测试必须重新生成，历史 XML 不作为当前证据。
+- PR #36 保持 Draft，未 Ready、未合并；后续 M3-C2、IsoMap、Overlay、Preview、TMP、palette 和 renderer 均未开始。

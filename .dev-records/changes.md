@@ -1,5 +1,64 @@
 # 变更记录
 
+## 2026-08-04 - M3-C1 contract fixes and behavioral matrix
+
+### 变更范围
+- PackedMap chunk sentinel、LZO backend/pipeline、Strict Base64、fragment collector 和 synthetic EditMode matrix。
+
+### 具体改动
+- 移除 `AllowOneZeroField`；单零字段返回 `ChunkZeroFieldInvalid`，`0/0` 只接受显式 terminator policy。
+- LZO request 验证 codec、bounded input、exact output、output budget、cancellation 和 provenance；pipeline 拒绝 consumed mismatch、长度 mismatch、空 identity、error diagnostic、null、异常、取消和不匹配 provenance。
+- Strict Base64 增加 canonical pad-bit 校验；collector 保留 raw values、source order、numeric diagnostics、预算和 provenance。
+- 测试矩阵达到 109 个独立执行 case（89 `[Test]` + 20 参数化执行 case），不使用等价 Base64 输入填充数量；pipeline 对未知 codec 先行结构化拒绝。
+
+### 验证情况
+- 最终当前 HEAD PackedMap 聚焦 EditMode `109/109`，完整 EditMode `933/933`，PlayMode `1/1`；XML 均完整且无失败/跳过/不确定项。
+- Unity 聚焦与 PlayMode 在结果写出后需要受控 post-result shutdown；Unity 退出码均为 0，零字节普通 `Temp/UnityLockfile` 已按既有规则清理。
+- Windows PowerShell 5.1 与 PowerShell 7 repository validation、copyright scan 及全部回归均 exit 0；仓库统计 236 assets/236 meta、148 matrix、110 evidence、0 violations。
+- `git diff --check` 通过；本机系统 csc 不支持项目使用的现代 C# 语法，不能替代 Unity Roslyn。
+- ProjectBaseline packed audit 仍未执行；无 LZO 算法、无原版 payload、无 IsoMap/Overlay/Preview/TMP/palette/renderer。
+
+### 风险
+- 当前修复尚未提交/推送；PR #36 body 和 Actions 状态需在可用 GitHub connector/凭据下更新，不能伪造。
+
+## 2026-08-04 - M3-C1 core hardening
+
+- 为 chunk envelope 保存完整 provenance chain，并在 window/stream/materialized 输入路径执行显式输入预算。
+- 为 Format80 输入预算和 LZO request 增加结构化合同；collector 增加 `MaxFragments + 1` 惰性枚举停止测试。
+- 新增 provenance、预算和结果不可变性聚焦测试；未实现 LZO 算法、IsoMap/Overlay/Preview/TMP、palette 或渲染。
+
+## 2026-08-04 - M3-C1 packed map compression foundation
+
+### 变更范围
+- 新增 `PackedMap` Core 模型、诊断、预算、fragment collector、strict Base64、chunk envelope、Format80 decoder、LZO backend contract 和 pipeline。
+- 新增 122 个合成 EditMode 用例及 Unity `.meta`。
+- 新增 ADR、格式说明、合成 evidence、compatibility matrix 条目和 README 入口。
+
+### 具体改动
+- Collector 保留 occurrence/raw key/value/source/provenance，支持 source order、numeric ascending unique、strict sequential policies。
+- Base64 在调用 .NET primitive 前执行 alphabet、padding、长度、whitespace 和预算验证。
+- Chunk reader 保留 block ordinal/offset/sizes/payload，`0/0` 仅在显式 sentinel policy 下接受。
+- Format80 支持五类命令、overlap copy、exact output、terminator、trailing input 和结构化诊断。
+- LZO 无 backend 时返回 `BackendUnavailable`，不产生占位数据。
+
+### 验证情况
+- PackedMap 聚焦 EditMode XML：122/122 passed，0 failed。
+- ProjectBaseline packed audit：未运行，符合本轮边界。
+
+### 风险
+- 原版运行时 codec profile、LZO 算法和地图特定 record 语义仍未确认。
+
+## 2026-08-04 - M3-C1 packed map compression foundation
+
+### 变更范围
+- New standalone Core foundation for packed INI fragments, strict Base64, chunk envelopes, explicit Format80 profiles, LZO backend contracts and codec-neutral orchestration.
+
+### 限制
+- No ProjectBaseline packed audit, miniLZO, native plugin, IsoMap/Overlay/Preview/TMP, writer or rendering.
+
+### 验证情况
+- To be updated after focused synthetic tests and repository gates.
+
 ## 2026-08-03 - 项目级架构和来源边界冻结
 
 ### 变更范围
@@ -15,6 +74,26 @@
 
 ### 风险
 - 社区教程许可证未确认，只能 reference-only；其语义不能单独证明 stock runtime 行为。
+
+## 2026-08-03 - M2-SHP1F independent RLE row-width probe
+
+### Change scope
+- Audit-only SHP(TS) flags-3 classification; no production decoder changes.
+
+### Concrete changes
+- Added bounded scalar row analysis, baseline drift lock, conditional Stage B, decision gates, sanitized serializer, Editor command, wrapper, and tests.
+- Added ADR, format notes, compatibility evidence, matrix references, README status, and development records.
+
+### Verification
+- Focused EditMode: 33/33 passed.
+- Full EditMode XML: 808/808 passed; wrapper exit 1 because Process.ExitCode was empty.
+- PlayMode XML: 1/1 passed; wrapper exit 1 for the same reason.
+- PS 5.1 and PS 7 wrapper contract tests: 6/6 passed in each host.
+- Actual PS 5.1 and PS 7 forensic wrappers: exit 0, Unity exit 0, forced shutdown false, decision B.
+- Repository validation and copyright scan passed in PS 5.1 and PS 7; copyright violations: 0.
+
+### Risk
+- The result narrows the local conflict but does not prove original runtime behavior or authorize a general crop rule.
 
 ## 2026-08-01 - WP-00/WP-01 基础建设
 
@@ -304,3 +383,58 @@
 - Art 多重名称匹配改为真正的 `Ambiguous` 字段：无单一 `Parsed`、保留全部候选和来源链、不生成 reference 或 route。
 - Rules registry 新增按解析后整数判断的 `DuplicateRegistryOrdinal`；冲突仅限同一 registry，所有原始条目继续保留。
 - 新增 4 个 EditMode case；阶段性全量结果为 678/678，ProjectBaseline 三个规范化模型哈希和既有聚合保持不变。
+
+## 2026-08-03 - M2-SHP1 SHP(TS) core indexed reader
+
+- Added UnityEngine-free SHP(TS) header and directory models, bounded reader, strict raw/RLE indexed decoder, diagnostics, budgets, and canonical hashing.
+- Added Memory, seekable Stream, short-read Stream, and bounded MIX-entry-window equivalence.
+- Added six fixed ProjectBaseline audit profiles, repository-external per-frame manifests, sanitized repository evidence, and a controlled Editor/PowerShell entry point.
+- Added 97 Unity EditMode tests and 9 SHP wrapper regression cases.
+- Added format documentation, ADR 0018/0019, third-party reference records, compatibility matrix entries, README status, and delivery evidence.
+- Final local validation: EditMode 775/775, PlayMode 1/1, repository regression 46/46, copyright regression 22/22, and zero wrapper or scan exit failures in PowerShell 5.1/7.
+
+## 2026-08-03 - ProjectBaseline INI ordered semantic composition revision
+
+- Added a ProjectBaseline-only load-plan builder with the explicit low-to-high
+  order `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Same-name INI documents now compose per `SectionName + KeyName`; higher layers
+  override matching values while lower unique values and higher additions remain.
+- Every resolved value retains its winning layer and complete overridden
+  candidate chain, physical line IDs, source ID, and logical MIX provenance.
+- Invalid or duplicate expand numbers and non-ProjectBaseline sources fail with
+  structured diagnostics; discovery enumeration order cannot change results.
+- Rules typed auditing consumes the composed two-layer result. Intradocument
+  name, duplicate, semicolon, whitespace, and empty-value behavior remains an
+  explicit testing policy and is not original-runtime confirmation.
+- Final validation: composition 16/16, full EditMode 824/824, PlayMode 1/1,
+  INI wrapper 15/15 in both PowerShell hosts, repository validation 46/46,
+  copyright regression 22/22, and all real audit/gate exit codes zero.
+
+## 2026-08-04 - PR #20 synchronized validation closeout
+
+### Change scope
+- Merged current `main` with a normal two-parent merge and semantically retained
+  MAP/TMP research, map-compression research, visual-asset architecture, and
+  ProjectBaseline INI composition records.
+- Clarified that `IniProjectBaselineLoadPlanBuilder` is a fixed audit adapter,
+  not generic runtime archive discovery or mount authority.
+- Fixed the Unity test wrapper exit handshake so XML status, Unity exit code,
+  wrapper exit code, and post-result shutdown are reported independently.
+
+### Verification
+- Focused EditMode: load plan 16/16, composition audit 17/17, typed audit 1/1.
+- Final full Unity: EditMode 694/694 and PlayMode 1/1; Unity and wrapper exits
+  were zero, with controlled post-result shutdown in both modes.
+- ProjectBaseline Rules/Art aggregates and normalized model hashes remained
+  stable in PowerShell 5.1 and 7.
+- Repository validation passed with 194 assets, 194 meta files, 143 matrix
+  entries, and 91 evidence references; regressions passed 46/46.
+- Copyright scan passed with zero violations and regressions passed 22/22.
+- CSF and PAL wrapper timestamp validation now accepts PowerShell 7's strict
+  UTC `DateTime` coercion without weakening the PS5.1 string `Z` requirement;
+  each wrapper gained one regression case.
+
+### Risk
+- The synchronized `main` does not yet contain an SHP audit wrapper; PR #20 did
+  not migrate one from the separate SHP workstream.
+- Original-runtime INI syntax and precedence confirmation remains unimplemented.

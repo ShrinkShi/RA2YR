@@ -240,13 +240,28 @@ function Assert-LogicalPath {
 
 function Assert-IsoUtcTimestamp {
     param(
-        [Parameter(Mandatory)][string] $Value,
+        [Parameter(Mandatory)][object] $Value,
         [Parameter(Mandatory)][string] $Context
     )
-    if ($Value -notmatch 'Z$') { throw "The $Context timestamp is not explicitly UTC." }
+
+    if ($Value -is [DateTimeOffset]) {
+        if ($Value.Offset -ne [TimeSpan]::Zero) {
+            throw "The $Context timestamp is not explicitly UTC."
+        }
+        return
+    }
+    if ($Value -is [DateTime]) {
+        if ($Value.Kind -ne [DateTimeKind]::Utc) {
+            throw "The $Context timestamp is not explicitly UTC."
+        }
+        return
+    }
+
+    $text = [string]$Value
+    if ($text -notmatch 'Z$') { throw "The $Context timestamp is not explicitly UTC." }
     $parsed = [DateTimeOffset]::MinValue
     if (-not [DateTimeOffset]::TryParse(
-        $Value,
+        $text,
         [Globalization.CultureInfo]::InvariantCulture,
         [Globalization.DateTimeStyles]::RoundtripKind,
         [ref]$parsed)) {
@@ -320,8 +335,8 @@ function Assert-SanitizedSummary {
         throw 'The sanitized CSF audit summary identity is invalid.'
     }
     Assert-LowerSha256 ([string]$Summary.directoryFingerprint) 'directoryFingerprint'
-    Assert-IsoUtcTimestamp ([string]$Summary.startedUtc) 'startedUtc'
-    Assert-IsoUtcTimestamp ([string]$Summary.completedUtc) 'completedUtc'
+    Assert-IsoUtcTimestamp $Summary.startedUtc 'startedUtc'
+    Assert-IsoUtcTimestamp $Summary.completedUtc 'completedUtc'
 
     Assert-ExactJsonProperties -Object $Summary.externalManifest `
         -Context 'externalManifest' `

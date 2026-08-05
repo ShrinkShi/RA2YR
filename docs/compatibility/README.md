@@ -10,9 +10,13 @@ status means synthetic bounded-input, budget, diagnostic, and tail tests pass.
 WP-02C separately promotes only the tested MIX container, ID, encryption,
 checksum, virtual-source, nesting, and XCC interoperability entries. WP-02D
 promotes only strict raw PAL parsing after both synthetic and three fixed
-ProjectBaseline samples pass. It does not promote SHP, VXL/HVA, TMP, PCX, CSF,
-INI, map Pack, Texture2D, shaders, player remap, theater selection, rendering,
-or runtime game behavior.
+ProjectBaseline samples pass. M2-SHP1 separately validates SHP(TS) directory
+parsing and raw indexed flags 0/1 decoding. Its strict flags 3 RLE-Zero decoder
+passes synthetic cases but is not promoted as ProjectBaseline-compatible:
+every one of 257 attempted compressed baseline frames exceeds the declared
+local width by one index on row zero and fails closed. None of these statuses
+promotes VXL/HVA, TMP, PCX, Texture2D/Sprite, shaders, palette selection,
+player remap, shadow pairing, rendering, or runtime game behavior.
 
 ## Status vocabulary
 
@@ -54,6 +58,14 @@ model hashes, scan facts, and approved representative metadata. Only the raw
 PAL payload structure is interpreted; visual output is not. This still does
 not constitute a clean YR 1.001 manifest, visual comparison, or original
 behavior comparison.
+
+The complete M2-SHP1 per-frame manifest also remains outside the repository.
+Public SHP evidence contains only selection-basis labels, logical MIX
+provenance, entry identities, aggregate frame/flags/geometry/padding counts,
+one-way directory and decoded-model hashes, and diagnostic counts. It contains
+no indexed frame body, pixel image, scanline/run detail, Base64, hex dump, or
+absolute path. Catalog survey samples prove only controlled content presence,
+not stock runtime selection.
 
 For XCC, `往返通过` means the specifically recorded synthetic semantic
 contract passed: entry sets/order where required and extracted payload hashes

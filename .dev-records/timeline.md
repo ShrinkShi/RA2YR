@@ -1,5 +1,109 @@
 # 开发时间线
 
+## 2026-08-04 - M3-C1 contract review fixes
+
+### 用户目标
+- 在既有 M3-C1 分支和 Draft PR #36 上修复 chunk sentinel、LZO backend 合同和行为测试矩阵，不开始后续地图/渲染工作。
+
+### 本轮处理
+- 确认 HEAD `49ca8e3`、`origin/main` `c4db651`，main 未推进；保留三个既有提交，不 rebase。
+- 删除未实现的单零字段 policy；补齐 `0/0` 显式 terminator、单零 fail-closed、LZO 精确合同和 109 个独立 synthetic case。
+- Unity Hub 安装记录指向并确认 Unity 2022.3.60f1c1；历史 XML 不作为当前 HEAD 证据。
+
+### 关键结论
+- PR #36 已由外部 connector 创建；本地 `gh auth` 仍无效，不将其误写为本地 gh 恢复。
+- ProjectBaseline packed audit、LZO 算法、IsoMap、Overlay、Preview、TMP、palette、renderer 均未实现。
+
+### 影响文件
+- `Assets/RA2YR/Core/Formats/PackedMap/PackedMapModels.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/PackedIniFragmentCollector.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/PackedSectionDecodePipeline.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/StrictBase64Decoder.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/WestwoodChunkEnvelopeReader.cs`
+- `Assets/RA2YR/Tests/EditMode/Formats/PackedMap/PackedMapCoreTests.cs`
+- `docs/formats/map-packed-compression.md`
+- `docs/compatibility/evidence/m3c1-packed-map-synthetic-20260804.yml`
+- `.dev-records/issues.md`
+- `.dev-records/changes.md`
+- `.dev-records/timeline.md`
+
+### 后续事项
+- 使用当前 HEAD 运行 Unity focused/full 和仓库门禁；完成后分三次独立提交并推送到 PR #36，保持 Draft。
+
+## 2026-08-04 - M3-C1 packed map compression foundation
+
+- 从 `c4db6516eaa4e971f8bfe20cd3462dd397f39a55` 创建并保持独立分支 `feature/m3-c1-packed-map-compression-foundation`。
+- 实现 lossless INI fragment collection、strict Base64、codec-neutral chunk envelope、显式 Format80 profiles、LZO backend contract 和分阶段 pipeline；未读取 ProjectBaseline packed 内容。
+- Unity Roslyn Core/EditMode 编译检查均为 exit 0；当前桌面宿主的 Unity wrapper 受 `Start-Process` PATH/Path 冲突阻塞，旧 focused XML 不作为本轮结果。
+
+## 2026-08-04 17:35 - M3-C1 packed map compression foundation
+
+### 用户目标
+- 从 `c4db6516eaa4e971f8bfe20cd3462dd397f39a55` 开始独立实现 packed map compression 基础。
+
+### 本轮处理
+- 新增 lossless INI fragment collection、strict Base64、codec-neutral chunk envelope、显式 Format80 decoder、LZO backend contract 和 pipeline。
+- 新增 bounded Memory/Stream/window 入口与 122 个合成 EditMode 用例。
+- 未读取 ProjectBaseline packed 内容，未实现 LZO、IsoMap、Overlay、Preview、TMP、palette 或 rendering。
+
+### 关键结论
+- Format80 只按显式 profile 解码，禁止 variant guessing、clamp、padding 和 partial success。
+- LZO 无 backend 时结构化返回 `BackendUnavailable`。
+- 当前证据等级为 synthetic/configured，不是 original runtime confirmation。
+
+### 影响文件
+- `Assets/RA2YR/Core/Formats/PackedMap/`
+- `Assets/RA2YR/Tests/EditMode/Formats/PackedMap/`
+- `docs/formats/map-packed-compression.md`
+- `docs/adr/0023-packed-map-compression-foundation.md`
+- `docs/compatibility/evidence/m3c1-packed-map-synthetic-20260804.yml`
+- `docs/compatibility/matrix.yml`
+- `README.md`
+
+### 后续事项
+- 完成全量 EditMode、PlayMode、仓库验证、版权扫描及双 PowerShell 宿主回归。
+
+## 2026-08-04 - M3-C1 packed map compression foundation started
+
+### 用户目标
+- 从 `c4db6516eaa4e971f8bfe20cd3462dd397f39a55` 开始实现通用 packed INI fragment、严格 Base64、chunk envelope、Format80 和 LZO backend contract 基础。
+
+### 本轮边界
+- 不读取 ProjectBaseline packed map 内容。
+- 不实现 miniLZO、IsoMapPack5、Overlay、Preview、TMP、palette、Unity rendering 或地图逻辑。
+- Core 继续保持 UnityEngine-free，并复用现有 bounded window/stream 抽象。
+
+### 当前处理
+- 已核对本地与远端 `main` 均为固定 SHA，并创建 `feature/m3-c1-packed-map-compression-foundation`。
+- 已阅读 map-compression 研究资料、INI lossless occurrence 模型和 bounded input 实现。
+
+### 后续事项
+- 分阶段提交模型、collector/Base64、chunk envelope、Format80、LZO contract/pipeline、测试和文档。
+
+## 2026-08-03 18:20 - M2-SHP1F flags-3 row-width forensic probe
+
+### User goal
+- Keep the production SHP decoder unchanged while classifying the locked 257-frame row-width conflict.
+
+### Work completed
+- Added an independent bounded scalar analyzer, conditional all-row audit, sanitized evidence, and PS 5.1/7 wrapper.
+- Locked the existing row-zero aggregate before inference.
+- Analyzed 9,495 declared rows after Stage A passed its five conditions.
+
+### Key conclusion
+- Decision B: 1,331 rows equal WidthRaw and 8,164 rows equal WidthRaw+1; every frame contains both classes.
+- No production repair is recommended and flags-3 ProjectBaseline compatibility remains unimplemented.
+
+### Files affected
+- `Assets/RA2YR/Core/Content/ShpTs/Forensics/`
+- `Assets/RA2YR/Tests/EditMode/Content/ShpTs/Forensics/`
+- `Tools/Content/Invoke-ShpTsRleForensicAudit.ps1`
+- `docs/adr/0020-shp-ts-rle-forensic-probe-remains-non-production.md`
+- `docs/compatibility/evidence/m2-shp1f-rle-forensic-20260803.yml`
+
+### Follow-up
+- Run the final full repository gates, commit the forensic work independently, and keep PR #11 Draft.
+
 ## 2026-08-03 - 冻结 runtime root、社区语义参考和现代资产边界
 
 ### 用户目标
@@ -393,3 +497,63 @@
 - 2026-08-03: 删除经审计无 PR、无独有提交、无仓库引用的远端临时分支 `research/m2-shp-format-dossier-merge-probe`、`noop`、`noop2`。
 - 2026-08-03: 以普通 merge `e60f7beb` 将最新 main 合入 PR #10；完成 Art ambiguity 和 duplicate registry ordinal 的 fail-closed 修复，新增 4 个 EditMode case。
 - 2026-08-03: 最终本地门禁得到 EditMode 678/678、PlayMode 1/1、WP-02G2 聚焦 51/51；PS7/PS5.1 typed audit 聚合和三个模型哈希保持不变。
+
+## 2026-08-03 - M2-SHP1 core reader and ProjectBaseline audit
+
+- Created `feature/m2-shp-ts-core-reader` from merged main `7e43b513`.
+- Implemented the 8-byte SHP(TS) header, ordered 24-byte descriptors, raw flags 0/1 decode, strict flags 3 RLE-Zero decode, bounded inputs, immutable local indexed frames, and structured diagnostics.
+- Added 97 EditMode tests: 47 reader, 38 decoder, and 12 ProjectBaseline audit cases.
+- Audited six fixed MIX-backed SHP entries without publishing pixels or frame bodies. The aggregate contains 988 frames: raw0=1, raw1=477, flags3=510, canonical-empty=253.
+- Strict decoding succeeded for all raw frames and failed closed for 257 non-empty flags 3 frames. Every observed failure was a row-0 output overflow by one index; production behavior was not widened or sample-special-cased.
+- Final local results: EditMode 775/775, PlayMode 1/1, both Unity wrappers exit 0 with controlled post-result shutdown; SHP/INI/CSF/PAL wrapper regressions pass in PowerShell 5.1 and 7.
+- Repository validation reports 214 Assets/214 meta, 147 matrix entries, and 95 evidence references. Copyright scans report zero violations and 13/13 ignored external probes in both hosts.
+
+## 2026-08-03 - ProjectBaseline INI composition correction
+
+- Replaced the interim whole-file winner model with ordered multi-document
+  semantic composition: `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Added deterministic expand-number parsing, per-key overlay tests, complete
+  overridden-candidate traces, and fail-closed source/layer diagnostics.
+- Re-routed the WP-02G2 Rules audit through the composed two-document result;
+  `artmd.ini` remains a one-layer regression input.
+- Kept original-runtime comparison and all intradocument syntax policies
+  unresolved and independently evidence-gated.
+- Final ProjectBaseline audits were stable across PowerShell 5.1/7: Rules has
+  22,720 resolved values, 22,709 overridden chains, five registries and 1,171
+  entries; Art remains 880 records. Final Unity XML is 824/824 and 1/1.
+
+## 2026-08-04 14:35 - PR #20 synchronized closeout
+
+### User goal
+- Synchronize the INI composition branch with current `main`, preserve all
+  merged research and architecture records, rerun local gates, and merge PR #20
+  only after Repository safety succeeds.
+
+### Work completed
+- Resolved the ADR index conflict semantically and reviewed all auto-merged
+  development records and README entries for cumulative preservation.
+- Kept the active PR diff limited to INI composition, Rules/Art audit, tests,
+  wrappers, documentation, evidence, compatibility data, and development logs.
+- Re-ran focused and full Unity tests, content audits, repository validation,
+  copyright checks, and PowerShell 5.1/7 composition audits.
+- Corrected the Unity wrapper's Windows PowerShell exit-code handshake after a
+  passed XML run exposed a null `Process.ExitCode` read.
+- Corrected CSF/PAL UTC timestamp validation for PowerShell 7 JSON date
+  coercion, then reran both audits and their dual-host wrapper regressions.
+
+### Key results
+- EditMode 694/694; PlayMode 1/1; both Unity and wrapper exit codes were zero.
+- Rules remained 22,720 resolved values and 22,709 override chains; Art remained
+  880 records. Both normalized model hashes were unchanged across shell hosts.
+- The evidence level remains `ConfiguredForProjectBaseline`, never
+  `ConfirmedByOriginalRuntime`.
+
+### Files affected
+- `Tools/Testing/Invoke-UnityTests.ps1`
+- `docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml`
+- `.dev-records/changes.md`
+- `.dev-records/timeline.md`
+
+### Next step
+- Commit and push the normal merge, verify PR #27 state, wait for PR #20
+  Repository safety, then squash merge PR #20 without starting PR #21 work.

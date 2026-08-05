@@ -1,5 +1,50 @@
 # 技术决策记录
 
+## 2026-08-04 - M3-C1 verification boundary
+
+### 决策
+
+M3-C1 只提交 synthetic/configured codec foundation。ProjectBaseline packed 审计保持未执行；Unity XML 必须来自当前提交，历史 122/122 结果仅作参考。
+
+### 原因
+
+当前宿主的 PowerShell `Start-Process` 在构造环境时触发 `PATH`/`Path` 重复键，Unity batch test 无法可靠启动；核心程序集和 EditMode 程序集仍通过 Unity Roslyn 编译。
+
+## 2026-08-04 - M3-C1 packed map 分层和严格失败语义
+
+### 背景
+地图压缩研究同时涉及 INI 分片、Base64、chunk envelope、Format80/LCW 和 LZO，公开实现存在 profile 与许可证边界冲突。
+
+### 决策
+采用 `lossless occurrences -> Base64 -> envelope -> explicit codec -> exact bytes` 分层。Format80 的 absolute/relative 语义显式传入；LZO 只定义可注入 backend 合同，不引入算法或第三方代码。
+
+### 原因
+避免把地图特定知识泄漏到通用 reader，避免用“看起来像地图”的输出掩盖 profile 错误、截断或 backend 失败。
+
+### 代价
+当前不能读取 ProjectBaseline packed 内容，也不能声明地图加载兼容；后续 IsoMap/Overlay/Preview 必须建立独立证据和 reader。
+
+### 替代方案
+- 复制 miniLZO 或 GPL 实现：拒绝，违反本轮许可证和依赖边界。
+- 自动尝试 Format80 变体：拒绝，会把证据不足变成隐式策略。
+
+## 2026-08-04 - M3-C1 keeps packed compression layers codec-neutral
+
+### 背景
+Packed map sections cross several independently uncertain boundaries: lossless INI occurrences, concatenated Base64, chunk headers, codec payloads and future map-specific readers.
+
+### 决策
+- Fragment collection preserves raw occurrence order and provenance; ordering is selected explicitly.
+- Strict Base64 validates structure before calling the framework primitive.
+- The chunk envelope reader exposes bounded payload windows and does not select or invoke a codec.
+- Format80 receives an explicit profile; it never tries variants automatically.
+- LZO is an injectable backend contract only; no algorithm or native dependency is added.
+- The orchestration result retains every stage result and fails closed on incomplete stages.
+
+### 代价
+- M3-C1 cannot claim map loading or ProjectBaseline packed-content compatibility.
+- Future map readers must consume the typed decoded stream and provide their own semantic policy.
+
 ## 2026-08-03 - Legacy formats remain import adapters
 
 ### 背景
@@ -335,3 +380,33 @@ typed projection 不能反过来替 WP-02G1 猜测 precedence，也不能用便�
 - G2 名称策略匹配多个 G1 值时，字段状态为 `Ambiguous`，单值属性为空；全部候选按稳定键排序后进入模型和哈希。
 - Ambiguous 字段不进入资源引用，也不能产生 SHP/VXL route candidate。
 - 同一 Rules registry 内相同解析 ordinal 的全部条目保留并标记 Incomplete；不同 registry 的相同 ordinal 相互独立。
+
+## 2026-08-03 - SHP(TS) decoding remains strict at the documented frame width
+
+### Decision
+- Flags 0 and 1 consume exactly `width * height` local indices.
+- Flags 3 rows must produce exactly the descriptor width and consume their declared row bytes.
+- Flags 2, unknown flags, and `00 00` remain controlled unresolved outcomes.
+- The decoder does not reinterpret descriptor fields as dependencies and does not create a full-canvas buffer.
+
+### Reason
+All 257 observed ProjectBaseline flags 3 failures overflow the first row by one index, but the available evidence does not establish a compatible alternate width or command rule. Relaxing the decoder to fit those files would convert a reproducible format conflict into an undocumented heuristic.
+
+### Impact
+Directory and raw indexed decoding can be promoted independently. Strict synthetic flags 3 decoding is implemented, while ProjectBaseline compressed-frame compatibility remains limited and explicitly evidenced.
+
+## 2026-08-03 - ProjectBaseline same-name INI files compose by value identity
+
+### Decision
+- The configured layer order is `ra2 -> ra2md -> expandmd01..99 -> loose`.
+- Same-name documents overlay low-to-high by `SectionName + KeyName`; they are
+  not whole-file winners, fallback-only files, or concatenated text.
+- The result preserves each value winner and all overridden candidates with
+  document layer, physical line, source, and archive provenance.
+- This policy is `ConfiguredForProjectBaseline`, not
+  `ConfirmedByOriginalRuntime`.
+
+### Independent unresolved boundaries
+Section/key comparison, duplicate sections and keys, inline semicolons,
+whitespace, and empty-value override/deletion remain separate policies. The
+cross-document composition decision does not select them implicitly.
