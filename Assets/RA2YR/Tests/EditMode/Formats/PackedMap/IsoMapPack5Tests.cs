@@ -145,7 +145,7 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         public void ZeroDiagnosticBudgetStillFailsInvalidTrailer() { IsoMapPack5RecordReadResult r = Read(Concat(Record(1, 1, 1, 1, 1, 1), new byte[] { 7 }), limits: new IsoMapPack5ReadLimits(maxDiagnostics: 0)); Assert.That(r.IsSuccess, Is.False); Assert.That(r.HasFatalError, Is.True); }
 
         [Test]
-        public void TrailingOffsetOverflowIsStructured() { IsoMapPack5RecordReadResult r = Read(Concat(Record(1, 1, 1, 1, 1, 1), new byte[] { 7 }), absoluteOffset: long.MaxValue); Assert.That(r.IsSuccess, Is.False); Assert.That(HasDiagnostic(r, IsoMapDiagnosticCode.CoordinateArithmeticOverflow), Is.True); }
+        public void TrailingOffsetOverflowIsStructured() { IsoMapPack5RecordReadResult r = Read(Concat(Record(1, 1, 1, 1, 1, 1), new byte[] { 7 }), limits: new IsoMapPack5ReadLimits(maxDiagnostics: 0), absoluteOffset: long.MaxValue); Assert.That(r.IsSuccess, Is.False); Assert.That(r.HasFatalError, Is.True); Assert.That(r.SuppressedDiagnosticCount, Is.EqualTo(1)); }
 
         [Test]
         public void MemoryStreamUsesSameReader() { byte[] bytes = Record(1, 2, 3, 4, 5, 6); using (var stream = new MemoryStream(bytes)) { Assert.That(new IsoMapPack5RecordReader().Read(stream, bytes.Length, Source()).Records[0].GetRawBytesCopy(), Is.EqualTo(bytes)); } }
@@ -316,6 +316,9 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         public void TrailingBytesAreDefensiveCopy() { byte[] input = Concat(Record(1, 1, 1, 1, 1, 1), 4); IsoMapPack5TrailingData trailing = Read(input, IsoMapPack5TrailingPolicy.PreserveRemainderWithDiagnostic).Trailing; input[11] = 9; Assert.That(trailing.Bytes, Is.EqualTo(new byte[] { 4 })); }
 
         [Test]
+        public void ModifyingReturnedTrailingBytesDoesNotChangeResult() { IsoMapPack5TrailingData trailing = Read(Concat(Record(1, 1, 1, 1, 1, 1), new byte[] { 4 }), IsoMapPack5TrailingPolicy.PreserveRemainderWithDiagnostic).Trailing; byte[] returned = trailing.Bytes; returned[0] = 9; Assert.That(trailing.Bytes, Is.EqualTo(new byte[] { 4 })); }
+
+        [Test]
         public void RecordProvenanceChainIsImmutableView() { IsoMapPack5RecordRaw r = Read(Record(1, 1, 1, 1, 1, 1)).Records[0]; Assert.That(r.Provenance, Has.Count.EqualTo(1)); }
 
         [Test]
@@ -326,6 +329,12 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
 
         [Test]
         public void AllowIdenticalDuplicatesStillDiagnoses() { IsoMapCoordinateAnalysis a = Analyze(Concat(Record(2, 3, 0, 0, 0, 0), Record(2, 3, 0, 0, 0, 0)), IsoMapCoordinateDuplicatePolicy.AllowByteIdenticalDuplicatesButDiagnose); Assert.That(HasDiagnostic(a, IsoMapDiagnosticCode.DuplicateCoordinate), Is.True); }
+
+        [TestCase(0x01020304u, 0, 0, 0)]
+        [TestCase(0u, 0x11, 0, 0)]
+        [TestCase(0u, 0, 0x22, 0)]
+        [TestCase(0u, 0, 0, 0x33)]
+        public void AllowIdenticalPolicyRejectsEachConflictingPayloadField(uint tile, byte sub, byte level, byte tail) { IsoMapCoordinateAnalysis a = Analyze(Concat(Record(2, 3, 0, 0, 0, 0), Record(2, 3, tile, sub, level, tail)), IsoMapCoordinateDuplicatePolicy.AllowByteIdenticalDuplicatesButDiagnose); Assert.That(a.IsSuccess, Is.False); Assert.That(a.Index.DuplicateGroups.Single().ConflictingPayload, Is.True); }
 
         [Test]
         public void SignednessCandidateIsRecordedByProfile() { var profile = new IsoMapCoordinateValidationProfile(signedness: IsoMapCoordinateSignednessCandidate.Signed16Candidate); Assert.That(profile.Signedness, Is.EqualTo(IsoMapCoordinateSignednessCandidate.Signed16Candidate)); }
