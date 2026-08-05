@@ -162,7 +162,7 @@ shadow不决定caster occupancy或pathfinding。
 - global lighting；
 - detail-level suppression。
 
-社区资料显示不同 SHP family可能使用 separated frames或palette-index约定；这些是 `CommunityDocumented`，不能统一成一个raw format事实。
+社区资料显示不同 SHP family可能使用 separated frames或palette-index约定；这是 `ConfirmedCommunityConvention`，不能统一成一个raw format事实，也不能提升为原版runtime唯一shadow合同。
 
 ## 11. Shadow pass与排序
 
@@ -205,4 +205,4 @@ ShadowPass需要：
 
 ## 15. 项目决定
 
-Core仅保存 raw plane与 interpretation descriptor；未来 renderer adapter决定 GPU depth、CPU mask、stencil或其他实现。Core不得保存 shader/material名称。
+Core仅保存 raw plane与 interpretation descriptor；未来 renderer adapter决定 GPU depth、CPU mask、stencil或其他实现。Core不得保存 shader/material名称。该决定为`DefensiveDesign`。
