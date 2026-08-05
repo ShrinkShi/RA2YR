@@ -1,6 +1,12 @@
 # Backlog
 
 ## 待处理
+- [ ] 使用 Unity 2022.3.60f1c1 从当前 HEAD 重新运行 M3-C1 focused/full Unity 门禁。
+- [ ] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 三个独立提交，更新 Draft PR #36。
+- [ ] 后续独立工作包研究并实现 IsoMap/Overlay/Preview/TMP，必须重新建立格式证据。
+
+- [ ] 在授权并具备实际 backend 后设计 ProjectBaseline packed-section audit；不得在 M3-C1 伪造地图兼容性。
+- [ ] 研究并实现后续 IsoMapPack5、OverlayPack、PreviewPack、TMP 和 LZO 读取工作包。
 
 - [ ] 获取并登记干净、解包的 YR 1.001 内容基线。
 - [ ] 建立 FinalAlert 2 A/B/C/D 往返黄金样本。
@@ -14,6 +20,9 @@
 - [ ] 调查 Unity 2022.3.60f1c1 中国版 headless 测试完成后的退出异常。
 - [ ] 获得单独授权后，在仓库外一次性副本上执行 stock YR INI precedence、重复项、大小写、分号、空白和空值 A/B 黑盒对照。
 - [ ] 在单独授权的黑盒对照中验证已冻结的 ProjectBaseline composition 是否匹配原版运行时；在此之前证据等级保持 `ConfiguredForProjectBaseline`。
+- [ ] Resolve the ProjectBaseline SHP(TS) flags 3 row-width conflict with independently authorized original-runtime or reference-tool observations; do not relax the strict decoder from corpus shape alone.
+- [ ] Audit real flags 2, high-bit coordinates, and `00 00` command semantics if future fixed samples expose them.
+- [ ] Implement palette binding, remap, shadow pairing, visual comparison, and Unity rendering only in later work packages.
 
 ## 已放弃
 

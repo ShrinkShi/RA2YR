@@ -256,6 +256,71 @@ paths. The complete physical INI manifest remains in the configured external
 Cache. Run the command with both Windows PowerShell 5.1 and PowerShell 7 for
 the delivery regression.
 
+## M2-SHP1 SHP(TS) ProjectBaseline audit
+
+`Invoke-ShpTsProjectBaselineAudit.ps1` invokes
+`RA2YR.Editor.ShpTsProjectBaselineAuditCommand.Run`. It mounts six fixed SHP
+entries through the MIX virtual content source, validates every payload and
+logical provenance chain, parses the immutable SHP(TS) directory, and compares
+Memory, seekable Stream, and bounded MIX-window decode results.
+
+```powershell
+./Tools/Content/Invoke-ShpTsProjectBaselineAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+The wrapper supports Windows PowerShell 5.1 and PowerShell 7. It read-locks
+the ignored external-content configuration, rejects reparse points and
+repository/cache boundary violations, pins all six payload and model hashes,
+and independently verifies the external manifest length and SHA-256. It never
+starts XCC or the game and never writes to `YR1001_ProjectBaseline`.
+
+The accepted audit status is deliberately
+`CompleteWithDecodeFailures`: 257 non-empty flags 3 frames fail strict row
+width validation. Raw flags 0/1 frames decode successfully. The ignored JSON
+summary contains only aggregate statistics and one-way hashes; the complete
+per-frame manifest remains in the configured repository-external Cache and
+contains no index buffers.
+
+Run the wrapper contract tests in both supported hosts:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
+    ./Tools/Content/Tests/Invoke-ShpTsProjectBaselineAudit.Tests.ps1
+
+pwsh.exe -NoProfile -File `
+    ./Tools/Content/Tests/Invoke-ShpTsProjectBaselineAudit.Tests.ps1
+```
+
+## M2-SHP1F flags-3 row-width forensic audit
+
+`Invoke-ShpTsRleForensicAudit.ps1` invokes the independent scalar analyzer for
+the 257 locked non-empty flags-3 failures. It validates the original row-zero
+aggregate before inference and executes the all-row stage only when the five
+final-zero-run guard preconditions are satisfied.
+
+```powershell
+./Tools/Content/Invoke-ShpTsRleForensicAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+The accepted result is decision B: 9,495 rows contain 1,331 exact-width rows
+and 8,164 width-plus-one rows, with every frame containing both classes. The
+wrapper pins these aggregates, records real Unity exit state, and publishes
+only a sanitized summary below ignored `TestResults`; per-frame/per-row scalar
+records remain in repository-external Cache. It does not change or relax the
+production decoder and does not start XCC, FinalAlert, or the game.
+
+Run the wrapper contract tests in both supported hosts:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
+    ./Tools/Content/Tests/Invoke-ShpTsRleForensicAudit.Tests.ps1
+
+pwsh.exe -NoProfile -File `
+    ./Tools/Content/Tests/Invoke-ShpTsRleForensicAudit.Tests.ps1
+```
+
 ## WP-02C XCC synthetic interoperability
 
 `Invoke-XccSyntheticInterop.ps1` provides three operator-facing modes around
