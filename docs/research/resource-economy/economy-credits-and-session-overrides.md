@@ -1,233 +1,43 @@
 # Economy credits and session overrides
 
-> **来源与许可证声明**
->
-> 本文件由 **ChatGPT 网页版**基于公开资料独立研究完成；未读取 ProjectBaseline；不是 Codex 产物；GPL 或许可证不明的实现仅作行为、冲突和架构参考，未复制、逐句翻译、机械改写或移植其采集、经济、AI、随机、寻路或测试代码。`code_imported: false`。
+> **Source notice:** ChatGPT Web public-source research. ProjectBaseline was not read. `code_imported: false`.
 
-## 1. Economy-source graph
+## Economy-source graph
 
 ```text
 Rules defaults
 map House credits
-Basic carry-over candidates
+carry-over candidates
 campaign persistence
-multiplayer lobby credits
-game-mode override
-scenario/Trigger/crate mutations
-refinery deliveries
+lobby/game-mode money
+refinery/crate/Trigger mutations
 runtime player account
-AI observations
+AI estimates
 score/statistics
 ```
 
 No single parser field defines final money.
 
-## 2. Descriptor
+## Evidence
 
-```text
-EconomySourceDescriptor
-- SourceKind
-- RawValue
-- NumericCandidates
-- SourceLayer
-- Scope
-- HouseOrPlayerReference?
-- ScenarioModeCandidates
-- ProductProfile
-- Evidence
-- Diagnostics
-```
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes authored credits/carry-over/economy fields | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor behavior only. | Preserve authored source profile. | `NotRun` |
+| OpenRA/Ares/Phobos/Vinifera/client storage/cash behavior | `ImplementationSpecificBehavior` | Named implementations | Product/extension/client-specific. | Keep source layers separate. | `NotRun` |
+| Stable community descriptions of credits, storage, refinery and carry-over | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Provenance/product applicability. | `NotRun` |
+| Authored House credits and refinery delivery as economy-source candidates | `Underconfirmed` | Tools/community | Runtime precedence and units are incomplete. | Explicit `EconomyOverridePolicy`. | `NotRun` |
+| Stock RA2/YR versus TS/Ares/OpenRA silo/storage/cash models | `ConflictingSources` | Products/extensions/engines | Direct model differences. | Never merge profiles. | `NotRun` |
+| Exact runtime precedence, sell/destruction/capture overflow and settlement rounding | `Unresolved` | No original-runtime source located | No complete account algorithm. | Future deterministic simulation/session adapter. | `NotRun` |
+| Provenance-preserving economy graph and no parser mutation | `DefensiveDesign` | Project policy | Architecture/fail-closed design. | Commands/results separate. | `NotRun` |
 
-## 3. Override layers
+## Descriptors
 
-```text
-EconomyOverrideLayer
-- LayerId
-- PriorityCandidate
-- ApplicabilityPredicate
-- ValueCandidate
-- MergeModeCandidate
-- Provenance
-- ConflictPolicy
-```
+`EconomySourceDescriptor` records source kind, raw value, numeric candidates, source layer, scope, House/player reference, mode/product profile, evidence and diagnostics. `EconomyOverrideLayer` records applicability, merge-mode candidate and conflicts without selecting precedence during parsing.
 
-Candidate merge modes:
+## Distinct states
 
-```text
-Replace
-Add
-Clamp
-CarryOver
-CapCarryOver
-Ignore
-ExtensionDefined
-Unknown
-```
+House Credits, CarryOverMoney/Cap, lobby starting money, game-mode override, physical stored resource, cash, spendable total, earned/spent statistics and score remain distinct. Refinery delivery produces an economy-mutation candidate only after explicit cargo acceptance; editor estimates never authorize mutation.
 
-The parser does not select precedence.
+## Runtime boundary
 
-## 4. Starting credits candidates
-
-Strictly distinct:
-- House `Credits`;
-- `[Basic] CarryOverMoney`;
-- `CarryOverCap`;
-- campaign previous-mission state;
-- multiplayer/lobby starting money;
-- game-mode/client override;
-- runtime initialization account.
-
-Map metadata can produce an authored candidate, not the final session value.
-
-## 5. Runtime accounts
-
-```text
-RuntimeCreditAccount
-- CashCandidate
-- PhysicalStoredResourceCandidate
-- TotalSpendableCandidate
-- EarnedStatistic
-- SpentStatistic
-- CapacityCandidate
-- SimulationTick
-```
-
-Whether stock RA2/YR merges physical ore and cash internally, and under which silo mode, remains product/profile scoped.
-
-## 6. Refinery delivery
-
-Refinery delivery produces an `EconomyMutationCandidate` only after cargo acceptance:
-
-```text
-ResourceType
-AcceptedUnits
-ValuePerUnitCandidate
-ModifierCandidates
-PhysicalStorageOutcome
-CashOutcome
-OverflowOutcome
-Owner
-Tick
-```
-
-Editor map-resource estimates do not authorize this mutation.
-
-## 7. Storage and silo
-
-Separate:
-- harvester cargo;
-- refinery acceptance;
-- building storage capacity;
-- player physical resource;
-- cash;
-- displayed credits;
-- score.
-
-Ares documentation describes optional restored storage behavior; OpenRA independently models cash/resources/capacity. Neither is automatically stock YR fact.
-
-## 8. Storage capacity changes
-
-Future simulation commands:
-
-```text
-AddStorageCapacity
-RemoveStorageCapacity
-DiscardExcess
-TransferStoredResource
-ConvertStoredResourceToCash
-OwnerChanged
-```
-
-Sell/destruction/capture outcomes remain P0.
-
-## 9. Crates
-
-A crate may produce:
-- credits;
-- resource;
-- actor;
-- effect;
-- extension behavior.
-
-Crate Overlay is not a resource cell. Crate credit mutation belongs to runtime command execution.
-
-## 10. Trigger boundary
-
-Possible Trigger/Event/Action categories:
-- compare credits;
-- modify credits;
-- compare resource amount;
-- create/remove resource;
-- enable growth/spread;
-- create harvester/refinery;
-- AI economy condition.
-
-Only opcode/parameter candidates are recorded. Editor display names are not complete runtime semantics.
-
-## 11. AI economy boundary
-
-```text
-ScenarioResourceState
-PlayerEconomyState
-AIEconomyObservation
-AIDecision
-ProductionCommand
-```
-
-Observations may include:
-- harvester/refinery counts;
-- resource scan;
-- estimated field value;
-- credits/storage;
-- threatened harvester;
-- difficulty;
-- campaign/script refs.
-
-AI does not live in format Core and is not implemented.
-
-## 12. Score and statistics
-
-```text
-CurrentCredits
-PhysicalStoredResource
-CreditsDelivered
-Earned
-Spent
-ResourceHarvested
-Score
-AIResourceEstimate
-```
-
-These values may coincide numerically but remain independent semantic fields.
-
-## 13. Arithmetic and determinism
-
-Future economy policy must define:
-- integer/fixed-point;
-- checked multiplication;
-- modifier order;
-- rounding;
-- saturation vs failure;
-- negative values;
-- max credits;
-- transaction order;
-- replay/savegame serialization.
-
-OpenRA’s choices are independent implementation evidence only.
-
-## 14. Session precedence diagnostics
-
-Required diagnostics:
-- multiple starting-credit sources;
-- lobby value outside allowed set;
-- carry-over without campaign context;
-- carry-over cap conflict;
-- House reference missing;
-- negative/overflow value;
-- map-local override collision;
-- unsupported merge mode;
-- extension source on vanilla profile.
-
-## 15. No implementation
-
-No player account, session, lobby, Trigger executor, crate mutation, refinery credit transfer, AI decision or UI counter is implemented.
+Trigger/crate/refinery/sell/capture/storage commands are future simulation inputs. Core does not add credits, discard resources, clamp accounts, update score, execute AI or write lobby state into maps.

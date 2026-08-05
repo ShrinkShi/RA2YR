@@ -1,208 +1,59 @@
 # Harvester capacity and load state
 
-> **来源与许可证声明**
->
-> 本文件由 **ChatGPT 网页版**基于公开资料独立研究完成；未读取 ProjectBaseline；不是 Codex 产物；GPL 或许可证不明的实现仅作行为、冲突和架构参考，未复制、逐句翻译、机械改写或移植其采集、经济、AI、随机、寻路或测试代码。`code_imported: false`。
+> **Source notice:** ChatGPT Web public-source research. ProjectBaseline was not read. `code_imported: false`.
 
-## 1. Identity boundary
+## Separation
 
 ```text
-VehicleType
-HarvesterCapability
-CurrentHarvesterInstance
-CargoState
-ResourceTypeFilter
-HarvestMission
-DockingState
-UnloadState
-VisualAnimationState
+AuthoredTypeCapacity
+≠ CurrentCargo
+≠ CargoComposition
+≠ CargoEconomicValue
+≠ PipCount
+≠ DisplayedLoadFraction
+≠ HarvesterVisualFrame
 ```
 
-No name heuristic (`HARV`, `MINER`, `ORE`) can create a harvester capability.
+Raw Rules/type fields are configuration candidates; current cargo is runtime state; pips/bars/frames are presentation.
 
-## 2. Candidate Rules/Art inputs
+## Evidence
 
-Profile-scoped candidates include:
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert/editor exposes resource/harvester-related fields and estimates | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Editor behavior only. | Named editor profile. | `NotRun` |
+| OpenRA or extension cargo/storage models | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
+| Common capacity, PipScale and harvester conventions | `ConfirmedCommunityConvention` | ModEnc/community docs | Convention does not prove runtime units or mixed-cargo behavior. | Preserve raw fields/product applicability. | `NotRun` |
+| Type capacity as a stock cargo-limit candidate | `Underconfirmed` | Tools/community | Units, defaults and rounding remain incomplete. | Explicit capacity profile. | `NotRun` |
+| Exact runtime cargo units, mixed resources, pips and unload rounding | `Unresolved` | No original-runtime source located | No reliable complete contract. | Future simulation/UI adapters. | `NotRun` |
+| UI/visual state used as cargo authority | `ConflictingSources` | Tool visuals and data models | Display frames/pips are not canonical state. | Canonical runtime cargo only. | `NotRun` |
+| No clamp/default repair and UI separation | `DefensiveDesign` | Project policy | Preservation/architecture. | Checked capacity and explicit state. | `NotRun` |
 
-```text
-Harvester
-ResourceGatherer
-Storage
-PipScale
-Dock
-Refinery
-UnloadingClass
-TiberiumProof
-TiberiumHeal
-TiberiumRemains
-Crusher
-MovementZone
-SpeedType
-Locomotor
-Owner
-Prerequisite
-AI fields
-extension fields
-```
-
-Each property records raw token, case, source layer, selected profile, evidence and unknown behavior.
-
-## 3. Capability descriptor
+## Model
 
 ```text
-HarvesterCapabilityDescriptor
-- VehicleTypeReference
-- IsHarvesterCandidate
-- AcceptedResourceTypeCandidates[]
-- RequiresGroundResourceCandidate
-- CollectionAnimationRefs[]
-- DockTypeCandidates[]
-- UnloadingClassCandidates[]
-- MovementCapabilityRef
-- AIObservationTags[]
+HarvesterCapacityCandidate
+- RawCapacity
+- UnitsProfile
+- ResourceFamilyApplicability
 - ProductProfile
 - Evidence
-- Diagnostics
-```
 
-This descriptor does not contain current cargo or mission.
-
-## 4. Capacity descriptor
-
-```text
-HarvesterCapacityDescriptor
-- CapacityRaw
-- CapacityUnitCandidate
-- SharedCapacityCandidate
-- PerTypeCapacityCandidates[]
-- ZeroCapacityMeaning
-- NegativeValueMeaning
-- OverflowPolicy
-- ProductProfile
-- Evidence
-```
-
-Missing, zero and negative values remain distinct.
-
-## 5. Cargo model
-
-```text
-HarvesterCargoEntry
-- ResourceTypeId
-- CanonicalAmount
-- AmountUnit
-- EconomicValueCandidate
-- SourceEventOrdinal
-- Diagnostics
-
-HarvesterCargoSnapshot
-- ActorStableId
-- Entries[]
-- TotalCanonicalAmount
-- CapacityDescriptorRef
-- IsEmptyCandidate
-- IsFullCandidate
-- OverflowState
+RuntimeCargoSnapshot
+- EntriesByResourceFamily
+- TotalQuantity
+- TotalEconomicValueCandidate
+- CapacityReference
 - SimulationTick
 ```
 
-The model supports multiple entries to avoid baking in an unproven single-resource assumption. Stock ore/gem mixed-cargo behavior remains unresolved.
+Missing, invalid, negative and overflowed capacity values remain distinct. Core does not fill capacity from visuals, class names or common defaults.
 
-## 6. Load fraction
+## UI boundary
 
-```text
-HarvesterLoadFraction
-- Numerator
-- Denominator
-- RationalReduction
-- ClampedPresentationFraction?
-- OverflowDiagnostic
-```
-
-Canonical state preserves exact integers. UI may clamp display to `[0,1]`, but simulation does not silently clamp cargo.
-
-## 7. Required distinctions
+The proposed selected-unit load indicator:
 
 ```text
-AuthoredVehicleTypeCapacity
-!= CurrentRuntimeCargo
-!= CargoEconomicValue
-!= UI PipCount
-!= UI BarWidth
-!= ArtLoadFrame
+black outline + yellow fill
 ```
 
-A cargo snapshot can be partial, full, over-capacity due to malformed/savegame/extension input, or unknown.
-
-## 8. Independent implementation evidence
-
-OpenRA at pinned revision separates:
-- a `StoresResources` capacity and accepted-resource list;
-- per-resource cargo dictionary;
-- total content;
-- harvester resource filters;
-- full/empty/fullness queries;
-- unload delay and unload amount;
-- refinery acceptance.
-
-This is useful architectural evidence, not stock RA2/YR behavior.
-
-## 9. UI boundary
-
-Canonical inputs:
-
-```text
-CanonicalCargoAmount
-CanonicalCapacity
-NormalizedLoadFraction
-CargoTypeBreakdown
-OwnerVisibilityPolicy
-ObserverVisibilityPolicy
-```
-
-Presentation candidates:
-
-```text
-UIPipDescriptor
-UIBarDescriptor
-ArtLoadFrameCandidate
-TooltipCargoDescriptor
-SidebarCargoDescriptor
-```
-
-Original-game feedback may include selection pips and/or vehicle art changes depending on product/type. Exact YR behavior is evidence-scoped.
-
-The planned project style:
-
-```text
-black outline + yellow fill load bar
-```
-
-is explicitly `ConfiguredForProjectPolicy`. It is not a format or stock-runtime fact.
-
-## 10. Visibility
-
-UI policy must define:
-- selection-only vs always visible;
-- owner-only vs allied/enemy;
-- observer/replay;
-- shroud/fog;
-- remap/color;
-- damaged/disabled state;
-- mixed cargo visualization.
-
-Core does not evaluate camera, selection or renderer state.
-
-## 11. Save/load and scripted cargo
-
-Future savegame/state import may provide current cargo. It must not be interpreted as authored map placement. Script-created cargo and extension over-capacity state remain runtime inputs with diagnostics.
-
-## 12. No mutation
-
-This research defines no:
-- `AddCargo`;
-- `RemoveCargo`;
-- collection tick;
-- full-state mission transition;
-- unload loop;
-- UI progress bar component.
+is `DefensiveDesign` UI policy, not stock behavior. It consumes an explicit cargo/capacity snapshot and never writes cargo, changes simulation, reads sprite frames, infers resource type from color or becomes a compatibility claim.

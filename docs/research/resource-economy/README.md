@@ -1,136 +1,74 @@
 # M3-R13 — Resource harvesting and economy boundaries
 
-> **来源与许可证声明**
->
-> 本文件由 **ChatGPT 网页版**基于公开资料独立研究完成；未读取 ProjectBaseline；不是 Codex 产物；GPL 或许可证不明的实现仅作行为、冲突和架构参考，未复制、逐句翻译、机械改写或移植其采集、经济、AI、随机、寻路或测试代码。`code_imported: false`。
+> **Source notice:** ChatGPT Web public-source research only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no harvesting, economy, AI, RNG, pathfinding or UI code was copied or ported. `code_imported: false`.
 
-## 1. Scope
-
-本专题只定义 RA2/YR 资源 Overlay、资源类型、矿车载荷、采集、精炼厂 docking/卸载、增长/扩散、credits 与经济覆盖层的**声明式输入和职责边界**。不实现任何 runtime mutation。
-
-冻结候选管线：
+## Boundary
 
 ```text
-raw map and Rules descriptors
+raw map/Rules descriptors
 → resource-overlay family binding
-→ raw resource-stage/value candidates
+→ raw stage/value candidates
 → logical resource-cell descriptors
 → harvester/refinery capability binding
-→ declarative collection and unloading contracts
+→ declarative collection/unloading contracts
 → economy-source descriptors
-→ future deterministic simulation and UI adapters
+→ future deterministic simulation/UI adapters
 ```
 
-## 2. Non-negotiable boundaries
+Overlay parsing does not calculate remaining resource, collection does not mutate cells/cargo, refinery binding does not transfer credits, growth/spread metadata does not run RNG, and Core creates no actors or Unity objects.
 
-- Overlay reader 只保留 `OverlayTypeRaw`、`OverlayDataRaw`、storage coordinate 和 provenance，不计算最终资源量。
-- `OverlayDataRaw` 没有 format-wide 统一语义；resource、wall、bridge、crate 等 family 必须分开解释。
-- resource binder 不修改地图，不删除 Overlay，不触发增长、扩散或耗尽。
-- harvester binder 不创建单位；type capacity 与 current cargo 分离。
-- collection contract 不执行采集、不寻路、不分配目标、不运行 reservation。
-- refinery binder 不转移 cargo 或 credits；dock、animation、audio、mission 和 economy mutation 分离。
-- economy parser 不覆盖 lobby/session state，不决定最终起始资金。
-- UI 只消费 canonical state；pip、进度条、车体帧和黄色载荷条都不能成为 cargo 权威。
-- Core 不依赖 `UnityEngine`，不创建 `GameObject`、`Sprite`、`ProgressBar`、`AudioSource`、粒子或协程。
+## Findings
 
-## 3. Principal conclusions
+- Overlay and OverlayData remain independent arrays; OverlayData has family-specific semantics.
+- Ore, gems, TS Tiberium, veins, crates, debris, walls, bridges and extension resources require separate product/family profiles.
+- `OverlayDataRaw`, visual stage, stored quantity candidate, remaining amount, cell yield, Rules value and delivered credits are distinct.
+- FinalAlert's `(OverlayData + 1) × Value` is an official-editor estimate only.
+- Type capacity, current cargo, cargo composition/value, pips and UI load fraction are separate.
+- Harvest target, approach, reservation, command and result are separate deterministic simulation contracts.
+- Refinery capability, dock/queue, unload animation, cargo mutation, storage mutation and credit mutation are separate.
+- Growth/spread capability, interval/probability, eligible cells, RNG, depletion and regrowth state remain separate.
+- House credits, carry-over, lobby/game-mode money, refinery/crate/Trigger mutations, runtime accounts and score keep independent provenance.
+- A black-outline/yellow-fill load bar is project UI policy only.
 
-### 3.1 Resource overlays
+## Formal grades
 
-官方 FinalSun/FinalAlert 2 编辑器在固定版本源码中识别四组硬编码资源 Overlay 范围，并独立保存 Overlay 和 OverlayData 数组。该证据证明 editor profile，不证明原版 RA2/YR runtime 的完整资源 registry 或 harvest settlement。
-
-资源 family 候选：
+Formal `Grade` fields use only:
 
 ```text
-Empty
-Ore
-Gems
-TSGreenTiberium
-TSBlueTiberium
-Veins
-Crate
-DebrisOrRock
-WallOrFence
-Bridge
-Rail
-Tunnel
-ExtensionResource
-Unknown
+ConfirmedByOriginalRuntimeSource
+ConfirmedByOfficialToolSource
+ConfirmedByMultipleIndependentImplementations
+ConfirmedCommunityConvention
+ImplementationSpecificBehavior
+DefensiveDesign
+ConflictingSources
+Underconfirmed
+Unresolved
 ```
 
-`Veins`、crate 和 debris 不得作为普通 ore 处理。
+No complete original RA2/YR economy runtime source was found. FinalSun/FinalAlert behavior uses `ConfirmedByOfficialToolSource`; named tools/engines/extensions use `ImplementationSpecificBehavior`; stable community conventions use `ConfirmedCommunityConvention`; cross-tool candidates without proven lineage/runtime applicability remain `Underconfirmed`; direct product/formula/storage conflicts use `ConflictingSources`; complete runtime settlement/RNG/economy behavior remains `Unresolved`.
 
-### 3.2 Stage, quantity and value
-
-每个资源 cell 同时保留：
+Raw preservation, explicit product/family/profile selection, no stage-to-quantity assumption, no simulation mutation, deterministic reservations, checked arithmetic, no UI-as-authority and fail-closed binding use `DefensiveDesign`.
 
 ```text
-OverlayTypeRaw
-OverlayDataRaw
-ResourceFamilyCandidates
-VisualStageCandidates
-QuantityCandidates
-YieldCandidates
-InterpretationProfile
-EvidenceGrade
-Diagnostics
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
 ```
 
-`visual frame != quantity != economic yield`。官方编辑器的 map-money 估算候选 `(OverlayData + 1) × Value` 只标记 `ConfirmedByOfficialEditorSource`。
+These fields do not imply ProjectBaseline access and cannot promote compatibility or runtime evidence.
 
-### 3.3 Resource registry
+## Normalized claims
 
-`[Tiberiums]`、资源 subsection、Overlay ordinal、editor hardcoded range、theater/control INI 和 extension registry 都属于不同来源。TS Tiberium 与 RA2/YR ore/gems 采用显式 product profile，不能无条件共享一个 vanilla model。
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert resource ranges, Overlay arrays, growth/spread fields and map-money estimate | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor behavior only. | Named editor profile. | `NotRun` |
+| OpenRA/WAE/CNCMaps and extensions' resource/economy behavior | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
+| Stable ore/gem/Tiberium/value/growth/spread conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/RA2 DIY | Convention only. | Product applicability retained. | `NotRun` |
+| Stage/value/capacity/refinery candidates shared by tools | `Underconfirmed` | Tools/community | Runtime applicability and independence unproven. | Explicit profiles. | `NotRun` |
+| TS/RA2/YR/extension storage, stage, silo and economy models | `ConflictingSources` | Tools/community/extensions | Direct product/model differences. | Do not merge profiles. | `NotRun` |
+| Exact runtime remaining amount, harvest settlement, unload, RNG and account precedence | `Unresolved` | No runtime source | No complete contract. | Future simulation adapter. | `NotRun` |
+| No mutation/repair, canonical raw state and UI separation | `DefensiveDesign` | Project policy | Preservation/architecture. | Fail closed. | `NotRun` |
 
-### 3.4 Harvester cargo
+## Non-goals
 
-```text
-AuthoredVehicleTypeCapacity
-!= CurrentRuntimeCargo
-!= CargoEconomicValue
-!= UI Pip Count
-!= DisplayedLoadFraction
-```
-
-Core 模型允许 mixed cargo 和 per-resource entries，但是否为 stock YR 行为保持 `Unresolved`。
-
-### 3.5 Collection and docking
-
-采集和卸载均定义为未来 deterministic simulation 协议。parser、renderer、pathfinder 和 animation 不得修改资源、cargo 或 credits。
-
-### 3.6 Economy sources
-
-House credits、campaign carry-over、lobby money、game-mode override、refinery delivery、crate、Trigger、runtime account、AI estimate 和 score 分开保存。最终 session credits 由显式 `EconomyOverridePolicy` 在更高层选择。
-
-## 4. Evidence grades
-
-- `ConfirmedByOfficialRuntimeSource`
-- `ConfirmedByOfficialEditorSource`
-- `ConfirmedByIndependentImplementation`
-- `CommunityDocumented`
-- `ObservedByFutureProjectBaselineAudit`
-- `ConfiguredForProjectPolicy`
-- `Unresolved`
-
-预计没有完整、公开的 RA2/YR runtime economy source。本专题不会人为提升证据。
-
-## 5. Files
-
-1. `README.md`
-2. `layer-and-domain-boundaries.md`
-3. `resource-overlay-and-data-model.md`
-4. `resource-types-values-and-storage.md`
-5. `harvester-capacity-and-load-state.md`
-6. `harvest-targeting-and-collection.md`
-7. `refinery-docking-and-unloading.md`
-8. `growth-spread-and-depletion.md`
-9. `economy-credits-and-session-overrides.md`
-10. `source-comparison.md`
-11. `implementation-boundaries.md`
-12. `test-matrix.md`
-13. `baseline-audit-request.md`
-14. `unresolved-questions.md`
-
-## 6. Explicit non-goals
-
-No resource parser, harvesting, cargo mutation, harvester AI, resource reservation, docking, unloading, credits mutation, growth, spread, AI economy, UI load bar, Unity object, C#, PowerShell, test, configuration, ProjectBaseline audit, map execution or compatibility promotion.
+No resource parser implementation, harvesting, cargo mutation, targeting/reservation, docking/unloading, growth/spread, credits/storage mutation, economy AI, UI load bar, Unity, code, tests, ProjectBaseline audit, game/editor execution or compatibility promotion is included.
