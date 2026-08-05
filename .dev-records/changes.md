@@ -450,8 +450,9 @@
   axis, signedness, domain, sparse, and dense-count candidate policies.
 - Added the packed-section adapter over the existing injected RawLzo1X pipeline;
   upstream failures stop record parsing and no LZO algorithm was added.
-- Added 127 independent synthetic NUnit execution cases plus ADR, format notes,
-  compatibility evidence, matrix entry, and README links.
+- The original M3-C2 delivery recorded 127 defined NUnit executions; after the
+  PR #42 review tests were added, the current source defines 139 executions
+  (89 `[Test]`, 50 `[TestCase]`) across 96 behavior-method declarations.
 
 ## 2026-08-05 - PR #42 review correction scope
 

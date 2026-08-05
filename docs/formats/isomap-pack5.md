@@ -1,10 +1,10 @@
 # IsoMapPack5 raw record foundation
 
-The current synthetic matrix defines 127 NUnit executions (81 `[Test]`
-declarations and 46 parameterized `[TestCase]` executions). The current-HEAD
+The current synthetic matrix defines 139 NUnit executions (89 `[Test]`
+declarations and 50 parameterized `[TestCase]` executions). The current-HEAD
 executed count is 0 and passed count is unknown until a new XML result is
-generated; parameterized boundary cases are tracked separately from distinct
-behavior contracts. This count does not represent ProjectBaseline compatibility
+generated; parameterized boundary cases are tracked separately from the 96
+behavior-method declarations. This count does not represent ProjectBaseline compatibility
 or original-runtime proof.
 
 `SourceOffset` is the absolute offset within the decoded IsoMapPack5 stream (or
