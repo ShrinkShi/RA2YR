@@ -69,16 +69,16 @@ namespace RA2YR.Core.Content.Ini.Audit
             AppendPolicyEvidence(
                 builder,
                 "containerPrecedence",
-                IniResolutionEvidenceLevel.ConfirmedByOfficialEditorSource,
-                "ea-finalalert2-mission-editor-6abf0f5",
-                "editor-search-order-only-runtime-unresolved",
+                IniResolutionEvidenceLevel.ConfiguredForProjectBaseline,
+                "project-baseline-ordered-ini-semantic-composition",
+                "ra2-ra2md-expandmd01-through-99-loose-low-to-high",
                 false);
             AppendPolicyEvidence(
                 builder,
                 "fileComposition",
-                IniResolutionEvidenceLevel.Unresolved,
-                "wp02g1-static-research",
-                "rulesmd-and-soundmd-winners-unresolved",
+                IniResolutionEvidenceLevel.ConfiguredForProjectBaseline,
+                "project-baseline-ordered-ini-semantic-composition",
+                "ordered-multi-document-section-key-overlay-no-whole-file-winner",
                 true);
             AppendPolicyEvidence(
                 builder,
@@ -103,7 +103,7 @@ namespace RA2YR.Core.Content.Ini.Audit
                 true);
             builder.Append('}');
 
-            builder.Append(",\"candidateSets\":[");
+            builder.Append(",\"compositionSets\":[");
             AppendCandidateSet(builder, "rulesmd.ini", GetCandidates(model, "rulesmd.ini"), false);
             AppendCandidateSet(builder, "soundmd.ini", GetCandidates(model, "soundmd.ini"), true);
             builder.Append(']');
@@ -147,7 +147,8 @@ namespace RA2YR.Core.Content.Ini.Audit
             builder.Append(",\"runtimeBoundary\":{");
             AppendBoolean(builder, "genericExplicitLoadPlanExecutable", true, false);
             AppendBoolean(builder, "perValueCandidateChainImplemented", true, true);
-            AppendBoolean(builder, "projectBaselineRuntimeWinnerSelected", false, true);
+            AppendBoolean(builder, "projectBaselineCompositionConfigured", true, true);
+            AppendBoolean(builder, "wholeFileWinnerSelected", false, true);
             AppendBoolean(builder, "originalRuntimeComparisonPassed", false, true);
             AppendBoolean(builder, "typedRulesArtAiImplemented", false, true);
             AppendBoolean(builder, "blackBoxValidationRequired", true, true);
@@ -194,8 +195,7 @@ namespace RA2YR.Core.Content.Ini.Audit
                     sample.Length,
                     sample.Sha256)));
             return matches
-                .OrderBy(candidate => candidate.Provenance.RootArchive.Value,
-                    StringComparer.OrdinalIgnoreCase)
+                .OrderBy(candidate => GetLayerDescriptor(candidate).Priority)
                 .ThenBy(candidate => string.Join(
                     "/",
                     candidate.Provenance.Layers.Select(layer => layer.ResolvedName.Value)),
@@ -216,8 +216,8 @@ namespace RA2YR.Core.Content.Ini.Audit
 
             builder.Append('{');
             AppendString(builder, "logicalName", logicalName, false);
-            AppendNumber(builder, "candidateCount", candidates.Count, true);
-            builder.Append(",\"candidates\":[");
+            AppendNumber(builder, "documentLayerCount", candidates.Count, true);
+            builder.Append(",\"layers\":[");
             for (int index = 0; index < candidates.Count; index++)
             {
                 if (index > 0)
@@ -225,13 +225,62 @@ namespace RA2YR.Core.Content.Ini.Audit
                     builder.Append(',');
                 }
 
-                AppendSurveyCandidate(builder, candidates[index]);
+                AppendCompositionCandidate(builder, candidates[index]);
             }
 
             builder.Append(']');
-            builder.Append(",\"selectedWinner\":null");
-            AppendString(builder, "winnerEvidence", "Unresolved", true);
+            builder.Append(",\"wholeFileWinner\":null");
+            AppendString(builder, "documentRole", "CompositionLayer", true);
+            AppendString(builder, "compositionStatus", "ConfiguredForProjectBaseline", true);
+            AppendString(builder, "layerOrder", "low-to-high", true);
             builder.Append('}');
+        }
+
+        private static void AppendCompositionCandidate(
+            StringBuilder builder,
+            IniSurveyCandidate candidate)
+        {
+            IniProjectBaselineLayerDescriptor layer = GetLayerDescriptor(candidate);
+            builder.Append('{');
+            AppendString(builder, "logicalName", candidate.LogicalName.Value, false);
+            AppendString(builder, "mixId", candidate.MixId.ToString(), true);
+            AppendString(builder, "layerId", layer.LayerId, true);
+            AppendString(builder, "layerKind", layer.Kind.ToString(), true);
+            AppendNumber(builder, "priority", layer.Priority, true);
+            if (layer.ExpandNumber.HasValue)
+            {
+                AppendNumber(builder, "expandNumber", layer.ExpandNumber.Value, true);
+            }
+            else
+            {
+                builder.Append(",\"expandNumber\":null");
+            }
+
+            AppendProvenance(builder, candidate.Provenance, true);
+            AppendNumber(builder, "length", candidate.Length, true);
+            AppendString(builder, "sha256", candidate.Sha256, true);
+            builder.Append('}');
+        }
+
+        private static IniProjectBaselineLayerDescriptor GetLayerDescriptor(
+            IniSurveyCandidate candidate)
+        {
+            LogicalContentPath[] chain = new[] { candidate.Provenance.RootArchive }
+                .Concat(candidate.Provenance.Layers.Select(layer => layer.ResolvedName))
+                .ToArray();
+            IniProjectBaselineLayerDescriptor descriptor;
+            IniResolutionDiagnosticCode failureCode;
+            if (!IniProjectBaselineLoadPlanBuilder.TryClassifyLayer(
+                chain,
+                candidate.LogicalName,
+                out descriptor,
+                out failureCode))
+            {
+                throw new InvalidOperationException(
+                    "A fixed ProjectBaseline INI candidate does not match the configured layer policy.");
+            }
+
+            return descriptor;
         }
 
         private static void AppendSyntaxAudit(
@@ -336,6 +385,9 @@ namespace RA2YR.Core.Content.Ini.Audit
             AppendBoolean(builder, "confirmsRuntime",
                 level == IniResolutionEvidenceLevel.ConfirmedByOriginalRuntime ||
                 level == IniResolutionEvidenceLevel.ConfirmedByProjectBaselineRuntime,
+                true);
+            AppendBoolean(builder, "configuresProjectBaseline",
+                level == IniResolutionEvidenceLevel.ConfiguredForProjectBaseline,
                 true);
             builder.Append('}');
         }

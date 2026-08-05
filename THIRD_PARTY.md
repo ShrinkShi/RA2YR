@@ -22,6 +22,7 @@ public formats or behavior; it does not permit code import.
 | OpenRA commit `a520984` | GPL-3.0-or-later | Independent MIX/encryption and PAL conversion cross-check | No | Reference only |
 | iron-curtain-engine/cnc-formats commit `77da596` | MIT OR Apache-2.0 | Independent PAL and CSF layout cross-check | No | Reference only |
 | LewisXY CSF tool revision `ba6046f` | MIT | Independent CSF marker, length, and text-representation cross-check | No | Reference only |
+| RA2 DIY 2025 tutorial bundle | License unverified | `CommunitySemanticReference` for later stock/extension/unresolved Rules, Art, and AI hypotheses | No | Reference only; never a runtime content source |
 
 The pinned OpenRA commit contains no CSF implementation or CSF format
 documentation and is not used as WP-02E CSF evidence.

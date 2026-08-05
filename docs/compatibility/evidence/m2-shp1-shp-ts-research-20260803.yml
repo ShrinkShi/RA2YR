@@ -1,0 +1,85 @@
+schema_version: 1
+work_package: "M2-SHP1"
+evidence_kind: "format-research-and-decision"
+date_utc: "2026-08-03"
+scope: "Westwood SHP(TS) header, directory, raw indexed frames, and RLE-Zero indexed frames"
+implementation_origin: "independently authored C#; no third-party source imported"
+sources:
+  - id: "omniblade-xcc-encoding-62bb770"
+    license: "GPL-2.0-only"
+    use: "reference-only"
+    code_imported: false
+    adopted_facts:
+      - "8-byte little-endian header and ordered 24-byte frame descriptors"
+      - "32-bit flags, four raw frame-color bytes, reserved field, and absolute data offset"
+      - "canonical empty descriptor observation"
+      - "flags RLE-bit behavior and RLE-Zero row control"
+  - id: "xcc-sourceforge-svn-r1201"
+    license: "GPL-2.0-only"
+    use: "reference-only historical cross-check"
+    code_imported: false
+  - id: "openra-mix-reference-a520984"
+    license: "GPL-3.0-or-later"
+    use: "reference-only independent behavior comparison"
+    code_imported: false
+  - id: "ea-finalalert2-mission-editor-6abf0f5"
+    license: "GPL-3.0-or-later"
+    use: "reference-only official-editor lineage evidence"
+    code_imported: false
+  - id: "moddingwiki-westwood-shp-ts-oldid-10936"
+    license: "LicenseRef-Unverified-ModdingWiki"
+    use: "reference-only format fact cross-check"
+    code_imported: false
+  - id: "moddingwiki-westwood-rle-zero-oldid-11565"
+    license: "LicenseRef-Unverified-ModdingWiki"
+    use: "reference-only RLE fact cross-check"
+    code_imported: false
+  - id: "iron-curtain-cnc-formats-pal-77da596"
+    license: "MIT OR Apache-2.0"
+    use: "reference-only defensive-reading comparison"
+    code_imported: false
+    rejected_behavior: "compression value 3 mapped to LCW and permissive padding"
+format_facts:
+  byte_order: "little-endian"
+  header_bytes: 8
+  descriptor_bytes: 24
+  family_marker_required: 0
+  zero_frame_policy: "strict-failure"
+  raw_payload: "width * height row-major index bytes"
+  rle_line_length_unit: "bytes including the two-byte row header"
+  rle_literal: "each non-zero command byte emits one index"
+  rle_zero_run: "00 count emits count zero indices"
+  directory_has_explicit_data_length: false
+  next_distinct_offset_role: "hard read bound and overlap diagnostic only"
+  coordinate_signedness: "unresolved; raw ushort retained"
+  dependency_field_confirmed: false
+compression_decisions:
+  flags_0: "RawOpaque implemented"
+  flags_1: "RawTransparent implemented"
+  flags_2: "source-conflicting; no default decoder"
+  flags_3: "strict RLE-Zero implemented"
+  flags_other: "unknown; no decoder"
+  zero_zero: "consumes two bytes and emits no pixels; semantic acceptance unresolved"
+strictness:
+  padding_output: false
+  truncate_output: false
+  clamp_zero_run: false
+  borrow_next_frame_bytes: false
+  partial_success: false
+project_baseline_conflict_observation:
+  fixed_samples: 6
+  non_empty_flags_3_attempted: 257
+  rle_output_overflow: 257
+  failure_row_min: 0
+  failure_row_max: 0
+  overflow_pixels_per_row: 1
+  even_declared_width_failures: 120
+  odd_declared_width_failures: 137
+  declared_width_range: { min: 14, max: 202 }
+  parser_relaxed_for_baseline: false
+  compatibility_promoted: false
+limitations:
+  - "ProjectBaseline is patched development content, not a clean YR 1.001 corpus."
+  - "No original YR runtime behavior comparison or visual comparison was performed."
+  - "Flags 2, coordinate signedness, and 00 00 semantics remain unresolved."
+  - "SHP writing, PAL binding, RGBA, remap, shadow pairing, Texture2D/Sprite, Art animation runtime, VXL/HVA, and gameplay are outside scope."

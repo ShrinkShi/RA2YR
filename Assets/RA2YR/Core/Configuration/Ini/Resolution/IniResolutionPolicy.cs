@@ -13,6 +13,7 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
         ConfirmedByOfficialEditorSource,
         CrossCheckedByIndependentImplementation,
         CommunityDocumented,
+        ConfiguredForProjectBaseline,
         ConfiguredForTesting,
         Unresolved
     }
@@ -39,6 +40,9 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
         public bool ConfirmsRuntime =>
             Level == IniResolutionEvidenceLevel.ConfirmedByOriginalRuntime ||
             Level == IniResolutionEvidenceLevel.ConfirmedByProjectBaselineRuntime;
+
+        public bool ConfiguresProjectBaseline =>
+            Level == IniResolutionEvidenceLevel.ConfiguredForProjectBaseline;
     }
 
     internal enum IniLoadLayerKind
@@ -296,7 +300,7 @@ namespace RA2YR.Core.Configuration.Ini.Resolution
         }
 
         public static IniResolutionLimits Default { get; } =
-            new IniResolutionLimits(64, 128, 2_000_000, 1_000_000, 100_000);
+            new IniResolutionLimits(128, 128, 2_000_000, 1_000_000, 100_000);
 
         public int MaxDocuments { get; }
         public int MaxLayers { get; }

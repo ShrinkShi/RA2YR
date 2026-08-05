@@ -180,6 +180,12 @@ Invoke-Case -Name 'Synthetic sanitized summary passes' -Body {
     Assert-SanitizedSummary -Summary (New-SyntheticSummary)
 }
 
+Invoke-Case -Name 'JSON UTC timestamp coercion passes' -Body {
+    $summary = (New-SyntheticSummary | ConvertTo-Json -Depth 8 -Compress) |
+        ConvertFrom-Json
+    Assert-SanitizedSummary -Summary $summary
+}
+
 Invoke-Case -Name 'Changed golden payload hash fails closed' -Body {
     $summary = New-SyntheticSummary
     $summary.csf.sha256 = ('0' * 64)

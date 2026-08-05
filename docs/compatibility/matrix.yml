@@ -384,13 +384,127 @@ entries:
       - id: interoperability.xcc-mix-write.gui-manual
         status: "已知限制"
         description: "XCC 1.47 is a GUI-only controlled manual gate; CI validates the synthetic contract but cannot execute or attest the external XCC process."
-  - id: format.shp
+  - id: format.shp-ts-directory
     domain: format
-    feature: "SHP frames, compression, offsets, shadows, and remap indices"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    feature: "Westwood SHP(TS) header and ordered frame-directory parsing"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.MinimalCanonicalEmptyFrameParses"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.TruncatedDirectoryFailsBeforeReducingFrameCount"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.FrameColorRawAndDescriptorOrderAreImmutable"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.DuplicateOffsetsArePreservedWithoutDependencyInference"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.FixedProfileLocksProjectBaselineTargetsAndModelIdentities"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-research-20260803.yml#format_facts"
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#test_classes"
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml#samples"
+      - "docs/adr/0018-shp-ts-core-indexed-model.md"
+    limitations:
+      - id: format.shp-ts-directory.patched-baseline
+        status: "已知限制"
+        description: "The fixed local samples come from the patched YR1001_ProjectBaseline, not a clean YR 1.001 corpus, and no original runtime comparison was performed."
+      - id: format.shp-ts-directory.coordinate-signedness
+        status: "已知限制"
+        description: "X/Y signedness remains unresolved; raw ushort values are authoritative and high-bit coordinates are preserved with diagnostics rather than placed on a canvas."
+      - id: format.shp-ts-directory.read-only-local-model
+        status: "已知限制"
+        description: "The model is read-only and local-indexed only; writer, dependency/delta semantics, canvas placement, palette binding, pivots, shadows, and rendering are not implemented."
+  - id: format.shp-ts-raw-indexed-decode
+    domain: format
+    feature: "SHP(TS) flags 0/1 raw local indexed-frame decoding"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RawFlagsDecodeRowMajorWithoutChangingZeroIndices"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RawPayloadTruncationFailsWithoutPaddingZeros"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RawFrameReportsAlignmentPaddingWithoutDecodingIt"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.DecodedFrameDoesNotAliasInputOrReturnedCopies"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.CompleteRawAuditPublishesSanitizedSummaryAndExternalFrames"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#test_classes"
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml#aggregate"
+    limitations:
+      - id: format.shp-ts-raw-indexed-decode.rendering-separate
+        status: "已知限制"
+        description: "Flags 0/1 retain raw index bytes only; index-zero transparency, PAL choice, RGBA, remap, shadow, Texture2D/Sprite, and visual comparison are separate unimplemented layers."
+  - id: format.shp-ts-rle-zero-indexed-decode
+    domain: format
+    feature: "Strict SHP(TS) flags 3 RLE-Zero local indexed-frame decoding"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RleZeroRunOutputsExactCount"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.MultipleRleRowsCompleteExactly"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.RleRunOutputOverflowFailsWithoutClamp"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.ZeroZeroConsumesTwoBytesButReturnsUnresolved"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.StrictRleFailureStillPublishesControlledSanitizedEvidence"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Forensics.ShpTsRleForensicAnalyzerTests.FinalZeroRunGuardIsClassifiedWithoutProducingPixels"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Forensics.ShpTsRleForensicAuditTests.MixedRowsSharedAcrossCategoriesReachB"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-research-20260803.yml#compression_decisions"
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#test_classes"
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml#rle_conflict"
+      - "docs/compatibility/evidence/m2-shp1f-rle-forensic-20260803.yml"
+      - "docs/adr/0019-shp-ts-rle-zero-strictness.md"
+      - "docs/adr/0020-shp-ts-rle-forensic-probe-remains-non-production.md"
+    limitations:
+      - id: format.shp-ts-rle-zero-indexed-decode.project-baseline-conflict
+        status: "已知限制"
+        description: "All 257 attempted non-empty flags-3 ProjectBaseline frames fail strictly on row zero. The independent all-row probe found 1,331 exact-width rows and 8,164 final-zero-run width+1 rows, so decision B keeps the decoder strict and ProjectBaseline compressed-frame compatibility unpromoted."
+      - id: format.shp-ts-rle-zero-indexed-decode.flags2-unresolved
+        status: "已知限制"
+        description: "RawFlags 2 remains source-conflicting between XCC and OpenRA and has no default decoder; unknown flags also remain unresolved."
+      - id: format.shp-ts-rle-zero-indexed-decode.zero-zero-unresolved
+        status: "已知限制"
+        description: "00 00 consumes input but its stock semantic acceptance remains unresolved. The independent scalar probe found zero occurrences across 9,495 declared rows in the fixed failing frames, which is sample evidence rather than a format-wide rule."
+  - id: format.shp-ts-rle-forensic-probe
+    domain: format
+    feature: "Independent bounded SHP(TS) flags-3 row-width forensic classification"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Forensics.ShpTsRleForensicAnalyzerTests"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Forensics.ShpTsRleForensicAuditTests"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1f-rle-forensic-20260803.yml"
+      - "docs/adr/0020-shp-ts-rle-forensic-probe-remains-non-production.md"
+    limitations:
+      - id: format.shp-ts-rle-forensic-probe.non-production
+        status: "已知限制"
+        description: "Decision B is aggregate forensic evidence only; it neither changes the strict production decoder nor proves original runtime behavior."
+  - id: format.shp-ts-mix-window
+    domain: format
+    feature: "Bounded SHP(TS) Memory, Stream, short-read, and MIX-entry-window equivalence"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.SeekableAndShortReadStreamsProduceSameDirectoryHash"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsReaderTests.MixEntryWindowProducesSameDirectoryHash"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.SeekableShortReadDecodeMatchesMemory"
+      - "RA2YR.Tests.EditMode.Formats.ShpTs.WestwoodShpTsDecoderTests.MixWindowDecodeMatchesMemory"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#test_classes"
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml#samples"
+    limitations:
+      - id: format.shp-ts-mix-window.read-only
+        status: "已知限制"
+        description: "The bounded window path is read-only and does not extract assets, rewrite MIX archives, or publish frame bodies."
+  - id: format.shp-ts-project-baseline-audit
+    domain: format
+    feature: "Controlled sanitized SHP(TS) ProjectBaseline golden audit"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.FixedProfileLocksProjectBaselineTargetsAndModelIdentities"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.ChangedPayloadHashFailsBeforePublishingCache"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.LooseCandidateIsRejectedBeforeMounting"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.BaselineFingerprintChangeFailsBeforeManifestPublication"
+      - "RA2YR.Tests.EditMode.Content.ShpTs.Audit.ShpTsProjectBaselineAuditServiceTests.ManifestBudgetFailureDoesNotPublishPartialArtifact"
+    evidence:
+      - "docs/compatibility/evidence/m2-shp1-project-baseline-20260803.yml"
+      - "docs/compatibility/evidence/m2-shp1-shp-ts-synthetic-20260803.yml#power_shell_wrapper_regression"
+    limitations:
+      - id: format.shp-ts-project-baseline-audit.decode-conflicts
+        status: "已知限制"
+        description: "The audit deliberately completes as CompleteWithDecodeFailures; directory and raw-frame evidence passes while 257 strict flags-3 decodes remain incompatible with the declared-width contract."
+      - id: format.shp-ts-project-baseline-audit.selection-basis
+        status: "已知限制"
+        description: "ArtExplicitImageCatalogResolved and configuration labels preserve static evidence only; VerifiedCatalogSurvey samples prove controlled content presence, not stock runtime selection or precedence."
   - id: format.vxl
     domain: format
     feature: "VXL sections, voxels, bounds, colors, and normals"
@@ -463,10 +577,18 @@ entries:
   - id: format.map-pack-codec
     domain: format
     feature: "Map pack Base64, block framing, compression, and bounds"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.PackedMap.PackedMapCoreTests"
+    evidence:
+      - "docs/compatibility/evidence/m3c1-packed-map-synthetic-20260804.yml#components"
+    limitations:
+      - id: format.map-pack-codec.synthetic-only
+        status: "已知限制"
+        description: "Only explicit synthetic fragment, Base64, chunk, and Format80 profiles are implemented; LZO is contract-only and no ProjectBaseline packed audit was run."
+      - id: format.map-pack-codec.map-specific-unimplemented
+        status: "已知限制"
+        description: "IsoMap, OverlayPack, OverlayDataPack, PreviewPack, TMP, palette, rendering, writer, and original runtime behavior remain unimplemented or unconfirmed."
   - id: format.yro-wrapper
     domain: format
     feature: "YRO opaque prefix, INI body, digest, and trailing-data preservation"
@@ -574,44 +696,56 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.LoadPlanRequiresPrematerializedTrustedLayerList"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SourceIdCaseMismatchFailsAsIncompleteProvenanceWithoutHostPath"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.CompleteResolutionResultCannotBeForgedThroughPublicApi"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.BuildsExplicitLowToHighProjectBaselineLayerOrder"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.InputEnumerationOrderDoesNotChangePlanResolutionOrTrace"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
       - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
       - "docs/adr/0015-ini-runtime-resolution-policy.md"
+      - "docs/adr/0022-project-baseline-ini-ordered-semantic-composition.md"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#synthetic_validation"
     limitations:
       - id: ini.load-plan.explicit-policy-only
         status: "已知限制"
-        description: "Executable plans require caller-supplied priorities and policies with evidence labels; no stock YR load plan is selected."
+        description: "The ProjectBaseline plan is configured and executable; original-runtime confirmation and independent intradocument policies remain unresolved."
   - id: ini.container-precedence
     domain: ini
     feature: "Stock YR loose, expand, ecache, elocal, base, and nested MIX precedence"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
     tests:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.LooseAndMixCandidatesRemainDistinctLayers"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.NestedMixProvenanceIsValidatedAsACompleteChain"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.MissingPriorityReturnsAmbiguous"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.BuildsExplicitLowToHighProjectBaselineLayerOrder"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.MissingExpandNumbersAreLegalAndHigherNumberOverrides"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.DuplicateExpandNumberFailsWithStructuredDiagnostic"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.InvalidExpandNumberFailsWithStructuredDiagnostic"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
       - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#composition_layers"
     limitations:
       - id: ini.container-precedence.runtime-unresolved
         status: "已知限制"
-        description: "Official editor source and independent implementations narrow hypotheses but do not prove stock YR runtime order; rulesmd.ini and soundmd.ini winners remain ambiguous."
+        description: "ProjectBaseline uses the configured ra2/ra2md/expand01..99/loose order; it is not ConfirmedByOriginalRuntime. ecache/elocal and broader stock runtime order remain outside this configured plan."
   - id: ini.file-composition
     domain: ini
     feature: "Stock same-name INI selection/overlay and base-versus-md file composition"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
     tests:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SelectDocumentPolicyExcludesUniqueLowerDocumentValues"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.OverlayPolicyRetainsUniqueLowerDocumentValues"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.UnresolvedFileCompositionReturnsAmbiguous"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.FullCompositionOverridesPerKeyAndRetainsLowerUniqueValues"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.ResolvedValueRetainsWinnerAndEveryOverriddenLayerProvenance"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-research-20260803.yml#policy_conclusions"
       - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
     limitations:
       - id: ini.file-composition.runtime-unresolved
         status: "已知限制"
-        description: "Select and overlay strategies are synthetic capabilities only; stock rules.ini/rulesmd.ini, art.ini/artmd.ini, and same-name archive composition are unresolved."
+        description: "ProjectBaseline same-name documents compose per SectionName+KeyName; original-runtime confirmation, base-versus-md family composition, and intradocument identity policies remain unresolved."
   - id: ini.name-comparison
     domain: ini
     feature: "Stock section and key name comparison"
@@ -682,15 +816,17 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.DiagnosticsExposeLogicalPathsButNoAbsolutePaths"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ExactSourceIdCaseMatchesProvenance"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.SourceIdCaseMismatchFailsAsIncompleteProvenanceWithoutHostPath"
-      - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.RuntimeResolutionAuditKeepsProjectBaselineWinnersUnresolved"
+      - "RA2YR.Tests.EditMode.Content.Ini.Audit.IniProjectBaselineAuditServiceTests.RuntimeResolutionAuditRecordsConfiguredCompositionWithoutWholeFileWinner"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.TypedSourceTraceRetainsEveryDocumentLayer"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
       - "docs/compatibility/evidence/wp02g1-project-baseline-20260803.yml#candidate_sets"
       - "docs/compatibility/evidence/wp02g1-review-fixes-20260803.yml#review_fixes"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#composition_layers"
     limitations:
       - id: ini.resolution-trace.explicit-plan-only
         status: "已知限制"
-        description: "Complete traces are available for explicitly configured policies; ProjectBaseline runtime winners and typed values remain unresolved."
+        description: "Complete traces include configured ProjectBaseline document layers and per-value overrides; original-runtime comparison and unresolved intradocument policies are not promoted."
   - id: ini.override-source-tracking
     domain: ini
     feature: "Configuration override semantics and per-value source tracking"
@@ -699,13 +835,15 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.EveryWinnerRetainsOverriddenCandidates"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ThreeLayersRetainTheCompleteCandidateChain"
       - "RA2YR.Tests.EditMode.Configuration.Ini.IniRuntimeResolverTests.ResolutionDoesNotModifyTheRawDocuments"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.ResolvedValueRetainsWinnerAndEveryOverriddenLayerProvenance"
     evidence:
       - "docs/compatibility/evidence/wp02g1-ini-synthetic-20260803.yml#synthetic_validation"
       - "docs/adr/0015-ini-runtime-resolution-policy.md"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
     limitations:
       - id: ini.override-source-tracking.runtime-policy-unresolved
         status: "已知限制"
-        description: "Per-value candidate chains are complete under an explicit policy, but stock configuration override semantics are not selected or original-runtime-verified."
+        description: "Per-value candidate chains execute the configured ProjectBaseline composition; original-runtime comparison and independent name/duplicate/comment/empty semantics remain unresolved."
   - id: ini.typed-views
     domain: ini
     feature: "Strongly typed views coexisting with preserved raw nodes"
@@ -715,9 +853,11 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.RulesAcceptsOnlyCompleteResolutionInput"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.AmbiguousResolutionIsRejectedWithoutTypedDocument"
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.FailedResolutionIsRejectedWithoutTypedDocument"
+      - "RA2YR.Tests.EditMode.Configuration.Ini.IniProjectBaselineLoadPlanTests.TypedSourceTraceRetainsEveryDocumentLayer"
     evidence:
       - "docs/compatibility/evidence/wp02g2-ini-typed-synthetic-20260803.yml"
       - "docs/adr/0016-minimal-rules-art-resource-views.md"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
     limitations:
       - id: ini.typed-views.explicit-complete-resolution-only
         status: "已知限制"
@@ -735,6 +875,7 @@ entries:
     evidence:
       - "docs/compatibility/evidence/wp02g2-ini-typed-synthetic-20260803.yml"
       - "docs/compatibility/evidence/wp02g2-project-baseline-20260803.yml"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
     limitations:
       - id: ini.minimal-resource-references.no-defaults-or-fallback
         status: "已知限制"
@@ -751,11 +892,12 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.RegistryOrdinalsAreScopedToTheirOwnRegistry"
     evidence:
       - "docs/compatibility/evidence/wp02g2-project-baseline-20260803.yml"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#rules_composition"
       - "docs/formats/ini-minimal-resource-views.md"
     limitations:
       - id: ini.rules-type-registries.no-stock-winner-or-object-semantics
         status: "已知限制"
-        description: "Both rulesmd.ini candidates are reported separately under ConfiguredForTesting; stock precedence, registry duplicate behavior, unregistered sections, inheritance, and object creation remain unresolved."
+        description: "rulesmd.ini layers are composed under ConfiguredForProjectBaseline; registry duplicate behavior, unregistered sections, inheritance, object creation, and original-runtime comparison remain unresolved."
   - id: ini.art-resource-routing
     domain: ini
     feature: "Minimal explicit Art resource-routing field projection"
@@ -768,6 +910,7 @@ entries:
       - "RA2YR.Tests.EditMode.Configuration.Ini.Typed.IniMinimalResourceViewBuilderTests.ArtAmbiguityCanonicalOrderDoesNotDependOnResolvedValueEnumeration"
     evidence:
       - "docs/compatibility/evidence/wp02g2-project-baseline-20260803.yml"
+      - "docs/compatibility/evidence/wp02g1g2-project-baseline-composition-20260803.yml#art_regression"
       - "docs/adr/0016-minimal-rules-art-resource-views.md"
     limitations:
       - id: ini.art-resource-routing.explicit-candidates-only

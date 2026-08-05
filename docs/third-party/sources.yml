@@ -167,7 +167,7 @@ sources:
     license:
       spdx: "GPL-3.0-or-later"
       verification: "upstream LICENSE.md, README license section, and MissionEditor source headers"
-    purpose: "FinalAlert 2 RA2/YR INI parsing, trimming, duplicate, and normalized-writer behavior reference"
+    purpose: "FinalAlert 2 RA2/YR INI behavior reference plus official-editor use of XCC SHP(TS) structures and decoding lineage"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -210,7 +210,7 @@ sources:
     license:
       spdx: "GPL-2.0-only"
       verification: "SourceForge project metadata; snapshot contains no LICENSE or COPYING file"
-    purpose: "Later XCC MIX behavior, PAL behavior, and CSF header, record-layout, and text-transform reference"
+    purpose: "Later XCC MIX, PAL, CSF, and SHP(TS) layout, flags, empty-frame, and RLE-Zero behavior reference"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -230,7 +230,7 @@ sources:
     license:
       spdx: "GPL-2.0-only"
       verification: "Upstream lineage and SourceForge project metadata; clone contains no LICENSE or COPYING file"
-    purpose: "Pinned MIX and PAL comparison plus CSF header, record-layout, and text-transform observation"
+    purpose: "Pinned MIX, PAL, CSF, and SHP(TS) comparison including header, descriptor, flags, empty-frame, and RLE-Zero behavior"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -305,7 +305,7 @@ sources:
     approval_status: "approved-license-free-data"
 
   - id: openra-mix-reference-a520984
-    name: "OpenRA MIX, key-envelope, PAL, and legacy INI reference"
+    name: "OpenRA MIX, PAL, INI, and SHP(TS) reference"
     source:
       type: "external-git-reference"
       canonical_upstream: "https://github.com/OpenRA/OpenRA"
@@ -317,7 +317,7 @@ sources:
     license:
       spdx: "GPL-3.0-or-later"
       verification: "upstream COPYING and source headers"
-    purpose: "Independent observable cross-check of MIX behavior, PAL high-bit-replication display conversion, legacy INI parsing, and explicit Rules/Art resource field names"
+    purpose: "Independent observable cross-check of MIX behavior, PAL conversion, legacy INI parsing, explicit Rules/Art fields, and SHP(TS) raw/RLE dispatch"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -327,8 +327,46 @@ sources:
       - "The pinned tree contains no CSF implementation or CSF format documentation and is not WP-02E evidence."
       - "WP-02G2 used only observable field and registry presence to bound a minimal projection; OpenRA defaults and runtime behavior were not adopted as stock YR semantics."
 
+  - id: openra-format80-map-reference-a520984
+    name: "OpenRA LCW/Format80 map compression reference"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/OpenRA/OpenRA"
+      commit: "https://github.com/OpenRA/OpenRA/commit/a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+      observed_location: "../Reference/ThirdParty/OpenRA-bleed (logical external location)"
+    version_or_hash:
+      commit: "a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+    license:
+      spdx: "GPL-3.0-or-later"
+      verification: "upstream COPYING and source headers"
+    purpose: "Format80/LCW command-family and explicit position-mode behavior reference only"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "clean-room behavior reference; no source, translation, or binary imported"
+    approval_status: "approved-reference-only"
+
+  - id: wae-format80-reference-b4c948
+    name: "WAE Format80 and map compression reference"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/Westwood-Editors/WAE"
+      commit: "b4c948 reference pin recorded in map-compression dossier"
+      observed_location: "../Reference/ThirdParty/WAE (logical external location)"
+    version_or_hash:
+      commit: "b4c948 dossier pin"
+    license:
+      spdx: "Unverified-reference-only"
+      verification: "recorded in the map-compression research ledger; no code reuse approved"
+    purpose: "Independent Format80 command and absolute-position cross-check"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source or binary imported"
+    approval_status: "approved-reference-only-no-reuse"
+
   - id: iron-curtain-cnc-formats-pal-77da596
-    name: "iron-curtain-engine/cnc-formats PAL and CSF implementation"
+    name: "iron-curtain-engine/cnc-formats PAL, CSF, and SHP(TS) implementation"
     source:
       type: "external-git-reference"
       canonical_upstream: "https://github.com/iron-curtain-engine/cnc-formats"
@@ -340,12 +378,66 @@ sources:
     license:
       spdx: "MIT OR Apache-2.0"
       verification: "pinned Cargo.toml plus upstream LICENSE-MIT and LICENSE-APACHE"
-    purpose: "Independent PAL cross-check plus CSF header, value-count, inverted UTF-16LE, and extended-field cross-check"
+    purpose: "Independent PAL and CSF cross-check plus SHP(TS) defensive-budget comparison; conflicting SHP compression behavior was not adopted"
     contains_code: true
     reference_only: true
     code_imported: false
     repository_use: "reference-only despite compatible licensing; no source, translation, or mechanical rewrite imported"
     approval_status: "approved-reference-only"
+
+  - id: moddingwiki-westwood-shp-ts-oldid-10936
+    name: "ModdingWiki Westwood SHP Format (TS)"
+    source:
+      type: "public-format-reference"
+      canonical_upstream: "https://moddingwiki.shikadi.net/wiki/Westwood_SHP_Format_(TS)?oldid=10936"
+      observed_location: "pinned public wiki revision; no repository-local copy"
+    version_or_hash:
+      revision: "oldid=10936"
+    license:
+      spdx: "LicenseRef-Unverified-ModdingWiki"
+      verification: "The pinned page did not expose a clear code/content reuse license during M2-SHP1"
+    purpose: "Independent SHP(TS) 8-byte header, 24-byte descriptor, flags, frame-color, reserved, offset, and shadow fact cross-check"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no prose, examples, tables, source, translation, or mechanical rewrite imported"
+    approval_status: "approved-reference-only-no-reuse"
+
+  - id: moddingwiki-westwood-rle-zero-oldid-11565
+    name: "ModdingWiki Westwood RLE-Zero"
+    source:
+      type: "public-format-reference"
+      canonical_upstream: "https://moddingwiki.shikadi.net/wiki/Westwood_RLE-Zero?oldid=11565"
+      observed_location: "pinned public wiki revision; no repository-local copy"
+    version_or_hash:
+      revision: "oldid=11565"
+    license:
+      spdx: "LicenseRef-Unverified-ModdingWiki"
+      verification: "The pinned page did not expose a clear code/content reuse license during M2-SHP1"
+    purpose: "Independent SHP(TS) scanline length, zero-run, command progress, and row-boundary fact cross-check"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no prose, examples, source, translation, or mechanical rewrite imported"
+    approval_status: "approved-reference-only-no-reuse"
+
+  - id: modenc-shp-oldid-20503
+    name: "ModEnc SHP format article"
+    source:
+      type: "public-format-reference"
+      canonical_upstream: "https://modenc.renegadeprojects.com/SHP"
+      observed_location: "public community article, observed revision oldid=20503; no repository-local copy"
+    version_or_hash:
+      revision: "oldid=20503"
+    license:
+      spdx: "LicenseRef-Unverified-ModEnc"
+      verification: "No compatible code-import license was established during M2-SHP1"
+    purpose: "Community cross-check of external palette use, RLE zero runs, and SHP(TS) content roles"
+    contains_code: false
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no article text, examples, translation, or data imported"
+    approval_status: "approved-reference-only-no-reuse"
 
   - id: lewisxy-csftool-ba6046f
     name: "LewisXY CSF JSON conversion tool"
@@ -431,9 +523,12 @@ sources:
     source:
       type: "external-local-reference"
       canonical_upstream: "not recorded"
-      observed_location: "../Reference/RA2-DIY-2025/code-dictionaries-and-text-tutorials (logical external role)"
+      observed_location: "../参考资料/红警DIY2025年版教程附件/2025年版教程/代码词典和文字教程 (logical external role)"
     version_or_hash:
       edition: "2025"
+      observed_file_count: 18
+      observed_total_bytes: 1034682
+      metadata_manifest: "docs/third-party/ra2-diy-2025-community-semantic-reference.yml"
       selected_files:
         global_dictionary_sha256: "5EA3FF65DA0B60599C04EE8690EF29A4399233D62102C45C9E016F01B9A5BB07"
         rules_dictionary_sha256: "ECF9F6E244507F0E28570808DADB0D57E1503FD22D6B587C2CD8E0A6EA74E0BA"
@@ -443,7 +538,7 @@ sources:
     license:
       spdx: "LicenseRef-Unverified-Community-Tutorial"
       verification: "No redistribution or code-import license was established during WP-02G1"
-    purpose: "Community-documented INI syntax, case, comment, duplicate, registry, and explicit Art resource-field hypotheses"
+    purpose: "CommunitySemanticReference for later stock, extension-specific, and unresolved Rules/Art/AI semantic hypotheses"
     contains_code: true
     reference_only: true
     code_imported: false
@@ -451,3 +546,4 @@ sources:
     approval_status: "approved-reference-only-no-reuse"
     notes:
       - "WP-02G2 confirmed that the pinned Rules and Art dictionaries discuss the requested registry and resource field names; no tutorial prose, examples, code, or value data was copied."
+      - "This directory is not a runtime content source and is excluded from candidate discovery."

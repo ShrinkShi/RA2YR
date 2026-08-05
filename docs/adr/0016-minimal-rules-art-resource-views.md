@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted for WP-02G2.
+Accepted for WP-02G2; ProjectBaseline input composition amended by ADR 0022.
 
 ## Context
 
@@ -31,9 +31,11 @@ VXL research samples without discarding the physical and resolution evidence.
 - Opaque lines, unresolved inline semicolons, or duplicate policies that may
   affect a typed target make the result `Incomplete`. They are never silently
   ignored to produce a `Complete` claim.
-- ProjectBaseline candidates are evaluated separately using a
-  `ConfiguredForTesting` single-document plan. The two `rulesmd.ini`
-  candidates are not merged and neither is called the stock runtime winner.
+- ProjectBaseline `rulesmd.ini` documents are composed low-to-high by
+  `SectionName + KeyName` under `ConfiguredForProjectBaseline`. The typed audit
+  still uses explicit `ConfiguredForTesting` policies for unresolved
+  intradocument name, duplicate, semicolon, whitespace, and empty-value
+  semantics. It performs neither text concatenation nor whole-file selection.
 
 ## Consequences
 

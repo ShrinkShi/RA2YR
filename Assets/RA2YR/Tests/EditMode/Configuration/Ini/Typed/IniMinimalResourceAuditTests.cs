@@ -54,9 +54,23 @@ namespace RA2YR.Tests.EditMode.Configuration.Ini.Typed
                 IniMinimalResourceProjectBaselineAudit.Build(model, physical);
 
             Assert.That(delivery.SanitizedSummary, Does.Contain(
-                "\"stockRuntimeWinnerSelected\":false"));
+                "\"originalRuntimeComparisonPassed\":false"));
             Assert.That(delivery.SanitizedSummary, Does.Contain(
-                "\"rulesCandidates\":["));
+                "\"projectBaselineCompositionConfigured\":true"));
+            Assert.That(delivery.SanitizedSummary, Does.Contain(
+                "\"projectBaselineCompositionExecuted\":true"));
+            Assert.That(delivery.SanitizedSummary, Does.Contain(
+                "\"wholeFileWinnerSelected\":false"));
+            Assert.That(delivery.SanitizedSummary, Does.Contain(
+                "\"crossDocument\":\"ConfiguredForProjectBaseline\""));
+            Assert.That(delivery.SanitizedSummary, Does.Contain(
+                "\"rulesComposition\":{"));
+            Assert.That(delivery.SanitizedSummary, Does.Contain(
+                "\"documentLayerCount\":2"));
+            Assert.That(delivery.SanitizedSummary, Does.Contain(
+                "\"valuesWithOverriddenCandidates\":1"));
+            Assert.That(delivery.SanitizedSummary, Does.Contain(
+                "\"winnerLayerCounts\":{\"projectbaseline-expandmd01\":1}"));
             Assert.That(delivery.SanitizedSummary, Does.Contain(
                 "\"artCandidate\":"));
             Assert.That(delivery.SanitizedSummary, Does.Not.Contain("PRIVATE_"));
