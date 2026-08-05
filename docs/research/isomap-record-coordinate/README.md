@@ -41,17 +41,27 @@ This branch does not implement any stage.
 
 ## Evidence grades
 
-Every behavior is tagged with one of:
+Every formal evidence-grade field uses exactly one value from this closed vocabulary:
 
-- `ConfirmedByOfficialRuntimeSource`
-- `ConfirmedByOfficialEditorSource`
-- `ConfirmedByIndependentImplementation`
-- `CommunityDocumented`
-- `ObservedByFutureProjectBaselineAudit`
-- `ConfiguredForProjectPolicy`
+- `ConfirmedByOriginalRuntimeSource`
+- `ConfirmedByOfficialToolSource`
+- `ConfirmedByMultipleIndependentImplementations`
+- `ConfirmedCommunityConvention`
+- `ImplementationSpecificBehavior`
+- `DefensiveDesign`
+- `ConflictingSources`
+- `Underconfirmed`
 - `Unresolved`
 
-No finding in this dossier is promoted to `ConfirmedByOfficialRuntimeSource`.
+`ConfirmedByOriginalRuntimeSource` is reserved for evidence from the original game runtime or its actual source. No finding in this dossier currently has that grade.
+
+`ConfirmedByOfficialToolSource` applies to FinalAlert, FinalSun, and other official editor/tool behavior. Official-tool evidence does not establish original-runtime behavior.
+
+`ConfirmedByMultipleIndependentImplementations` requires demonstrably independent implementation lineages. XCC, FinalAlert's bundled XCC-derived code, OpenRA/openra2 XCC descendants, and implementations that acknowledge shared lineage are not counted repeatedly.
+
+`ConfirmedCommunityConvention` records a stable community or toolchain convention without promoting it to runtime fact. A single implementation is `ImplementationSpecificBehavior`; uncertain cross-source convergence is `Underconfirmed`; direct disagreement is `ConflictingSources`.
+
+Project choices such as preserving raw views, refusing repair, and failing closed are `DefensiveDesign`. Policy details belong in a separate `Policy` field. Future ProjectBaseline work is recorded with `AuditStatus` and `FutureEvidenceSource`, not as an evidence grade; the current status is `NotRun`.
 
 ## Project policies proposed for implementation planning
 

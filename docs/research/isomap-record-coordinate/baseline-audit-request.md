@@ -4,6 +4,13 @@
 
 ChatGPT Web did not access the local ProjectBaseline. This document specifies a later read-only audit for local Codex.
 
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+These fields describe planned work. They are not evidence grades and do not imply that ProjectBaseline data has been read.
+
 ## Objective
 
 Collect aggregate evidence that can:
@@ -239,8 +246,12 @@ BindingSummary
   AggregateHash
 DiagnosticsSummary
 InputModeEquivalence
-EvidenceGrade = ObservedByFutureProjectBaselineAudit
+CurrentEvidenceGrade = Underconfirmed
+AuditStatus = NotRun
+FutureEvidenceSource = ProjectBaselineAggregateAudit
 ```
+
+`CurrentEvidenceGrade` reflects the public evidence available before the audit. After an authorized audit, aggregate observations remain ProjectBaseline observations and do not become original-runtime confirmation merely because the data came from an original-content installation.
 
 ## Determinism checks
 
@@ -290,12 +301,14 @@ Budget failures are reported and the sample is not retried with unbounded settin
 
 For each research question, output separately:
 
-- `ObservedByFutureProjectBaselineAudit` aggregate observation;
-- current `ConfiguredForProjectPolicy`;
+- current formal `EvidenceGrade`, using the normalized closed vocabulary;
+- `AuditStatus`, initially `NotRun` and later the exact completed/failed state;
+- `FutureEvidenceSource: ProjectBaselineAggregateAudit`;
+- current `ProjectPolicy`, if any, in a separate field;
 - whether public source conflict remains;
 - whether further original-runtime evidence is required.
 
-Never relabel a ProjectBaseline observation as `ConfirmedByOfficialRuntimeSource`.
+Never relabel a ProjectBaseline observation as `ConfirmedByOriginalRuntimeSource`.
 
 ## Safety declaration for the future audit
 

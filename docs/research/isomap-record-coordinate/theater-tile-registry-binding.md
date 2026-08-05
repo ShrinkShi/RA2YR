@@ -35,6 +35,15 @@ The binder consumes:
 
 It does not scan disks, parse INI, decode MIX, or parse TMP bytes itself.
 
+## Evidence classification
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| Cumulative TileSet global numbering is a stable tool/community convention | `ConfirmedCommunityConvention` | ModEnc LastTilesInSet and editor/tool registry behavior | The convention is well established, but no original-runtime source was reviewed. | Build deterministic cumulative ranges with checked arithmetic. | `NotRun` |
+| Missing TMP assets must not shift later global ranges | `DefensiveDesign` | Project preservation policy | This prevents resource availability from changing declared registry identity; it is not a runtime fact claim. | Reserve ranges from registry metadata and diagnose missing TMP separately. | `NotRun` |
+| `.ubn → .urb` fallback is a universal vanilla behavior | `ImplementationSpecificBehavior` | WAE/editor compatibility behavior | The observed fallback belongs to a named compatibility path and is not stock-runtime proof. | Keep fallback opt-in and provenance-labeled. | `NotRun` |
+| Exact stock-runtime TileSet gap, duplicate, and missing-resource behavior | `Unresolved` | No original-runtime source located | Tool readers differ and may repair or stop enumeration. | Fail closed on ambiguous registry construction. | `NotRun` |
+
 ## Global tile-ID ranges
 
 For each typed TileSet:
@@ -46,7 +55,10 @@ EndExclusive       = StartGlobalTileId + TilesInSet
 
 The range exists from registry metadata even if some TMP files are absent.
 
-`ConfiguredForProjectPolicy`:
+```text
+EvidenceGrade: DefensiveDesign
+PolicyClassification: ProjectPolicy
+```
 
 - missing TMP assets never shift later ranges;
 - missing TileSet sections are diagnosed by registry construction, not compacted away by the binder;

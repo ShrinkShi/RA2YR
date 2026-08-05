@@ -184,4 +184,4 @@ No question below is silently resolved by implementation convenience, current th
 
 ## Current stop conditions
 
-Implementation planning must retain multiple profiles while questions 17–31, 50–60, 76–90, and 91–104 remain unresolved. A ProjectBaseline audit may reduce uncertainty but must report its findings as `ObservedByFutureProjectBaselineAudit`, never as official runtime source confirmation.
+Implementation planning must retain multiple profiles while questions 17–31, 50–60, 76–90, and 91–104 remain unresolved. ProjectBaseline remains `AuditStatus: NotRun`; a future authorized aggregate audit may reduce uncertainty, but its observations must remain separately attributed and cannot be promoted to `ConfirmedByOriginalRuntimeSource` without actual original-runtime evidence.

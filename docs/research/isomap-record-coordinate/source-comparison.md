@@ -21,9 +21,29 @@ All sources are behavior-level references. `code_imported: false` for every row.
 | Project Perfect Mod | no single stable load-bearing post pinned in this pass | varies by post | community discussion | no conclusion derived | no conclusion | no conclusion | withheld rather than cite an unstable or ambiguous thread |
 | ModdingWiki | no dedicated stable RA2/YR IsoMapPack5 page located | wiki terms | community documentation | no conclusion derived | no conclusion | no conclusion | do not invent a source merely to fill the requested list |
 
-## Detailed evidence classification
+## Normalized evidence classification
 
-### ConfirmedByOfficialEditorSource
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| Official editor record structure is 11 bytes | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Establishes official editor behavior only. Other tools corroborate, but shared XCC/community lineage is not counted as independent runtime proof. | Parse exact 11-byte records and preserve incomplete remainder separately. | `NotRun` |
+| Bytes 4..7 have one settled tile interpretation | `ConflictingSources` | EA FinalSun / FinalAlert 2 and XCC versus WAE, CNCMaps, and MapTool | Split-16 and full-32 models directly disagree. No stock-runtime source resolves the conflict. | Preserve raw32, low/high16, and byte 6/7 views; require an explicit interpretation profile. | `NotRun` |
+| Byte 10 exists as a separately preserved field in the official editor | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | This confirms preservation by the editor, not its runtime semantic meaning. | Preserve as `FinalByteRaw`. | `NotRun` |
+| Byte 10 universally means IceGrowth in RA2/YR | `Underconfirmed` | WAE, CNCMaps, MapTool, ModEnc; XCC/OpenRA use zero/ignored views | Community/tool naming is substantial but applicability to stock RA2/YR is not established. | Expose an opt-in semantic candidate only; default remains raw. | `NotRun` |
+| `(2W-1) × H` is a useful dense canvas convention | `Underconfirmed` | FinalAlert, XCC/OpenRA lineage, CNCMaps, MapTool | Several tools agree, but implementation independence and universal runtime applicability are not proven. | Treat as an explicit coordinate/density profile, not an automatic format fact. | `NotRun` |
+| Modern tools intentionally emit sparse streams | `Underconfirmed` | WAE and CNCMaps; ModEnc documentation | Named writers demonstrate tool behavior, but independence and stock-runtime acceptance are not established. | Preserve missing versus explicit-default distinctions; never synthesize during parsing. | `NotRun` |
+| Stock runtime duplicate-coordinate winner behavior | `Unresolved` | No original-runtime source located | Array/dictionary last-assignment effects in tools are implementation behavior, not runtime proof. | Preserve every occurrence and fail closed on conflicting duplicates. | `NotRun` |
+| Public writer orders are not a reliable identity contract | `Underconfirmed` | FinalAlert, XCC, WAE, CNCMaps, MapTool | Writers use multiple traversals and compression-oriented orders; exact stock-runtime order requirements remain unknown. | Preserve source order and build coordinate indexes separately. | `NotRun` |
+| A four-zero decoded trailer is a stable tool/community convention | `ConfirmedCommunityConvention` | WAE, CNCMaps, MapTool, OpenRA, ModEnc | This grade confirms the convention, not universal format or runtime necessity. | Support only through an explicit trailer profile and retain the bytes. | `NotRun` |
+| Every valid stream universally requires a four-zero decoded trailer | `ConflictingSources` | Four-zero tool lineage versus FinalAlert reader/writer behavior | Official editor writer passes `N×11`; reader integer-divides decoded length. | Default fail-closed policy distinguishes exact records, explicit four-zero profile, and arbitrary remainder. | `NotRun` |
+| Raw/canvas coordinate transforms and domain formulas are universally authoritative | `Underconfirmed` | OpenRA, CNCMaps, FinalAlert/XCC traversal evidence | Formula convergence exists, but shared lineage and runtime applicability are not proven. Signedness also conflicts. | Keep transforms, axis order, signedness, and domain predicate in explicit profiles. | `NotRun` |
+| Cumulative TileSet global numbering is a stable community/toolchain convention | `ConfirmedCommunityConvention` | ModEnc LastTilesInSet and editor/tool registry behavior | No original-runtime source was reviewed. | Construct deterministic cumulative ranges with checked arithmetic. | `NotRun` |
+| Missing TMP assets must not shift later global tile ranges | `DefensiveDesign` | Project preservation policy informed by registry conventions | This is a project integrity rule, not external runtime evidence. | Reserve ranges from registry metadata and diagnose missing assets separately. | `NotRun` |
+| `.ubn → .urb` fallback is a universal vanilla behavior | `ImplementationSpecificBehavior` | WAE/editor-compatibility behavior | The observed fallback belongs to a named editor compatibility profile and is not stock-runtime proof. | Keep fallback opt-in and provenance-labeled. | `NotRun` |
+| ProjectBaseline aggregate findings are already available | `Unresolved` | No audit executed | ProjectBaseline was not read during this research. Planned audit is not evidence. | `FutureEvidenceSource: ProjectBaselineAggregateAudit`. | `NotRun` |
+
+## Official tool evidence
+
+The following are `ConfirmedByOfficialToolSource` for FinalAlert/FinalSun behavior:
 
 - record width 11 in FinalAlert's `MAPFIELDDATA`;
 - official editor's low-16 ground/tile representation;
@@ -35,9 +55,9 @@ All sources are behavior-level references. `code_imported: false` for every row.
 
 These findings do not prove the stock game runtime.
 
-### ConfirmedByIndependentImplementation
+## Cross-implementation evidence with unresolved independence
 
-Using independence conservatively:
+The following are `Underconfirmed` rather than multiple-independent confirmation:
 
 - 11-byte records are implemented across official editor, OpenRA, WAE, CNCMaps, MapTool, and XCC lineages;
 - `(2W-1) × H` is a common normalized dense canvas count;
@@ -47,14 +67,18 @@ Using independence conservatively:
 
 Shared knowledge and code ancestry prevent treating every repository as a separate vote.
 
-### CommunityDocumented
+## Community conventions
 
-- byte 10 as IceGrowth, particularly in TS snow behavior;
-- omission of default clear level-0 records;
-- sort-order choices for compression;
-- cumulative TileSet global IDs and the danger of shifting later ranges.
+The following are `ConfirmedCommunityConvention` only for the convention itself:
 
-### Unresolved
+- byte 10 is widely called IceGrowth, particularly in TS snow discussions;
+- omission of default clear level-0 records is documented in the community;
+- compression-oriented sort-order choices are documented;
+- cumulative TileSet global IDs and the danger of shifting later ranges are established toolchain conventions.
+
+Runtime applicability may remain `Underconfirmed` or `Unresolved` as stated in the normalized table.
+
+## Unresolved
 
 - original runtime's complete 32-bit versus split-16 tile interpretation;
 - original runtime duplicate-coordinate behavior;
@@ -91,9 +115,9 @@ A future implementation should derive from this format dossier and independently
 
 ## Source-strength cautions
 
-- Official editor source is not official runtime source.
+- Official editor source is not original-runtime source.
 - An importer that opens common maps may still ignore fields or repair errors.
 - A writer producing accepted maps does not prove every value it can serialize is accepted by stock runtime.
 - Multiple tools sharing XCC/OpenRA lineage are not independent confirmation.
-- Community documentation can describe real runtime behavior without supplying source proof; its grade remains `CommunityDocumented` until stronger evidence is obtained.
-- Future ProjectBaseline observations are `ObservedByFutureProjectBaselineAudit`, not runtime proof by themselves.
+- Community documentation can describe plausible runtime behavior without supplying source proof; the convention may be `ConfirmedCommunityConvention` while runtime applicability remains `Underconfirmed`.
+- Future ProjectBaseline work remains `AuditStatus: NotRun` until executed and cannot by itself become `ConfirmedByOriginalRuntimeSource`.

@@ -2,18 +2,22 @@
 
 # Test matrix — 114 cases
 
-## Labels
+## Test-intent labels
 
-- `F` — confirmed record/tool-format fact supported by the cited source set.
-- `C` — source conflict or cross-implementation comparison.
-- `P` — configured project defensive policy or architecture requirement.
-- `U` — deliberately unresolved assumption or experimental profile.
+The compact codes in this matrix are test-planning categories, not formal evidence grades:
+
+- `F` — exercise a record/tool-format fact supported by the cited source set.
+- `C` — exercise a source conflict or cross-implementation comparison.
+- `P` — exercise a project defensive policy or architecture requirement.
+- `U` — exercise a deliberately unresolved assumption or experimental profile.
+
+Formal evidence grades use the normalized closed vocabulary defined in `README.md` and `source-comparison.md`. Each implementation test should cite the relevant research claim rather than treating `F/C/P/U` as evidence strength.
 
 Fixtures are synthetic and independently authored. Fixture builders must not reuse production parsing, coordinate conversion, sorting, tile interpretation, or binding formulas.
 
 ## 11-byte record layout — 20
 
-| ID | Grade | Case |
+| ID | Test intent | Case |
 |---:|:---:|---|
 | 1 | `F` | Single exact 11-byte record with all raw fields zero parses one record and no trailer. |
 | 2 | `P` | Ten-byte decoded input returns truncated-record failure, not partial success. |
@@ -38,7 +42,7 @@ Fixtures are synthetic and independently authored. Fixture builders must not reu
 
 ## Tile field views — 18
 
-| ID | Grade | Case |
+| ID | Test intent | Case |
 |---:|:---:|---|
 | 21 | `C` | Raw tile 0x00000001 yields full32=1, low16=1, high16=0. |
 | 22 | `C` | Raw tile 0x0000FFFF preserves full32 65535 and low signed -1. |
@@ -61,7 +65,7 @@ Fixtures are synthetic and independently authored. Fixture builders must not reu
 
 ## Coordinate domain — 20
 
-| ID | Grade | Case |
+| ID | Test intent | Case |
 |---:|:---:|---|
 | 39 | `F` | Dimensions W=1,H=1 produce expected normalized canvas count 1. |
 | 40 | `F` | Dimensions W=2,H=1 produce expected normalized canvas count 3. |
@@ -86,7 +90,7 @@ Fixtures are synthetic and independently authored. Fixture builders must not reu
 
 ## Density, order, and duplicates — 20
 
-| ID | Grade | Case |
+| ID | Test intent | Case |
 |---:|:---:|---|
 | 59 | `F` | Complete unique coordinate set classifies dense. |
 | 60 | `C` | Source record shuffle preserves coordinate index and aggregate semantic hash. |
@@ -111,7 +115,7 @@ Fixtures are synthetic and independently authored. Fixture builders must not reu
 
 ## Decoded trailer and length contract — 14
 
-| ID | Grade | Case |
+| ID | Test intent | Case |
 |---:|:---:|---|
 | 79 | `F` | Decoded length exactly 11 has no trailer. |
 | 80 | `F` | Decoded length exactly 22 has two records and no trailer. |
@@ -130,7 +134,7 @@ Fixtures are synthetic and independently authored. Fixture builders must not reu
 
 ## Theater tile binding — 12
 
-| ID | Grade | Case |
+| ID | Test intent | Case |
 |---:|:---:|---|
 | 93 | `P` | GlobalTileId at start of first range binds TileSet0 index0. |
 | 94 | `P` | GlobalTileId at end-exclusive boundary binds next range, not previous. |
@@ -147,7 +151,7 @@ Fixtures are synthetic and independently authored. Fixture builders must not reu
 
 ## Input modes, safety, and architecture — 10
 
-| ID | Grade | Case |
+| ID | Test intent | Case |
 |---:|:---:|---|
 | 105 | `P` | Memory input and seekable Stream produce identical document hash. |
 | 106 | `P` | Short-read Stream produces identical result while making progress. |
@@ -158,7 +162,7 @@ Fixtures are synthetic and independently authored. Fixture builders must not reu
 | 111 | `P` | Coordinate, duplicate, trace, and diagnostic budgets are independently enforced. |
 | 112 | `P` | Record reader does not call Base64, LZO, INI, TMP, or Unity services. |
 | 113 | `P` | Shuffled provider/filesystem enumeration does not change registry binding result. |
-| 114 | `P` | ProjectBaseline audit labels observations separately from original-runtime evidence. |
+| 114 | `P` | ProjectBaseline audit labels status and future source separately from original-runtime evidence. |
 
 ## Required assertions across the matrix
 
@@ -170,7 +174,7 @@ Fixtures are synthetic and independently authored. Fixture builders must not reu
 - Memory, Stream, short-read Stream, and MIX-window modes use the same state machine.
 - Directory, provider, dictionary, and record input enumeration order cannot alter normalized results.
 - Production sorters and transforms are not reused to generate expected fixture values.
-- `ObservedByFutureProjectBaselineAudit` never upgrades itself to official runtime proof.
+- ProjectBaseline remains `AuditStatus: NotRun` until execution and never upgrades itself to original-runtime proof.
 
 ## Distribution check
 

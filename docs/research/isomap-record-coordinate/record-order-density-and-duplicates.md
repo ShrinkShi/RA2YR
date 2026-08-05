@@ -18,6 +18,17 @@ SparseRecordSet
 
 None is a substitute for another.
 
+## Evidence classification
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| Official editor/tool paths support a dense valid-cell traversal | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Establishes official editor behavior, not a universal stock-runtime requirement. XCC/OpenRA and other tools corroborate with lineage caveats. | Dense expectation is an explicit analysis profile. | `NotRun` |
+| Modern tools intentionally emit sparse streams | `Underconfirmed` | WAE and CNCMaps; ModEnc documentation | Writer behavior is observed, but source independence and stock RA2/YR sparse acceptance are not established. | Preserve sparse input and distinguish missing from explicit default. | `NotRun` |
+| Omitted level-0 clear cells are always reconstructed identically by stock runtime | `Underconfirmed` | ModEnc community documentation | Community documentation supplies a candidate runtime behavior without original-runtime source proof. | Never synthesize during raw parsing; any effective default view is policy-labeled. | `NotRun` |
+| Public tools exhibit last-assignment effects for duplicate coordinates | `ImplementationSpecificBehavior` | Array/dictionary-based tool implementations | Accidental overwrite behavior is implementation-specific and cannot become a universal format rule. | Preserve every occurrence; never select an implicit winner. | `NotRun` |
+| Conflicting duplicates fail closed in the project default | `DefensiveDesign` | Project policy | This is a preservation and ambiguity-handling decision, not external evidence. | Retain all records and mark the effective coordinate ambiguous. | `NotRun` |
+| Stock runtime duplicate winner semantics | `Unresolved` | No original-runtime source located | First-wins, last-wins, undefined, or fatal behavior remains unknown. | Compatibility profiles require new target-specific evidence. | `NotRun` |
+
 ## Dense behavior
 
 Evidence supporting dense streams:
@@ -99,7 +110,10 @@ Public tools frequently overwrite an array or dictionary cell, producing effecti
 
 ## Project duplicate policy
 
-`ConfiguredForProjectPolicy`:
+```text
+EvidenceGrade: DefensiveDesign
+PolicyClassification: ProjectPolicy
+```
 
 - preserve every record and its ordinal;
 - group duplicates after coordinate interpretation;

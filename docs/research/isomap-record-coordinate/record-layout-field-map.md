@@ -6,16 +6,22 @@
 
 The public implementations reviewed converge on an 11-byte record. Ten- and twelve-byte models have no supporting source in this study.
 
+## Normalized width evidence
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| IsoMapPack5 records are 11 bytes wide in the official editor structure | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 `MAPFIELDDATA` | This establishes official editor behavior, not original-runtime consumption. XCC, OpenRA, WAE, CNCMaps, and MapTool corroborate the width but shared lineage is not counted repeatedly. | Parse only exact 11-byte records; retain incomplete bytes as a diagnosed trailer/partial result. | `NotRun` |
+
 ## Raw byte map
 
-| Offset | Size | Required raw model | Common names | Current grade |
-|---:|---:|---|---|---|
-| `0` | 2 | `XRaw16` | X, RX, wX | `ConfirmedByOfficialEditorSource` |
-| `2` | 2 | `YRaw16` | Y, RY, wY | `ConfirmedByOfficialEditorSource` |
-| `4` | 4 | `TileFieldRaw32` plus low/high views | TileIndex, TileNum, wGround + data | `Unresolved` interpretation |
-| `8` | 1 | `SubTileRaw` | SubTile, TileSubIndex | `ConfirmedByIndependentImplementation` |
-| `9` | 1 | `LevelRaw` | Z, Level, Height | `ConfirmedByIndependentImplementation` |
-| `10` | 1 | `FinalByteRaw` | zero3, bMapData2, IceGrowth | `Unresolved` runtime meaning |
+| Offset | Size | Required raw model | Common names | Grade | Source | Notes | Policy | AuditStatus |
+|---:|---:|---|---|---|---|---|---|---|
+| `0` | 2 | `XRaw16` | X, RX, wX | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor places the first coordinate at bytes 0..1. Signedness and stock-runtime constraints remain unconfirmed. | Preserve raw16 and expose signed/unsigned candidate views. | `NotRun` |
+| `2` | 2 | `YRaw16` | Y, RY, wY | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor places the second coordinate at bytes 2..3. Internal axis naming does not prove runtime coordinate semantics. | Preserve raw16 and expose signed/unsigned candidate views. | `NotRun` |
+| `4` | 4 | `TileFieldRaw32` plus low/high views | TileIndex, TileNum, wGround + data | `ConflictingSources` | EA FinalSun / FinalAlert 2 and XCC versus WAE, CNCMaps, and MapTool | Official editor/XCC lineage exposes a 16-bit tile plus adjacent bytes, while modern tools expose one 32-bit tile. No unique runtime interpretation is selected. | Preserve raw32, low/high 16-bit, and byte 6/7 views under explicit profiles. | `NotRun` |
+| `8` | 1 | `SubTileRaw` | SubTile, TileSubIndex | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor stores SubTile at byte 8; other tools corroborate. Exact runtime validation belongs to TMP binding. | Preserve unsigned byte; do not clamp or validate in the record reader. | `NotRun` |
+| `9` | 1 | `LevelRaw` | Z, Level, Height | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor stores its height/level field at byte 9; exact runtime range and semantics remain underconfirmed. | Preserve unsigned byte and defer semantic limits. | `NotRun` |
+| `10` | 1 | `FinalByteRaw` | zero3, bMapData2, IceGrowth | `Underconfirmed` | EA FinalSun / FinalAlert 2, XCC, OpenRA, WAE, CNCMaps, MapTool, ModEnc | The official editor preserves a separate byte, but tools disagree between zero/ignored and IceGrowth naming. Stock RA2/YR meaning is unresolved. | Preserve the byte raw; semantic names require an explicit profile. | `NotRun` |
 
 ## Source-specific layouts
 

@@ -91,15 +91,15 @@ The project should use a configurable semantic limit and report values outside i
 
 This byte has the weakest settled meaning.
 
-| Source | Name/behavior | Evidence |
-|---|---|---|
-| EA FinalSun/FinalAlert 2 | `bData2`, copied into and out of editor field data | official editor preservation |
-| XCC | `zero3`, generated as zero in conversion path | tool convention |
-| OpenRA importer | ignored `zero2` | importer behavior |
-| WAE | `IceGrowth`, read and written | modern editor behavior |
-| CNCMaps | `IceGrowth`, read and written | renderer/tool behavior |
-| MapTool | `IceGrowth`, read and written | map-tool behavior |
-| ModEnc | documents ice growth, especially TS snow behavior | community documentation |
+| Source | Name/behavior | Grade | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| EA FinalSun/FinalAlert 2 | `bData2`, copied into and out of editor field data | `ConfirmedByOfficialToolSource` | Confirms official editor preservation of a separate byte, not stock-runtime semantics. | Preserve as `FinalByteRaw`. | `NotRun` |
+| XCC | `zero3`, generated as zero in conversion paths | `ImplementationSpecificBehavior` | XCC canonicalization behavior; descendants are not separate independent confirmations. | Do not zero the raw byte during read. | `NotRun` |
+| OpenRA importer | ignored `zero2` | `ImplementationSpecificBehavior` | Importer behavior is not lossless and is not runtime proof. | Retain the byte before any importer adapter discards it. | `NotRun` |
+| WAE | `IceGrowth`, read and written | `ImplementationSpecificBehavior` | Named modern editor behavior; applicability to stock RA2/YR remains underconfirmed. | Expose only through a named compatibility/semantic profile. | `NotRun` |
+| CNCMaps | `IceGrowth`, read and written | `ImplementationSpecificBehavior` | Renderer/tool behavior with acknowledged community lineage. | Keep default model raw. | `NotRun` |
+| MapTool | `IceGrowth`, read and written | `ImplementationSpecificBehavior` | Map-tool behavior; not universal format semantics. | Keep default model raw. | `NotRun` |
+| ModEnc | documents ice growth, especially TS snow behavior | `ConfirmedCommunityConvention` | Confirms a stable community convention, not RA2/YR runtime applicability. | Permit an opt-in TS snow candidate profile. | `NotRun` |
 
 ### What is confirmed
 
@@ -134,7 +134,7 @@ FinalByteInterpretation
 
 The default raw parser exposes no final semantic name beyond `FinalByteRaw`.
 
-An opt-in TS snow profile may expose an `IceGrowthCandidate`, with `CommunityDocumented` or implementation-specific evidence. That profile must not relabel RA2/YR data globally.
+An opt-in TS snow profile may expose an `IceGrowthCandidate` with `ConfirmedCommunityConvention` when it explicitly follows stable community documentation, or `ImplementationSpecificBehavior` when it emulates a named tool. That profile must not relabel RA2/YR data globally.
 
 ## Writer and roundtrip policy
 

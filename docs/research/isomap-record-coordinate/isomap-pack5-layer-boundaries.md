@@ -124,4 +124,8 @@ Success at one level does not imply success at another.
 
 ## Evidence policy
 
-A public tool accepting a stream proves only that tool's behavior. Multiple tools agreeing supports `ConfirmedByIndependentImplementation`, but does not create official runtime proof. Official FinalAlert source is `ConfirmedByOfficialEditorSource`, not runtime source.
+A public tool accepting a stream proves only that tool's behavior. FinalAlert or FinalSun source is `ConfirmedByOfficialToolSource`, not original-runtime source. One named reader or writer is `ImplementationSpecificBehavior` unless a stronger source applies.
+
+Agreement across repositories is `ConfirmedByMultipleIndependentImplementations` only when their implementation lineages are demonstrably independent. XCC-derived code, FinalAlert's bundled XCC lineage, OpenRA/openra2 descendants, and acknowledged shared community ancestry are not counted repeatedly. Uncertain independence is `Underconfirmed`; direct disagreement is `ConflictingSources`.
+
+Raw preservation, explicit profiles, diagnostic-only handling, and refusal to guess or repair are `DefensiveDesign`. Project policy is recorded separately from external evidence. ProjectBaseline remains `AuditStatus: NotRun` and is not an evidence grade.

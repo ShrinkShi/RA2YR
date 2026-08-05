@@ -49,14 +49,24 @@ The project must not exclude Candidate C before aggregate evidence exists.
 
 ## Source matrix
 
-| Source | Read view | Write view | High 16 behavior | Evidence role |
-|---|---|---|---|---|
-| EA FinalSun/FinalAlert 2 | `u16 wGround` + two raw bytes | preserves ground and adjacent metadata | preserved, not named as tile high bits | official editor |
-| XCC | `i16 tile` + `u8 zero1` + `u8 zero2` | writes zero fields in conversion paths | canonicalized to zero | tool, XCC lineage |
-| OpenRA importer | `u16 tile` + ignored `i16` | no stock-map writer in cited path | ignored | reimplementation/importer |
-| WAE | `i32 TileIndex` | writes `i32` | used as high half of integer | modern editor |
-| CNCMaps | `i32 TileNum` | writes `i32` | used as high half of integer | renderer/tool |
-| MapTool | `i32 TileIndex` | writes `i32` | used as high half of integer | map tool |
+| Source | Read view | Write view | High 16 behavior | Grade | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|---|---|
+| EA FinalSun / FinalAlert 2 | `u16 wGround` + two raw bytes | preserves ground and adjacent metadata | preserved, not named as tile high bits | `ConfirmedByOfficialToolSource` | Official editor behavior only; not stock-runtime proof. | Preserve split views and adjacent raw bytes. | `NotRun` |
+| XCC | `i16 tile` + `u8 zero1` + `u8 zero2` | writes zero fields in conversion paths | canonicalized to zero | `ImplementationSpecificBehavior` | XCC tool behavior; descendants are not independent votes. | Do not canonicalize during read. | `NotRun` |
+| OpenRA importer | `u16 tile` + ignored `i16` | no stock-map writer in cited path | ignored | `ImplementationSpecificBehavior` | Importer behavior, not lossless or runtime evidence. | Preserve ignored bytes before adapter conversion. | `NotRun` |
+| WAE | `i32 TileIndex` | writes `i32` | used as high half of integer | `ImplementationSpecificBehavior` | Named modern editor behavior. | Expose full32 candidate without selecting it automatically. | `NotRun` |
+| CNCMaps | `i32 TileNum` | writes `i32` | used as high half of integer | `ImplementationSpecificBehavior` | Renderer/tool behavior with shared community lineage. | Expose full32 candidate. | `NotRun` |
+| MapTool | `i32 TileIndex` | writes `i32` | used as high half of integer | `ImplementationSpecificBehavior` | Map-tool behavior. | Expose full32 candidate. | `NotRun` |
+
+## Normalized claim grades
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| Bytes 4..7 have one settled universal interpretation | `ConflictingSources` | Official editor/XCC split model versus WAE/CNCMaps/MapTool full32 model | Source count is not a vote and the shared lineages do not resolve the disagreement. | Retain all raw and derived views. | `NotRun` |
+| The full32 interpretation is confirmed for stock RA2/YR | `Underconfirmed` | WAE, CNCMaps, MapTool | Multiple tools implement it, but independence and runtime applicability are not established. | Require an explicit full32 profile. | `NotRun` |
+| Values above 65535 are accepted by stock runtime | `Unresolved` | No original-runtime source or audit result | Public writers can serialize them, which proves implementation capability only. | Preserve values without truncation and report binding ambiguity. | `NotRun` |
+| Preserve raw32 and split16 views without guessing | `DefensiveDesign` | Project policy | A reversible data model avoids choosing an interpretation from current registry success. | Keep raw32, signed/unsigned32, low/high16, and byte6/7 views. | `NotRun` |
+| ProjectBaseline resolves the high-half question | `Unresolved` | No audit executed | Future aggregate audit is planned but no ProjectBaseline packed data was read. | `FutureEvidenceSource: ProjectBaselineAggregateAudit`. | `NotRun` |
 
 ## Why source count is not a vote
 
@@ -130,7 +140,10 @@ The original value remains retained in every case.
 
 ## Project policy
 
-`ConfiguredForProjectPolicy`:
+```text
+EvidenceGrade: DefensiveDesign
+PolicyClassification: ProjectPolicy
+```
 
 1. retain all four bytes;
 2. publish both complete and split views;
@@ -152,3 +165,5 @@ A future sanitized ProjectBaseline audit should report only aggregates:
 - count where each candidate binds to a theater registry range;
 - canonical hashes of interpretation classifications;
 - no per-record tile values or coordinates.
+
+The audit remains `AuditStatus: NotRun` until separately authorized and executed.
