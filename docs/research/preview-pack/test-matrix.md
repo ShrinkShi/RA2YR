@@ -4,12 +4,16 @@
 
 This is a design matrix, not test implementation. Synthetic fixtures contain no original map pixels.
 
-## Basis labels
+## Test-intent labels
 
-- `Fact` — confirmed by official editor or executable public implementation.
-- `Conflict` — public sources disagree.
-- `Policy` — defensive project requirement.
-- `Unresolved` — hypothesis requiring future evidence.
+The `Basis` column is a test-planning classification, not a formal evidence `Grade` field. It does not replace the normalized evidence grade recorded in the claim documents.
+
+- `Fact` — exercises a source-pinned official-tool, community-convention, or named implementation behavior at its documented evidence level.
+- `Conflict` — exercises a `ConflictingSources` case or a comparison where sources disagree.
+- `Policy` — exercises a `DefensiveDesign` project requirement.
+- `Unresolved` — exercises a hypothesis whose format or runtime behavior remains `Underconfirmed` or `Unresolved`.
+
+Composite test-intent labels such as `Fact/Policy` remain planning shorthand only; formal Grade fields elsewhere contain exactly one normalized grade.
 
 ## A. Metadata and `Size=` — 20
 
@@ -103,6 +107,8 @@ This is a design matrix, not test implementation. Synthetic fixtures contain no 
 | C13 | gamma/sRGB transform attempted in Core | forbidden | Policy |
 | C14 | cache key differs by channel profile | distinct semantic cache identities | Policy |
 
+The formal channel-order claim remains `ConflictingSources`; these test intents do not promote RGB or BGR to original-runtime proof.
+
 ## E. Row order and coordinate interpretation — 14
 
 | ID | Scenario | Expected design result | Basis |
@@ -189,6 +195,15 @@ Total                                120
 - expected channel/row mappings are written explicitly;
 - randomized stream read segmentation cannot change results;
 - no test creates Unity types.
+
+## Future audit boundary
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+Future audit observations cannot automatically change test expectations, evidence grades, project policy, or compatibility status.
 
 ## Compatibility discipline
 

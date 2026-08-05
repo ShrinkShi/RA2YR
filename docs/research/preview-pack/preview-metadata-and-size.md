@@ -23,7 +23,7 @@ For each field retain:
 - cross-layer provenance;
 - same-document duplicate diagnostics.
 
-A field name such as `Width` is a derived interpretation, not the raw API.
+A field name such as `Width` is a derived interpretation, not the raw API. Preserving all four fields is `DefensiveDesign`.
 
 ## 2. Public-source behavior
 
@@ -37,9 +37,13 @@ The writer:
 2. replaces parameter 2 with generated bitmap width;
 3. replaces parameter 3 with generated bitmap height.
 
-This is `ConfirmedByOfficialEditorSource` evidence that the last two values are written as preview width and height. It also proves that the editor does not inherently force the first two fields to zero: it inherits them from `[Map] Size`.
+```text
+EvidenceGrade: ConfirmedByOfficialToolSource
+Source: EA FinalSun / FinalAlert 2
+AuditStatus: NotRun
+```
 
-It does not prove what the game runtime does with the first two values.
+This confirms that the official editor writes fields 2 and 3 as preview width and height. It also shows that the writer does not inherently force the first two fields to zero because it inherits them from `[Map] Size`. It does not prove what the game runtime does with fields 0 and 1.
 
 ### World-Altering Editor
 
@@ -53,7 +57,13 @@ The writer emits:
 
 Its dummy preview uses `0,0,106,61`.
 
-This is editor behavior, not runtime source.
+```text
+EvidenceGrade: ImplementationSpecificBehavior
+Source: World-Altering Editor
+AuditStatus: NotRun
+```
+
+This is named editor behavior, not runtime source.
 
 ### CNCMaps
 
@@ -61,11 +71,23 @@ Pinned source: `afb9c1ec118f5128cbc1f3fb5e35c7dfa0e422fb`, `CNCMaps.Engine/Map/T
 
 The writer emits `0,0,width,height`. The reader constructs a rectangle from all four values but uses its width and height to allocate the preview. This supports an `x,y,width,height` interpretation in that tool.
 
+```text
+EvidenceGrade: ImplementationSpecificBehavior
+Source: CNCMaps
+AuditStatus: NotRun
+```
+
 ### MapTool
 
 Pinned source: `f85f2226905496139f1258b5854fad915f9bbac6`, `MapTool.Logic/MapFile.cs`.
 
-The reader exposes fields 2 and 3 as `PreviewWidth` and `PreviewHeight`. Its setters rewrite the value as `0,0,width,height`, discarding nonzero first fields. This is a canonicalizing tool behavior and cannot be used for byte-identical round-trip.
+The reader exposes fields 2 and 3 as `PreviewWidth` and `PreviewHeight`. Its setters rewrite the value as `0,0,width,height`, discarding nonzero first fields. This is canonicalizing tool behavior and cannot be used for byte-identical round-trip.
+
+```text
+EvidenceGrade: ImplementationSpecificBehavior
+Source: MapTool
+AuditStatus: NotRun
+```
 
 ### CnCNet XNA client
 
@@ -73,11 +95,40 @@ Pinned source: `e6e367bbe04c1a0dc1e34a8fed2856ea3ab7e8c4`, both preview extracto
 
 The consumers parse only fields 2 and 3 and reject width or height below 1. Fields 0 and 1 are ignored.
 
+```text
+EvidenceGrade: ImplementationSpecificBehavior
+Source: CnCNet XNA client
+AuditStatus: NotRun
+```
+
 ### ModEnc
 
 Permanent `Preview` revision `oldid=21306` states that the section contains preview size information but does not resolve all four values. Permanent `PreviewPack` revision `oldid=28503` treats dimensions as belonging to `[Preview]`.
 
-## 3. Interpretation profiles
+```text
+EvidenceGrade: ConfirmedCommunityConvention
+Source: ModEnc Preview and PreviewPack
+AuditStatus: NotRun
+```
+
+The community convention supports Preview metadata carrying dimensions but does not settle fields 0 and 1 or runtime strictness.
+
+## 3. Normalized evidence summary
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert copies Map Size and replaces fields 2/3 with generated width/height | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official-editor writer behavior only. | Preserve all raw fields and source provenance. | `NotRun` |
+| WAE writes `0,0,width,height` | `ImplementationSpecificBehavior` | World-Altering Editor | Named writer canonicalization. | Do not treat zero origins as universal. | `NotRun` |
+| CNCMaps writes and reads an `x,y,width,height` tuple | `ImplementationSpecificBehavior` | CNCMaps | Named tool interpretation. | Keep behind an explicit metadata profile. | `NotRun` |
+| MapTool reads fields 2/3 and rewrites origins to zero | `ImplementationSpecificBehavior` | MapTool | Named tool behavior is not lossless for nonzero origins. | Preserve source text separately. | `NotRun` |
+| CnCNet consumers use only fields 2/3 | `ImplementationSpecificBehavior` | CnCNet XNA client | Consumer-specific behavior. | Do not discard fields 0/1 in Core. | `NotRun` |
+| Fields 2/3 are the cross-tool width/height candidate | `Underconfirmed` | FinalAlert, WAE, CNCMaps, MapTool, CnCNet, ModEnc | Strong convergence exists, but implementation independence and original-runtime semantics are not established. | Require an explicit interpretation profile. | `NotRun` |
+| `0,0,width,height` is the unique original-runtime contract | `Underconfirmed` | Tool writers and community convention | Official editor can inherit nonzero first fields; no runtime source requires zeros. | Never force fields 0/1 to zero during parse. | `NotRun` |
+| Original-runtime meaning of fields 0/1 | `Unresolved` | No original-runtime source located | Origin, offset, inherited map values, ignored fields, and unknown tuple roles remain candidates. | Preserve raw values without guessing. | `NotRun` |
+| Nonzero fields 0/1 occur in authorized ProjectBaseline samples | `Unresolved` | Audit not executed | Future observation only. | `FutureEvidenceSource: ProjectBaselineAggregateAudit`. | `NotRun` |
+| Raw preservation, explicit profiles, checked validation, and no repair | `DefensiveDesign` | Project policy | Project design, not external evidence. | Apply before allocation or interpretation. | `NotRun` |
+
+## 4. Interpretation profiles
 
 ### `OffsetAndDimensions`
 
@@ -88,15 +139,15 @@ Width  = raw2
 Height = raw3
 ```
 
-Supported by CNCMaps' rectangle construction and the common `0,0,w,h` writer convention.
+Supported by CNCMaps' rectangle construction and the common `0,0,w,h` writer convention. Overall applicability remains `Underconfirmed`.
 
 ### `MapOriginAndDimensions`
 
-Same numeric mapping, but raw0/raw1 are understood as map-relative preview origin fields copied from `[Map] Size`. The official editor's writer behavior supports this as a distinct candidate.
+Same numeric mapping, but raw0/raw1 are understood as map-relative preview origin fields copied from `[Map] Size`. The official editor's writer behavior supports this as a distinct candidate, but runtime use remains `Unresolved`.
 
 ### `DimensionsOnlyLastTwo`
 
-Only raw2/raw3 are semantically used. raw0/raw1 are preserved but ignored by the selected consumer. CnCNet and MapTool consumers demonstrate this behavior.
+Only raw2/raw3 are semantically used. raw0/raw1 are preserved but ignored by the selected consumer. CnCNet and MapTool consumers demonstrate this `ImplementationSpecificBehavior`.
 
 ### `RectangleEdges`
 
@@ -107,13 +158,13 @@ Right  = raw2
 Bottom = raw3
 ```
 
-No inspected executable source required this interpretation. It remains an explicit unresolved candidate because the four-value shape can be mistaken for edge coordinates.
+No inspected executable source required this interpretation. It remains `Unresolved` because the four-value shape can be mistaken for edge coordinates.
 
 ### `UnknownFourTuple`
 
 No geometry is selected; only raw values are exposed.
 
-## 4. Default project policy
+## 5. Default project policy
 
 The research default is:
 
@@ -126,9 +177,12 @@ The research default is:
 - reject width/height that are zero, negative, overflowed, or above configured limits before allocation;
 - retain metadata even when payload is absent or invalid.
 
-This is `ConfiguredForProjectPolicy`, not runtime proof.
+```text
+PolicyClassification: DefensiveDesign
+AuditStatus: NotRun
+```
 
-## 5. Numeric and budget constraints
+## 6. Numeric and budget constraints
 
 Before multiplication:
 
@@ -141,7 +195,7 @@ Before multiplication:
 
 An original menu's display dimensions, editor default, or dummy preview dimensions are not format maxima.
 
-## 6. Zero and negative values
+## 7. Zero and negative values
 
 Public consumers generally reject width/height below one. The format-layer status is still separate:
 
@@ -151,7 +205,7 @@ Public consumers generally reject width/height below one. The format-layer statu
 - negative raw0/raw1 remain preserved and unresolved;
 - no absolute-value, clamp, or default substitution is permitted.
 
-## 7. Duplicate and malformed values
+## 8. Duplicate and malformed values
 
 Diagnostics distinguish:
 
@@ -167,14 +221,6 @@ Diagnostics distinguish:
 - valid metadata with absent payload;
 - valid payload with invalid metadata.
 
-## 8. Consumer display size is not format size
+## 9. Consumer display size is not format size
 
 Scaling, cropping, fitting, aspect-ratio preservation, interpolation, and thumbnail cache dimensions belong to consumers. They do not constrain raw metadata or decoded pixel dimensions.
-
-## 9. Evidence status
-
-- Last two values written as width/height: `ConfirmedByOfficialEditorSource`.
-- Common `0,0,w,h`: `ConfirmedByIndependentImplementation` and editor convention.
-- Runtime semantics of first two fields: `Unresolved`.
-- Nonzero first fields in stock content: future `ObservedByFutureProjectBaselineAudit` only.
-- Project validation and budget policy: `ConfiguredForProjectPolicy`.

@@ -15,28 +15,38 @@ For each source this dossier records:
 - likely code or knowledge ancestry;
 - reference-only status.
 
-A tool that displays a preview correctly is not game runtime evidence. Several community projects sharing XCC/CNCMaps helpers are not counted as independent votes.
+A tool that displays a preview correctly is not game-runtime evidence. Several community projects sharing XCC/CNCMaps helpers, map-pack knowledge, or cross-tool documentation are not counted as independent discoveries.
+
+No reviewed source qualifies as `ConfirmedByOriginalRuntimeSource` for PreviewPack.
 
 ## 2. Source matrix
 
-| Source | Pin/path | Role | License | Direct evidence | Does not prove |
+| Source | Pin/path | Role | Grade for direct behavior | Direct evidence | Lineage / limits |
 |---|---|---|---|---|---|
-| EA FinalSun / FinalAlert 2 | `6abf0f557469baea73079c6bf6550709e2e3584e`, `MissionEditor/MapData.cpp` | official editor writer | source header GPL-3.0-or-later | last two Size fields set to generated width/height; first two inherited from Map Size; exact `w×h×3`; DIB bottom-up/BGR converted into top-down RGB; packed-section encoder used; 70-char fragments | original game reader, arbitrary section order, malformed-input tolerance |
-| World-Altering Editor | `b4c9481e9b00fb0a38739049a046f528b6054ce2`, `MapWriter.cs`, `Map.cs` | editor writer/fallback | GPL-3.0-or-later | `0,0,w,h`; three bytes; code writes R/G/B despite BGR comment; 8192 output blocks; key 1 and 70 chars; sections moved first; fixed 106×61 dummy | runtime requirement, comment correctness, universal block maximum |
-| CnCNet XNA client | `e6e367bbe04c1a0dc1e34a8fed2856ea3ab7e8c4`, `MapPreviewExtractor.cs`, `FastMapPreviewExtractor.cs` | consumer reader | GPL-3.0 | reads fields 2/3; allocates `w×h×3`; calls data RGB; swaps to BGR consumer buffer; no scan padding in source; recognizes hidden payload; fast path preserves physical value order | exact runtime behavior; strict output completion; numeric fragment ordering |
-| CNCMaps | `afb9c1ec118f5128cbc1f3fb5e35c7dfa0e422fb`, `CNCMaps.Engine/Map/ThumbInjector.cs` | bitmap reader/writer/injector | repository MIT default with imported OpenRA/XCC exceptions; reference only | writes/reads `0,0,w,h`; exact three-byte allocation; 70-char fragments; inserts PreviewPack relative to Preview/Basic; symmetric component conversion | independent codec ancestry; runtime section-order rule |
-| MapTool | `f85f2226905496139f1258b5854fad915f9bbac6`, `MapTool.Logic/MapFile.cs` | reader/writer tool | GPL-2.0-or-later | reads fields 2/3; exact `w×h×3`; missing/invalid returns null; rewrites metadata to `0,0,w,h`; 70-char section rewrite | helper channel/row behavior from this file alone; lossless round-trip |
-| ModEnc PreviewPack | `index.php?title=PreviewPack&oldid=28503` | community documentation | site documentation; reference only | Base64 fragments, u16/u16 chunk description, LZO, three bytes, no row padding, BGR888 claim, empirical size proportions | executable behavior, independent runtime proof |
-| ModEnc Preview | `index.php?title=Preview&oldid=21306` | community documentation | site documentation; reference only | Preview holds size metadata, PreviewPack holds image | four-field semantics |
-| PPM CNCMaps release | fixed topic `36021` | community/tool release documentation | forum post | generated PreviewPack placement changed to after Basic rather than behind Digest | game executable requirement |
-| PPM MapResize | fixed topic `55391` | tool limitation report | forum post | resize tool leaves preview unchanged and requires separate generation | format semantics |
-| OpenRA | `a520984d91eda9de48a62b1d15c1e3bad0d4fb1a` | searched reference implementation | GPL-3.0-or-later | no load-bearing PreviewPack path located at pin | no vote on layout or channels |
-| Chrono Divide SDK | `5943c4ae6c19897929d348a417d6d2f1481b75fd` | searched public SDK | no repository license file located in prior dossier; reference only | no load-bearing PreviewPack path located | no vote |
-| XCC / OmniBlade | fixed public mirrors and SourceForge lineage searched | historical tools/code lineage | GPL lineage; reference only | XCC can generate sections according to community docs | no pinned low-level Preview path used here |
+| EA FinalSun / FinalAlert 2 | `6abf0f557469baea73079c6bf6550709e2e3584e`, `MissionEditor/MapData.cpp` | official editor writer | `ConfirmedByOfficialToolSource` | last two Size fields set to generated width/height; first two inherited from Map Size; exact `w×h×3`; DIB bottom-up/BGR converted into top-down RGB; packed-section encoder used; 70-character fragments | official editor, not game runtime; packed helper lineage includes XCC-derived code |
+| World-Altering Editor | `b4c9481e9b00fb0a38739049a046f528b6054ce2`, `MapWriter.cs`, `Map.cs` | editor writer/fallback | `ImplementationSpecificBehavior` | `0,0,w,h`; three bytes; code writes R/G/B despite BGR comment; 8192 output blocks; key 1 and 70 characters; sections moved first; fixed 106×61 dummy | shares ecosystem knowledge/components; does not prove runtime requirement or universal block maximum |
+| CnCNet XNA client | `e6e367bbe04c1a0dc1e34a8fed2856ea3ab7e8c4`, `MapPreviewExtractor.cs`, `FastMapPreviewExtractor.cs` | consumer reader | `ImplementationSpecificBehavior` | reads fields 2/3; allocates `w×h×3`; calls data RGB; swaps to BGR consumer buffer; no source scanline padding; recognizes hidden payload; fast path preserves physical value order | consumer behavior, not runtime; exact output completion and numeric ordering are not established |
+| CNCMaps | `afb9c1ec118f5128cbc1f3fb5e35c7dfa0e422fb`, `CNCMaps.Engine/Map/ThumbInjector.cs` | bitmap reader/writer/injector | `ImplementationSpecificBehavior` | writes/reads `0,0,w,h`; exact three-byte allocation; 70-character fragments; inserts PreviewPack relative to Preview/Basic; symmetric component conversion | imported OpenRA/XCC exceptions and ecosystem ancestry prevent treating it as an independent runtime discovery |
+| MapTool | `f85f2226905496139f1258b5854fad915f9bbac6`, `MapTool.Logic/MapFile.cs` | reader/writer tool | `ImplementationSpecificBehavior` | reads fields 2/3; exact `w×h×3`; missing/invalid returns null; rewrites metadata to `0,0,w,h`; 70-character section rewrite | inspected file does not expose graphics-helper channel/row behavior; not lossless for origins |
+| ModEnc PreviewPack | `index.php?title=PreviewPack&oldid=28503` | community documentation | `ConfirmedCommunityConvention` | Base64 fragments, u16/u16 chunk description, LZO, three bytes, no row padding, BGR888 claim, empirical size proportions | documentation, not executable or runtime source; BGR statement conflicts with executable evidence |
+| ModEnc Preview | `index.php?title=Preview&oldid=21306` | community documentation | `ConfirmedCommunityConvention` | Preview holds size metadata; PreviewPack holds image | does not resolve four-field semantics |
+| PPM CNCMaps release | fixed topic `36021` | community/tool release documentation | `ImplementationSpecificBehavior` | generated PreviewPack placement changed to after Basic rather than behind Digest | documents one tool release behavior, not game-executable requirement |
+| PPM MapResize | fixed topic `55391` | tool limitation report | `ImplementationSpecificBehavior` | resize tool leaves preview unchanged and requires separate generation | tool behavior only |
+| OpenRA | `a520984d91eda9de48a62b1d15c1e3bad0d4fb1a` | searched reference implementation | `Unresolved` | no load-bearing PreviewPack path located at pin | no vote on layout or channels |
+| Chrono Divide SDK | `5943c4ae6c19897929d348a417d6d2f1481b75fd` | searched public SDK | `Unresolved` | no load-bearing PreviewPack path located | no vote |
+| XCC / OmniBlade | fixed public mirrors and SourceForge lineage searched | historical tools/code lineage | `Underconfirmed` | XCC can generate sections according to community documentation | no pinned low-level Preview path used; historical lineage influences later tools |
 
-## 3. Official-editor evidence limits
+All executable sources are reference-only. Every row has `code_imported: false`.
 
-The EA repository is official editor source, not RA2/YR runtime source. Its evidence grade is `ConfirmedByOfficialEditorSource`.
+## 3. Official-tool evidence limits
+
+The EA repository is official editor source, not RA2/YR runtime source.
+
+```text
+EvidenceGrade: ConfirmedByOfficialToolSource
+Source: EA FinalSun / FinalAlert 2
+AuditStatus: NotRun
+```
 
 It is especially valuable for:
 
@@ -54,46 +64,74 @@ It cannot settle:
 - whether the game accepts nonzero origins or unusual dimensions;
 - whether missing Preview crashes every executable/version.
 
-## 4. WAE source/comment conflict
-
-WAE's comment says BGR888 while its executable assignment writes R/G/B. The comparison retains both facts. Comments are not silently corrected, but code behavior is the stronger statement about what WAE emits.
-
-Its dummy-preview and section-first policies are compatibility choices. They are not promoted to runtime facts.
-
-## 5. CnCNet strictness limit
-
-CnCNet performs useful bounds checks, but its decompressor can stop on input exhaustion or either zero size and return a preallocated destination without verifying aggregate written length. The image builder then sees the expected array length because allocation was fixed. This is lenient zero-fill behavior, not an exact decode contract.
-
-The project strict profile intentionally differs.
-
-## 6. CNCMaps naming and API layout
-
-`PixelFormat.Format24bppRgb` bitmap memory is BGR-oriented. CNCMaps' variable names label bytes as if they were RGB and its comments describe a reversal. Tracing both injection and extraction shows a symmetric conversion consistent with raw RGB. The dossier avoids treating names alone as byte-order evidence.
-
-## 7. MapTool helper boundary
-
-The map file calls external graphics helpers. Without pinning and inspecting those helper implementations, MapTool provides evidence for exact three-byte sizing and symmetric get/set behavior, not an independent channel or row-order fact.
-
-## 8. Community documentation conflict
-
-ModEnc's BGR888 claim conflicts with the EA writer and CnCNet contract. It remains `CommunityDocumented` and is not deleted from the evidence set.
-
-ModEnc's empirical preview-size ratios concern official-map generation/display appearance, not the packed-stream dimensions formula or a parser maximum.
-
-## 9. Shared ancestry and independence
+## 4. Source-lineage warning
 
 Potential sharing includes:
 
-- CNCMaps map-pack helpers reused by WAE;
+- CNCMaps map-pack helpers or knowledge reused by WAE;
 - XCC-derived packing concepts in the EA editor release and community tools;
 - CnCNet ecosystem reuse of Rampastring/CNCMaps utilities;
-- community documentation citing CnCNet code.
+- community documentation citing CnCNet or other tools;
+- common community knowledge transferred across implementations.
 
-Therefore agreement is grouped by lineage where appropriate. Official-editor and CnCNet/CNCMaps/WAE agreement is strong practical evidence but still not official runtime source.
+Agreement among repositories may represent one or a few code/knowledge lineages rather than separate discoveries of runtime behavior. This dossier therefore does not use `ConfirmedByMultipleIndependentImplementations` for any reviewed PreviewPack claim.
 
-## 10. Legal implementation boundary
+## 5. WAE source/comment conflict
 
-All executable sources are reference-only for this research. A future implementation may use:
+WAE's comment says BGR888 while its executable assignment writes R/G/B. The comparison retains both facts. Comments are not silently corrected, but executable assignment is the stronger description of what that writer emits.
+
+Its dummy-preview and section-first policies are compatibility choices. They remain `ImplementationSpecificBehavior` and are not promoted to runtime facts.
+
+## 6. CnCNet strictness limit
+
+CnCNet performs useful bounds checks, but its decompressor can stop on input exhaustion or either zero size and return a preallocated destination without verifying aggregate written length. The image builder then sees the expected array length because allocation was fixed.
+
+This is `ImplementationSpecificBehavior` with lenient zero-fill consequences, not an exact decode contract. The project strict profile intentionally differs under `DefensiveDesign`.
+
+## 7. CNCMaps naming and API layout
+
+`PixelFormat.Format24bppRgb` bitmap memory is BGR-oriented. CNCMaps' variable names label bytes as if they were RGB and its comments describe a reversal. Tracing injection and extraction shows a symmetric conversion consistent with raw RGB.
+
+This is `ImplementationSpecificBehavior`; names alone are not byte-order evidence.
+
+## 8. MapTool helper boundary
+
+The map file calls external graphics helpers. Without pinning and inspecting those helper implementations, MapTool provides evidence for exact three-byte sizing and symmetric get/set behavior, not an independent channel or row-order fact. Channel and row order remain `Unresolved` for that source path.
+
+## 9. Community documentation conflict
+
+ModEnc's BGR888 claim is a `ConfirmedCommunityConvention`, but it conflicts with the EA writer and CnCNet consumer contract. The combined RGB/BGR result is `ConflictingSources`.
+
+ModEnc's empirical preview-size ratios concern official-map generation/display appearance, not the packed-stream dimensions formula or a parser maximum.
+
+## 10. Normalized evidence summary
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert writes fields 2/3 as preview width/height | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official-editor writer behavior only. | Preserve all four raw fields. | `NotRun` |
+| Fields 2/3 are the cross-tool width/height candidate | `Underconfirmed` | FinalAlert, WAE, CnCNet, CNCMaps, MapTool, ModEnc | Strong convergence but no original-runtime source or proven independent lineages. | Explicit metadata profile. | `NotRun` |
+| Original-runtime meaning of fields 0/1 | `Unresolved` | No original-runtime source located | Tool writers and consumers treat them differently or ignore them. | Preserve raw; never force zero. | `NotRun` |
+| FinalAlert emits `width × height × 3` raw bytes | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official-editor output. | Source-pinned writer profile. | `NotRun` |
+| `width × height × 3` is the leading standard decoded-length candidate | `Underconfirmed` | Official editor, public tools, ModEnc | Convergence does not prove runtime strictness. | Exact output is enforced as `DefensiveDesign`. | `NotRun` |
+| No alpha, palette payload, scanline padding, or decoded trailer was found in reviewed standard paths | `Underconfirmed` | Reviewed public sources | Evidence-scope absence statement only. | Do not infer extra structures; preserve unknown tails on failure. | `NotRun` |
+| FinalAlert writes top-down RGB preview bytes | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official-editor writer behavior. | Leading producer profile. | `NotRun` |
+| CnCNet RGB consumption, WAE assignment, and CNCMaps conversion | `ImplementationSpecificBehavior` | Named tools | Tool-specific behavior; not multiple independent runtime proof. | Keep source-pinned profiles. | `NotRun` |
+| ModEnc BGR888 description | `ConfirmedCommunityConvention` | ModEnc | Stable documentation, not runtime source. | Retain BGR profile. | `NotRun` |
+| One unique runtime channel order | `ConflictingSources` | RGB executable evidence versus BGR documentation | No runtime source resolves the disagreement. | Preserve raw components; no visual auto-selection. | `NotRun` |
+| `RowMajorTopDown` is the leading row-order candidate | `Underconfirmed` | FinalAlert, CnCNet, CNCMaps | Runtime reader behavior remains unsourced. | Explicit row profile; Unity flips are adapter-only. | `NotRun` |
+| Chunk header is `u16 compressed/u16 output` | `ConfirmedCommunityConvention` | Public tools and ModEnc | Stable toolchain convention; no runtime source. | Explicit envelope profile. | `NotRun` |
+| WAE uses 8192-byte output blocks | `ImplementationSpecificBehavior` | WAE | Writer convention only. | Configurable writer profile. | `NotRun` |
+| 8192 is a runtime hard limit | `Unresolved` | No runtime source located | Not established as LZO or runtime maximum. | Do not bake into backend. | `NotRun` |
+| WAE first-section placement | `ImplementationSpecificBehavior` | WAE | Named writer behavior with a runtime claim. | Separate target profile. | `NotRun` |
+| CNCMaps after-Basic placement | `ImplementationSpecificBehavior` | CNCMaps/PPM | Conflicts with WAE policy. | Separate target profile. | `NotRun` |
+| Original-runtime section-order contract | `ConflictingSources` | First, after-Basic, and location-independent public behaviors | No original-runtime source selects a rule. | Preserve physical order losslessly. | `NotRun` |
+| WAE fixed dummy and CnCNet recognition | `ImplementationSpecificBehavior` | WAE and CnCNet | Two named tool behaviors, not runtime standard. | Source absence and generated placeholder stay separate. | `NotRun` |
+| Exact lengths, strict Base64, explicit LZO/profile, no trial decode, no fabrication, and non-authoritative preview boundary | `DefensiveDesign` | Project policy | Project preservation and fail-closed contracts. | Compatibility status remains unchanged. | `NotRun` |
+| ProjectBaseline observations are already available | `Unresolved` | Audit not executed | ProjectBaseline was not read. | `FutureEvidenceSource: ProjectBaselineAggregateAudit`. | `NotRun` |
+
+## 11. Legal implementation boundary
+
+A future implementation may use:
 
 - independently expressed field and envelope facts;
 - black-box-compatible fixtures created without original assets;
@@ -111,27 +149,11 @@ It must not:
 - use source-derived pseudo-code that is structurally equivalent;
 - import original preview bytes or maps into public tests.
 
-## 11. Evidence summary
-
-| Question | Leading result | Grade |
-|---|---|---|
-| Size fields 2/3 | width/height | official editor + independent implementations |
-| Size fields 0/1 | origin/offset/raw preserved | unresolved |
-| bytes per pixel | 3 | official editor + independent implementations |
-| payload row padding | none | official editor + implementations + community docs |
-| raw channel order | RGB leading; BGR documented conflict | conflicting sources |
-| row order | row-major top-down leading | official editor + independent consumer |
-| block header | u16 compressed/u16 output | independent implementations/community docs |
-| 8192 max output | writer convention | independent implementation only |
-| section placement | first vs after Basic conflict | unresolved runtime rule |
-| missing-preview runtime behavior | compatibility concern | community/editor claim, unresolved |
-
-## 12. `code_imported`
-
-For every source above:
+## 12. Audit status
 
 ```text
-code_imported: false
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
 ```
 
-No formal third-party ledger was changed by this research.
+No ProjectBaseline data was accessed, and no compatibility status was changed.

@@ -4,17 +4,16 @@
 
 This is a request specification for a future local Codex run. It is not executed by this PR.
 
-## 1. Objective
+## 1. Objective and status
 
 Collect bounded aggregate evidence about Preview metadata, packed fragments, chunk envelopes, decoded lengths, channel/row candidates, physical section order, and missing/fabricated preview categories without publishing any map identity, pixels, compressed content, or reconstructable information.
 
-Audit observations receive only:
-
 ```text
-ObservedByFutureProjectBaselineAudit
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
 ```
 
-They do not become `ConfirmedByOfficialRuntimeSource`.
+These fields describe planned work. They are not a formal evidence grade and do not imply that ProjectBaseline was read, observed, or confirmed. Current claims retain the public-source grades recorded in the research dossier, normally `Underconfirmed`, `ConflictingSources`, or `Unresolved`. A future aggregate audit cannot by itself become `ConfirmedByOriginalRuntimeSource`.
 
 ## 2. Authoritative root boundary
 
@@ -208,7 +207,7 @@ The audit must not render images or select RGB/BGR based on plausibility. It may
 - component-only aggregate summaries;
 - profile conflicts.
 
-It cannot claim the runtime profile solely from visual appearance or component statistics.
+It cannot claim the runtime profile solely from visual appearance or component statistics. The formal RGB/BGR classification remains `ConflictingSources` unless stronger source evidence resolves it.
 
 ## 10. Row-order audit rule
 
@@ -243,6 +242,8 @@ A known fixed hidden-preview signature may be compared locally. Public output is
 - no external application launch;
 - budgets remain active even for trusted baseline content.
 
+These are `DefensiveDesign` audit requirements, not observations about the original runtime.
+
 ## 14. Reproducibility
 
 The private audit record should retain:
@@ -273,6 +274,29 @@ The audit may inform, but not automatically decide:
 
 Any production policy change requires separate review and source comparison.
 
-## 16. Explicit statement
+## 16. Expected report structure
+
+```text
+AuditSchemaVersion
+AuditStatus = NotRun
+FutureEvidenceSource = ProjectBaselineAggregateAudit
+SelectionBasis
+InputProvenanceCategory
+MetadataAggregateSummary
+FragmentAndChunkAggregateSummary
+DecodedLengthAggregateSummary
+ChannelProfileAggregateSummary
+RowProfileAggregateSummary
+SectionPlacementAggregateSummary
+MissingAndDummyAggregateSummary
+InputModeEquivalence
+Diagnostics
+CurrentEvidenceGrade
+PolicyImpactRecommendation
+```
+
+`CurrentEvidenceGrade` must use the normalized closed vocabulary and describe the public evidence available independently of the audit. `PolicyImpactRecommendation` cannot modify compatibility or project policy automatically.
+
+## 17. Explicit statement
 
 This PR did not run the audit, access ProjectBaseline, decode any local preview, or publish any original content.

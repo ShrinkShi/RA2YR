@@ -109,7 +109,7 @@ The default project policy is strict and deterministic:
 5. preserve original fragment grouping for possible lossless round-trip;
 6. produce a separate canonical ordered stream only after policy approval.
 
-Whether the original runtime follows numeric order, physical order, or parser-container order remains unresolved. CnCNet's fast consumer appends physical occurrences; WAE and other tools usually write canonical `1..N` order, so common files do not distinguish the alternatives.
+These preservation and explicit-selection rules are `DefensiveDesign`. Whether the original runtime follows numeric order, physical order, or parser-container order remains `Unresolved`. CnCNet's fast consumer appends physical occurrences; WAE and other tools usually write canonical `1..N` order, so common files do not distinguish the alternatives.
 
 ## 6. Payload decode boundary
 
@@ -125,7 +125,7 @@ Strict Base64 requirements:
 - no partial byte result;
 - exact source-span diagnostics.
 
-The decoded Base64 bytes are still compressed container bytes, not pixels.
+These are `DefensiveDesign` requirements. The decoded Base64 bytes are still compressed container bytes, not pixels.
 
 ## 7. Chunk and codec boundary
 
@@ -157,7 +157,7 @@ It does not mutate either source layer.
 
 ## 9. Non-authoritative boundary
 
-Preview parsing never validates map gameplay content. A valid preview can be unrelated to the map; an invalid or absent preview does not prove the scenario data is invalid.
+Preview parsing never validates map gameplay content. A valid preview can be unrelated to the map; an invalid or absent preview does not prove the scenario data is invalid. This is a `DefensiveDesign` architecture boundary.
 
 ## 10. Implementation exclusions
 

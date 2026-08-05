@@ -196,7 +196,16 @@ Production default rejects compressed and decoded trailing bytes. Audit modes ca
 
 Selects preserve-source, intentional recompress, canonical target rewrite, or generated preview. The default does not rewrite unchanged content.
 
+```text
+PolicyClassification: DefensiveDesign
+AuditStatus: NotRun
+```
+
+The policies above are project preservation, explicit-profile, and fail-closed contracts. They are not external format or original-runtime evidence.
+
 ## 4. Required invariants
+
+The following invariants are `DefensiveDesign` requirements:
 
 - checked arithmetic everywhere;
 - width and height validated before multiplication;
@@ -306,7 +315,7 @@ Core assemblies reference no `UnityEngine`. A future Unity adapter may construct
 - UI material;
 - cache asset.
 
-That adapter owns vertical orientation, alpha insertion, texture format, filtering, mipmaps, and lifecycle.
+That adapter owns vertical orientation, alpha insertion, texture format, filtering, mipmaps, and lifecycle. These are adapter behaviors, not PreviewPack format evidence.
 
 ## 11. No writer default yet
 

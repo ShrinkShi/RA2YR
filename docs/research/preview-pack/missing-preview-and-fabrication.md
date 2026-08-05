@@ -138,7 +138,7 @@ A future system must distinguish:
 - `FallbackPlaceholder`;
 - `ConsumerDisplayImage`.
 
-Each has independent hashes and provenance. A generated artifact never inherits the source PreviewPack identity.
+Each has separate hashes and provenance. A generated artifact never inherits the source PreviewPack identity.
 
 ## 9. Save policy
 
@@ -163,12 +163,15 @@ The following remain separate:
 
 No one result implies the others.
 
-## 11. Evidence status
+## 11. Normalized evidence status
 
-- WAE placeholder generation: `ConfirmedByIndependentImplementation`.
-- CnCNet hidden-placeholder recognition: `ConfirmedByIndependentImplementation`.
-- Original executable crash/requirement claim: WAE comment plus community reports, therefore `CommunityDocumented` / `Unresolved`, not official runtime source.
-- Core non-fabrication rule: `ConfiguredForProjectPolicy`.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| WAE injects a fixed 106×61 dummy preview when sections are missing | `ImplementationSpecificBehavior` | World-Altering Editor | Named editor compatibility behavior only. | Treat the inserted payload as generated content with explicit provenance. | `NotRun` |
+| CnCNet recognizes the WAE payload and suppresses visible preview output | `ImplementationSpecificBehavior` | CnCNet XNA client | Named consumer behavior only. | Preserve source bytes while reporting a hidden-placeholder candidate. | `NotRun` |
+| Missing Preview causes every original executable to crash or requires the fixed dummy payload | `Underconfirmed` | WAE comment and community reports | Candidate compatibility concern without original-runtime source. Exact affected versions and launch paths are unresolved. | Do not promote the dummy payload to a standard runtime representation. | `NotRun` |
+| The fixed dummy payload is the original-runtime standard missing-preview value | `Unresolved` | No original-runtime source located | Cooperation between WAE and CnCNet establishes a tool convention, not a runtime standard. | Keep source absence, generated placeholder, and consumer fallback as separate states. | `NotRun` |
+| Core reports missing/inconsistent source and never fabricates source bytes | `DefensiveDesign` | Project policy | Preservation and fail-closed architecture rule. | Generation remains an explicit editor/UI adapter action. | `NotRun` |
 
 ## 12. Explicit exclusion
 

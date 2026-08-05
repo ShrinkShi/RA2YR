@@ -8,6 +8,8 @@ PreviewPack is a stored image used by map-selection, editor, browser, export, or
 
 A structurally valid preview does not prove that terrain, overlays, bridges, resources, objects, waypoints, houses, or scripts match the image.
 
+This non-authoritative separation is `DefensiveDesign` and an architecture boundary, not an original-runtime evidence claim.
+
 ## 2. Candidate consumers
 
 ### Original game map-selection UI
@@ -20,27 +22,27 @@ Potential responsibilities:
 - clipping or filling unused pixels;
 - choosing a fallback when unavailable.
 
-No public original runtime source was located. Exact behavior remains unresolved.
+No public original runtime source was located. Exact behavior remains `Unresolved`.
 
 ### FinalSun / FinalAlert 2
 
-The official editor can render a minimap-like image and replace Preview/PreviewPack. Its writer converts from a Windows DIB representation. This is editor generation, not the format parser itself.
+The official editor can render a minimap-like image and replace Preview/PreviewPack. Its writer converts from a Windows DIB representation. This is `ConfirmedByOfficialToolSource` for editor generation, not the format parser or game runtime.
 
 ### World-Altering Editor
 
-WAE can write an actual preview from a texture and can inject a fixed dummy preview. Texture readback, row orientation, section movement, and dummy generation are editor concerns.
+WAE can write an actual preview from a texture and can inject a fixed dummy preview. Texture readback, row orientation, section movement, and dummy generation are `ImplementationSpecificBehavior`.
 
 ### CnCNet client
 
-The client extracts PreviewPack for map-selection display. It performs channel conversion, bitmap stride construction, hidden-preview recognition, and failure fallback. Its fast reader scans physical INI text for performance.
+The client extracts PreviewPack for map-selection display. It performs channel conversion, bitmap stride construction, hidden-preview recognition, and failure fallback. Its fast reader scans physical INI text for performance. These are `ImplementationSpecificBehavior`.
 
 ### CNCMaps
 
-CNCMaps renders the full map, produces a bitmap, injects a preview, and can extract one. Rendering, crop, startup markers, lighting, and preview insertion are tool behavior.
+CNCMaps renders the full map, produces a bitmap, injects a preview, and can extract one. Rendering, crop, startup markers, lighting, and preview insertion are `ImplementationSpecificBehavior`.
 
 ### MapTool
 
-MapTool exposes bitmap get/set operations around generic map-pack helpers. Conversion helpers and canonical rewriting are tool behavior.
+MapTool exposes bitmap get/set operations around generic map-pack helpers. Conversion helpers and canonical rewriting are `ImplementationSpecificBehavior`.
 
 ### Future Unity UI
 
@@ -101,7 +103,7 @@ Preview metadata dimensions describe the stored pixel rectangle under the leadin
 - Unity texture dimensions after scaling;
 - visible cropped dimensions.
 
-Original-map proportion observations reported by ModEnc are empirical/community constraints, not the binary format's width/height formula or maximum.
+Original-map proportion observations reported by ModEnc are empirical community constraints, not the binary format's width/height formula or maximum.
 
 ## 6. Aspect ratio
 
@@ -111,13 +113,15 @@ Core does not reject unusual aspect ratios if dimensions and budgets are valid.
 
 ## 7. Alpha boundary
 
-Standard decoded data has three components per pixel. A consumer may construct opaque RGBA using alpha 255, but:
+Standard decoded data has three components per pixel in the reviewed public writers and consumers. A consumer may construct opaque RGBA using alpha 255, but:
 
 - alpha is derived;
-- it is not stored in PreviewPack;
+- it is not stored in the reviewed PreviewPack profiles;
 - it is not included in decoded hashes;
 - premultiplication is not performed in Core;
 - transparent fallback UI is unrelated to source pixels.
+
+The absence of alpha in reviewed sources is not universal original-runtime proof.
 
 ## 8. Color-space boundary
 
@@ -151,7 +155,7 @@ Preview pixels cannot be used to:
 - choose RGB/BGR by comparing expected terrain colors;
 - select row order by visual plausibility.
 
-Optional discrepancy analysis can report that a regenerated preview differs, but cannot mutate map data or source preview.
+These prohibitions are `DefensiveDesign`. Optional discrepancy analysis can report that a regenerated preview differs, but cannot mutate map data or source preview.
 
 ## 11. Cache identity
 

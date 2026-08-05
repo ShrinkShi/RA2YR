@@ -34,25 +34,49 @@ The layers are intentionally one-way:
 - the preview model is non-authoritative for terrain, overlays, simulation, fog, pathfinding, or map validity;
 - Core creates no `Texture2D`, `Sprite`, `RenderTexture`, `Material`, `GameObject`, bitmap, PNG, or JPEG.
 
-## Evidence grades
+## Formal evidence grades
 
-Every claim is labelled using one of:
+Every formal `Grade` field uses exactly one value from this closed vocabulary:
 
-- `ConfirmedByOfficialRuntimeSource`
-- `ConfirmedByOfficialEditorSource`
-- `ConfirmedByIndependentImplementation`
-- `CommunityDocumented`
-- `ObservedByFutureProjectBaselineAudit`
-- `ConfiguredForProjectPolicy`
+- `ConfirmedByOriginalRuntimeSource`
+- `ConfirmedByOfficialToolSource`
+- `ConfirmedByMultipleIndependentImplementations`
+- `ConfirmedCommunityConvention`
+- `ImplementationSpecificBehavior`
+- `DefensiveDesign`
+- `ConflictingSources`
+- `Underconfirmed`
 - `Unresolved`
 
-No public RA2/YR game runtime source was located for PreviewPack. No finding in this dossier is promoted to `ConfirmedByOfficialRuntimeSource` merely because an editor or client displays a preview correctly.
+`ConfirmedByOriginalRuntimeSource` is reserved for actual RA2/YR runtime behavior or original runtime source. No reviewed claim in this dossier has that grade because no public original-runtime source was located.
+
+`ConfirmedByOfficialToolSource` applies to FinalSun, FinalAlert, and other official editor/tool behavior. It does not establish game-runtime behavior.
+
+`ConfirmedByMultipleIndependentImplementations` requires demonstrably independent implementation lineages. Related community tools, shared map-pack helpers, XCC-derived knowledge, and cross-tool knowledge transfer are not counted repeatedly.
+
+Stable community/toolchain conventions use `ConfirmedCommunityConvention`. A named reader, writer, client, or extension behavior uses `ImplementationSpecificBehavior`. Uncertain convergence uses `Underconfirmed`; direct disagreement uses `ConflictingSources`.
+
+Exact-length validation, raw preservation, explicit profiles, refusal to guess or repair, and fail-closed behavior use `DefensiveDesign`. Project choices belong in `Policy` or `PolicyClassification`, not in external evidence claims.
+
+Future ProjectBaseline work is recorded separately:
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+These fields are not evidence grades and do not imply that ProjectBaseline was read.
 
 ## Main conclusions
 
-### Independent metadata and payload
+### Separate metadata and payload layers
 
-`[Preview]` and `[PreviewPack]` are separate artifacts. Metadata can exist without payload and payload can exist without valid metadata. Neither layer is fabricated by the parser when the other is absent.
+`[Preview]` and `[PreviewPack]` are separate artifacts. Metadata can exist without payload and payload can exist without valid metadata.
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| Public tools represent metadata and packed payload as separate sections | `Underconfirmed` | FinalAlert, WAE, CnCNet, CNCMaps, MapTool | Cross-tool convergence is useful, but implementation lineages and stock-runtime behavior are not proven independent. | Keep section states and provenance separate. | `NotRun` |
+| Core never fabricates one layer when the other is absent | `DefensiveDesign` | Project policy | This is a preservation and failure-boundary decision, not a runtime fact. | Report missing or inconsistent layers explicitly. | `NotRun` |
 
 ### Raw metadata first
 
@@ -65,40 +89,69 @@ PreviewSizeFieldRaw2
 PreviewSizeFieldRaw3
 ```
 
-The strongest consumer convention treats fields 2 and 3 as width and height. The exact runtime meaning of fields 0 and 1 remains unresolved. EA's released editor begins with `[Map] Size` and replaces only values 2 and 3, while WAE, CNCMaps, and MapTool writers emit `0,0,width,height`.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert copies `[Map] Size` and replaces fields 2 and 3 with generated preview width and height | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Confirms official-editor writer behavior only. It also shows that fields 0 and 1 are not inherently forced to zero by that writer. | Preserve all four raw fields. | `NotRun` |
+| WAE, CNCMaps, and MapTool write `0,0,width,height` | `ImplementationSpecificBehavior` | Named writers | Each entry is tool-specific canonicalization, not one runtime contract. | Do not rewrite nonzero first fields automatically. | `NotRun` |
+| Fields 2 and 3 are the width/height candidate used across public consumers and writers | `Underconfirmed` | FinalAlert, WAE, CnCNet, CNCMaps, MapTool, ModEnc | Strong convergence exists, but original-runtime semantics are not directly established. | Require an explicit metadata interpretation profile. | `NotRun` |
+| Original-runtime meaning of fields 0 and 1 | `Unresolved` | No original-runtime source located | Candidate interpretations include origin, offset, inherited map fields, ignored fields, or unknown tuple members. | Preserve raw values without forcing zero. | `NotRun` |
 
 ### Three bytes per pixel
 
-The strongest candidate contract is:
+The leading decoded-length candidate is:
 
 ```text
 expectedDecodedLength = width × height × 3
 ```
 
-Public writers allocate exactly three bytes per pixel. No evidence was found for alpha, palette indices, scanline padding inside the decoded payload, a decoded trailer, or row alignment. The strict project policy requires checked multiplication and exact output length.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert allocates and encodes three bytes per generated preview pixel | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official-editor output only. | Preserve as source-pinned writer evidence. | `NotRun` |
+| WAE, CnCNet, CNCMaps, and MapTool use `width × height × 3` storage | `Underconfirmed` | Public tools | Convergence does not prove independent lineages or a universal runtime rule. | Use as an explicit standard-profile candidate. | `NotRun` |
+| Stock runtime strictly requires exact `width × height × 3` output | `Underconfirmed` | Public writer/consumer behavior | No runtime source establishes rejection, padding, or truncation behavior. | Enforce exact output as project policy. | `NotRun` |
+| Checked multiplication, exact output, no padding, no clamp, no truncation, and no partial success | `DefensiveDesign` | Project policy | Fail-closed safety contract. | Validate before pixel interpretation. | `NotRun` |
+
+No inspected source path added alpha, palette indices, scanline padding inside the decoded stream, or a decoded trailer. That absence is limited to the reviewed evidence set and is not an absolute runtime proof.
 
 ### Channel-order conflict
 
-The strongest executable evidence indicates raw `R,G,B` component order:
+The sources do not establish one uncontested runtime channel order.
 
-- EA's released editor converts bottom-up Windows DIB BGR bytes into top-down raw RGB;
-- CnCNet explicitly documents raw 24-bit RGB and swaps into BGR only for its bitmap consumer;
-- WAE writes `Color.R`, `Color.G`, `Color.B` even though its comment says “BGR888”;
-- CNCMaps' variable names and comments are misleading, but its conversion is consistent with raw RGB when accounting for GDI's BGR memory layout.
-
-ModEnc permanent revision `oldid=28503` describes BGR888. This remains a real source conflict. Core therefore stores `Component0Raw`, `Component1Raw`, and `Component2Raw` before applying an explicit `PreviewChannelOrderProfile`.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert converts bottom-up Windows DIB BGR memory into raw `R,G,B` output | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official-editor writer behavior, not game-runtime reader proof. | Retain as the leading writer profile. | `NotRun` |
+| CnCNet consumes raw RGB and swaps only for BGR-native bitmap memory | `ImplementationSpecificBehavior` | CnCNet XNA client | Named consumer behavior. | Keep consumer conversion outside Core. | `NotRun` |
+| WAE writes `R,G,B` despite a `BGR888` comment | `ImplementationSpecificBehavior` | World-Altering Editor | Source comment and executable assignment conflict within the named tool. | Preserve both facts in source notes. | `NotRun` |
+| CNCMaps behavior is consistent with raw RGB when GDI BGR memory is accounted for | `ImplementationSpecificBehavior` | CNCMaps | Variable names/comments are not sufficient without API memory-order analysis. | Treat as tool-specific evidence. | `NotRun` |
+| ModEnc documents BGR888 | `ConfirmedCommunityConvention` | ModEnc PreviewPack `oldid=28503` | Stable community documentation, but it conflicts with executable writer/consumer behavior. | Keep as an explicit comparison profile. | `NotRun` |
+| One unique original-runtime channel order is established | `ConflictingSources` | RGB executable evidence versus BGR documentation | No runtime source selects a unique contract. | Store `Component0Raw/1Raw/2Raw`; require explicit channel profile; never select by visual plausibility. | `NotRun` |
 
 ### Row-order candidate
 
-EA's released editor reads a bottom-up DIB source, vertically reverses it, and writes a row-major destination. CnCNet consumes rows in increasing row order without a Core-level vertical flip. `RowMajorTopDown` is the strongest project candidate but remains evidence-gated; `RowMajorBottomUp`, `ColumnMajor`, and `Unknown` remain explicit alternatives.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert vertically reverses bottom-up DIB rows into top-down packed output | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Confirms generated editor output only. | Retain a named top-down writer profile. | `NotRun` |
+| CnCNet consumes increasing rows without a Core-level vertical flip | `ImplementationSpecificBehavior` | CnCNet XNA client | Named consumer behavior. | Keep consumer-native orientation outside Core. | `NotRun` |
+| `RowMajorTopDown` is the leading standard candidate | `Underconfirmed` | FinalAlert and public consumers | Original-runtime row behavior is not directly sourced. | Require explicit row profile. | `NotRun` |
+| Original-runtime unique row order | `Unresolved` | No original-runtime source located | Third-party and extension payloads may differ. | Retain top-down, bottom-up, column-major, and unknown profiles; Unity flips remain adapter behavior. | `NotRun` |
 
 ### Section placement is compatibility-sensitive
 
-WAE states that original TS and YR expect `[Preview]` and `[PreviewPack]` first and moves both sections to the front. CNCMaps instead inserts generated preview sections after `[Basic]`, and its release notes specifically discuss that placement. The original runtime rule is unresolved, so lossless physical section order must be preserved and canonical reordering must be an explicit writer policy.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| WAE moves Preview sections to the file front | `ImplementationSpecificBehavior` | World-Altering Editor | The accompanying original-runtime claim is not source-confirmed. | Keep as a named writer compatibility profile. | `NotRun` |
+| CNCMaps places generated PreviewPack after Basic in the documented release behavior | `ImplementationSpecificBehavior` | CNCMaps and fixed PPM release discussion | Conflicts with WAE placement policy. | Preserve as a separate writer profile. | `NotRun` |
+| CnCNet scans Preview sections wherever they occur | `ImplementationSpecificBehavior` | CnCNet XNA client | Consumer behavior only. | Do not infer game-runtime acceptance. | `NotRun` |
+| Preview must be first for original YR runtime | `Underconfirmed` | WAE comment and community reports | Tool and community claim without original-runtime source. | Preserve physical section order losslessly; canonical relocation requires an explicit writer profile. | `NotRun` |
 
 ### Missing preview is not parse success
 
-WAE can inject a 106×61 dummy/hidden preview when sections are missing. CnCNet recognizes that payload and intentionally returns no visible preview. Such generation and fallback belong to editor or UI adapters. Core reports missing or inconsistent layers and never claims that a fabricated preview was present in the source.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| WAE injects a fixed 106×61 dummy preview when sections are missing | `ImplementationSpecificBehavior` | World-Altering Editor | Named editor compatibility behavior. | Treat as generated content, not source truth. | `NotRun` |
+| CnCNet recognizes the fixed payload and hides it | `ImplementationSpecificBehavior` | CnCNet XNA client | Named consumer behavior. | Preserve bytes while exposing a diagnostic candidate. | `NotRun` |
+| The dummy payload is the original-runtime standard representation of a missing preview | `Unresolved` | No original-runtime source located | Tool cooperation does not establish a runtime standard. | Core never fabricates a source preview. | `NotRun` |
+| Missing, inconsistent, or fabricated-preview handling in Core | `DefensiveDesign` | Project policy | Parser reports source state and preserves provenance. | Placeholder generation and fallback UI remain adapter behavior. | `NotRun` |
 
 ### Preview is non-authoritative
 
@@ -113,7 +166,7 @@ Preview pixels cannot validate, repair, or replace:
 - minimap simulation state;
 - rendering correctness.
 
-A stale or deliberately misleading preview can still be structurally valid.
+This separation is `DefensiveDesign` and an architectural boundary. A stale or deliberately misleading preview can still be structurally valid.
 
 ## Pinned public sources
 

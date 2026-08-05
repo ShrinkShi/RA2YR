@@ -2,7 +2,7 @@
 
 > Source notice: compiled by **ChatGPT Web** from public research; no local `ProjectBaseline`; not a Codex Agent artifact; no code copied, translated, mechanically rewritten, or imported (`code_imported: false`).
 
-These questions remain explicit. An editor implementation, community page, or future aggregate audit cannot be silently promoted to original runtime proof.
+These questions remain explicit. An editor implementation, community page, or future aggregate audit cannot be silently promoted to original-runtime proof.
 
 ## P0 — format and runtime blockers
 
@@ -164,9 +164,20 @@ These questions remain explicit. An editor implementation, community page, or fu
 Until these questions are resolved:
 
 - raw metadata and bytes remain primary;
+- RGB/BGR remains `ConflictingSources`;
 - RGB/top-down are leading candidates, not undisputed runtime facts;
-- exact `width×height×3` is the strict project length contract;
+- fields 2/3 and exact `width×height×3` remain `Underconfirmed` public-source candidates;
+- strict exact output, explicit profiles, raw preservation, no trial decode, and no fabrication are `DefensiveDesign`;
 - section/fragment physical order is preserved;
 - parser fabrication is forbidden;
 - no canonical writer is selected;
 - no compatibility status is raised.
+
+## Future audit status
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+ProjectBaseline was not read. Future aggregate observations cannot automatically become `ConfirmedByOriginalRuntimeSource`, modify project policy, or promote compatibility status.

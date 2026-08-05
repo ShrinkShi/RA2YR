@@ -14,7 +14,7 @@ Most INI semantics are section-name and key based, but public tools make Preview
 - Base64 wrapping;
 - relative placement of `[Preview]`, `[PreviewPack]`, `[Basic]`, `[Digest]`, and other sections.
 
-Semantic lookup and physical serialization order are separate views.
+Semantic lookup and physical serialization order are separate views. Preserving them is `DefensiveDesign`.
 
 ## 2. WAE placement behavior
 
@@ -30,13 +30,25 @@ appear at the beginning, with Preview before PreviewPack after the two move oper
 
 Its dummy-preview path applies the same placement.
 
-This is a strong editor compatibility claim, but not official runtime source.
+```text
+EvidenceGrade: ImplementationSpecificBehavior
+Source: World-Altering Editor
+AuditStatus: NotRun
+```
+
+This is a named editor compatibility policy. The accompanying original-runtime statement is not original-runtime source evidence.
 
 ## 3. CNCMaps placement behavior
 
 CNCMaps' thumbnail injector creates or updates `[Preview]` and creates `[PreviewPack]` relative to Preview. Its release discussion notes a change so generated PreviewPack is inserted after `[Basic]` rather than behind `[Digest]`.
 
-This creates a genuine public-tool conflict with WAE's “first sections” policy. Both tools can produce usable maps in their target environments, so the difference cannot be resolved by counting tools.
+```text
+EvidenceGrade: ImplementationSpecificBehavior
+Source: CNCMaps and fixed PPM release discussion
+AuditStatus: NotRun
+```
+
+This creates a genuine public-tool conflict with WAE's first-section policy. Both tools can produce usable maps in their target environments, so the difference cannot be resolved by counting tools.
 
 ## 4. EA official editor behavior
 
@@ -44,15 +56,39 @@ The released editor regenerates the two sections during save, but the inspected 
 
 The official editor is evidence for generated data and metadata, not automatically for runtime section-order acceptance.
 
+```text
+EvidenceGrade: Underconfirmed
+Source: EA FinalSun / FinalAlert 2 writer path
+AuditStatus: NotRun
+```
+
 ## 5. CnCNet fast reader
 
 CnCNet's fast extractor scans the file linearly and recognizes Preview and PreviewPack wherever they occur. It appends PreviewPack values in physical encounter order until another section changes the active state.
 
-This demonstrates that the client consumer does not require the sections to be first. It does not prove original executable behavior.
+```text
+EvidenceGrade: ImplementationSpecificBehavior
+Source: CnCNet XNA client
+AuditStatus: NotRun
+```
 
-## 6. Ordering dimensions
+This demonstrates that the named consumer does not require the sections to be first. It does not prove original executable behavior.
 
-Do not collapse these independent questions:
+## 6. Normalized placement summary
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| WAE moves Preview and PreviewPack to the file front | `ImplementationSpecificBehavior` | World-Altering Editor | Named writer compatibility behavior. | Keep as an explicit writer target profile. | `NotRun` |
+| CNCMaps places generated PreviewPack after Basic in the documented release behavior | `ImplementationSpecificBehavior` | CNCMaps and PPM release discussion | Named writer behavior that conflicts with WAE placement. | Preserve as a separate target profile. | `NotRun` |
+| CnCNet scans Preview sections wherever they occur | `ImplementationSpecificBehavior` | CnCNet XNA client | Named consumer behavior only. | Do not promote to runtime acceptance. | `NotRun` |
+| A long-standing community/tool concern exists around Preview placement | `ConfirmedCommunityConvention` | WAE comments and community/tool discussions | Stable compatibility concern, but not a resolved runtime contract. | Keep placement visible in provenance and diagnostics. | `NotRun` |
+| Original YR runtime requires Preview sections to be first | `Underconfirmed` | WAE claim and community reports | No original-runtime source or controlled version matrix establishes the rule. CNCMaps and CnCNet behavior prevents treating it as universally settled. | Preserve source order; do not relocate during parse. | `NotRun` |
+| One universal original-runtime placement contract is established | `ConflictingSources` | First-section tool policy versus after-Basic writer and location-independent consumer | Public behavior differs and no runtime source selects one result. | Canonical relocation requires an explicit target profile. | `NotRun` |
+| Lossless physical-order preservation and no automatic reordering | `DefensiveDesign` | Project policy | Preservation and fail-closed writer boundary. | Use the lossless document for no-op save. | `NotRun` |
+
+## 7. Ordering dimensions
+
+Do not collapse these separate questions:
 
 1. Where `[Preview]` occurs relative to the file start.
 2. Where `[PreviewPack]` occurs relative to `[Preview]`.
@@ -63,7 +99,9 @@ Do not collapse these independent questions:
 7. Whether an editor rewrites section order on save.
 8. Whether an original executable accepts arbitrary order.
 
-## 7. Round-trip identities
+The section/stream relationship is logically separate from claims about independent source lineages.
+
+## 8. Round-trip identities
 
 ### Lossless INI identity
 
@@ -91,7 +129,7 @@ Preserves what a particular consumer renders after swaps, flips, scaling, crop, 
 
 These identities are not interchangeable.
 
-## 8. Default save policy
+## 9. Default save policy
 
 A future default writer must not silently canonicalize Preview content. The recommended modes are explicit:
 
@@ -111,7 +149,9 @@ Use explicit section placement, fragment wrapping, chunk size, channel order, an
 
 An editor adapter creates a new image. It is generated content and has no source pixel identity.
 
-## 9. Data that may need preservation
+These writer choices are `DefensiveDesign` policy, not external format evidence.
+
+## 10. Data that may need preservation
 
 - original `Size` key/value spelling;
 - every Preview section occurrence;
@@ -129,7 +169,7 @@ An editor adapter creates a new image. It is generated content and has no source
 - known placeholder identity;
 - diagnostics and evidence grades.
 
-## 10. Reordering hazards
+## 11. Reordering hazards
 
 A generic INI serializer that alphabetizes sections or keys can:
 
@@ -143,7 +183,7 @@ A generic INI serializer that alphabetizes sections or keys can:
 
 Therefore Preview round-trip must use the lossless document, not a typed dictionary serializer.
 
-## 11. Editor reopen versus runtime acceptance
+## 12. Editor reopen versus runtime acceptance
 
 Tests and audit reports must distinguish:
 
@@ -156,11 +196,3 @@ Tests and audit reports must distinguish:
 - gameplay launches.
 
 No compatibility status is raised by research alone.
-
-## 12. Evidence status
-
-- WAE first-section placement: `ConfirmedByIndependentImplementation`, with a community/runtime claim.
-- CNCMaps after-Basic placement: `ConfirmedByIndependentImplementation` and fixed PPM release documentation.
-- CnCNet location-independent scan: `ConfirmedByIndependentImplementation`.
-- Original runtime section-order rule: `Unresolved`.
-- Lossless preservation requirement: `ConfiguredForProjectPolicy`.
