@@ -22,7 +22,7 @@ Interpretation requires a record-layout profile and, for some values, a bound Ru
 
 ModEnc and MapTool describe placement health as units of `1/256` of the type's total `Strength=`. The common editor range is `0..256`, where 256 represents full health.
 
-This is strong community and independent-implementation evidence. It is not complete official runtime source evidence, and it does not justify changing source values during parsing.
+This is strong community documentation and cross-tool convergence, with implementation independence unproven. The corresponding formal grade is `Underconfirmed`. It is not complete official runtime source evidence, and it does not justify changing source values during parsing.
 
 Keep separate:
 
