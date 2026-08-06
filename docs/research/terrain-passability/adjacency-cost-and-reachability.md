@@ -148,7 +148,7 @@ float行为若作为来源证据必须标 implementation-specific。
 
 `Blocked/Unknown`不应仅编码成一个magic integer。可同时保留来源sentinel candidate，但semantic state独立。
 
-OpenRA使用明确unreachable cost是独立实现证据，不是stock constant。
+OpenRA使用明确unreachable cost是具名公开引擎实现行为；其相对共享社区或工具谱系的独立性未获证明，也不是stock constant。
 
 ## 11. Zero and negative cost
 
@@ -299,9 +299,9 @@ graph contract对未来算法保持中立。
 
 ## 22. Evidence
 
-| Claim | Grade |
-|---|---|
-| editor/map formats expose cells and Tube metadata | official editor evidence |
-| independent engine separates cost, occupancy and custom layers | independent implementation |
-| exact stock edge/cost formula | `Unresolved` |
-| deterministic graph contract | project policy |
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| editor/map formats expose cells and Tube metadata | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor evidence only; it does not establish runtime adjacency or cost semantics. | Preserve raw cells and Tube metadata under a named tool profile. | `NotRun` |
+| OpenRA separates cost, occupancy and custom layers | `ImplementationSpecificBehavior` | OpenRA | Named public engine implementation; independence from shared community/tool lineage is unproven. | Comparison profile only. | `NotRun` |
+| exact stock edge/cost formula | `Unresolved` | No original-runtime source located | No reliable complete formula was found. | Preserve explicit alternatives for future simulation work. | `NotRun` |
+| deterministic graph contract | `DefensiveDesign` | Project policy | Project architecture and determinism choice, not external runtime evidence. | Stable node/edge ordering, checked arithmetic and fail-closed ambiguity handling. | `NotRun` |
