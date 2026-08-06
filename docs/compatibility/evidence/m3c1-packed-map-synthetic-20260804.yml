@@ -1,0 +1,70 @@
+schema_version: 1
+work_package: M3-C1
+evidence_level: Synthetic
+project_baseline_read: false
+source_payload_published: false
+code_imported: false
+gpl_reference_only: true
+tests:
+  previous_focus_total: 122
+  previous_focus_passed: 122
+  current_head_focus_expected: 109
+  current_head_focus_executed: true
+  current_head_focus_passed: 109
+  current_head_focus_failed: 0
+  current_head_compilation:
+    core_roslyn_exit: 0
+    editmode_roslyn_exit: 0
+  current_head_unity_focus:
+    status: passed
+    xml_published: true
+    total: 109
+    passed: 109
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+    unity_exit: 0
+    wrapper_shell_exit: 0
+    forced_post_result_shutdown: true
+  current_head_full_editmode:
+    status: passed
+    xml_published: true
+    total: 933
+    passed: 933
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+    unity_exit: 0
+    forced_post_result_shutdown: false
+  current_head_full_playmode:
+    status: passed
+    xml_published: true
+    total: 1
+    passed: 1
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+    unity_exit: 0
+    forced_post_result_shutdown: true
+components:
+  fragment_collector: synthetic_policy_tests
+  strict_base64: synthetic_strict_validation_tests
+  chunk_envelope: synthetic_bounded_envelope_tests
+  format80: synthetic_explicit_profile_tests
+  lzo: contract_and_fake_backend_only
+  pipeline: codec_neutral_fail_closed_tests
+behavior_matrix:
+  independent_execution_cases: 109
+  equivalent_base64_padding_cases_used_as_fillers: false
+verification_state:
+  static_contract_fixes_present: true
+  current_head_unity_results_authoritative: true
+  reason: Results were regenerated from the final current head; historical XML remains reference only.
+compatibility:
+  original_runtime: NotConfirmed
+  project_baseline_audit: NotRun
+  isomap: NotImplemented
+  overlay: NotImplemented
+  preview: NotImplemented
+  tmp: NotImplemented
+  rendering: NotImplemented
