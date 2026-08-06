@@ -1,97 +1,25 @@
-> **Source notice:** Prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# Mission state candidates
 
-# Queued Orders, Waypoints, and Patrol
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Official manual evidence
+## Raw identity
 
-The RA2 manual describes `Z` waypoint mode:
+`MissionRaw` preserves exact text, case, whitespace, empty/sentinel candidates, source field/section, product/profile and unknown state. It is not replaced by an enum during parsing.
 
-- selected groups receive multiple waypoint nodes;
-- units wait until waypoint mode is exited;
-- ordinary route nodes are deleted as they are completed;
-- patrol routes can be looped and persist;
-- multiple groups can be configured before synchronized release;
-- nodes may be deleted and adjacent route segments reconnected.
+## Candidate catalog
 
-These are player-facing behavior statements, not a complete savegame or network serialization format.
+Common names include Sleep, Harmless, Guard, Area Guard, Move, Attack, Hunt, Harvest, Enter, Capture, Repair, Deploy, Patrol, Scatter, Stop, Return, Unload and product/extension-specific entries. Catalog order is not an ordinal and completeness is not assumed.
 
-## Queue boundary
+## Evidence
 
-```text
-UIWaypointList
-!= IssuedCommandBatch
-!= CommandQueueDescriptor
-!= RuntimeCommandQueue
-!= PathNodeList
-```
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes named Mission options and editor defaults | `ConfirmedByOfficialToolSource` | EA editor | Official catalog/default behavior only. | Named editor profile. | `NotRun` |
+| WAE/OpenRA/extensions implement mission catalogs and state logic | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
+| Stable mission-name descriptions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Naming convention only. | Preserve raw and applicability. | `NotRun` |
+| Common mission names as semantic candidates | `Underconfirmed` | Tools/community | Runtime aliases, defaults and lifecycle unproven. | Explicit mission catalog profile. | `NotRun` |
+| Missing/unknown defaults, Guard/Hunt/Attack distinctions and mission aliases | `ConflictingSources` | Editors/engines/community | Models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact runtime state/substate/transition and save behavior | `Unresolved` | No runtime source | No complete state machine. | Future simulation adapter. | `NotRun` |
+| Unknown Mission remains raw; no fallback to Guard/Sleep | `DefensiveDesign` | Project policy | Preservation/fail-closed design. | Semantic execution ineligible until profile selected. | `NotRun` |
 
-## Recommended models
-
-```text
-CommandQueueDescriptor
-- OwnerActorStableId
-- QueuePolicyProfile
-- Entries[]
-- ActiveOrdinal
-- Version
-- EvidenceGrade
-
-CommandQueueEntry
-- CommandStableId
-- QueueOrdinal
-- CommandType
-- TargetDescriptor
-- AppendOrReplaceCandidate
-- ValidationSnapshot
-- Status
-
-WaypointRouteDescriptor
-- RouteStableId
-- NodeDescriptors[]
-- LoopCandidate
-- ReleasePolicy
-- AssociatedActors[]
-```
-
-## Queue policies requiring explicit profiles
-
-- Shift append versus replace;
-- normal right-click while queue exists;
-- Stop clears active only versus entire queue;
-- invalid queued target behavior;
-- actor death;
-- partial completion;
-- new explicit command;
-- deployment;
-- entering transport;
-- target ownership change;
-- save/load;
-- replay;
-- multiplayer command batching.
-
-## Waypoint node types
-
-- movement cell;
-- attack actor;
-- attack cell;
-- enter transport/building;
-- repair facility;
-- patrol loop connection;
-- synchronized release marker;
-- extension command;
-- unknown.
-
-A visual node can map to more than one command and is not the authoritative queue entry.
-
-## Patrol
-
-Patrol combines a looped route with an autonomous behavior profile. Route following, target acquisition, chase, leash/return-to-route, and node advancement are separate policies.
-
-## Deterministic requirements
-
-- stable route identity;
-- stable node ordinal;
-- stable actor ordering;
-- stable batch-release tick;
-- explicit invalidation and deletion order;
-- no dictionary ordering or UI callback arrival order.
+`RuntimeMissionSnapshot` is separate and may include mission, phase/substate, target/path, source command, entered tick, interruptibility, completion reason and deterministic state. It never overwrites `MissionRaw`.

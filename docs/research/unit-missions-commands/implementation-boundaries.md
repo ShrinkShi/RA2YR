@@ -1,155 +1,32 @@
-> **Source notice:** Prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# Command taxonomy and request model
 
-# Implementation Boundaries and Candidate Core Design
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Candidate Core models
-
-```text
-MissionTypeRaw
-MissionProfile
-UnitCommandRaw
-UnitCommandDescriptor
-CommandValidationResult
-CommandQueueDescriptor
-CommandQueueEntry
-MissionTransitionCandidate
-AutonomousBehaviorProfile
-AcquisitionPolicy
-RetaliationPolicy
-PursuitPolicy
-LeashPolicy
-HoldPositionPolicy
-TargetPersistencePolicy
-MovementIntent
-TargetingIntent
-FiringIntent
-WaypointRouteDescriptor
-DeployCommandDescriptor
-EnterCommandDescriptor
-TransportOccupancyDescriptor
-GarrisonOccupancyDescriptor
-SelectionDescriptor
-UnitCommandDiagnostic
-UnitCommandReadLimits
-UnitCommandConsistencyAnalysis
-UnitCommandRoundtripDescriptor
-```
-
-Supporting candidates:
+## Command sources
 
 ```text
-StableCommandIdentity
-StableMissionTransitionIdentity
-TargetDescriptor
-CommandCapabilitySnapshot
-CommandAuthoritySnapshot
-PathRequestDescriptor
-OccupancyReservationCandidate
-PassengerEntryDescriptor
-AutonomousDecisionDescriptor
-ProjectControlBindingProfile
+AuthoredInitialMission
+PlayerCommand
+AICommand
+ScriptCommand
+TriggerCommand
+InternalFollowUpCommand
 ```
 
-## Explicit policies
+Each command carries source, priority/arbitration candidate, tick, stable ordinal, queue/replace modifier, actor set, typed target, capability requirements and diagnostics.
 
-```text
-MissionBindingPolicy
-CommandValidationPolicy
-CommandQueuePolicy
-StopPolicy
-HoldPositionPolicy
-GuardPolicy
-AcquisitionPolicy
-RetaliationPolicy
-PursuitPolicy
-LeashPolicy
-TargetPersistencePolicy
-WaypointPolicy
-PatrolPolicy
-DeployPolicy
-EnterPolicy
-TransportPolicy
-GarrisonPolicy
-SelectionPolicy
-HotkeyPolicy
-UnitCommandDeterminismPolicy
-UnitCommandOrderingPolicy
-UnitCommandRoundtripPolicy
-```
+## Evidence
 
-## Command validation result
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes mission/command names and editor parameters | `ConfirmedByOfficialToolSource` | EA editor | Official tool only. | Named editor profile. | `NotRun` |
+| OpenRA/clients/extensions implement command request and queue models | `ImplementationSpecificBehavior` | Named implementations | Target/client-specific. | Keep separate. | `NotRun` |
+| Common Move/Attack/Guard/Harvest/Deploy/etc. command taxonomy | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Names do not prove state transitions. | Preserve raw and product applicability. | `NotRun` |
+| Typed requests with actor/target/modifier candidates | `Underconfirmed` | Tools/community | Exact runtime queue/arbitration and lineage independence unproven. | Explicit command profile. | `NotRun` |
+| Replace/append/front queueing, mixed selection, partial acceptance and command priority | `ConflictingSources` | Engines/clients/extensions | Models differ directly. | Preserve alternatives and per-actor results. | `NotRun` |
+| Exact stock runtime command protocol and arbitration | `Unresolved` | No runtime source | No complete contract. | Future simulation/session adapter. | `NotRun` |
+| Stable IDs, declarative requests and no UI/animation authority | `DefensiveDesign` | Project policy | Determinism/architecture. | Fail closed. | `NotRun` |
 
-Must support multiple reasons:
+## Results
 
-```text
-Accepted
-UnknownCommand
-NotAuthorized
-ActorUnavailable
-CapabilityMissing
-TargetInvalid
-RelationshipInvalid
-OutOfDomain
-PathUnavailable
-CapacityFull
-OccupancyBlocked
-HoldRestriction
-MissionRestriction
-ScenarioRestriction
-ExtensionStateMissing
-Unknown
-```
-
-Validation returns data; it does not mutate actors.
-
-## Deterministic command processing
-
-Recommended ordering tuple:
-
-```text
-SimulationTick
-PlayerStableId
-CommandSequence
-ActorStableId
-QueueOrdinal
-MissionTransitionOrdinal
-TargetStableId
-AutonomousDecisionOrdinal
-```
-
-Simultaneous commands require an explicit conflict policy. No Unity frame time, wall clock, dictionary iteration, Unity instance ID, input callback arrival, render event, or animation event may determine authoritative order.
-
-## Autonomous update contract
-
-```text
-ActorSnapshot
-+ CurrentMissionSnapshot
-+ CommandQueueSnapshot
-+ Hold/Guard profile
-+ NearbyTargetCandidates in stable order
-+ TargetPersistenceSnapshot
-+ LeashSnapshot
-→ AutonomousDecisionCandidate[]
-```
-
-The autonomous subsystem emits intents. Movement, targeting, and combat systems validate and execute separately.
-
-## Save/load and replay
-
-Serialize:
-
-- stable actor/player/command IDs;
-- queue entries and ordinals;
-- current mission profile and transition state;
-- target identity and last-known candidate;
-- Hold/Guard/autonomous policy;
-- leash origin;
-- waypoint route and active node;
-- transport/garrison occupancy order;
-- deterministic RNG state if used.
-
-Do not serialize UI widget references, Unity object IDs, cursor names as authority, or renderer animation progress as mission state.
-
-## Roundtrip
-
-Lossless writer preserves raw mission tokens, numeric spelling, unknown values, duplicates, extension fields, map placement values, and source order. Semantic descriptors and runtime state are separate outputs. No default canonicalization or repair.
+`CommandAcceptanceResult` is per actor and separates syntax, capability, target, current-state and queue-policy outcomes. A command can be partially accepted without deleting rejected actors or rewriting the request. Parser/UI do not mutate missions; simulation emits explicit accepted/rejected/queued/replaced transition commands.

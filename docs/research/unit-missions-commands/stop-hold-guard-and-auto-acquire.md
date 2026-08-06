@@ -1,111 +1,35 @@
-> **Source notice:** Prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# Target typing and validation
 
-# Stop, Hold, Guard, and Autonomous Acquisition
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Stock public evidence
-
-The RA2/YR manuals document:
-
-- `S`: stop selected unit movement;
-- `G`: guard current area;
-- ordinary units may attack approaching enemies;
-- Guard units attack approaching enemies and return to their original position;
-- `H`: center the tactical view on the base, not Hold Position.
-
-Community Mission Control documentation distinguishes Guard, Sticky, Area Guard, Stop, Ambush, Hunt, passive acquisition, and pursuit behavior, but does not constitute official runtime source.
-
-## Project S policy
-
-`S` is `ConfiguredForProjectPolicy`:
+## Target kinds
 
 ```text
-interrupt current explicit command candidate
-clear explicit movement destination
-cancel current path request
-clear explicit attack target candidate
-clear queued orders according to StopQueuePolicy
-retain autonomous-targeting eligibility
-retain retaliation eligibility
-permit legal in-range fire after reevaluation
+None
+Cell
+Object/Actor
+Building
+Unit/Infantry/Aircraft
+ResourceCell
+Waypoint
+House/Player
+Transport/Dock/Refinery/RepairFacility
+Mission/Script-specific reference
+Unknown
 ```
 
-It does not mean:
+Raw target text/identity, candidate domains, resolved references and runtime legality remain separate.
 
-- disable weapons;
-- cease fire permanently;
-- Hold Position;
-- disable passive acquire;
-- delete actor;
-- reset map placement Mission.
+## Evidence
 
-## Project H policy
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes command/script target parameter catalogs | `ConfirmedByOfficialToolSource` | EA editor | Official editor behavior only. | Named editor profile. | `NotRun` |
+| OpenRA/clients/extensions implement typed target validation | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
+| Common object/cell/waypoint/House target conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw/reference provenance. | `NotRun` |
+| Typed target candidates based on command kind | `Underconfirmed` | Tools/community | Exact runtime conversion and lineage independence unproven. | Explicit target profile. | `NotRun` |
+| Cell/object conversion, missing target, target loss, fog, ownership and command-specific legality | `ConflictingSources` | Engines/clients/extensions | Models differ directly. | Preserve alternatives and diagnostics. | `NotRun` |
+| Exact stock runtime target resolution and validation order | `Unresolved` | No runtime source | No complete contract. | Future world-query/simulation adapter. | `NotRun` |
+| Never select a target domain because lookup/path/render succeeds | `DefensiveDesign` | Project policy | Plausibility probing prohibited. | Fail closed on ambiguity. | `NotRun` |
 
-`H` is `ConfiguredForProjectPolicy` and intentionally replaces the stock camera binding in the project control scheme:
-
-```text
-HoldPositionActive = true
-LeashOrigin = current authoritative position
-AutonomousMovementAllowed = false
-AutonomousChaseAllowed = false
-Explicit movement accepted later clears hold
-InPlaceTurnAllowed = policy input
-InPlaceAimAllowed = policy input
-InPlaceFireAllowed = policy input
-PassiveAcquireAllowed = policy input
-RetaliationAllowed = policy input
-```
-
-Hold Position is not cease-fire. It is closest to a Sticky-like no-pursuit policy, but must not be called the stock Sticky mission without evidence.
-
-## Project G policy
-
-`G` opens an autonomous-behavior configuration GUI:
-
-```text
-GuardEnabled
-AutoAttackEnabled
-RetaliationEnabled
-PursuitEnabled
-LeashEnabled
-LeashRadius
-TargetCategories
-TargetPersistence
-ThreatPreference
-ReturnToOriginPolicy
-```
-
-Opening or changing the GUI does not itself create a stock Guard command unless a future explicit adapter translates a chosen profile into simulation commands.
-
-## Autonomous behavior model
-
-```text
-AutonomousBehaviorProfile
-AcquisitionPolicy
-RetaliationPolicy
-PursuitPolicy
-LeashPolicy
-HoldPositionPolicy
-TargetPersistencePolicy
-```
-
-Do not collapse these into `Aggressive=true/false`.
-
-## Passive acquisition and retaliation
-
-Ares documents that manual target selection, autonomous acquisition, and retaliation are distinct. Its `NoManualFire` can disable manual targeting while retaining autonomous targeting and retaliation. Ares also separates passive acquisition behavior in Guard and Area Guard. This is extension evidence supporting the architecture, not stock defaults.
-
-## Decision order candidate
-
-```text
-explicit command authority
-→ current hold/mission restrictions
-→ target eligibility
-→ retaliation candidate
-→ passive acquisition candidate
-→ target persistence candidate
-→ pursuit/leash candidate
-→ movement intent
-→ firing intent
-```
-
-The order remains a future simulation policy.
+`CommandTargetCandidate` records raw source, target-kind candidates, identity/coordinate profiles, resolution candidates and ambiguity. `TargetValidationResult` separately reports existence, capability, ownership, range/path/line-of-fire, occupancy, visibility and runtime-state reasons without mutating the request.

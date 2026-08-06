@@ -1,132 +1,28 @@
-> **Source notice:** Prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# Implementation boundaries
 
-# Mission Records and Command Identities
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Mission source families
+## Models
 
-Mission-like values may originate from:
+`MissionIdentityRaw`, `MissionDescriptor`, `CommandRequest`, `CommandTarget`, `CommandAcceptanceResult`, `CommandQueueDescriptor`, `RuntimeMissionSnapshot`, `MissionTransitionCommand/Result`, `EngagementPolicy`, `ScriptCommandCandidate`, `MissionCapabilityDescriptor`, diagnostics, limits and roundtrip descriptors.
 
-- map placement records;
-- Rules mission-control sections;
-- TeamType/ScriptType actions;
-- Trigger actions;
-- AI configuration;
-- type defaults;
-- player-issued commands;
-- autonomous simulation transitions;
-- deploy/repair/transport subsystems;
-- extension providers.
+## Formal grades
 
-These sources are not interchangeable.
+All evidence-bearing values use exactly one normalized grade. Source, Notes, Policy and AuditStatus are separate. No reviewed claim has original-runtime-source confirmation.
 
-## Candidate mission tokens
-
-Preserve raw occurrences for at least:
+## Policy
 
 ```text
-Sleep
-Attack
-Move
-QMove / Waypoint-like queued move
-Retreat
-Guard
-Sticky
-Enter
-Capture
-Eaten
-Harvest
-Area Guard
-Return
-Stop
-Ambush
-Hunt
-Unload
-Sabotage
-Construction
-Selling
-Repair
-Rescue
-Missile
-Harmless
-Open
-Patrol
-Paradrop Approach
-Paradrop Overfly
-Wait
-Spyplane Approach
-Spyplane Overfly
-Deploy
-special/extension missions
+PolicyClassification: DefensiveDesign
+AuditStatus: NotRun
 ```
 
-Community sources disagree across TS, RA2, and YR about numeric positions because RA2 inserts additional missions. Therefore ordinal binding requires an explicit product profile and cannot be inferred from one shared enum.
+Preserve raw Mission/action/argument/target tokens, duplicates, unknowns and sentinels; require explicit product/extension/catalog/target/queue/transition profiles; no fallback to Guard, no enum-by-list-order, no automatic target conversion, no mission execution during parsing, stable command/transition IDs, canonical actor ordering, bounded queues and checked arithmetic; no animation, cursor, UI or Unity authority.
 
-## Recommended raw models
+## Layering
 
-```text
-MissionTypeRaw
-- RawToken
-- RawNumericCandidate
-- SourceKind
-- SourceSection
-- SourceKey
-- OccurrenceOrdinal
-- ProductProfile
-- ExtensionProvider
-- EvidenceGrade
-- Diagnostics
+Parser/Core owns immutable descriptors. Session/UI emits commands. AI/Script/Trigger adapters emit declarative requests. Simulation owns capability checks, queue arbitration, target validation, path/combat/harvest/dock/repair/capture/deploy state and mission transitions. Presentation owns cursor, animation, audio and feedback. None rewrites authored Mission or Script text.
 
-MissionProfile
-- StableMissionProfileId
-- CanonicalFamilyCandidate
-- ApplicableActorCategories
-- PerpetualCandidate
-- MovementCandidate
-- TargetingCandidate
-- FiringCandidate
-- CompletionCandidate
-- TransitionPermissions
-```
+## Roundtrip
 
-## Command identity
-
-```text
-UnitCommandRaw
-- RawCommandKind
-- RawTarget
-- ModifierKeys
-- QueueModifier
-- IssuingPlayer
-- LocalInputSequence
-- SourceUI
-- ProductProfile
-
-UnitCommandDescriptor
-- StableCommandType
-- RequiredCapabilities
-- TargetDomain
-- QueuePolicyCandidate
-- MissionTransitionCandidate
-```
-
-## Explicit distinctions
-
-```text
-MapPlacementMissionRaw
-!= RulesDefaultMission
-!= ScriptAssignMission
-!= IssuedCommand
-!= AcceptedCommand
-!= CurrentMission
-!= PendingMissionTransition
-```
-
-A placed unit with `Mission=Guard` can later receive Move, Attack, Enter, or scripted commands. Parsing must never treat the placement token as current savegame state.
-
-## Script mission evidence
-
-The official EA mission editor exposes Team Script operations such as Attack, Move to waypoint/cell, Guard area for a duration, Unload, Deploy, Load onto transport, Patrol, Scatter, and “Do this” mission assignment. This is editor/script evidence, not the original unit mission executor.
-
-## Invalid and unknown values
-
-Unknown strings, negative numbers, out-of-range numbers, empty values, duplicate values, case collisions, and extension missions remain structured. They are not converted to Guard, Sleep, Stop, or NoOp without a named policy.
+Preserve exact Mission spelling/case/whitespace, Script action/argument text, queue modifiers, target references, unknown tails, duplicates and source provenance. Runtime mission snapshots and command history are save/replay state, not source-map rewrite.

@@ -1,76 +1,32 @@
-> **Source notice:** Prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# Guard, hold, stop and engagement policy
 
-# Layer and Domain Boundaries
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Frozen layers
+## Distinct policies
 
 ```text
-1. ordered Rules/map/AI documents
-2. raw placement and script references
-3. mission token and command identity views
-4. product/extension profile binding
-5. immutable command-capability descriptors
-6. runtime snapshots supplied by simulation
-7. command validation result
-8. deterministic command queue
-9. mission transition and autonomous-policy candidates
-10. movement/targeting/firing/occupancy intents
-11. future simulation systems
-12. future UI and presentation adapters
+StopCommand
+HoldPositionPolicy
+GuardMission
+AreaGuardMission
+EngagementPolicy
+AutoAcquirePolicy
+PursuitPolicy
+ReturnToAnchorPolicy
 ```
 
-## Forbidden layer leaks
+Stop interrupts/clears current orders under a profile; hold constrains movement; guard/area-guard describe ongoing behavior; auto-fire, pursuit and return are separate.
 
-- Map parser does not create an actor or set a live mission.
-- Rules binder does not scan the world for targets.
-- Mission binder does not request paths.
-- Command validator does not mutate actor state.
-- Queue does not execute movement or weapon fire.
-- Autonomous policy does not render target lines.
-- Renderer animations do not authorize mission transitions.
-- Selection UI does not determine command ownership.
-- Transport UI pips do not determine capacity.
-- Core does not instantiate `GameObject`, `NavMeshAgent`, `Collider`, `LineRenderer`, `Button`, or cursor objects.
+## Evidence
 
-## Coordinate and identity domains
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes Guard/Area Guard/Stop-related mission names | `ConfirmedByOfficialToolSource` | EA editor | Official catalog only. | Named editor profile. | `NotRun` |
+| OpenRA/clients/extensions implement guard, stance, hold and pursuit | `ImplementationSpecificBehavior` | Named implementations | Target/client-specific. | Keep separate profiles. | `NotRun` |
+| Stable Guard/Area Guard/Stop/Scatter conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw mission/command identity. | `NotRun` |
+| Guard with autonomous acquisition/pursuit as a common candidate | `Underconfirmed` | Tools/community | Exact ranges, return behavior and runtime applicability unproven. | Explicit engagement profile. | `NotRun` |
+| Stop versus Guard reset, Hold attack behavior, pursuit and return-to-origin | `ConflictingSources` | Engines/clients/community | Models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact stock runtime mission interruption and guard lifecycle | `Unresolved` | No runtime source | No complete state machine. | Future simulation adapter. | `NotRun` |
+| S/H/G-like controls remain UI policy and never rewrite source Mission | `DefensiveDesign` | Project policy | Architecture boundary. | UI emits explicit commands/policies. | `NotRun` |
 
-Keep separate:
-
-- raw map placement identity;
-- actor type identity;
-- runtime actor stable identity;
-- player stable identity;
-- target actor identity;
-- target cell identity;
-- scenario waypoint identity;
-- UI waypoint-node identity;
-- path node identity;
-- transport occupancy slot;
-- garrison occupant slot;
-- control-group slot;
-- render selection marker.
-
-## State ownership
-
-| State | Owner |
-|---|---|
-| raw Mission token | map/Rules document |
-| command capability | Core descriptor |
-| issued command | input/session layer |
-| accepted command | deterministic simulation |
-| current mission | actor simulation |
-| path request/result | movement subsystem |
-| target acquisition | targeting subsystem |
-| firing permission | combat subsystem |
-| passenger list | transport simulation |
-| selection | local UI/session |
-| control groups | local or synchronized policy |
-| animation | presentation |
-
-## Raw versus derived
-
-Raw strings, numeric spelling, duplicates, case, unknown tokens, extension keys, and source provenance are preserved. Derived mission families, command categories, validation outcomes, and autonomous policies are separate serializable views.
-
-## Input contracts
-
-Memory, seekable Stream, short-read Stream, and exact MIX-window inputs must feed one logical reader behavior. Budgets cover mission tokens, command definitions, waypoint nodes, queue entries, transport slots, occupants, diagnostics, and graph edges. Checked arithmetic and no-progress guards are mandatory.
+Hold/stop units may still attack under an explicit engagement policy, but parser does not assume this as stock behavior. Auto-acquisition, retaliation, pursuit distance, lost-target handling and return anchor are separate deterministic inputs/results.

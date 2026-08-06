@@ -1,66 +1,58 @@
-> **Source notice:** Prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# Source comparison and evidence boundaries
 
-# Source Comparison and Licensing
+> **Source notice:** Public-source research only. ProjectBaseline was not read. All implementations are reference-only. `code_imported: false`.
 
-## Source classes
+## Formal grades
 
-| Source | Pin/revision | Category | Product scope | License/boundary |
-|---|---|---|---|---|
-| EA FinalSun/FinalAlert 2 editor | `6abf0f557469baea73079c6bf6550709e2e3584e` | official editor | TS/RA2/YR map and AI authoring | GPL-3.0-or-later; editor evidence only |
-| RA2/YR user manuals | preserved public PDF/manual mirrors | official user documentation | RA2/YR controls and waypoints | behavior documentation; no runtime source |
-| OpenRA | `a520984d91eda9de48a62b1d15c1e3bad0d4fb1a` | independent implementation | reimplementation architecture | GPL-3.0-or-later; reference-only |
-| Ares docs | versioned 3.0 documentation | extension/runtime patch docs | YR + Ares | extension-only; no vanilla promotion |
-| ModEnc Mission Control / ScriptActions | fixed/current revisions where available | community documentation | TS/RA2/YR comparison | community evidence |
-| PPM forums | fixed topic URLs | community/tutorial | TS/RA2/YR/Ares | anecdotal and tutorial evidence |
-| RA2 DIY | stable tutorial/catalog references where locatable | community | Chinese modding community | reference-only |
-| Phobos | versioned docs/source references | extension | YR + Phobos | extension-only |
-| Vinifera/TS++ | versioned docs/source references | extension | TS lineage | not transferable to YR by default |
-| CnCNet client | pinned client repository where relevant | client/UI | launch/client behavior | not original game runtime |
-| Chrono Divide | pinned public SDK where relevant | independent implementation | browser reimplementation | implementation-specific |
-| openra2/Vanguard | pinned public source where relevant | reimplementation/shared lineage | RA2-oriented | avoid double-counting lineage |
+```text
+ConfirmedByOriginalRuntimeSource
+ConfirmedByOfficialToolSource
+ConfirmedByMultipleIndependentImplementations
+ConfirmedCommunityConvention
+ImplementationSpecificBehavior
+DefensiveDesign
+ConflictingSources
+Underconfirmed
+Unresolved
+```
 
-## Load-bearing findings
+No complete original mission runtime source was found and no claim has proven independent implementation lineages sufficient for the multiple-independent grade.
 
-### Official manual
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
 
-Supports:
+## Sources
 
-- S stop movement;
-- G guard current area;
-- Z waypoint creation/release;
-- patrol loops;
-- D deploy/eject;
-- control groups and type selection;
-- H camera-center-on-base.
+| Source | Support | Limits/grade |
+|---|---|---|
+| EA FinalSun/FinalAlert 2 `6abf0f…` | Mission/Script/editor catalogs and validation | `ConfirmedByOfficialToolSource`; not runtime lifecycle |
+| OpenRA `a52098…` | explicit target-engine orders/activities/stances | `ImplementationSpecificBehavior` |
+| WAE/MapTool/CNCMaps/CnCNet | named editor/tool/client behavior | `ImplementationSpecificBehavior` |
+| Chrono Divide | browser reimplementation command model | `ImplementationSpecificBehavior` |
+| Ares/Phobos/Vinifera | extension missions/scripts/commands | `ImplementationSpecificBehavior`; extension-only |
+| ModEnc/PPM/RA2 DIY | mission/script/command naming conventions | `ConfirmedCommunityConvention` or `Underconfirmed` |
+| XCC/openra2 lineage | shared format/tool knowledge | not independent runtime evidence |
 
-It does not specify internal enum ordinals, savegame representation, target scan algorithm, chase distance, queue serialization, or network ordering.
+## Retained conflicts
 
-### Official mission editor
+Mission catalogs/aliases/defaults; Guard/Area Guard/Hunt/Attack/Stop/Hold behavior; command queue replace/append and mixed-selection acceptance; target typing and cell/object/reference conversion; Script action mapping, retry/failure/advance; player/AI/Script/Trigger arbitration; Move/Attack/Harvest/Enter/Repair/Capture/Deploy/Patrol/Scatter lifecycle; target loss, interruption, return, save/load and deterministic ordering.
 
-`ScriptTypes.cpp` exposes editor Team Script actions including Attack, Move, Guard area with duration, Unload, Deploy, Load onto Transport, Patrol, Scatter, and mission assignment. This confirms editor-facing script concepts, not the original unit mission executor or numeric Mission Control enum.
+Direct differences are `ConflictingSources`; common candidates without runtime/lineage proof are `Underconfirmed`; complete runtime behavior is `Unresolved`.
 
-### ModEnc/community
+## Evidence summary
 
-Provides the strongest public cross-game mission-name/ordinal comparison and descriptions of Guard, Sticky, Area Guard, Stop, Ambush, Hunt, Enter, Capture, Unload, Construction, Selling, Repair, Patrol, and later RA2/YR additions. These remain `CommunityDocumented`.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert mission/script catalogs | `ConfirmedByOfficialToolSource` | EA editor | Official tool only. | Named editor profile. | `NotRun` |
+| Named engine/tool/client/extension models | `ImplementationSpecificBehavior` | Public implementations | Separate profiles. | No source-count voting. | `NotRun` |
+| Stable mission/command names | `ConfirmedCommunityConvention` | Community docs | Naming convention only. | Product/provider provenance. | `NotRun` |
+| Common request/target/mission candidates | `Underconfirmed` | Tools/community | Runtime strictness and independence unproven. | Explicit profiles. | `NotRun` |
+| Queue, target, guard and lifecycle semantics | `ConflictingSources` | Sources above | Direct model differences. | Preserve alternatives. | `NotRun` |
+| Exact runtime mission state machine | `Unresolved` | No runtime source | No complete contract. | Future simulation adapter. | `NotRun` |
+| Raw preservation/no execution/determinism | `DefensiveDesign` | Project policy | Safety/architecture. | Fail closed. | `NotRun` |
 
-### Ares
+## License boundary
 
-Provides explicit extension evidence separating:
-
-- manual targeting from auto-acquire and retaliation;
-- Guard versus Area Guard passive acquisition;
-- cursor visibility from AI/script permissions;
-- manual enter/unload from transport capability;
-- passenger filters and size policies;
-- passenger survival;
-- garrison and deploy cursor conflicts.
-
-No Ares extension is treated as stock YR behavior.
-
-### OpenRA and other reimplementations
-
-Useful for architectural proof that orders, activities, pathing, targeting, cargo, selection, and presentation can be separated. Their class layouts, algorithms, tick rates, RNG, queue semantics, and UI behavior are not Westwood facts.
-
-## License rule
-
-No GPL or unclear-license production logic, enum table, switch, test fixture, or algorithm was copied, translated, or mechanically ported. `code_imported: false`.
+Do not copy mission/AI/path/combat algorithms, switches, source-shaped pseudocode or proprietary fixtures. Use factual field/name/reference observations, neutral original schemas, provenance and independent synthetic tests.

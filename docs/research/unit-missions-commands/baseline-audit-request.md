@@ -1,77 +1,31 @@
-> **Source notice:** Prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# AI and Script command boundaries
 
-# Future ProjectBaseline Sanitized Audit Request
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Status
-
-Design only. Do not run in this research task. Any future result is graded only as:
+## Separation
 
 ```text
-ObservedByFutureProjectBaselineAudit
+ScriptTypeStepRaw
+Team/AI order candidate
+Player command request
+Authored placement Mission
+Runtime mission state
+Runtime command queue
+AI planner state
 ```
 
-It does not confirm original runtime compatibility.
+A Script step or editor list entry is declarative input, not an executed mission transition.
 
-## Selection basis
+## Evidence
 
-A future read-only Codex audit may select representative sanitized inputs by broad category only:
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes Script/Mission catalogs and editor validation | `ConfirmedByOfficialToolSource` | EA editor | Official tool behavior only. | Named editor profile. | `NotRun` |
+| OpenRA/WAE/Chrono Divide/extensions implement AI/Script command execution | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
+| Stable Script action and mission-name conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw action/argument tokens. | `NotRun` |
+| Script steps producing typed command candidates | `Underconfirmed` | Tools/community | Exact runtime mapping and lineage independence unproven. | Explicit Script profile. | `NotRun` |
+| Team recruitment, Script advancement, retries, failure, target selection and player override | `ConflictingSources` | Engines/extensions/community | Models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact stock runtime AI planner/Script/mission transition behavior | `Unresolved` | No runtime source | No complete state machine. | Future AI/simulation adapter. | `NotRun` |
+| Parser does not execute or repair Script commands and keeps stable step identity | `DefensiveDesign` | Project policy | Preservation/architecture. | Fail closed. | `NotRun` |
 
-- placement families containing Mission fields;
-- Rules mission-control presence;
-- Team/Script mission-reference presence;
-- actor-category capability fields;
-- transport/garrison fields;
-- deploy/enter-related fields;
-- broad waypoint/queue-shape candidates.
-
-The public report must not expose file names, map names, paths, type names, or record text.
-
-## Permitted aggregate output
-
-- mission section/token presence;
-- broad actor categories;
-- raw text versus numeric mission-shape counts;
-- known/unknown/ambiguous binding counts;
-- product-profile classification counts;
-- command-capability category counts;
-- autonomous-policy field-presence counts;
-- transport/garrison field-presence counts;
-- coarse queue/waypoint shape histograms;
-- duplicate/case/empty/invalid counts;
-- diagnostic category counts;
-- bounded-input and no-progress outcomes;
-- non-linkable aggregate hashes;
-- Memory/Stream/short-read/MIX equivalence.
-
-## Forbidden output
-
-- type, unit, building, team, or transport names;
-- map/scenario names or paths;
-- INI text or token text;
-- exact mission sequences or enum values per object;
-- object positions;
-- target or ownership graph;
-- waypoint coordinates or route topology;
-- transport passenger contents;
-- garrison occupant contents;
-- Trigger, Tag, Script, TeamType, or AI IDs;
-- exact hotkeys or client configuration;
-- screenshots, renders, cursors, or UI captures;
-- per-map/per-type hashes;
-- hex, Base64, compressed or decoded bytes;
-- any information sufficient to reconstruct a mission, team script, unit configuration, or map.
-
-## Audit checks
-
-1. Raw input modes yield equivalent aggregate results.
-2. No original content appears in diagnostics or exception messages.
-3. Unknown mission tokens remain unknown.
-4. Placement Mission is not reported as runtime state.
-5. No command, path, target, mission transition, transport mutation, or selection is executed.
-6. No Unity object is created.
-7. Budgets and checked arithmetic fail closed.
-8. Aggregate hashes are dataset-level and non-linkable.
-
-## Publication gate
-
-A human reviewer must verify the report against the forbidden-output list before publication. Audit observations cannot change compatibility matrices, ADRs, or implementation status from this branch.
+`ScriptCommandCandidate` records Script/step identity, raw action/argument, command-kind candidates, target/reference candidates, retry/completion profile and diagnostics. It never invokes actor methods. AI and player commands share an explicit arbitration interface but remain distinct sources with provenance and deterministic ordering.

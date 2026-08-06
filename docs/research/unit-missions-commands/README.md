@@ -1,73 +1,61 @@
-> **Source notice:** Prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# M3-R16 — Unit missions and command semantics dossier
 
-# M3-R16 Unit Missions, Commands, Autonomous Behavior, Waypoints, Deploy, and Transport Research
+> **Source notice:** ChatGPT Web public-source research only. ProjectBaseline was not read. Public implementations are reference-only; no mission, command, AI, pathfinding, targeting, combat or Unity code was copied or ported. `code_imported: false`.
 
-## Scope
-
-This dossier studies declarative inputs and responsibility boundaries needed for a future RA2/YR-compatible unit-command system. It does not implement mission parsing, command execution, pathfinding, targeting, transport logic, selection, or Unity objects.
-
-Frozen candidate pipeline:
+## Boundary
 
 ```text
-raw Rules/map/AI references
-→ mission and command raw identities
-→ explicit product/extension profiles
-→ command validation candidate
-→ deterministic command queue
-→ mission transition candidate
-→ autonomous targeting and movement policy
-→ future simulation and UI adapters
+raw map/Rules/Script/command inputs
+→ mission/command identity candidates
+→ typed target and capability candidates
+→ declarative command requests
+→ deterministic transition/result contracts
+→ future simulation, AI and UI adapters
 ```
 
-## Non-collapsible identities
+Parsing never moves, attacks, guards, deploys, harvests, enters, repairs, captures, patrols, scatters, stops or mutates actors.
+
+## Non-collapse rules
+
+Authored placement Mission, ScriptType action, player command, AI order, current runtime mission, queued command and locomotor/combat substate are distinct. A mission name or editor dropdown item does not define a complete runtime state machine. `Stop`, `Guard`, `Area Guard`, hold-position and target engagement policies remain separate.
+
+## Formal grades
 
 ```text
-MapPlacementMissionRaw
-!= MissionTypeRaw
-!= ScriptMissionArgumentRaw
-!= IssuedCommand
-!= AcceptedCommand
-!= CurrentRuntimeMission
-!= MovementIntent
-!= TargetingIntent
-!= FiringIntent
-!= AutonomousChaseIntent
-!= AnimationState
+ConfirmedByOriginalRuntimeSource
+ConfirmedByOfficialToolSource
+ConfirmedByMultipleIndependentImplementations
+ConfirmedCommunityConvention
+ImplementationSpecificBehavior
+DefensiveDesign
+ConflictingSources
+Underconfirmed
+Unresolved
 ```
 
-## Project S/H/G policy
+No complete original RA2/YR mission runtime source was found and no claim has proven independent implementation lineages sufficient for the multiple-independent grade. FinalAlert behavior is official-tool evidence; named engines/tools/extensions are implementation-specific; stable community mission names are community conventions; cross-tool candidates remain underconfirmed; command/transition conflicts remain conflicting; complete runtime lifecycle is unresolved.
 
-These bindings are project policy, not stock RA2/YR facts:
+Raw preservation, explicit target/capability/queue/lifecycle policies, no mission fallback, stable command identities, checked arithmetic, no execution during parsing and no UI/animation authority are `DefensiveDesign`.
 
-- `S`: interrupt explicit command candidates, clear movement/path/explicit attack targets, but do not disable legal autonomous fire.
-- `H`: Hold Position until the next explicit command; forbid autonomous movement and chase, while allowing in-place turning, aiming, and legal firing.
-- `G`: open the project autonomous-behavior GUI; it does not directly issue stock Guard.
-- Evidence grade: `ConfiguredForProjectPolicy`.
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
 
-Stock public evidence differs: the RA2/YR manuals describe `S` as stopping movement, `G` as guarding the current area, `Z` as waypoint mode, `D` as deploy, and `H` as centering the camera on the base.
+These fields do not imply ProjectBaseline access and cannot promote compatibility or runtime evidence.
 
-## Main conclusions
+## Normalized claims
 
-- Map placement `Mission` is an authored starting-state candidate, not a saved current runtime mission.
-- Community mission-number lists are useful profile evidence but are not official runtime enum source.
-- Guard, Area Guard, Sticky/Hold-like behavior, Hunt, Ambush, Stop, and Attack are distinct profiles.
-- Stop, Hold Position, cease-fire, passive acquisition, retaliation, and chase are separate controls.
-- UI cursors and hotkeys propose commands; simulation validates and accepts them.
-- Queue presentation is not the simulation queue.
-- Transport capacity, passenger eligibility, embark, occupancy, unload, and passenger survival are separate.
-- Selection and control groups never establish command authority or simulation ownership.
-- Core remains independent of `UnityEngine`.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes Mission/Script/command catalogs and editor validation | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor only. | Named editor profile. | `NotRun` |
+| OpenRA/WAE/Chrono Divide/extensions implement mission/command models | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
+| Stable Guard/Move/Attack/Harvest/Enter/Repair/Capture/etc. names | `ConfirmedCommunityConvention` | ModEnc/PPM/RA2 DIY | Naming convention, not lifecycle proof. | Preserve raw tokens/product applicability. | `NotRun` |
+| Common command/request and mission candidates | `Underconfirmed` | Tools/community | Runtime strictness and lineage independence unproven. | Explicit profiles. | `NotRun` |
+| Guard/hold/stop, queueing, target typing, mission replacement and Script semantics | `ConflictingSources` | Engines/extensions/community | Public models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact runtime state transitions, interruption, persistence and AI/player precedence | `Unresolved` | No runtime source | No complete contract. | Future deterministic simulation adapter. | `NotRun` |
+| Declarative requests, no fallback/execution and stable lifecycle IDs | `DefensiveDesign` | Project policy | Preservation/architecture. | Fail closed. | `NotRun` |
 
-## Evidence grades
+## Non-goals
 
-- `ConfirmedByOfficialRuntimeSource`
-- `ConfirmedByOfficialEditorSource`
-- `ConfirmedByIndependentImplementation`
-- `CommunityDocumented`
-- `ObservedByFutureProjectBaselineAudit`
-- `ConfiguredForProjectPolicy`
-- `Unresolved`
-
-## Files
-
-The remaining files define layer boundaries, mission identities, autonomous behavior, movement and attack, waypoints, special commands, transports, UI, source comparison, implementation design, 184 test cases, a sanitized future audit, and P0 unresolved questions.
+No mission parser/executor, command queue, locomotion, pathfinding, combat, harvesting, docking, repair, capture, deployment, AI, UI, Unity, ProjectBaseline audit or compatibility promotion is included.
