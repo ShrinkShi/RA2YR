@@ -30,7 +30,7 @@ Parameter6Raw
 
 That is one opcode plus seven parameter slots, eight tokens per Action tuple.
 
-This is strong independent-editor evidence for TS/RA2/YR map storage. It is not complete original-runtime source evidence.
+This is strong WAE editor evidence, graded `ImplementationSpecificBehavior`, for TS/RA2/YR map storage. It is not complete original-runtime source evidence.
 
 ## 3. Why all seven slots must remain
 
@@ -99,7 +99,7 @@ For every numeric opcode, distinguish:
 2. official editor display name;
 3. editor parameter labels;
 4. community name;
-5. independent implementation behavior;
+5. named public implementation behavior;
 6. extension documentation;
 7. original runtime behavior.
 
