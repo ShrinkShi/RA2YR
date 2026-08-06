@@ -327,6 +327,44 @@ sources:
       - "The pinned tree contains no CSF implementation or CSF format documentation and is not WP-02E evidence."
       - "WP-02G2 used only observable field and registry presence to bound a minimal projection; OpenRA defaults and runtime behavior were not adopted as stock YR semantics."
 
+  - id: openra-format80-map-reference-a520984
+    name: "OpenRA LCW/Format80 map compression reference"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/OpenRA/OpenRA"
+      commit: "https://github.com/OpenRA/OpenRA/commit/a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+      observed_location: "../Reference/ThirdParty/OpenRA-bleed (logical external location)"
+    version_or_hash:
+      commit: "a520984d91eda9de48a62b1d15c1e3bad0d4fb1a"
+    license:
+      spdx: "GPL-3.0-or-later"
+      verification: "upstream COPYING and source headers"
+    purpose: "Format80/LCW command-family and explicit position-mode behavior reference only"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "clean-room behavior reference; no source, translation, or binary imported"
+    approval_status: "approved-reference-only"
+
+  - id: wae-format80-reference-b4c948
+    name: "WAE Format80 and map compression reference"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/Westwood-Editors/WAE"
+      commit: "b4c948 reference pin recorded in map-compression dossier"
+      observed_location: "../Reference/ThirdParty/WAE (logical external location)"
+    version_or_hash:
+      commit: "b4c948 dossier pin"
+    license:
+      spdx: "Unverified-reference-only"
+      verification: "recorded in the map-compression research ledger; no code reuse approved"
+    purpose: "Independent Format80 command and absolute-position cross-check"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source or binary imported"
+    approval_status: "approved-reference-only-no-reuse"
+
   - id: iron-curtain-cnc-formats-pal-77da596
     name: "iron-curtain-engine/cnc-formats PAL, CSF, and SHP(TS) implementation"
     source:
