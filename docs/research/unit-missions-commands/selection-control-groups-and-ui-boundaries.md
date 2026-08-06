@@ -1,29 +1,34 @@
-# Move, attack, harvest, enter, repair and capture
+# Selection, control groups, and UI boundaries
 
 > **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Typed command families
+## Separation
 
-- Move: cell/object/formation target, path request, arrival radius, queue policy.
-- Attack: object/cell target, weapon/targeting eligibility, approach/line-of-fire candidates.
-- Harvest: resource target/search, reservation, cargo/refinery follow-up candidates.
-- Enter: building/transport/refinery/dock target and acceptance policy.
-- Repair: repair facility/object/self candidates and cost/ownership policy.
-- Capture: capturable target, engineer/capability, ownership and post-capture transition.
-- Deploy/Undeploy: transformation/placement transaction.
-- Patrol: waypoint/path cycle and engagement policy.
-- Scatter: short displacement policy, not a complete mission state by name alone.
+```text
+LocalSelection
+ControlGroupMembership
+CommandAuthority
+Owned/Controllable Actor Set
+IssuedCommandBatch
+PerActorAcceptance
+Cursor/Hotkey/Feedback
+RuntimeMissionState
+```
+
+Selection and control groups do not establish ownership, command authority or simulation state. UI proposes commands; simulation validates each actor deterministically.
 
 ## Evidence
 
 | Claim | Grade | Source | Notes | Policy | AuditStatus |
 |---|---|---|---|---|---|
-| FinalAlert exposes these Mission names and authoring parameters | `ConfirmedByOfficialToolSource` | EA editor | Official catalog only. | Named editor profile. | `NotRun` |
-| OpenRA/clients/extensions implement each command family | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
-| Stable community descriptions of command families | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw names/product scope. | `NotRun` |
-| Typed target/capability request model | `Underconfirmed` | Tools/community | Exact runtime acceptance/lifecycle unproven. | Explicit command profiles. | `NotRun` |
-| Approach, queueing, target loss, resource/refinery, transport, repair, capture and deploy semantics | `ConflictingSources` | Engines/extensions/community | Models differ directly. | Preserve alternatives. | `NotRun` |
-| Exact stock runtime state transitions and side effects | `Unresolved` | No runtime source | No complete contracts. | Future simulation adapters. | `NotRun` |
-| Parser creates no path/combat/economy/ownership mutation | `DefensiveDesign` | Project policy | Architecture boundary. | Commands/results separate. | `NotRun` |
+| Official manuals/editor expose command names, hotkeys and authoring labels | `ConfirmedByOfficialToolSource` | EA manuals and FinalAlert | Official tool/documentation behavior only. | Named UI/editor profile. | `NotRun` |
+| CnCNet/OpenRA/other clients implement selection and command UI | `ImplementationSpecificBehavior` | Named clients/engines | Client/target-specific. | Keep separate profiles. | `NotRun` |
+| Stable selection, control-group and command-feedback conventions | `ConfirmedCommunityConvention` | Manuals/community docs | Convention only. | Preserve surface provenance. | `NotRun` |
+| Batch command with per-actor validation as an architecture candidate | `Underconfirmed` | Clients/engines/community | Exact stock authority and lineage independence unproven. | Explicit session/command profile. | `NotRun` |
+| Hotkeys, mixed-selection behavior, control-group persistence and feedback timing | `ConflictingSources` | Clients/engines/platforms | Public models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact stock multiplayer/local authority and UI synchronization | `Unresolved` | No original-runtime source located | No complete contract. | Future session/UI adapters. | `NotRun` |
+| UI state is non-authoritative and never rewrites Mission/queue state | `DefensiveDesign` | Project policy | Architecture boundary. | UI emits explicit requests only. | `NotRun` |
 
-A target/reference resolving successfully does not prove legality. Capability, current state, ownership, path, occupancy, weapon, cargo, refinery, transport and mode checks remain simulation queries. Partial or failed results preserve the original request and deterministic reason codes.
+## S/H/G policy
+
+Project-specific S/H/G bindings are represented in an independent Policy field or as `DefensiveDesign`; they are not external runtime evidence. Cursor, animation, sound, health bars, route lines and command feedback are downstream presentation and cannot trigger authoritative transitions.

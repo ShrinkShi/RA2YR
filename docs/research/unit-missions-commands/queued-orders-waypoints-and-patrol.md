@@ -1,25 +1,35 @@
-# Mission state candidates
+# Queued orders, waypoints, and patrol
 
 > **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Raw identity
+## Distinct structures
 
-`MissionRaw` preserves exact text, case, whitespace, empty/sentinel candidates, source field/section, product/profile and unknown state. It is not replaced by an enum during parsing.
+```text
+IssuedCommandBatch
+PerActorAcceptanceResult
+SimulationCommandQueue
+QueueEntry
+ScenarioWaypointIdentity
+UIWaypointNode
+PatrolRoute
+PathNode
+RuntimeRouteProgress
+```
 
-## Candidate catalog
-
-Common names include Sleep, Harmless, Guard, Area Guard, Move, Attack, Hunt, Harvest, Enter, Capture, Repair, Deploy, Patrol, Scatter, Stop, Return, Unload and product/extension-specific entries. Catalog order is not an ordinal and completeness is not assumed.
+UI waypoint lines and command batches are presentation/input artifacts; they are not the authoritative simulation queue or path.
 
 ## Evidence
 
 | Claim | Grade | Source | Notes | Policy | AuditStatus |
 |---|---|---|---|---|---|
-| FinalAlert exposes named Mission options and editor defaults | `ConfirmedByOfficialToolSource` | EA editor | Official catalog/default behavior only. | Named editor profile. | `NotRun` |
-| WAE/OpenRA/extensions implement mission catalogs and state logic | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
-| Stable mission-name descriptions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Naming convention only. | Preserve raw and applicability. | `NotRun` |
-| Common mission names as semantic candidates | `Underconfirmed` | Tools/community | Runtime aliases, defaults and lifecycle unproven. | Explicit mission catalog profile. | `NotRun` |
-| Missing/unknown defaults, Guard/Hunt/Attack distinctions and mission aliases | `ConflictingSources` | Editors/engines/community | Models differ directly. | Preserve alternatives. | `NotRun` |
-| Exact runtime state/substate/transition and save behavior | `Unresolved` | No runtime source | No complete state machine. | Future simulation adapter. | `NotRun` |
-| Unknown Mission remains raw; no fallback to Guard/Sleep | `DefensiveDesign` | Project policy | Preservation/fail-closed design. | Semantic execution ineligible until profile selected. | `NotRun` |
+| FinalAlert exposes waypoint and mission/script authoring fields | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor behavior only. | Named editor profile. | `NotRun` |
+| OpenRA, clients and extensions implement queues, waypoints and patrols | `ImplementationSpecificBehavior` | Named implementations | Target/client-specific. | Keep separate profiles. | `NotRun` |
+| Stable queued-order/waypoint/patrol authoring conventions | `ConfirmedCommunityConvention` | Manuals/ModEnc/PPM/community docs | Convention only. | Preserve raw order and identity. | `NotRun` |
+| Ordered command entries and route-node candidates | `Underconfirmed` | Tools/community | Exact runtime limits and lineage independence unproven. | Explicit queue/route profile. | `NotRun` |
+| Replace/append/front insertion, route looping, failure handling and patrol engagement | `ConflictingSources` | Engines/clients/extensions/community | Public models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact stock queue ownership, maximums, transition and save/load behavior | `Unresolved` | No original-runtime source located | No complete contract. | Future deterministic simulation adapter. | `NotRun` |
+| Stable IDs/order, bounded queues and no UI/path-node authority | `DefensiveDesign` | Project policy | Determinism/architecture. | Fail closed. | `NotRun` |
 
-`RuntimeMissionSnapshot` is separate and may include mission, phase/substate, target/path, source command, entered tick, interruptibility, completion reason and deterministic state. It never overwrites `MissionRaw`.
+## Determinism
+
+Entries carry simulation tick, player/actor stable IDs, command sequence, queue ordinal, target identity and selected policy. Mixed selections may accept commands per actor without deleting rejected actors. Missing/duplicate waypoint references, route gaps and unknown modifiers remain explicit diagnostics rather than repaired routes.

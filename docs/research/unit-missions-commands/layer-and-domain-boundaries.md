@@ -1,32 +1,20 @@
-# Guard, hold, stop and engagement policy
+# Layer and domain boundaries
 
 > **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Distinct policies
+## Domains
 
-```text
-StopCommand
-HoldPositionPolicy
-GuardMission
-AreaGuardMission
-EngagementPolicy
-AutoAcquirePolicy
-PursuitPolicy
-ReturnToAnchorPolicy
-```
-
-Stop interrupts/clears current orders under a profile; hold constrains movement; guard/area-guard describe ongoing behavior; auto-fire, pursuit and return are separate.
+Keep distinct: authored placement Mission, Rules mission default, Script action/argument, Team/AI order, player command, Trigger command, runtime mission identity, command queue entry, locomotor/path state, combat target state, animation/cursor and Unity/UI object.
 
 ## Evidence
 
 | Claim | Grade | Source | Notes | Policy | AuditStatus |
 |---|---|---|---|---|---|
-| FinalAlert exposes Guard/Area Guard/Stop-related mission names | `ConfirmedByOfficialToolSource` | EA editor | Official catalog only. | Named editor profile. | `NotRun` |
-| OpenRA/clients/extensions implement guard, stance, hold and pursuit | `ImplementationSpecificBehavior` | Named implementations | Target/client-specific. | Keep separate profiles. | `NotRun` |
-| Stable Guard/Area Guard/Stop/Scatter conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw mission/command identity. | `NotRun` |
-| Guard with autonomous acquisition/pursuit as a common candidate | `Underconfirmed` | Tools/community | Exact ranges, return behavior and runtime applicability unproven. | Explicit engagement profile. | `NotRun` |
-| Stop versus Guard reset, Hold attack behavior, pursuit and return-to-origin | `ConflictingSources` | Engines/clients/community | Models differ directly. | Preserve alternatives. | `NotRun` |
-| Exact stock runtime mission interruption and guard lifecycle | `Unresolved` | No runtime source | No complete state machine. | Future simulation adapter. | `NotRun` |
-| S/H/G-like controls remain UI policy and never rewrite source Mission | `DefensiveDesign` | Project policy | Architecture boundary. | UI emits explicit commands/policies. | `NotRun` |
+| FinalAlert exposes mission/script/editor fields | `ConfirmedByOfficialToolSource` | EA editor | Official tool only. | Named editor profile. | `NotRun` |
+| Named engines/tools/clients map fields into runtime command domains | `ImplementationSpecificBehavior` | Public implementations | Target-specific architecture. | Comparison only. | `NotRun` |
+| Common authored Mission and Script-to-command candidates | `Underconfirmed` | Tools/community | Runtime mapping and lineage independence unproven. | Domain-tagged binding. | `NotRun` |
+| Similar labels reused for source records, requests, state and UI | `ConflictingSources` | Editors/engines/clients/community | Layer meanings differ. | Never merge by name alone. | `NotRun` |
+| Exact stock runtime domain/state ownership | `Unresolved` | No runtime source | No complete model. | Future simulation adapter. | `NotRun` |
+| Immutable descriptors, no execution and no Unity/UI authority | `DefensiveDesign` | Project policy | Architecture boundary. | Fail closed. | `NotRun` |
 
-Hold/stop units may still attack under an explicit engagement policy, but parser does not assume this as stock behavior. Auto-acquisition, retaliation, pursuit distance, lost-target handling and return anchor are separate deterministic inputs/results.
+A mission name does not create locomotion/combat state. A cursor/animation does not prove command acceptance. A Script argument matching a waypoint/object does not select the target domain by plausibility. Runtime state never rewrites authored records.

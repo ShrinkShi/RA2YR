@@ -1,35 +1,32 @@
-# Target typing and validation
+# Guard, hold, stop and engagement policy
 
 > **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Target kinds
+## Distinct policies
 
 ```text
-None
-Cell
-Object/Actor
-Building
-Unit/Infantry/Aircraft
-ResourceCell
-Waypoint
-House/Player
-Transport/Dock/Refinery/RepairFacility
-Mission/Script-specific reference
-Unknown
+StopCommand
+HoldPositionPolicy
+GuardMission
+AreaGuardMission
+EngagementPolicy
+AutoAcquirePolicy
+PursuitPolicy
+ReturnToAnchorPolicy
 ```
 
-Raw target text/identity, candidate domains, resolved references and runtime legality remain separate.
+Stop interrupts/clears current orders under a profile; hold constrains movement; guard/area-guard describe ongoing behavior; auto-fire, pursuit and return are separate.
 
 ## Evidence
 
 | Claim | Grade | Source | Notes | Policy | AuditStatus |
 |---|---|---|---|---|---|
-| FinalAlert exposes command/script target parameter catalogs | `ConfirmedByOfficialToolSource` | EA editor | Official editor behavior only. | Named editor profile. | `NotRun` |
-| OpenRA/clients/extensions implement typed target validation | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
-| Common object/cell/waypoint/House target conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw/reference provenance. | `NotRun` |
-| Typed target candidates based on command kind | `Underconfirmed` | Tools/community | Exact runtime conversion and lineage independence unproven. | Explicit target profile. | `NotRun` |
-| Cell/object conversion, missing target, target loss, fog, ownership and command-specific legality | `ConflictingSources` | Engines/clients/extensions | Models differ directly. | Preserve alternatives and diagnostics. | `NotRun` |
-| Exact stock runtime target resolution and validation order | `Unresolved` | No runtime source | No complete contract. | Future world-query/simulation adapter. | `NotRun` |
-| Never select a target domain because lookup/path/render succeeds | `DefensiveDesign` | Project policy | Plausibility probing prohibited. | Fail closed on ambiguity. | `NotRun` |
+| FinalAlert exposes Guard/Area Guard/Stop-related mission names | `ConfirmedByOfficialToolSource` | EA editor | Official catalog only. | Named editor profile. | `NotRun` |
+| OpenRA/clients/extensions implement guard, stance, hold and pursuit | `ImplementationSpecificBehavior` | Named implementations | Target/client-specific. | Keep separate profiles. | `NotRun` |
+| Stable Guard/Area Guard/Stop/Scatter conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw mission/command identity. | `NotRun` |
+| Guard with autonomous acquisition/pursuit as a common candidate | `Underconfirmed` | Tools/community | Exact ranges, return behavior and runtime applicability unproven. | Explicit engagement profile. | `NotRun` |
+| Stop versus Guard reset, Hold attack behavior, pursuit and return-to-origin | `ConflictingSources` | Engines/clients/community | Models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact stock runtime mission interruption and guard lifecycle | `Unresolved` | No runtime source | No complete state machine. | Future simulation adapter. | `NotRun` |
+| S/H/G-like controls remain UI policy and never rewrite source Mission | `DefensiveDesign` | Project policy | Architecture boundary. | UI emits explicit commands/policies. | `NotRun` |
 
-`CommandTargetCandidate` records raw source, target-kind candidates, identity/coordinate profiles, resolution candidates and ambiguity. `TargetValidationResult` separately reports existence, capability, ownership, range/path/line-of-fire, occupancy, visibility and runtime-state reasons without mutating the request.
+Hold/stop units may still attack under an explicit engagement policy, but parser does not assume this as stock behavior. Auto-acquisition, retaliation, pursuit distance, lost-target handling and return anchor are separate deterministic inputs/results.

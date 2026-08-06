@@ -1,31 +1,55 @@
-# AI and Script command boundaries
+# Future ProjectBaseline sanitized audit request
 
-> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
+> **Source notice:** This audit was not run and ProjectBaseline was not read. `code_imported: false`.
 
-## Separation
+## Status
 
 ```text
-ScriptTypeStepRaw
-Team/AI order candidate
-Player command request
-Authored placement Mission
-Runtime mission state
-Runtime command queue
-AI planner state
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
 ```
 
-A Script step or editor list entry is declarative input, not an executed mission transition.
+These fields are not an evidence grade. Future aggregates cannot become original-runtime evidence, alter policy or promote compatibility.
 
-## Evidence
+## Allowed aggregates
 
-| Claim | Grade | Source | Notes | Policy | AuditStatus |
-|---|---|---|---|---|---|
-| FinalAlert exposes Script/Mission catalogs and editor validation | `ConfirmedByOfficialToolSource` | EA editor | Official tool behavior only. | Named editor profile. | `NotRun` |
-| OpenRA/WAE/Chrono Divide/extensions implement AI/Script command execution | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
-| Stable Script action and mission-name conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw action/argument tokens. | `NotRun` |
-| Script steps producing typed command candidates | `Underconfirmed` | Tools/community | Exact runtime mapping and lineage independence unproven. | Explicit Script profile. | `NotRun` |
-| Team recruitment, Script advancement, retries, failure, target selection and player override | `ConflictingSources` | Engines/extensions/community | Models differ directly. | Preserve alternatives. | `NotRun` |
-| Exact stock runtime AI planner/Script/mission transition behavior | `Unresolved` | No runtime source | No complete state machine. | Future AI/simulation adapter. | `NotRun` |
-| Parser does not execute or repair Script commands and keeps stable step identity | `DefensiveDesign` | Project policy | Preservation/architecture. | Fail closed. | `NotRun` |
+Broad product/unit-family categories; Mission/Script/command field presence; anonymous command-kind and target-kind counts; recognized/unknown mission/action categories; queue/replace/modifier and lifecycle-state categories; capability/target-validation diagnostic counts; guard/hold/stop/engagement classifications; non-linkable aggregate hashes; Memory/Stream/short-read/MIX equivalence.
 
-`ScriptCommandCandidate` records Script/step identity, raw action/argument, command-kind candidates, target/reference candidates, retry/completion profile and diagnostics. It never invokes actor methods. AI and player commands share an explicit arbitration interface but remain distinct sources with provenance and deterministic ordering.
+## Forbidden output
+
+No map/type/actor/House/Team/Script names or IDs, INI text, exact mission/action tokens or argument sequences, ordered command queues, target identities/positions/routes, state-machine traces, AI/Trigger data, Rules/Art/resource IDs, screenshots, bytes/hex/Base64, per-map/per-actor/per-command hashes or reconstructable behavior.
+
+## Discipline
+
+Compare only preselected mission-catalog, command, target, queue, guard/hold/stop, Script, AI arbitration, transition and lifecycle profiles. Never select by successful movement/attack, familiar animation, fewer diagnostics or one game's visible behavior. Multiple successes remain ambiguous.
+
+## Safety
+
+Read-only; bounded files/bytes/sections/tokens/commands/diagnostics/runtime; no game/editor/Unity execution; no actor commands, movement, combat, harvesting or AI simulation; no ProjectBaseline modification. These are `DefensiveDesign` requirements.
+
+## Report
+
+```text
+AuditMetadata
+- AuditStatus = NotRun
+- FutureEvidenceSource = ProjectBaselineAggregateAudit
+- SelectionBasis
+- SelectedProfiles
+
+MissionCommandAggregate
+- MissionAndActionCategories
+- CommandTargetBuckets
+- QueueTransitionCategories
+- GuardEngagementCategories
+- DiagnosticCounts
+- InputModeEquivalence
+- AggregateHash
+- CurrentEvidenceGrade
+
+DisclosureReview
+- ForbiddenFieldCheck
+- MinimumGroupSizeCheck
+- ReconstructabilityReview
+```
+
+Stop without publication if identities/sequences cannot be removed, a category identifies behavior/map, a hash is linkable, limits fail, input modes diverge without bounded diagnostics, or any operation would modify ProjectBaseline.

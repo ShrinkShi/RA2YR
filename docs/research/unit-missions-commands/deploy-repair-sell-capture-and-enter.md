@@ -1,55 +1,36 @@
-# Future ProjectBaseline sanitized audit request
+# Deploy, repair, sell, capture, and enter
 
-> **Source notice:** This audit was not run and ProjectBaseline was not read. `code_imported: false`.
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Status
+## Command boundaries
 
-```text
-AuditStatus: NotRun
-FutureEvidenceSource: ProjectBaselineAggregateAudit
-```
-
-These fields are not an evidence grade. Future aggregates cannot become original-runtime evidence, alter policy or promote compatibility.
-
-## Allowed aggregates
-
-Broad product/unit-family categories; Mission/Script/command field presence; anonymous command-kind and target-kind counts; recognized/unknown mission/action categories; queue/replace/modifier and lifecycle-state categories; capability/target-validation diagnostic counts; guard/hold/stop/engagement classifications; non-linkable aggregate hashes; Memory/Stream/short-read/MIX equivalence.
-
-## Forbidden output
-
-No map/type/actor/House/Team/Script names or IDs, INI text, exact mission/action tokens or argument sequences, ordered command queues, target identities/positions/routes, state-machine traces, AI/Trigger data, Rules/Art/resource IDs, screenshots, bytes/hex/Base64, per-map/per-actor/per-command hashes or reconstructable behavior.
-
-## Discipline
-
-Compare only preselected mission-catalog, command, target, queue, guard/hold/stop, Script, AI arbitration, transition and lifecycle profiles. Never select by successful movement/attack, familiar animation, fewer diagnostics or one game's visible behavior. Multiple successes remain ambiguous.
-
-## Safety
-
-Read-only; bounded files/bytes/sections/tokens/commands/diagnostics/runtime; no game/editor/Unity execution; no actor commands, movement, combat, harvesting or AI simulation; no ProjectBaseline modification. These are `DefensiveDesign` requirements.
-
-## Report
+Deploy, undeploy, repair, sell, capture, infiltration, sabotage, ordinary Enter, transport entry, garrison entry, refinery docking and grinder entry are separate command families even when they share cursor, approach or occupancy logic.
 
 ```text
-AuditMetadata
-- AuditStatus = NotRun
-- FutureEvidenceSource = ProjectBaselineAggregateAudit
-- SelectionBasis
-- SelectedProfiles
-
-MissionCommandAggregate
-- MissionAndActionCategories
-- CommandTargetBuckets
-- QueueTransitionCategories
-- GuardEngagementCategories
-- DiagnosticCounts
-- InputModeEquivalence
-- AggregateHash
-- CurrentEvidenceGrade
-
-DisclosureReview
-- ForbiddenFieldCheck
-- MinimumGroupSizeCheck
-- ReconstructabilityReview
+RawCommand
+→ capability and relationship queries
+→ typed target validation
+→ path/approach candidate
+→ reservation candidate
+→ accepted command
+→ mission transition candidate
+→ future subsystem result
 ```
 
-Stop without publication if identities/sequences cannot be removed, a category identifies behavior/map, a hash is linkable, limits fail, input modes diverge without bounded diagnostics, or any operation would modify ProjectBaseline.
+The parser and binder do not create/delete actors, transfer ownership, change health, charge/refund credits or mutate occupancy.
+
+## Evidence
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes deploy/repair/sell/capture/enter fields and command catalogs | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official editor behavior only. | Named editor profile. | `NotRun` |
+| OpenRA, clients and extensions implement these command families | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate profiles. | `NotRun` |
+| Stable command names and authoring conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/RA2 DIY | Convention only. | Preserve raw tokens/product applicability. | `NotRun` |
+| Typed capability/target/approach contracts | `Underconfirmed` | Tools/community | Runtime ordering and lineage independence unproven. | Explicit command profile. | `NotRun` |
+| Capture versus infiltration, repair modes, sell/deploy interactions and Enter target domains | `ConflictingSources` | Engines/extensions/community | Public models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact stock runtime transitions, refunds, transfer state and cancellation behavior | `Unresolved` | No original-runtime source located | No complete state machine. | Future deterministic simulation adapter. | `NotRun` |
+| No mutation during parsing and explicit transfer/reservation policies | `DefensiveDesign` | Project policy | Preservation/architecture. | Fail closed. | `NotRun` |
+
+## Required separation
+
+Deploy transformations preserve explicit owner, health, ammo, veterancy, cargo, passenger, mission and placement transfer candidates. Repair separates cursor, facility/weapon mode, cost and mission state. Sell separates UI mode, command, deconstruction, refund and survivor candidates. Capture/infiltration/sabotage never collapse into ordinary Enter. Cancellation preserves deterministic reason codes and the original request.

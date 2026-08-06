@@ -1,28 +1,25 @@
-# Implementation boundaries
+# Mission state candidates
 
 > **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Models
+## Raw identity
 
-`MissionIdentityRaw`, `MissionDescriptor`, `CommandRequest`, `CommandTarget`, `CommandAcceptanceResult`, `CommandQueueDescriptor`, `RuntimeMissionSnapshot`, `MissionTransitionCommand/Result`, `EngagementPolicy`, `ScriptCommandCandidate`, `MissionCapabilityDescriptor`, diagnostics, limits and roundtrip descriptors.
+`MissionRaw` preserves exact text, case, whitespace, empty/sentinel candidates, source field/section, product/profile and unknown state. It is not replaced by an enum during parsing.
 
-## Formal grades
+## Candidate catalog
 
-All evidence-bearing values use exactly one normalized grade. Source, Notes, Policy and AuditStatus are separate. No reviewed claim has original-runtime-source confirmation.
+Common names include Sleep, Harmless, Guard, Area Guard, Move, Attack, Hunt, Harvest, Enter, Capture, Repair, Deploy, Patrol, Scatter, Stop, Return, Unload and product/extension-specific entries. Catalog order is not an ordinal and completeness is not assumed.
 
-## Policy
+## Evidence
 
-```text
-PolicyClassification: DefensiveDesign
-AuditStatus: NotRun
-```
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes named Mission options and editor defaults | `ConfirmedByOfficialToolSource` | EA editor | Official catalog/default behavior only. | Named editor profile. | `NotRun` |
+| WAE/OpenRA/extensions implement mission catalogs and state logic | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate. | `NotRun` |
+| Stable mission-name descriptions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Naming convention only. | Preserve raw and applicability. | `NotRun` |
+| Common mission names as semantic candidates | `Underconfirmed` | Tools/community | Runtime aliases, defaults and lifecycle unproven. | Explicit mission catalog profile. | `NotRun` |
+| Missing/unknown defaults, Guard/Hunt/Attack distinctions and mission aliases | `ConflictingSources` | Editors/engines/community | Models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact runtime state/substate/transition and save behavior | `Unresolved` | No runtime source | No complete state machine. | Future simulation adapter. | `NotRun` |
+| Unknown Mission remains raw; no fallback to Guard/Sleep | `DefensiveDesign` | Project policy | Preservation/fail-closed design. | Semantic execution ineligible until profile selected. | `NotRun` |
 
-Preserve raw Mission/action/argument/target tokens, duplicates, unknowns and sentinels; require explicit product/extension/catalog/target/queue/transition profiles; no fallback to Guard, no enum-by-list-order, no automatic target conversion, no mission execution during parsing, stable command/transition IDs, canonical actor ordering, bounded queues and checked arithmetic; no animation, cursor, UI or Unity authority.
-
-## Layering
-
-Parser/Core owns immutable descriptors. Session/UI emits commands. AI/Script/Trigger adapters emit declarative requests. Simulation owns capability checks, queue arbitration, target validation, path/combat/harvest/dock/repair/capture/deploy state and mission transitions. Presentation owns cursor, animation, audio and feedback. None rewrites authored Mission or Script text.
-
-## Roundtrip
-
-Preserve exact Mission spelling/case/whitespace, Script action/argument text, queue modifiers, target references, unknown tails, duplicates and source provenance. Runtime mission snapshots and command history are save/replay state, not source-map rewrite.
+`RuntimeMissionSnapshot` is separate and may include mission, phase/substate, target/path, source command, entered tick, interruptibility, completion reason and deterministic state. It never overwrites `MissionRaw`.

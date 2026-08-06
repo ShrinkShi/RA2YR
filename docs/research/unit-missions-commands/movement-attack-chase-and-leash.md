@@ -1,20 +1,36 @@
-# Layer and domain boundaries
+# Movement, attack, chase, and leash
 
 > **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## Domains
+## State split
 
-Keep distinct: authored placement Mission, Rules mission default, Script action/argument, Team/AI order, player command, Trigger command, runtime mission identity, command queue entry, locomotor/path state, combat target state, animation/cursor and Unity/UI object.
+```text
+MoveCommand
+AttackCommand
+MovementIntent
+TargetingIntent
+FiringIntent
+PathDestination
+WeaponTarget
+AutonomousChaseTarget
+LeashOrigin
+ReturnIntent
+```
+
+A command request does not itself authorize movement or fire. Pathfinding, targeting and combat validate separate snapshots and produce deterministic results.
 
 ## Evidence
 
 | Claim | Grade | Source | Notes | Policy | AuditStatus |
 |---|---|---|---|---|---|
-| FinalAlert exposes mission/script/editor fields | `ConfirmedByOfficialToolSource` | EA editor | Official tool only. | Named editor profile. | `NotRun` |
-| Named engines/tools/clients map fields into runtime command domains | `ImplementationSpecificBehavior` | Public implementations | Target-specific architecture. | Comparison only. | `NotRun` |
-| Common authored Mission and Script-to-command candidates | `Underconfirmed` | Tools/community | Runtime mapping and lineage independence unproven. | Domain-tagged binding. | `NotRun` |
-| Similar labels reused for source records, requests, state and UI | `ConflictingSources` | Editors/engines/clients/community | Layer meanings differ. | Never merge by name alone. | `NotRun` |
-| Exact stock runtime domain/state ownership | `Unresolved` | No runtime source | No complete model. | Future simulation adapter. | `NotRun` |
-| Immutable descriptors, no execution and no Unity/UI authority | `DefensiveDesign` | Project policy | Architecture boundary. | Fail closed. | `NotRun` |
+| FinalAlert exposes Move/Attack/Guard/Hunt/Patrol mission names and parameters | `ConfirmedByOfficialToolSource` | EA FinalSun / FinalAlert 2 | Official catalog only. | Named editor profile. | `NotRun` |
+| OpenRA, clients and extensions implement movement, attack and pursuit models | `ImplementationSpecificBehavior` | Named implementations | Target/profile-specific. | Keep separate profiles. | `NotRun` |
+| Stable Move/Attack/Hunt/Guard/chase terminology | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw identity/product scope. | `NotRun` |
+| Explicit movement/target/firing intents and leash candidates | `Underconfirmed` | Tools/community | Exact stock lifecycle and lineage independence unproven. | Explicit engagement profile. | `NotRun` |
+| Attack-move, target persistence, pursuit distance, lost-target behavior and return-to-anchor | `ConflictingSources` | Engines/clients/extensions/community | Public models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact runtime transition, path retry, chase and leash behavior | `Unresolved` | No original-runtime source located | No complete state machine. | Future deterministic movement/combat adapters. | `NotRun` |
+| No path/target selection during parsing and stable tie-breaking | `DefensiveDesign` | Project policy | Determinism/architecture. | Fail closed. | `NotRun` |
 
-A mission name does not create locomotion/combat state. A cursor/animation does not prove command acceptance. A Script argument matching a waypoint/object does not select the target domain by plausibility. Runtime state never rewrites authored records.
+## Boundaries
+
+Hold Position can forbid movement while an independent engagement policy permits in-place aiming or firing. Stop, target loss and new explicit commands may clear different subsets under an explicit profile. Camera, animation, cursor and renderer state never authorize movement, chase or attack.
