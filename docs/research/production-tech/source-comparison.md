@@ -1,77 +1,57 @@
-> **Source notice:** This document was prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# Source comparison and evidence boundaries
 
-# Source comparison
+> **Source notice:** Public-source research only. ProjectBaseline was not read. All implementations are reference-only. `code_imported: false`.
 
-## Evidence matrix
+## Formal grades
 
-| Topic | Official editor | OpenRA | Ares | ModEnc / PPM | Result |
+```text
+ConfirmedByOriginalRuntimeSource
+ConfirmedByOfficialToolSource
+ConfirmedByMultipleIndependentImplementations
+ConfirmedCommunityConvention
+ImplementationSpecificBehavior
+DefensiveDesign
+ConflictingSources
+Underconfirmed
+Unresolved
+```
+
+No complete original production runtime source was found and no claim has proven independent implementation lineages sufficient for the multiple-independent grade.
+
+```text
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
+```
+
+## Sources
+
+| Source | Support | Limits/grade |
+|---|---|---|
+| EA FinalSun/FinalAlert 2 `6abf0f…` | editor registries/type fields/validation | `ConfirmedByOfficialToolSource`; not runtime |
+| OpenRA `a52098…` | explicit production/queue/placement model | `ImplementationSpecificBehavior` |
+| WAE/MapTool/CNCMaps/CnCNet | named editor/tool/client behavior | `ImplementationSpecificBehavior` |
+| Ares/Phobos/Vinifera | extension prerequisites/factories/queues/upgrades | `ImplementationSpecificBehavior`; extension-only |
+| ModEnc/PPM/RA2 DIY | registry, Owner, prerequisite, TechLevel, Cost/time, factory/sidebar conventions | `ConfirmedCommunityConvention` or `Underconfirmed` |
+| XCC/openra2 lineage | shared format/tool knowledge | not independent runtime evidence |
+
+## Retained conflicts
+
+Registry enumeration and unlisted definitions; Owners/Country/Side/House identity; prerequisite grammar/generic groups/stolen tech; TechLevel/BuildLimit scope; cost/time units and modifier order; shared/per-factory/category queues; credits payment/refund; low-power/multiple-factory/capture behavior; completion/exit/placement; deploy/upgrade state transfer; sidebar visibility/order/resources.
+
+Direct differences are `ConflictingSources`; common candidates without runtime/lineage proof are `Underconfirmed`; complete runtime behavior is `Unresolved`.
+
+## Evidence summary
+
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
 |---|---|---|---|---|---|
-| type registry ordinal | editor performs Rules/type lookup | independent actor definitions | extends stock registries | documents registry constraints and bugs | preserve raw registry identity and gaps |
-| prerequisite grammar | editor exposes data but not full runtime evaluator | explicit prerequisite traits | negative, alternative, theater, stolen-tech and factory-plan extensions | stock/community grammar claims | explicit grammar profiles |
-| factory category | type/editor evidence | Production and Exit are separate traits | `BuiltAt`, explicit factories and cloning | factory tutorials and shared-queue reports | capability and exit remain separate |
-| TechLevel | field/editor/community evidence | independent prerequisite system | extension interaction | numeric behavior claims | authored/session/UI separation |
-| BuildLimit | no complete public runtime source | independent limit implementations | fixes and extensions | detailed community observations | explicit counting policy |
-| cost/time | editor displays values | target-engine ticks and queue policy | per-type build-time controls | community formulas | no Westwood unit inferred |
-| queue ownership | no complete runtime source | several queue families | AI parallel/load-sharing extensions | stock shared-category queue reports | product-profile policy |
-| placement | authoring/editor behavior | independent footprint/buildability | irregular foundation extensions | community observations | simulation query separate from preview |
-| sidebar | editor is not runtime sidebar | independent widget layer | UI queue/hotkey extensions | sorting claims | UI is downstream |
-| capture/power | metadata only | explicit runtime traits | many extensions | community behavior | future simulation policy |
+| FinalAlert production fields/catalogs | `ConfirmedByOfficialToolSource` | EA editor | Official tool only. | Named editor profile. | `NotRun` |
+| Named engine/tool/client/extension models | `ImplementationSpecificBehavior` | Public implementations | Separate profiles. | No source-count voting. | `NotRun` |
+| Stable production/tech/sidebar conventions | `ConfirmedCommunityConvention` | Community docs | Convention only. | Product/provider provenance. | `NotRun` |
+| Common registries/availability/factory candidates | `Underconfirmed` | Tools/community | Runtime strictness and independence unproven. | Explicit profiles. | `NotRun` |
+| Grammar, queue, payment, modifiers and placement | `ConflictingSources` | Sources above | Direct model differences. | Preserve alternatives. | `NotRun` |
+| Exact runtime production state machine | `Unresolved` | No runtime source | No complete contract. | Future simulation adapter. | `NotRun` |
+| Raw preservation/no execution/determinism | `DefensiveDesign` | Project policy | Safety/architecture. | Fail closed. | `NotRun` |
 
-## EA FinalSun / FinalAlert 2
+## License boundary
 
-Pinned revision: `6abf0f557469baea73079c6bf6550709e2e3584e`.
-
-Relevant paths include `MissionEditor/MapData.cpp` and `MissionEditor/Defines.h`. License headers state GPL-3.0-or-later.
-
-The official editor is authoritative for editor data handling only. Editor defaults and recovery behavior are not original runtime production facts.
-
-## OpenRA
-
-Pinned revision: `a520984d91eda9de48a62b1d15c1e3bad0d4fb1a`, GPL-3.0-or-later.
-
-Relevant architecture paths include:
-
-- `OpenRA.Mods.Common/Traits/Buildable.cs`;
-- `OpenRA.Mods.Common/Traits/Player/ProductionQueue.cs`;
-- `OpenRA.Mods.Common/Traits/Player/ClassicProductionQueue.cs`;
-- `OpenRA.Mods.Common/Traits/Player/ParallelProductionQueue.cs`;
-- `OpenRA.Mods.Common/Traits/Production.cs`;
-- `OpenRA.Mods.Common/Traits/Buildings/Building.cs`;
-- `OpenRA.Mods.Common/Traits/Buildings/Exit.cs`;
-- production tooltip widget logic.
-
-The separation is useful architecture evidence. YAML, ticks, placement, queue and transaction algorithms are independent implementation choices.
-
-## Ares
-
-Versioned Ares 3.0 documentation is strong evidence for named extension fields and stated bug fixes. Relevant pages cover prerequisites, generic groups, negative prerequisites, factory-owner plans, `BuiltAt`, cloning, BuildTime, Factory Plant, powered units and UI queue extensions.
-
-Every such field carries `ExtensionProvider=Ares` and version provenance.
-
-## ModEnc
-
-Permanent/current revisions for `BuildLimit`, `Cost`, `BuildTime` and `BuildTimeMultiplier` provide detailed community claims. They remain `CommunityDocumented` unless supported by stronger evidence.
-
-## PPM and RA2 DIY
-
-Forums and tutorials are conflict discovery and practical behavior evidence. Individual examples do not define a universal parser or runtime contract.
-
-## Shared lineage
-
-XCC-derived, OpenRA-derived and community-derived implementations are not counted as independent confirmations when they share code or documentation ancestry.
-
-## Unresolved source gaps
-
-No complete public RA2/YR source was found for:
-
-- production availability precedence;
-- exact prerequisite grammar;
-- BuildLimit counting sets;
-- shared versus per-factory queues;
-- credits deduction/refund order;
-- construction-time rounding;
-- capture/queue transfer;
-- completion and blocked-exit behavior;
-- sidebar visibility and sorting.
-
-All reviewed code is reference-only; `code_imported: false`.
+Do not copy production/queue algorithms, prerequisite evaluators, switches, formulas, source-shaped pseudocode or proprietary fixtures. Use factual field/reference observations, neutral original schemas, provenance and independent synthetic tests.

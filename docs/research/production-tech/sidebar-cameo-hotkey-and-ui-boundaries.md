@@ -1,119 +1,32 @@
-> **Source notice:** This document was prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
+# Sidebar visibility and UI boundaries
 
-# Sidebar, cameo, hotkey and UI boundaries
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
 
-## UI input contracts
-
-```text
-LogicalProductionAvailability
-ProductionQueueSnapshot
-SidebarEntryDescriptor
-CameoReference
-TooltipReference
-HotkeyCandidate
-ProgressPresentation
-```
-
-The sidebar may render available, disabled, hidden, queued, active, paused, ready or blocked states. It does not decide those states.
-
-## Candidate references
-
-- `Image`;
-- `Cameo`;
-- `AltCameo`;
-- UI name / CSF label;
-- category and tab;
-- registry and explicit sort order;
-- TechLevel;
-- displayed Cost;
-- displayed BuildTime;
-- queue count;
-- BuildLimit count;
-- hotkey candidate;
-- client/UI overrides;
-- extension PCX or alternative cameo providers.
-
-Core stores logical references and diagnostics. It does not load SHP, PCX, palettes or CSF text.
-
-## Sorting candidates
+## Separation
 
 ```text
-ProductionCategoryPriority
-RegistryOrdinal
-AuthoredSidebarOrder
-TechLevelCandidate
-DisplayedCostCandidate
-LocalizedDisplayName
-ProviderSpecificOrder
-StableTypeIdentity
+LogicalTypeIdentity
+AvailabilityResult
+SidebarVisibilityCandidate
+SidebarCategory/Order
+Cameo/Name/TooltipReferences
+Hotkey/BuildTab
+QueueProgressPresentation
+RuntimeQueueState
 ```
 
-ModEnc documents cost ordering among objects of equal TechLevel as a community behavior candidate. The final comparator remains profile-specific.
+A visible button is not proof of producibility; a missing cameo is not proof that a type is unavailable.
 
-Dictionary iteration, Unity hierarchy order and locale-dependent string order must not become implicit simulation ordering.
+## Evidence
 
-## Hotkeys
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes type/UI-related authored fields | `ConfirmedByOfficialToolSource` | EA editor | Official editor behavior only. | Named editor profile. | `NotRun` |
+| CnCNet/OpenRA/Ares/Phobos implement sidebar/category/filter behavior | `ImplementationSpecificBehavior` | Named implementations | Client/engine/extension-specific. | Keep separate UI profiles. | `NotRun` |
+| Common Image/Cameo/UIName/BuildCat/sidebar conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Logical references and provenance retained. | `NotRun` |
+| Visibility based on type/category/availability as a leading candidate | `Underconfirmed` | Tools/community | Runtime/client precedence and lineage independence unproven. | Explicit UI query profile. | `NotRun` |
+| Hidden/show policies, sorting, alternate cameos, stolen tech, observer and mode behavior | `ConflictingSources` | Clients/extensions/community | Models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact stock sidebar visibility/order/hotkeys/progress behavior | `Unresolved` | No runtime/client source contract | No complete universal rule. | Future UI adapter. | `NotRun` |
+| UI is non-authoritative and missing resources do not alter type identity | `DefensiveDesign` | Project policy | Architecture boundary. | UI consumes immutable availability/queue snapshots. | `NotRun` |
 
-Preserve:
-
-- raw key or character;
-- locale;
-- client override;
-- category context;
-- duplicate candidates;
-- disabled command;
-- platform mapping;
-- extension command provider.
-
-A duplicate hotkey is a UI diagnostic, not a type-registry collision.
-
-## Queue interaction commands
-
-```text
-RequestProduction
-RequestRepeat
-PauseQueue
-ResumeQueue
-HoldQueue
-CancelOne
-CancelAllOfType
-ReorderCandidate
-EnterPlacementMode
-CancelPlacement
-```
-
-Ares adds Shift-click bulk queueing for units. This is an extension UI command and does not redefine Core queue semantics.
-
-## Progress presentation
-
-Displayed clocks and bars consume normalized snapshots. Animation time does not advance production. A ready cameo means a completion contract awaits exit or placement; it does not prove that a runtime actor exists.
-
-## Tooltip boundary
-
-Tooltip data may include cost, estimated time, prerequisite blockers, BuildLimit state, power state, category, description and hotkey. Localized labels are not authoritative IDs.
-
-## Observer and replay
-
-Observer/replay UI consumes recorded simulation state. It cannot issue production commands and may use visibility policies different from active players without changing the underlying availability graph.
-
-## Sidebar prohibitions
-
-The sidebar does not:
-
-- expand prerequisite groups;
-- choose Owner/Country applicability;
-- count BuildLimit objects;
-- deduct credits;
-- progress queues;
-- choose factories;
-- place buildings;
-- create actors;
-- decide capture policy.
-
-## Source anchors
-
-- Ares 3.0 UI feature documentation, including multi-unit Shift-click queueing and hotkey extensions.
-- OpenRA production tooltip/widget files, independent implementation.
-- ModEnc Cost and TechLevel ordering claims, community documentation.
-
-No UI implementation or asset loading was added; `code_imported: false`.
+Sidebar adapters may group, filter, sort and display logical candidates but never create production eligibility, deduct credits, advance queues, renumber registries or rewrite Rules. Unknown/missing CSF/cameo/Art references remain diagnostics with fallback presentation policy outside Core.

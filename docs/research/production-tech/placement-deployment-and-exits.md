@@ -1,138 +1,35 @@
-> **Source notice:** This document was prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
-
 # Placement, deployment and exits
 
-## Placement contract
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
+
+## Transactions
 
 ```text
+ProductionCompletion
+ExitRequest
+SpawnRequest
+BuildingPlacementRequest
 PlacementPreview
-PlacementRequest
-PlacementQuery
-FoundationFit
-BuildabilityResult
-OccupancyReservation
-ConstructionCommand
-PlacementResult
-RuntimeBuildingInstance
+PlacementValidation
+PlacementReservation
+Placement/SpawnResult
+Deploy/Undeploy/UpgradeTransformation
 ```
 
-The UI preview is advisory. The authoritative query consumes a simulation snapshot and stable reservation order.
+Completion creates a request, not an actor/building.
 
-## Placement inputs
+## Evidence
 
-- authored Foundation, including irregular extension foundations;
-- terrain buildability;
-- static and dynamic occupancy;
-- construction-yard adjacency/range candidates;
-- current owner;
-- scenario restrictions;
-- water, shore and naval layers;
-- bridges and elevated layers;
-- resources and overlays;
-- shroud/exploration policy;
-- walls and gates;
-- Bib and extension cells;
-- upgrades and host attachment;
-- optional rotation profile;
-- current placement reservations.
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes foundation/deploy/upgrade/exit-related fields | `ConfirmedByOfficialToolSource` | EA editor | Official field/editor behavior only. | Named editor profile. | `NotRun` |
+| OpenRA/Ares/Phobos implement placement, exits and transformations | `ImplementationSpecificBehavior` | Named implementations | Target/extension-specific. | Keep separate profiles. | `NotRun` |
+| Stable foundation, deploy and exit authoring conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve authored fields. | `NotRun` |
+| Completion-to-placement/exit as a common architecture candidate | `Underconfirmed` | Tools/community | Exact runtime queue retention and retry semantics unproven. | Explicit transaction profile. | `NotRun` |
+| Exit blocking, placement cancel/refund, deploy transfer and upgrade occupancy | `ConflictingSources` | Engines/extensions/community | Models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact runtime reservation, retry, spawn facing, transformation and save/load behavior | `Unresolved` | No runtime source | No complete contract. | Future simulation adapter. | `NotRun` |
+| Preview is non-authoritative, authored foundation only and no implicit actor creation | `DefensiveDesign` | Project policy | Architecture/fail-closed boundary. | Simulation validates occupancy/buildability. | `NotRun` |
 
-Image dimensions, transparency and selection bounds do not define the foundation.
+## Boundaries
 
-## Result dimensions
-
-```text
-InBounds
-FoundationFits
-TerrainAllowed
-LayerAllowed
-AdjacencySatisfied
-OwnershipSatisfied
-ScenarioAllowed
-ShroudAllowed
-NoStaticBlocker
-NoDynamicBlocker
-ReservationWon
-UpgradeHostValid
-```
-
-Several failures may coexist.
-
-## Unit exit contract
-
-```text
-ExitDescriptor
-- FactoryTypeIdentity
-- ExitCellCandidates[]
-- ExitLayer
-- RequiredFacingCandidates[]
-- DockOrPadCandidates[]
-- AlternateSearchPolicy
-- RallyPointPolicy
-- EvidenceGrade
-```
-
-Completion does not spawn at the foundation center. A blocked exit does not delete the product.
-
-```text
-Factory capability
-!= Exit descriptor
-!= Docking slot
-!= Spawn cell
-!= Rally point
-```
-
-## Naval and aircraft production
-
-Naval products require explicit water/shore/layer candidates. Aircraft may require pads, docks or airborne delivery depending on profile. `NumberOfDocks` does not prove queue capacity or parallel product count.
-
-## Deploy and undeploy
-
-```text
-TypeTransformationCandidate
-- SourceType
-- TargetType
-- TriggerCapability
-- PlacementCandidate
-- TransferPolicyCandidate
-- BuildLimitEquivalenceCandidate
-- OwnerPolicyCandidate
-- HealthTransferCandidate
-- CargoTransferCandidate
-- AmmoTransferCandidate
-- VeterancyTransferCandidate
-```
-
-Candidate fields include `DeploysInto`, `UndeploysInto`, `DeployToLand`, `IsSimpleDeployer`, `PowersUpBuilding`, `PowersUnit` and extension attachment fields.
-
-The binder does not perform the transformation or choose transfer semantics.
-
-## Upgrades
-
-Independent identities are required for:
-
-- upgrade product type;
-- host type requirements;
-- host runtime actor;
-- attachment slot;
-- BuildLimit contribution;
-- prerequisite contribution;
-- power production/drain;
-- removal and capture behavior;
-- sidebar entry;
-- placement/attachment command.
-
-## PR dependencies
-
-- PR #31: scenario placements.
-- PR #35: render anchors and visual previews.
-- PR #37: foundation occupancy and buildability.
-
-These are consumed as boundaries only.
-
-## Source anchors
-
-- OpenRA `Building`, `Exit` and placement architecture, independent implementation.
-- Ares irregular foundations, factories and deployment extensions, extension-only.
-- ModEnc and PPM deploy/build-limit discussions, community evidence.
-
-No placement or transformation code was imported; `code_imported: false`.
+Visual placement preview, SHP/VXL bounds and cameo do not define foundation/buildability. Exit/dock/factory bay are authored candidates separate from foundation and queue ownership. Deployment/undeployment/upgrades preserve source/target definitions, actor identity candidates, owner/health/ammo/veterancy/passenger/mission transfer policies and occupancy transactions without selecting defaults during parsing.

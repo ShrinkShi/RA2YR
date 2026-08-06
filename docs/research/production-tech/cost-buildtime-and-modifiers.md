@@ -1,125 +1,32 @@
-> **Source notice:** This document was prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
-
 # Cost, build time and modifiers
 
-## Independent values
+> **Source notice:** Public-source research only. ProjectBaseline was not read. `code_imported: false`.
+
+## Separate values
 
 ```text
 AuthoredCost
 CurrentCostCandidate
 DisplayedCost
-CreditsReservation
-CreditsDeduction
-RefundCandidate
-SellValueCandidate
-BuildTimeCandidate
-FactorySpeedModifier
-CountryModifier
-DifficultyModifier
-PowerModifier
-MultipleFactoryModifier
-FactoryPlantModifier
-FinalBuildDuration
+CreditsReservation/Deduction/Refund
+BuildTimeInputs
+Factory/Country/Difficulty/Power/Plant/MultipleFactoryModifiers
+FinalDuration
 DisplayedTime
 ```
 
-They are not aliases.
+No equality or precedence is assumed.
 
-## Cost candidates
+## Evidence
 
-Retain zero, negative, invalid and overflowing text. Potential consumers include:
+| Claim | Grade | Source | Notes | Policy | AuditStatus |
+|---|---|---|---|---|---|
+| FinalAlert exposes Cost/BuildTime-related fields and editor validation | `ConfirmedByOfficialToolSource` | EA editor | Official tool only. | Named editor profile. | `NotRun` |
+| OpenRA/Ares/Phobos implement cost/time modifiers and transactions | `ImplementationSpecificBehavior` | Named implementations | Target/extension-specific. | Keep separate profiles. | `NotRun` |
+| Stable Cost/BuildTime/BuildTimeMultiplier conventions | `ConfirmedCommunityConvention` | ModEnc/PPM/community docs | Convention only. | Preserve raw spelling/applicability. | `NotRun` |
+| Cost-derived time and common modifier candidates | `Underconfirmed` | Tools/community | Runtime units/order/rounding and independence unproven. | Explicit arithmetic profile. | `NotRun` |
+| Upfront/progressive payment, modifier stacking, low-power, multiple-factory, Factory Plant and refunds | `ConflictingSources` | Engines/extensions/community | Models differ directly. | Preserve alternatives. | `NotRun` |
+| Exact runtime transaction timing, rounding, cancellation and capture/destruction behavior | `Unresolved` | No runtime source | No complete contract. | Future simulation adapter. | `NotRun` |
+| Checked arithmetic, no clamp/default and separate presentation | `DefensiveDesign` | Project policy | Safety/architecture. | Fail on overflow; record profile. | `NotRun` |
 
-- affordability;
-- up-front reservation;
-- progressive deduction;
-- cancellation refund;
-- sell/refund calculations;
-- build-time input;
-- sidebar ordering;
-- AI budgeting;
-- scenario starting units;
-- extension effects.
-
-ModEnc documents progressive stock-style deduction, cost-derived construction time and cost participation in sidebar ordering. This remains community evidence, not a complete runtime transaction trace.
-
-## Build-time inputs
-
-Candidate sources:
-
-- `[General] BuildSpeed`;
-- authored `Cost`;
-- `BuildTimeMultiplier`;
-- country/category multipliers;
-- factory-count modifier;
-- Factory Plant effect;
-- low-power modifier;
-- difficulty or campaign profile;
-- game-speed presentation;
-- Ares `BuildTime.*` fields;
-- extension overrides.
-
-Ares explicitly offers per-type speed, alternate time-cost, low-power and multiple-factory modifiers. They carry `ExtensionProvider=Ares` and are not stock defaults.
-
-## Unit boundary
-
-OpenRA uses its own tick and world models. UI clocks, OpenRA ticks and editor preview time do not establish Westwood units.
-
-```text
-BuildTimeExpressionCandidate
-- BaseValueCandidate
-- UnitProfile
-- ModifierStages[]
-- ClampCandidates[]
-- RoundingPolicy
-- EvidenceGrade
-```
-
-## Arithmetic requirements
-
-- checked integer operations;
-- bounded decimal token length;
-- explicit rational/fixed-point scale;
-- explicit modifier order;
-- no locale-dependent parsing;
-- no negative-to-zero repair;
-- no overflow wrap;
-- no floating-point authority unless an evidence-gated policy explicitly chooses it.
-
-## Refund events
-
-```text
-QueueCancellation
-PartialProgressCancellation
-CompletedUnitAbort
-CompletedBuildingPlacementCancel
-FactoryDestruction
-FactoryCapture
-PlayerDefeat
-SellBuilding
-GrindUnit
-```
-
-Each event may use a different owner, basis and percentage. Presentation is downstream from the transaction.
-
-## Factory Plant
-
-Separate:
-
-```text
-FactoryPlantCapability
-FactoryPlantRuntimeInstance
-AffectedCategoryCandidate
-AuthoredBonus
-PerTypeExtensionMultiplier
-FinalCostModifier
-```
-
-Ares `FactoryPlant.Multiplier` modifies an existing effect and is extension-only evidence. The stock order, stacking and rounding remain unresolved.
-
-## Source anchors
-
-- ModEnc `Cost`, `BuildTime`, `BuildTimeMultiplier` revisions.
-- Ares 3.0 `Build Time` and `Factory Plant Effect` documentation.
-- OpenRA production queue files at commit `a520984d91eda9de48a62b1d15c1e3bad0d4fb1a`, independent implementation only.
-
-No formula code was copied; `code_imported: false`.
+`BuildTimeExpressionCandidate` records base inputs, units, ordered modifier candidates, rounding/clamp profile and evidence. Parser never reserves/deducts/refunds credits or advances progress. Zero, negative, missing, invalid and overflowed values remain distinct.

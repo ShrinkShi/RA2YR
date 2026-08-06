@@ -1,124 +1,56 @@
-> **Source notice:** This document was prepared by **ChatGPT Web** from public sources only. ProjectBaseline was not read. This is not a Codex artifact. GPL and unclear-license implementations are reference-only; no code was copied, translated, mechanically rewritten, or ported (`code_imported: false`).
-
 # Future ProjectBaseline sanitized audit request
+
+> **Source notice:** This audit was not run and ProjectBaseline was not read. `code_imported: false`.
 
 ## Status
 
-This document designs a future read-only audit. No ProjectBaseline file was accessed or executed during M3-R15.
-
-Any future result is evidence grade:
-
 ```text
-ObservedByFutureProjectBaselineAudit
+AuditStatus: NotRun
+FutureEvidenceSource: ProjectBaselineAggregateAudit
 ```
 
-It cannot automatically promote compatibility.
+These fields are not an evidence grade. Future aggregates cannot become original-runtime evidence, alter policy or promote compatibility.
 
-## Selection basis
+## Allowed aggregates
 
-A future audit may select broad, non-identifying categories such as:
+Broad registry/product/factory categories; registry counts/gaps/duplicates/case collisions; anonymous ownership and type-binding states; prerequisite shape/token/group categories; TechLevel/BuildLimit/Cost/BuildTime coarse buckets; factory/category/capability counts; deploy/upgrade/power/sidebar field presence; diagnostics; non-linkable aggregate hashes; Memory/Stream/short-read/MIX equivalence.
 
-- type registry family;
-- broad product category;
-- factory-capability category;
-- stock versus extension-provider profile;
-- map-local contribution present/absent;
-- prerequisite-shape category;
-- TechLevel/BuildLimit bucket;
-- cost/time-field presence;
-- deployment/upgrade/power field presence.
+## Forbidden output
 
-Selection criteria must not reveal individual type identities or reconstruct the tech tree.
+No type/factory/House/Country/Side names, Rules text, exact registry lists or prerequisite expressions, exact Owner lists/Cost/BuildTime/TechLevel/BuildLimit, technology graph, queue/product order, placement coordinates/foundations/exits, cameo/Art/resource IDs, Trigger/AI contents, screenshots, bytes/hex/Base64 or per-type/per-map hashes.
 
-## Allowed public aggregates
+## Discipline
 
-- `SelectionBasis` description;
-- broad type/category counts;
-- registry section presence;
-- registry entry counts and gap counts;
-- duplicate-key/value and case-collision counts;
-- listed-missing and unregistered-section counts;
-- factory capability categories;
-- production-category counts;
-- prerequisite token-count and group-shape histograms;
-- unknown/empty/extension-token counts;
-- TechLevel and BuildLimit coarse buckets;
-- Owner binding status categories;
-- Required/Forbidden field-presence counts;
-- Cost/BuildTime field-presence and coarse buckets;
-- deploy/undeploy/upgrade field presence;
-- power-production/drain field presence;
-- cameo/sidebar binding status;
-- structured diagnostic counts;
-- non-linkable aggregate hash;
-- Memory/Stream/short-read/MIX equivalence.
+Compare only preselected registry, ownership, prerequisite, TechLevel, BuildLimit, cost/time, factory, queue, power, capture, placement and sidebar profiles. Never choose by successful production, familiar UI, fewer diagnostics or available Art. Multiple successes remain ambiguous.
 
-## Forbidden public data
+## Safety
 
-Do not publish:
+Read-only; bounded files/bytes/sections/tokens/graphs/diagnostics/runtime; no map/game/editor/Unity execution; no queue/availability evaluation against actual player state; no asset extraction; no ProjectBaseline modification. These are `DefensiveDesign` requirements.
 
-- type, building, unit, aircraft, factory or upgrade names;
-- map names or filesystem paths;
-- INI section or value text;
-- exact registry lists or ordinal-to-type mappings;
-- exact prerequisite expressions or token sequences;
-- exact Owner, RequiredHouses or ForbiddenHouses lists;
-- exact Cost, BuildTime, TechLevel or BuildLimit;
-- complete technology or availability graphs;
-- queue configuration or product order;
-- placement coordinates, foundations or exit cells;
-- cameo, Art, PCX, SHP, palette or CSF IDs;
-- Trigger IDs, opcodes or parameters;
-- AI build-list contents;
-- graph topology;
-- screenshots or rendered UI;
-- per-type, per-map or per-resource hashes;
-- hex, Base64 or reconstructable raw content.
-
-## Aggregate hashing
-
-A permitted hash must combine many records, be salted for the audit run and be unsuitable for linking one result to a specific type or map. Per-type and per-record hashes are forbidden.
-
-## Proposed result schema
+## Report
 
 ```text
-ProductionAuditSummary
+AuditMetadata
+- AuditStatus = NotRun
+- FutureEvidenceSource = ProjectBaselineAggregateAudit
 - SelectionBasis
-- InputModeEquivalence
-- RegistryFamilyCounts
-- RegistryGapAndCollisionCounts
-- TypeBindingStateCounts
-- FactoryCategoryCounts
+- SelectedProfiles
+
+ProductionAggregate
+- RegistryBindingCounts
 - PrerequisiteShapeBuckets
-- TechLevelBuckets
-- BuildLimitBuckets
-- OwnershipBindingBuckets
-- CostFieldBuckets
-- BuildTimeFieldBuckets
-- TransformationFieldCounts
-- PowerFieldCounts
-- SidebarBindingBuckets
+- AvailabilityFieldBuckets
+- CostTimeFactoryCategories
+- TransformPowerSidebarCategories
 - DiagnosticCounts
-- NonLinkableAggregateHash
-- EvidenceGrade
+- InputModeEquivalence
+- AggregateHash
+- CurrentEvidenceGrade
+
+DisclosureReview
+- ForbiddenFieldCheck
+- MinimumGroupSizeCheck
+- ReconstructabilityReview
 ```
 
-## Audit safety rules
-
-- read-only;
-- no map/game/editor execution;
-- no content extraction;
-- no asset decoding;
-- no queue or availability evaluation against actual player state;
-- no screenshot generation;
-- no compatibility-matrix modification;
-- no ADR, third-party ledger or `.dev-records` update from this research branch;
-- fail closed if sanitization cannot be proven.
-
-## Independence
-
-The audit must compare Memory, seekable Stream, short-read Stream and exact MIX-window inputs using the same parser and limits. It must not repair raw inputs or canonicalize them before measuring.
-
-## License statement
-
-The audit design was written from public research only. No GPL or unclear-license implementation was copied, translated or mechanically ported. `code_imported: false`.
+Stop without publication if identities/exact expressions cannot be removed, a category identifies a type/map, a hash is linkable, limits fail, input modes diverge without bounded diagnostics, or any operation would modify ProjectBaseline.
