@@ -577,10 +577,18 @@ entries:
   - id: format.map-pack-codec
     domain: format
     feature: "Map pack Base64, block framing, compression, and bounds"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.PackedMap.PackedMapCoreTests"
+    evidence:
+      - "docs/compatibility/evidence/m3c1-packed-map-synthetic-20260804.yml#components"
+    limitations:
+      - id: format.map-pack-codec.synthetic-only
+        status: "已知限制"
+        description: "Only explicit synthetic fragment, Base64, chunk, and Format80 profiles are implemented; LZO is contract-only and no ProjectBaseline packed audit was run."
+      - id: format.map-pack-codec.map-specific-unimplemented
+        status: "已知限制"
+        description: "IsoMap, OverlayPack, OverlayDataPack, PreviewPack, TMP, palette, rendering, writer, and original runtime behavior remain unimplemented or unconfirmed."
   - id: format.yro-wrapper
     domain: format
     feature: "YRO opaque prefix, INI body, digest, and trailing-data preservation"
