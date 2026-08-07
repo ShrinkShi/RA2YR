@@ -1,5 +1,64 @@
 # 变更记录
 
+## 2026-08-04 - M3-C1 contract fixes and behavioral matrix
+
+### 变更范围
+- PackedMap chunk sentinel、LZO backend/pipeline、Strict Base64、fragment collector 和 synthetic EditMode matrix。
+
+### 具体改动
+- 移除 `AllowOneZeroField`；单零字段返回 `ChunkZeroFieldInvalid`，`0/0` 只接受显式 terminator policy。
+- LZO request 验证 codec、bounded input、exact output、output budget、cancellation 和 provenance；pipeline 拒绝 consumed mismatch、长度 mismatch、空 identity、error diagnostic、null、异常、取消和不匹配 provenance。
+- Strict Base64 增加 canonical pad-bit 校验；collector 保留 raw values、source order、numeric diagnostics、预算和 provenance。
+- 测试矩阵达到 109 个独立执行 case（89 `[Test]` + 20 参数化执行 case），不使用等价 Base64 输入填充数量；pipeline 对未知 codec 先行结构化拒绝。
+
+### 验证情况
+- 最终当前 HEAD PackedMap 聚焦 EditMode `109/109`，完整 EditMode `933/933`，PlayMode `1/1`；XML 均完整且无失败/跳过/不确定项。
+- Unity 聚焦与 PlayMode 在结果写出后需要受控 post-result shutdown；Unity 退出码均为 0，零字节普通 `Temp/UnityLockfile` 已按既有规则清理。
+- Windows PowerShell 5.1 与 PowerShell 7 repository validation、copyright scan 及全部回归均 exit 0；仓库统计 236 assets/236 meta、148 matrix、110 evidence、0 violations。
+- `git diff --check` 通过；本机系统 csc 不支持项目使用的现代 C# 语法，不能替代 Unity Roslyn。
+- ProjectBaseline packed audit 仍未执行；无 LZO 算法、无原版 payload、无 IsoMap/Overlay/Preview/TMP/palette/renderer。
+
+### 风险
+- 当前修复尚未提交/推送；PR #36 body 和 Actions 状态需在可用 GitHub connector/凭据下更新，不能伪造。
+
+## 2026-08-04 - M3-C1 core hardening
+
+- 为 chunk envelope 保存完整 provenance chain，并在 window/stream/materialized 输入路径执行显式输入预算。
+- 为 Format80 输入预算和 LZO request 增加结构化合同；collector 增加 `MaxFragments + 1` 惰性枚举停止测试。
+- 新增 provenance、预算和结果不可变性聚焦测试；未实现 LZO 算法、IsoMap/Overlay/Preview/TMP、palette 或渲染。
+
+## 2026-08-04 - M3-C1 packed map compression foundation
+
+### 变更范围
+- 新增 `PackedMap` Core 模型、诊断、预算、fragment collector、strict Base64、chunk envelope、Format80 decoder、LZO backend contract 和 pipeline。
+- 新增 122 个合成 EditMode 用例及 Unity `.meta`。
+- 新增 ADR、格式说明、合成 evidence、compatibility matrix 条目和 README 入口。
+
+### 具体改动
+- Collector 保留 occurrence/raw key/value/source/provenance，支持 source order、numeric ascending unique、strict sequential policies。
+- Base64 在调用 .NET primitive 前执行 alphabet、padding、长度、whitespace 和预算验证。
+- Chunk reader 保留 block ordinal/offset/sizes/payload，`0/0` 仅在显式 sentinel policy 下接受。
+- Format80 支持五类命令、overlap copy、exact output、terminator、trailing input 和结构化诊断。
+- LZO 无 backend 时返回 `BackendUnavailable`，不产生占位数据。
+
+### 验证情况
+- PackedMap 聚焦 EditMode XML：122/122 passed，0 failed。
+- ProjectBaseline packed audit：未运行，符合本轮边界。
+
+### 风险
+- 原版运行时 codec profile、LZO 算法和地图特定 record 语义仍未确认。
+
+## 2026-08-04 - M3-C1 packed map compression foundation
+
+### 变更范围
+- New standalone Core foundation for packed INI fragments, strict Base64, chunk envelopes, explicit Format80 profiles, LZO backend contracts and codec-neutral orchestration.
+
+### 限制
+- No ProjectBaseline packed audit, miniLZO, native plugin, IsoMap/Overlay/Preview/TMP, writer or rendering.
+
+### 验证情况
+- To be updated after focused synthetic tests and repository gates.
+
 ## 2026-08-03 - 项目级架构和来源边界冻结
 
 ### 变更范围

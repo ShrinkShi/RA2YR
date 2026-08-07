@@ -1,5 +1,50 @@
 # 技术决策记录
 
+## 2026-08-04 - M3-C1 verification boundary
+
+### 决策
+
+M3-C1 只提交 synthetic/configured codec foundation。ProjectBaseline packed 审计保持未执行；Unity XML 必须来自当前提交，历史 122/122 结果仅作参考。
+
+### 原因
+
+当前宿主的 PowerShell `Start-Process` 在构造环境时触发 `PATH`/`Path` 重复键，Unity batch test 无法可靠启动；核心程序集和 EditMode 程序集仍通过 Unity Roslyn 编译。
+
+## 2026-08-04 - M3-C1 packed map 分层和严格失败语义
+
+### 背景
+地图压缩研究同时涉及 INI 分片、Base64、chunk envelope、Format80/LCW 和 LZO，公开实现存在 profile 与许可证边界冲突。
+
+### 决策
+采用 `lossless occurrences -> Base64 -> envelope -> explicit codec -> exact bytes` 分层。Format80 的 absolute/relative 语义显式传入；LZO 只定义可注入 backend 合同，不引入算法或第三方代码。
+
+### 原因
+避免把地图特定知识泄漏到通用 reader，避免用“看起来像地图”的输出掩盖 profile 错误、截断或 backend 失败。
+
+### 代价
+当前不能读取 ProjectBaseline packed 内容，也不能声明地图加载兼容；后续 IsoMap/Overlay/Preview 必须建立独立证据和 reader。
+
+### 替代方案
+- 复制 miniLZO 或 GPL 实现：拒绝，违反本轮许可证和依赖边界。
+- 自动尝试 Format80 变体：拒绝，会把证据不足变成隐式策略。
+
+## 2026-08-04 - M3-C1 keeps packed compression layers codec-neutral
+
+### 背景
+Packed map sections cross several independently uncertain boundaries: lossless INI occurrences, concatenated Base64, chunk headers, codec payloads and future map-specific readers.
+
+### 决策
+- Fragment collection preserves raw occurrence order and provenance; ordering is selected explicitly.
+- Strict Base64 validates structure before calling the framework primitive.
+- The chunk envelope reader exposes bounded payload windows and does not select or invoke a codec.
+- Format80 receives an explicit profile; it never tries variants automatically.
+- LZO is an injectable backend contract only; no algorithm or native dependency is added.
+- The orchestration result retains every stage result and fails closed on incomplete stages.
+
+### 代价
+- M3-C1 cannot claim map loading or ProjectBaseline packed-content compatibility.
+- Future map readers must consume the typed decoded stream and provide their own semantic policy.
+
 ## 2026-08-03 - Legacy formats remain import adapters
 
 ### 背景
