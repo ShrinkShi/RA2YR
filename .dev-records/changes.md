@@ -483,3 +483,17 @@
 - Real packed ProjectBaseline decode: NotRun; LZO remains contract-only.
 - OverlayPack, PreviewPack, TMP, palette, rendering, writer, pathfinding, and
   gameplay remain outside this work package.
+
+## 2026-08-07 - M3-C2 packed execution aggregation follow-up
+
+- Aggregated packed, record, and coordinate child execution state at the
+  IsoMapPack5 adapter boundary.
+- Preserved fatal status and highest severity when diagnostic storage is full,
+  including a zero-diagnostic budget; suppressed counts use saturating merge.
+- Added current source coverage for packed-child failure, coordinate-child
+  failure, multi-child suppression, warning severity, consumed-length stop,
+  null-record termination, and deterministic duplicate-group ordering.
+- Current source defines 146 NUnit executions (96 `[Test]`, 50 `[TestCase]`)
+  across 103 behavior-method declarations. Unity execution remains NotRun
+  because the required Unity 2022.3.60f1c1 Editor executable is unavailable.
+- PS5.1/PS7 repository validation and copyright gates pass with zero violations.

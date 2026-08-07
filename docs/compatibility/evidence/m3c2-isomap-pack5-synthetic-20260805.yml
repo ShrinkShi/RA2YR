@@ -6,10 +6,10 @@ source_payload_published: false
 code_imported: false
 gpl_reference_only: true
 tests:
-  defined_nunit_executions: 139
-  test_attributes: 89
+  defined_nunit_executions: 146
+  test_attributes: 96
   test_case_attributes: 50
-  behavior_contract_declarations: 96
+  behavior_contract_declarations: 103
   current_head_executed: 0
   current_head_passed: unknown
 components:
@@ -18,13 +18,20 @@ components:
   coordinate_index: explicit_duplicate_and_domain_policies
   packed_adapter: injected_raw_lzo1x_contract_only
   inputs: memory_stream_short_read_and_bounded_window_paths
+  execution_aggregation: packed_record_coordinate_child_state_with_saturating_suppressed_count
 verification:
-  current_head_unity_focus: blocked_by_host_start_process_environment
+  current_head_unity_focus: NotRun_unity_2022_3_60f1c1_editor_not_installed
   current_head_xml_published: false
   current_head_executed: 0
   current_head_passed: unknown
   historical_xml_reused_as_current_evidence: false
   static_diff_check: passed
+  repository_validation_ps51: passed
+  repository_validation_ps7: passed
+  repository_validation_regressions: passed_46
+  copyright_ps51: passed
+  copyright_ps7: passed
+  copyright_regressions: passed_22
 compatibility:
   isomap_pack5_record_reader: Synthetic
   tile_interpretation: Unresolved

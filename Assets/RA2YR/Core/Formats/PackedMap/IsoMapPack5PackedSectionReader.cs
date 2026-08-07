@@ -28,7 +28,10 @@ namespace RA2YR.Core.Formats.PackedMap
                     null,
                     "packed",
                     "IsoMapPack5 packed sections require the explicit RawLzo1X codec policy.");
-                return new IsoMapPack5PackedReadResult(null, null, null, new[] { diagnostic });
+                var execution = new IsoMapExecutionState();
+                var diagnostics = new List<IsoMapDiagnostic>();
+                Add(diagnostics, policy.Limits, execution, diagnostic);
+                return new IsoMapPack5PackedReadResult(null, null, null, diagnostics, execution);
             }
 
             PackedSectionDecodeResult packed;
@@ -48,25 +51,27 @@ namespace RA2YR.Core.Formats.PackedMap
                     null,
                     "packed",
                     "Packed-section decoding failed before record parsing: " + exception.GetType().Name);
-                return new IsoMapPack5PackedReadResult(null, null, null, new[] { diagnostic });
+                var execution = new IsoMapExecutionState();
+                var diagnostics = new List<IsoMapDiagnostic>();
+                Add(diagnostics, policy.Limits, execution, diagnostic);
+                return new IsoMapPack5PackedReadResult(null, null, null, diagnostics, execution);
             }
 
             if (packed == null || !packed.IsSuccess || packed.DecodedBytes == null)
             {
-                var diagnostics = new List<IsoMapDiagnostic>
-                {
-                    new IsoMapDiagnostic(
-                        BinaryDiagnosticSeverity.Error,
-                        packed == null ? IsoMapDiagnosticCode.PackedStageFailure : IsoMapDiagnosticCode.PackedStageFailure,
-                        SyntheticSource(),
-                        new[] { SyntheticProvenance() },
-                        -1,
-                        -1,
-                        null,
-                        "packed",
-                        packed == null ? "Packed-section pipeline returned no result." : "Packed-section pipeline failed; record parsing was not attempted.")
-                };
-                return new IsoMapPack5PackedReadResult(packed, null, null, diagnostics);
+                var diagnostics = new List<IsoMapDiagnostic>();
+                var execution = new IsoMapExecutionState();
+                Add(diagnostics, policy.Limits, execution, new IsoMapDiagnostic(
+                    BinaryDiagnosticSeverity.Error,
+                    IsoMapDiagnosticCode.PackedStageFailure,
+                    SyntheticSource(),
+                    new[] { SyntheticProvenance() },
+                    -1,
+                    -1,
+                    null,
+                    "packed",
+                    packed == null ? "Packed-section pipeline returned no result." : "Packed-section pipeline failed; record parsing was not attempted."));
+                return new IsoMapPack5PackedReadResult(packed, null, null, diagnostics, execution);
             }
 
             IReadOnlyList<IniSourceProvenance> provenance = packed.Envelope != null && packed.Envelope.Blocks.Count != 0
@@ -95,10 +100,26 @@ namespace RA2YR.Core.Formats.PackedMap
                     source)
                 : null;
             var diagnosticsResult = new List<IsoMapDiagnostic>();
-            diagnosticsResult.AddRange(records.Diagnostics);
+            var resultExecution = new IsoMapExecutionState();
+            Append(diagnosticsResult, policy.Limits, resultExecution, records.Diagnostics);
             if (coordinates != null)
-                diagnosticsResult.AddRange(coordinates.Diagnostics);
-            return new IsoMapPack5PackedReadResult(packed, records, coordinates, diagnosticsResult);
+                Append(diagnosticsResult, policy.Limits, resultExecution, coordinates.Diagnostics);
+            return new IsoMapPack5PackedReadResult(packed, records, coordinates, diagnosticsResult, resultExecution);
+        }
+
+        private static void Append(IList<IsoMapDiagnostic> target, IsoMapPack5ReadLimits limits, IsoMapExecutionState execution, IEnumerable<IsoMapDiagnostic> diagnostics)
+        {
+            foreach (IsoMapDiagnostic diagnostic in diagnostics)
+                Add(target, limits, execution, diagnostic);
+        }
+
+        private static void Add(IList<IsoMapDiagnostic> diagnostics, IsoMapPack5ReadLimits limits, IsoMapExecutionState execution, IsoMapDiagnostic diagnostic)
+        {
+            execution.Observe(diagnostic.Severity);
+            if (diagnostics.Count < limits.MaxDiagnostics)
+                diagnostics.Add(diagnostic);
+            else
+                execution.SuppressOne();
         }
 
         private static BinarySourceContext SyntheticSource()

@@ -53,3 +53,10 @@
 - [x] 实现 CSF v3 严格只读解析并完成 `ra2md.csf` ProjectBaseline 黄金样本验证。
 ## 待处理
 - [ ] 在 PR #42 修复提交后重新运行 focused/full EditMode、PlayMode、PS5.1/PS7 validation、copyright、wrappers 和 Repository safety。
+
+## 2026-08-07 - M3-C2 delivery state
+
+- [x] 修复 packed/record/coordinate execution aggregation 与零诊断预算 fail-closed 状态。
+- [x] 重新扫描 M3-C2 测试计数：146 defined NUnit executions、103 behavior methods。
+- [x] 完成 PS5.1/PS7 repository validation、copyright scan 和 regression gates；Unity 与依赖 Unity 的 wrappers 保持 NotRun。
+- [ ] 在可用 Unity 2022.3.60f1c1 主机上生成当前最终 HEAD 的 focused/full EditMode 与 PlayMode XML。

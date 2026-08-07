@@ -187,6 +187,27 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         public void WarningBudgetThenCoordinateBudgetErrorStillFails() { IsoMapCoordinateAnalysis a = Analyze(Concat(Record(2, 2, 0, 0, 0, 0), Record(3, 3, 0, 0, 0, 0)), limits: new IsoMapPack5ReadLimits(maxCoordinateEntries: 1, maxDiagnostics: 1), profile: new IsoMapCoordinateValidationProfile(width: 1, height: 1)); Assert.That(a.IsSuccess, Is.False); Assert.That(a.SuppressedDiagnosticCount, Is.GreaterThanOrEqualTo(1)); }
 
         [Test]
+        public void PackedChildFailureWithZeroDiagnosticBudgetFailsTopLevel() { IsoMapPack5PackedReadResult r = PackedRead(null, limits: new IsoMapPack5ReadLimits(maxDiagnostics: 0)); Assert.That(r.CompletionStatus, Is.EqualTo(IsoMapCompletionStatus.Failed)); Assert.That(r.HasFatalError, Is.True); Assert.That(r.SuppressedDiagnosticCount, Is.GreaterThan(0)); }
+
+        [Test]
+        public void CoordinateChildFailureWithZeroDiagnosticBudgetFailsTopLevel() { IsoMapPack5PackedReadResult r = PackedRead(new FakeBackend(Concat(Record(1, 2, 0, 0, 0, 0), Record(1, 2, 0, 0, 0, 0))), limits: new IsoMapPack5ReadLimits(maxDiagnostics: 0), duplicatePolicy: IsoMapCoordinateDuplicatePolicy.RejectAnyDuplicate); Assert.That(r.CompletionStatus, Is.EqualTo(IsoMapCompletionStatus.Failed)); Assert.That(r.HasFatalError, Is.True); Assert.That(r.SuppressedDiagnosticCount, Is.GreaterThan(0)); }
+
+        [Test]
+        public void SuppressedCountsFromMultipleChildrenAccumulate() { IsoMapPack5PackedReadResult r = PackedRead(new FakeBackend(Concat(Record(1, 2, 0, 0, 0, 0), Record(1, 2, 0, 0, 0, 0), new byte[] { 9 })), trailingPolicy: IsoMapPack5TrailingPolicy.PreserveRemainderWithDiagnostic, limits: new IsoMapPack5ReadLimits(maxDiagnostics: 0), duplicatePolicy: IsoMapCoordinateDuplicatePolicy.RejectAnyDuplicate); Assert.That(r.IsSuccess, Is.False); Assert.That(r.SuppressedDiagnosticCount, Is.GreaterThanOrEqualTo(2)); }
+
+        [Test]
+        public void HighestSeverityAggregatesWarningChildState() { IsoMapPack5PackedReadResult r = PackedRead(new FakeBackend(Concat(Record(1, 2, 0, 0, 0, 0), new byte[] { 9 })), trailingPolicy: IsoMapPack5TrailingPolicy.PreserveRemainderWithDiagnostic, limits: new IsoMapPack5ReadLimits(maxDiagnostics: 0)); Assert.That(r.IsSuccess, Is.True); Assert.That(r.HighestObservedSeverity, Is.EqualTo(BinaryDiagnosticSeverity.Warning)); Assert.That(r.SuppressedDiagnosticCount, Is.GreaterThan(0)); }
+
+        [Test]
+        public void PackedAdapterConsumedMismatchDoesNotRunRecordParser() { IsoMapPack5PackedReadResult r = PackedRead(new FakeBackend(Record(1, 2, 3, 4, 5, 6), consumed: 0)); Assert.That(r.Records, Is.Null); Assert.That(r.IsSuccess, Is.False); }
+
+        [Test]
+        public void NullRecordStopsEnumerationImmediately() { IsoMapCoordinateAnalysis analysis = new IsoMapCoordinateIndexer().Analyze(NullThenThrow(), source: Source()); Assert.That(analysis.IsSuccess, Is.False); Assert.That(analysis.HasFatalError, Is.True); }
+
+        [Test]
+        public void MultipleDuplicateGroupsHaveDeterministicOrder() { IsoMapCoordinateAnalysis a = Analyze(Concat(Record(2, 2, 0, 0, 0, 0), Record(1, 1, 0, 0, 0, 0), Record(2, 2, 0, 0, 0, 1), Record(1, 1, 0, 0, 0, 2))); Assert.That(a.Index.DuplicateGroups.Select(g => g.Key.XRaw), Is.EqualTo(new ushort[] { 2, 1 })); Assert.That(a.Index.DuplicateGroups.SelectMany(g => g.Occurrences).Select(o => o.SourceOrdinal), Is.EqualTo(new[] { 0, 2, 1, 3 })); }
+
+        [Test]
         public void CoordinateThreeWayDuplicateRetainsAllOrdinals() { IsoMapCoordinateAnalysis a = Analyze(Concat(Record(1, 2, 0, 0, 0, 0), Record(1, 2, 0, 0, 0, 1), Record(1, 2, 0, 0, 0, 2))); Assert.That(a.Index.DuplicateGroups[0].Occurrences.Select(x => x.SourceOrdinal), Is.EqualTo(new[] { 0, 1, 2 })); }
 
         [Test]
@@ -366,11 +387,11 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         private static IsoMapCoordinateAnalysis Analyze(byte[] bytes, IsoMapCoordinateDuplicatePolicy duplicatePolicy = IsoMapCoordinateDuplicatePolicy.PreserveAllAndDiagnose, IsoMapCoordinateValidationProfile profile = null, IsoMapPack5ReadLimits limits = null)
             => new IsoMapCoordinateIndexer().Analyze(Read(bytes).Records, duplicatePolicy, profile, limits, Source());
 
-        private static IsoMapPack5PackedReadResult PackedRead(ILzoDecodeBackend backend, string base64 = null, string section = "IsoMapPack5", int? declaredOutputLength = null)
+        private static IsoMapPack5PackedReadResult PackedRead(ILzoDecodeBackend backend, string base64 = null, string section = "IsoMapPack5", int? declaredOutputLength = null, IsoMapPack5ReadLimits limits = null, IsoMapPack5TrailingPolicy trailingPolicy = IsoMapPack5TrailingPolicy.RejectAnyRemainder, IsoMapCoordinateDuplicatePolicy duplicatePolicy = IsoMapCoordinateDuplicatePolicy.PreserveAllAndDiagnose, IsoMapCoordinateValidationProfile profile = null, int consumed = -1)
         {
             byte[] decoded = backend is FakeBackend fake && fake.Bytes != null ? fake.Bytes : Record(1, 2, 3, 4, 5, 6);
             string value = base64 ?? Convert.ToBase64String(Chunk(decoded, declaredOutputLength));
-            return new IsoMapPack5PackedSectionReader().Read(new[] { Occurrence(section, "1", value) }, new IsoMapPack5PackedReadPolicy(new PackedSectionDecodePolicy(PackedIniFragmentOrderingPolicy.SourceOccurrenceOrder, StrictBase64Policy.StandardAlphabetNoWhitespace, ChunkSentinelPolicy.RejectAllZero, PackedCodecKind.RawLzo1X)), backend);
+            return new IsoMapPack5PackedSectionReader().Read(new[] { Occurrence(section, "1", value) }, new IsoMapPack5PackedReadPolicy(new PackedSectionDecodePolicy(PackedIniFragmentOrderingPolicy.SourceOccurrenceOrder, StrictBase64Policy.StandardAlphabetNoWhitespace, ChunkSentinelPolicy.RejectAllZero, PackedCodecKind.RawLzo1X), trailingPolicy, duplicatePolicy, profile, limits), backend);
         }
 
         private static byte[] Chunk(byte[] decoded, int? declaredOutputLength = null) { int outputLength = declaredOutputLength ?? decoded.Length; byte[] result = new byte[4 + decoded.Length]; result[0] = (byte)decoded.Length; result[1] = (byte)(decoded.Length >> 8); result[2] = (byte)outputLength; result[3] = (byte)(outputLength >> 8); Buffer.BlockCopy(decoded, 0, result, 4, decoded.Length); return result; }
@@ -382,6 +403,12 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         private static bool HasDiagnostic(IsoMapPack5RecordReadResult result, IsoMapDiagnosticCode code) => result.Diagnostics.Any(x => x.Code == code);
         private static bool HasDiagnostic(IsoMapCoordinateAnalysis result, IsoMapDiagnosticCode code) => result.Diagnostics.Any(x => x.Code == code);
         private static bool HasDiagnostic(IsoMapPack5PackedReadResult result, IsoMapDiagnosticCode code) => result.Diagnostics.Any(x => x.Code == code);
+
+        private static IEnumerable<IsoMapPack5RecordRaw> NullThenThrow()
+        {
+            yield return null;
+            throw new AssertionException("The coordinate analyzer continued after a null record.");
+        }
 
         private sealed class FakeBackend : ILzoDecodeBackend
         {

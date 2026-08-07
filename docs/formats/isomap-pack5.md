@@ -1,9 +1,9 @@
 # IsoMapPack5 raw record foundation
 
-The current synthetic matrix defines 139 NUnit executions (89 `[Test]`
+The current synthetic matrix defines 146 NUnit executions (96 `[Test]`
 declarations and 50 parameterized `[TestCase]` executions). The current-HEAD
 executed count is 0 and passed count is unknown until a new XML result is
-generated; parameterized boundary cases are tracked separately from the 96
+generated; parameterized boundary cases are tracked separately from the 103
 behavior-method declarations. This count does not represent ProjectBaseline compatibility
 or original-runtime proof.
 
@@ -68,6 +68,12 @@ missing-cell synthesis, or dense-map assumption is applied.
 injected backend. It retains fragment, Base64, chunk, backend, decoded-stream,
 record, and coordinate-stage results. Upstream failures stop record parsing.
 The adapter never reads OverlayPack, PreviewPack, TMP, or ProjectBaseline data.
+
+The packed result aggregates completion state from the packed, record, and
+coordinate stages. An error updates the aggregate failure state before the
+diagnostic is admitted to the bounded list; suppressed child diagnostics are
+combined with saturating arithmetic. Therefore a zero diagnostic budget cannot
+turn a packed, record, or coordinate failure into a successful result.
 
 ## Compatibility
 

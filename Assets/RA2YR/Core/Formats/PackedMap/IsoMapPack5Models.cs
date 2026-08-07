@@ -53,9 +53,45 @@ namespace RA2YR.Core.Formats.PackedMap
             if (severity == BinaryDiagnosticSeverity.Error) hasFatalError = true;
         }
 
+        internal void ObserveFailure()
+        {
+            hasFatalError = true;
+            if ((int)highestSeverity < (int)BinaryDiagnosticSeverity.Error)
+                highestSeverity = BinaryDiagnosticSeverity.Error;
+        }
+
+        internal void Merge(IsoMapExecutionState child)
+        {
+            if (child == null) return;
+            Observe(child.HighestObservedSeverity);
+            if (child.HasFatalError) ObserveFailure();
+            AddSuppressed(child.SuppressedDiagnosticCount);
+        }
+
+        internal void ObservePacked(PackedSectionDecodeResult packed)
+        {
+            if (packed == null)
+            {
+                ObserveFailure();
+                return;
+            }
+
+            foreach (PackedMapDiagnostic diagnostic in packed.Diagnostics)
+                Observe(diagnostic.Severity);
+            if (!packed.IsSuccess)
+                ObserveFailure();
+        }
+
         internal void SuppressOne()
         {
-            if (suppressedDiagnosticCount < int.MaxValue) suppressedDiagnosticCount++;
+            AddSuppressed(1);
+        }
+
+        private void AddSuppressed(int count)
+        {
+            if (count <= 0 || suppressedDiagnosticCount == int.MaxValue) return;
+            long total = (long)suppressedDiagnosticCount + count;
+            suppressedDiagnosticCount = total >= int.MaxValue ? int.MaxValue : (int)total;
         }
     }
 
@@ -389,6 +425,25 @@ namespace RA2YR.Core.Formats.PackedMap
             IsoMapDiagnostic[] diagnosticArray = (diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray();
             Diagnostics = Array.AsReadOnly(diagnosticArray);
             Execution = execution ?? new IsoMapExecutionState();
+            Execution.ObservePacked(packed);
+            if (records != null)
+            {
+                Execution.Merge(records.Execution);
+                if (!records.IsSuccess) Execution.ObserveFailure();
+            }
+            else if (packed != null && packed.IsSuccess)
+            {
+                Execution.ObserveFailure();
+            }
+            if (coordinates != null)
+            {
+                Execution.Merge(coordinates.Execution);
+                if (!coordinates.IsSuccess) Execution.ObserveFailure();
+            }
+            else if (packed != null && packed.IsSuccess && records != null && records.IsSuccess)
+            {
+                Execution.ObserveFailure();
+            }
             foreach (IsoMapDiagnostic diagnostic in diagnosticArray) Execution.Observe(diagnostic.Severity);
         }
 

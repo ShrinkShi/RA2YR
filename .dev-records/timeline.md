@@ -591,3 +591,10 @@
 - 在 `feature/m3-c2-isomap-pack5-record-foundation` 上继续修复 active diff 审查问题；保持原五个提交不变。
 - 修复诊断预算 fail-open、duplicate policy、trailer 防御性返回、offset overflow 和测试 helper 确定性问题。
 - 当前 HEAD 的 Unity/包装器/版权/Repository safety 结果尚待新提交后重新执行，未使用历史 XML 冒充证据。
+
+## 2026-08-07 - M3-C2 P1 aggregation and gate refresh
+
+- Audited the remote feature branch at `3e6a8b623dac916daf5ff80a3c64705f477b1159`; no unpushed local M3-C2 commits were present before this fix.
+- Added top-level execution aggregation for packed, record, and coordinate stages with saturating suppressed-count merge.
+- Recomputed source coverage as 146 defined NUnit executions and 103 behavior methods.
+- Repository validation and copyright gates passed under Windows PowerShell 5.1 and PowerShell 7; Unity execution remains NotRun because the required Editor executable is unavailable.

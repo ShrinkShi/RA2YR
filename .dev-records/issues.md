@@ -419,3 +419,14 @@ Current reproducible checks are limited to clean source diff validation and repo
 
 ### 验证方式
 - 新增零诊断预算、预算填满后错误、duplicate policy 和 trailer overflow 测试；修复后必须重新生成当前 HEAD XML。
+
+## 2026-08-07 - M3-C2 P1 resolution state
+
+- Resolved the remaining packed-result aggregation gap: child packed,
+  record, and coordinate execution state now contributes to top-level status,
+  fatal flag, highest severity, and suppressed count.
+- Current-head Unity focused/full EditMode and PlayMode remain `NotRun`; no
+  historical XML is being reused. The required Unity Editor executable is not
+  installed on this host.
+- PS5.1 and PS7 repository validation/copyright scans pass; regression suites
+  pass with 46 repository-validation cases and 22 copyright cases.
