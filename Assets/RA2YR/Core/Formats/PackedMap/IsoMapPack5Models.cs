@@ -21,6 +21,8 @@ namespace RA2YR.Core.Formats.PackedMap
         OutOfDomainCoordinate,
         CoordinateArithmeticOverflow,
         PackedStageFailure,
+        EmptyPackedInput,
+        EmptyChunkEnvelope,
         WrongCodec,
         BackendUnavailable,
         NoProgress,
@@ -87,6 +89,11 @@ namespace RA2YR.Core.Formats.PackedMap
             AddSuppressed(1);
         }
 
+        internal void Suppress(int count)
+        {
+            AddSuppressed(count);
+        }
+
         private void AddSuppressed(int count)
         {
             if (count <= 0 || suppressedDiagnosticCount == int.MaxValue) return;
@@ -141,6 +148,59 @@ namespace RA2YR.Core.Formats.PackedMap
         RejectAnyRemainder,
         PreserveRemainderWithDiagnostic,
         AllowExactFourZeroTrailer
+    }
+
+    internal static class IsoMapPolicyValidation
+    {
+        internal static void ValidateTrailingPolicy(IsoMapPack5TrailingPolicy policy, string parameterName)
+        {
+            switch (policy)
+            {
+                case IsoMapPack5TrailingPolicy.RejectAnyRemainder:
+                case IsoMapPack5TrailingPolicy.PreserveRemainderWithDiagnostic:
+                case IsoMapPack5TrailingPolicy.AllowExactFourZeroTrailer:
+                    return;
+                default:
+                    throw new ArgumentOutOfRangeException(parameterName, policy, "Unknown IsoMapPack5 trailing policy.");
+            }
+        }
+
+        internal static void ValidateDuplicatePolicy(IsoMapCoordinateDuplicatePolicy policy, string parameterName)
+        {
+            switch (policy)
+            {
+                case IsoMapCoordinateDuplicatePolicy.PreserveAllAndDiagnose:
+                case IsoMapCoordinateDuplicatePolicy.RejectAnyDuplicate:
+                case IsoMapCoordinateDuplicatePolicy.AllowByteIdenticalDuplicatesButDiagnose:
+                    return;
+                default:
+                    throw new ArgumentOutOfRangeException(parameterName, policy, "Unknown IsoMap coordinate duplicate policy.");
+            }
+        }
+
+        internal static void ValidateAxisOrder(IsoMapCoordinateAxisOrder axisOrder, string parameterName)
+        {
+            switch (axisOrder)
+            {
+                case IsoMapCoordinateAxisOrder.XThenY:
+                case IsoMapCoordinateAxisOrder.YThenX:
+                    return;
+                default:
+                    throw new ArgumentOutOfRangeException(parameterName, axisOrder, "Unknown IsoMap coordinate axis order.");
+            }
+        }
+
+        internal static void ValidateSignedness(IsoMapCoordinateSignednessCandidate signedness, string parameterName)
+        {
+            switch (signedness)
+            {
+                case IsoMapCoordinateSignednessCandidate.RawUnsigned:
+                case IsoMapCoordinateSignednessCandidate.Signed16Candidate:
+                    return;
+                default:
+                    throw new ArgumentOutOfRangeException(parameterName, signedness, "Unknown IsoMap coordinate signedness candidate.");
+            }
+        }
     }
 
     internal enum IsoMapTrailingClassification
@@ -305,7 +365,16 @@ namespace RA2YR.Core.Formats.PackedMap
             int? height = null,
             bool configuredDenseCountCandidate = false)
         {
-            if (width.HasValue && width.Value < 0 || height.HasValue && height.Value < 0) throw new ArgumentOutOfRangeException();
+            IsoMapPolicyValidation.ValidateAxisOrder(axisOrder, nameof(axisOrder));
+            IsoMapPolicyValidation.ValidateSignedness(signedness, nameof(signedness));
+            if (width.HasValue != height.HasValue)
+                throw new ArgumentException("Coordinate rectangle width and height must be configured together.");
+            if (width.HasValue && (width.Value <= 0 || height.Value <= 0))
+                throw new ArgumentOutOfRangeException(nameof(width), "Coordinate rectangle dimensions must be positive.");
+            if (configuredDenseCountCandidate && !width.HasValue)
+                throw new ArgumentException("A dense-count candidate requires explicit rectangle dimensions.", nameof(configuredDenseCountCandidate));
+            if (configuredDenseCountCandidate)
+                _ = checked((long)width.Value * height.Value);
             AxisOrder = axisOrder;
             Signedness = signedness;
             Width = width;
@@ -402,6 +471,8 @@ namespace RA2YR.Core.Formats.PackedMap
             IsoMapPack5ReadLimits limits = null)
         {
             PackedPolicy = packedPolicy ?? throw new ArgumentNullException(nameof(packedPolicy));
+            IsoMapPolicyValidation.ValidateTrailingPolicy(trailingPolicy, nameof(trailingPolicy));
+            IsoMapPolicyValidation.ValidateDuplicatePolicy(duplicatePolicy, nameof(duplicatePolicy));
             TrailingPolicy = trailingPolicy;
             DuplicatePolicy = duplicatePolicy;
             CoordinateProfile = coordinateProfile;
@@ -458,6 +529,6 @@ namespace RA2YR.Core.Formats.PackedMap
         public int SuppressedDiagnosticCount => Execution.SuppressedDiagnosticCount;
         public bool IsSuccess => CompletionStatus == IsoMapCompletionStatus.Succeeded &&
             Packed != null && Packed.IsSuccess && Records != null && Records.IsSuccess &&
-            (Coordinates == null || Coordinates.IsSuccess);
+            Coordinates != null && Coordinates.IsSuccess;
     }
 }

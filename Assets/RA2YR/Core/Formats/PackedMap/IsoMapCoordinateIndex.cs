@@ -17,6 +17,7 @@ namespace RA2YR.Core.Formats.PackedMap
             BinarySourceContext source = null)
         {
             if (records == null) throw new ArgumentNullException(nameof(records));
+            IsoMapPolicyValidation.ValidateDuplicatePolicy(duplicatePolicy, nameof(duplicatePolicy));
             limits = limits ?? new IsoMapPack5ReadLimits();
             source = source ?? new BinarySourceContext("isomap-coordinate-index", "isomap-pack5-input", LogicalContentPath.Parse("isomap-pack5-input"));
             var diagnostics = new List<IsoMapDiagnostic>();
@@ -89,12 +90,29 @@ namespace RA2YR.Core.Formats.PackedMap
         private static bool IsOutOfDomain(IsoMapCoordinateKey key, IsoMapCoordinateValidationProfile profile)
         {
             if (profile == null || !profile.Width.HasValue || !profile.Height.HasValue) return false;
-            long first = profile.AxisOrder == IsoMapCoordinateAxisOrder.XThenY ? key.XRaw : key.YRaw;
-            long second = profile.AxisOrder == IsoMapCoordinateAxisOrder.XThenY ? key.YRaw : key.XRaw;
+            long first;
+            long second;
+            switch (profile.AxisOrder)
+            {
+                case IsoMapCoordinateAxisOrder.XThenY:
+                    first = key.XRaw;
+                    second = key.YRaw;
+                    break;
+                case IsoMapCoordinateAxisOrder.YThenX:
+                    first = key.YRaw;
+                    second = key.XRaw;
+                    break;
+                default:
+                    throw new InvalidOperationException("Coordinate profile contains an invalid axis order.");
+            }
             if (profile.Signedness == IsoMapCoordinateSignednessCandidate.Signed16Candidate)
             {
                 first = unchecked((short)first);
                 second = unchecked((short)second);
+            }
+            else if (profile.Signedness != IsoMapCoordinateSignednessCandidate.RawUnsigned)
+            {
+                throw new InvalidOperationException("Coordinate profile contains an invalid signedness candidate.");
             }
             return first < 0 || second < 0 || first >= profile.Width.Value || second >= profile.Height.Value;
         }

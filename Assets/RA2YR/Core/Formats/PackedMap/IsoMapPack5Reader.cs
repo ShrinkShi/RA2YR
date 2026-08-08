@@ -23,6 +23,7 @@ namespace RA2YR.Core.Formats.PackedMap
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
             if (absoluteOffset < 0) throw new ArgumentOutOfRangeException(nameof(absoluteOffset));
+            IsoMapPolicyValidation.ValidateTrailingPolicy(trailingPolicy, nameof(trailingPolicy));
             limits = limits ?? new IsoMapPack5ReadLimits();
             source = source ?? SyntheticSource();
             IReadOnlyList<IniSourceProvenance> chain = NormalizeProvenance(provenance, source);
@@ -126,6 +127,7 @@ namespace RA2YR.Core.Formats.PackedMap
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
             if (source == null) throw new ArgumentNullException(nameof(source));
+            IsoMapPolicyValidation.ValidateTrailingPolicy(trailingPolicy, nameof(trailingPolicy));
             limits = limits ?? new IsoMapPack5ReadLimits();
             try
             {
@@ -152,6 +154,7 @@ namespace RA2YR.Core.Formats.PackedMap
             IEnumerable<IniSourceProvenance> provenance = null)
         {
             if (window == null) throw new ArgumentNullException(nameof(window));
+            IsoMapPolicyValidation.ValidateTrailingPolicy(trailingPolicy, nameof(trailingPolicy));
             limits = limits ?? new IsoMapPack5ReadLimits();
             source = source ?? SyntheticSource();
             try
