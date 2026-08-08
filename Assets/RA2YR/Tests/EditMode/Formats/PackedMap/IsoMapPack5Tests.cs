@@ -386,7 +386,7 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         public void CoreTypesDoNotReferenceUnityEngine() { string[] references = typeof(RA2YR.Core.AssemblyMarker).Assembly.GetReferencedAssemblies().Select(item => item.Name).ToArray(); Assert.That(references.Any(item => item != null && (item.StartsWith("UnityEngine", StringComparison.Ordinal) || item.StartsWith("UnityEditor", StringComparison.Ordinal))), Is.False); }
 
         [Test]
-        public void NoOverlayPreviewTmpModelsWereAdded() { Assert.That(typeof(IsoMapPack5RecordRaw).Assembly.GetTypes().Where(t => t.Namespace != null && t.Namespace.StartsWith("RA2YR.Core.Formats.PackedMap", StringComparison.Ordinal)).Select(t => t.Name), Has.None.Matches<string>(name => name.IndexOf("Overlay", StringComparison.OrdinalIgnoreCase) >= 0 || name.IndexOf("Preview", StringComparison.OrdinalIgnoreCase) >= 0 || name.Equals("TMP", StringComparison.OrdinalIgnoreCase))); }
+        public void NoPreviewOrTmpModelsWereAdded() { Assert.That(typeof(IsoMapPack5RecordRaw).Assembly.GetTypes().Where(t => t.Namespace != null && t.Namespace.StartsWith("RA2YR.Core.Formats.PackedMap", StringComparison.Ordinal)).Select(t => t.Name), Has.None.Matches<string>(name => name.IndexOf("Preview", StringComparison.OrdinalIgnoreCase) >= 0 || name.Equals("TMP", StringComparison.OrdinalIgnoreCase))); }
 
         [Test]
         public void NoLzoAlgorithmTypeWasAdded() { Assert.That(typeof(IsoMapPack5RecordRaw).Assembly.GetTypes().Where(t => t.Namespace != null && t.Namespace.StartsWith("RA2YR.Core.Formats.PackedMap", StringComparison.Ordinal)).Select(t => t.Name), Has.None.Matches<string>(name => name.IndexOf("Lzo1X", StringComparison.OrdinalIgnoreCase) >= 0 && name != nameof(ILzoDecodeBackend))); }
