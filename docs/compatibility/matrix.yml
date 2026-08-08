@@ -1,5 +1,5 @@
 schema_version: 1
-last_updated: "2026-08-03"
+last_updated: "2026-08-08"
 baseline:
   game: "Command & Conquer: Yuri's Revenge 1.001"
   content_role: "YR1001_ProjectBaseline patched development content source; not a clean YR 1.001 golden baseline"
@@ -600,7 +600,7 @@ entries:
     limitations:
       - id: format.isomap-pack5.synthetic-only
         status: "已知限制"
-        description: "The reader and coordinate analysis are synthetic/configured only; tile meaning, coordinate runtime semantics, and original behavior are not confirmed."
+        description: "The reader and coordinate analysis are synthetic/configured only; policies reject unknown enum values, rectangle bounds require positive width and height together, and tile meaning, coordinate runtime semantics, and original behavior are not confirmed."
       - id: format.isomap-pack5.packed-not-run
         status: "已知限制"
         description: "No real packed ProjectBaseline decode was run because the M3-C1 LZO algorithm remains unavailable by design."

@@ -1,11 +1,12 @@
 # IsoMapPack5 raw record foundation
 
-The current synthetic matrix defines 146 NUnit executions (96 `[Test]`
-declarations and 50 parameterized `[TestCase]` executions). The current-HEAD
-executed count is 0 and passed count is unknown until a new XML result is
-generated; parameterized boundary cases are tracked separately from the 103
-behavior-method declarations. This count does not represent ProjectBaseline compatibility
-or original-runtime proof.
+The current synthetic matrix defines 164 NUnit executions (110 `[Test]`
+declarations and 54 parameterized `[TestCase]` executions). On the current
+HEAD, the focused M3-C2 XML executed and passed 164 cases; the full EditMode
+XML executed and passed 1097 cases, and PlayMode executed and passed 1 case.
+Parameterized boundary cases are tracked separately from the 118
+behavior-method declarations. These results do not represent ProjectBaseline
+compatibility or original-runtime proof.
 
 `SourceOffset` is the absolute offset within the decoded IsoMapPack5 stream (or
 the bounded input window origin plus that stream-relative offset). It is not a
@@ -59,13 +60,17 @@ preserving source order and every occurrence. Duplicate policies are explicit:
 - `AllowByteIdenticalDuplicatesButDiagnose`.
 
 Validation profiles explicitly carry axis order, signedness candidate, and
-optional width/height. No automatic axis swap, winner selection, repair,
+optional rectangle bounds. Width and height must be omitted together or
+provided together as positive values. A configured dense-count candidate
+requires the complete rectangle. Invalid enum values are rejected at the
+configuration boundary and are never interpreted as fallback policies. No automatic axis swap, winner selection, repair,
 missing-cell synthesis, or dense-map assumption is applied.
 
 ## Packed adapter boundary
 
 `IsoMapPack5PackedSectionReader` requires an explicit `RawLzo1X` policy and an
-injected backend. It retains fragment, Base64, chunk, backend, decoded-stream,
+injected backend before any fragment or chunk processing. Empty fragment input
+and a successful zero-block envelope are distinct structured failures. It retains fragment, Base64, chunk, backend, decoded-stream,
 record, and coordinate-stage results. Upstream failures stop record parsing.
 The adapter never reads OverlayPack, PreviewPack, TMP, or ProjectBaseline data.
 

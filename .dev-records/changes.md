@@ -450,8 +450,8 @@
   axis, signedness, domain, sparse, and dense-count candidate policies.
 - Added the packed-section adapter over the existing injected RawLzo1X pipeline;
   upstream failures stop record parsing and no LZO algorithm was added.
-- The original M3-C2 delivery recorded 127 defined NUnit executions; after the
-  PR #42 review tests were added, the current source defines 139 executions
+- The original M3-C2 delivery recorded 127 defined NUnit executions. At the
+  previous PR #42 review head, the source defined 139 executions
   (89 `[Test]`, 50 `[TestCase]`) across 96 behavior-method declarations.
 
 ## 2026-08-05 - PR #42 review correction scope
@@ -493,7 +493,39 @@
 - Added current source coverage for packed-child failure, coordinate-child
   failure, multi-child suppression, warning severity, consumed-length stop,
   null-record termination, and deterministic duplicate-group ordering.
-- Current source defines 146 NUnit executions (96 `[Test]`, 50 `[TestCase]`)
-  across 103 behavior-method declarations. Unity execution remains NotRun
+- At that review head, the source defined 146 NUnit executions (96 `[Test]`,
+  50 `[TestCase]`) across 103 behavior-method declarations. Unity execution remains NotRun
   because the required Unity 2022.3.60f1c1 Editor executable is unavailable.
 - PS5.1/PS7 repository validation and copyright gates pass with zero violations.
+
+## 2026-08-07 - M3-C2 final independent-review corrections
+
+- Enforced the injected RawLzo1X backend requirement before fragment or chunk
+  processing; empty fragment input and a zero-block envelope are separate
+  structured failures and never reach the record stage.
+- Validated every M3-C2 policy/profile enum at its configuration boundary.
+  Coordinate rectangle bounds require positive width and height together;
+  dense-count candidates require the same complete rectangle.
+- Added direct regressions for record-child failure under a zero diagnostic
+  budget, suppressed-count saturation, missing coordinate stage, truncated
+  chunk input, empty input, zero chunks, and invalid policy/profile values.
+- At the review head before the current-head gate refresh, the source defined
+  164 NUnit executions (110 `[Test]`, 54 `[TestCase]`) across 118
+  behavior-method declarations; Unity was then `NotRun`.
+
+## 2026-08-08 - M3-C2 current-head verification refresh
+
+### Change scope
+- Added bounded first-occurrence peek/replay in the packed adapter so an empty
+  occurrence sequence returns `EmptyPackedInput` without unbounded materialization.
+- Updated synthetic evidence and compatibility metadata with current-head XML
+  results; compatibility claims remain synthetic and unconfirmed.
+
+### Verification
+- Focused IsoMapPack5 EditMode: 164/164 passed.
+- Full EditMode: 1097/1097 passed; Unity exit 0; shell exit 0;
+  forced post-result shutdown false.
+- PlayMode: 1/1 passed; Unity exit 0; shell exit 0;
+  forced post-result shutdown false.
+- Repository validation, copyright, regressions, and content wrapper regressions
+  passed under PS5.1 and PS7.

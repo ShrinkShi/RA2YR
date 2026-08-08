@@ -6,12 +6,12 @@ source_payload_published: false
 code_imported: false
 gpl_reference_only: true
 tests:
-  defined_nunit_executions: 146
-  test_attributes: 96
-  test_case_attributes: 50
-  behavior_contract_declarations: 103
-  current_head_executed: 0
-  current_head_passed: unknown
+  defined_nunit_executions: 164
+  test_attributes: 110
+  test_case_attributes: 54
+  behavior_contract_declarations: 118
+  current_head_executed: 164
+  current_head_passed: 164
 components:
   record_reader: synthetic_raw_11_byte_records
   trailing_policy: reject_preserve_or_exact_four_zero_profile
@@ -19,11 +19,34 @@ components:
   packed_adapter: injected_raw_lzo1x_contract_only
   inputs: memory_stream_short_read_and_bounded_window_paths
   execution_aggregation: packed_record_coordinate_child_state_with_saturating_suppressed_count
+  backend_requirement: raw_lzo1x_backend_required_before_fragment_processing
+  empty_packed_input: structured_failure_before_record_stage
+  zero_chunk_envelope: structured_failure_before_record_stage
+  enum_validation: deterministic_configuration_boundary_rejection
+  coordinate_dimensions: positive_width_and_height_both_or_neither
 verification:
-  current_head_unity_focus: NotRun_unity_2022_3_60f1c1_editor_not_installed
-  current_head_xml_published: false
-  current_head_executed: 0
-  current_head_passed: unknown
+  current_head_unity_focus: passed
+  current_head_xml_published: true
+  current_head_executed: 164
+  current_head_passed: 164
+  current_head_focus_xml: TestResults/focused-current-20260808T062940138Z/results.xml
+  current_head_focus_total: 164
+  current_head_focus_passed: 164
+  current_head_focus_failed: 0
+  current_head_focus_skipped: 0
+  current_head_focus_inconclusive: 0
+  current_head_focus_unity_exit: null
+  current_head_focus_shell_exit: 0
+  current_head_focus_forced_post_result_shutdown: true
+  current_head_full_editmode_xml: TestResults/20260808T060513590Z-5c0b0948e6544006a7ff40fdff83c277/EditMode/results.xml
+  current_head_full_playmode_xml: TestResults/20260808T060826184Z-9c31bde35ba2454fb3e60826e5692a01/PlayMode/results.xml
+  current_head_full_editmode_total: 1097
+  current_head_full_editmode_passed: 1097
+  current_head_full_playmode_total: 1
+  current_head_full_playmode_passed: 1
+  current_head_unity_exit: 0
+  current_head_wrapper_shell_exit: 0
+  current_head_forced_post_result_shutdown: false
   historical_xml_reused_as_current_evidence: false
   static_diff_check: passed
   repository_validation_ps51: passed

@@ -1,9 +1,18 @@
 # Backlog
 
-## M3-C2 follow-up
-- [ ] 在可用 Unity 主机上从当前 HEAD 重新生成 focused/full EditMode 与 PlayMode XML；历史 XML 不可替代。
-- [ ] 在可用 GitHub 凭据下推送 `feature/m3-c2-isomap-pack5-record-foundation` 并创建 Draft PR `format: implement IsoMapPack5 raw record foundation`。
-- [ ] 完成 M3-C2 的双 PowerShell repository validation、copyright、content wrapper regressions 和 Repository safety。
+## 2026-08-07 - M3-C2 authoritative closeout status
+
+- [x] Draft PR #42 exists and remains Open/Draft/Unmerged.
+- [x] Repository safety run `31178723783` completed successfully for review head `6551e01472404886da8f8a3aad4a514d863f8406`.
+- [x] Final independent-review code and regression corrections are implemented locally.
+- [ ] Push the final correction commit and obtain Repository safety success for its exact HEAD.
+- [x] Run focused/full EditMode and PlayMode on Unity 2022.3.60f1c1; current-head XMLs are authoritative and all executed cases passed.
+- Historical unchecked Draft PR and Repository safety entries below describe earlier delivery state and are superseded by this section.
+
+## M3-C2 follow-up (historical review-head checklist)
+- [x] 在可用 Unity 主机上从当前 HEAD 重新生成 focused/full EditMode 与 PlayMode XML；历史 XML 不可替代。
+- [x] 在可用 GitHub 凭据下推送 `feature/m3-c2-isomap-pack5-record-foundation` 并创建 Draft PR `format: implement IsoMapPack5 raw record foundation`。
+- [ ] 完成 M3-C2 的双 PowerShell repository validation、copyright、content wrapper regressions 和 exact final-head Repository safety; static and wrapper gates are complete, final safety remains pending after the new push.
 
 ## 待处理
 - [ ] 使用 Unity 2022.3.60f1c1 从当前 HEAD 重新运行 M3-C1 focused/full Unity 门禁。

@@ -598,3 +598,28 @@
 - Added top-level execution aggregation for packed, record, and coordinate stages with saturating suppressed-count merge.
 - Recomputed source coverage as 146 defined NUnit executions and 103 behavior methods.
 - Repository validation and copyright gates passed under Windows PowerShell 5.1 and PowerShell 7; Unity execution remains NotRun because the required Editor executable is unavailable.
+
+## 2026-08-07 - M3-C2 final independent-review correction
+
+- Started from synchronized review head `6551e01472404886da8f8a3aad4a514d863f8406` with `behind=0` against `ea1eb5505a71d9da28cb1cef6ed8b089bd7e193a`.
+- Added unconditional RawLzo1X backend gating, explicit empty-input and zero-chunk failures, deterministic enum validation, and a positive both-or-neither coordinate rectangle contract.
+- Expanded the source matrix to 164 defined NUnit executions and 118 behavior
+  methods; Unity was `NotRun` at that review head pending the required editor.
+
+## 2026-08-08 - M3-C2 current-head gates
+
+### User goal
+- Re-run the current-head gates after the packed empty-input boundary fix and
+  retain accurate evidence for PR #42.
+
+### Work completed
+- Added a bounded first-occurrence peek/replay before packed pipeline decode;
+  empty input now fails as `EmptyPackedInput` and never reaches record parsing.
+- Re-ran focused M3-C2 EditMode, full EditMode, and PlayMode on Unity
+  2022.3.60f1c1, plus PS5.1/PS7 repository, copyright, regression, and content
+  wrapper gates.
+
+### Key results
+- Focused: 164/164; full EditMode: 1097/1097; PlayMode: 1/1.
+- Static and wrapper gates passed; compatibility remains synthetic and no
+  ProjectBaseline packed data was read.
