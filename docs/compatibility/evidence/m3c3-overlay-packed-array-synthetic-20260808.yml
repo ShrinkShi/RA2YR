@@ -6,6 +6,7 @@ source_payload_published: false
 code_imported: false
 gpl_reference_only: true
 implementation_commit: 975593a
+validation_commit: 82fa0239edafd7174a6386a1fc80f43b6440f169
 components:
   section_selection: "OverlayPack and OverlayDataPack explicit Missing/PresentEmpty/Selected/Ambiguous states"
   overlay_pack: "ordinary 512x512 byte-array raw view"
@@ -20,18 +21,45 @@ tests:
   focused_test_attributes: 37
   focused_test_case_attributes: 14
   focused_behavior_method_declarations: 41
-  current_worktree_executed: 51
-  current_worktree_passed: 51
-  current_worktree_failed: 0
-  current_worktree_skipped: 0
-  current_worktree_inconclusive: 0
-  current_worktree_xml: "TestResults/focused-20260808T094027132Z-39c99b631a1d47f7822661486d907f65/results.xml"
+  focused_current_head_executed: 51
+  focused_current_head_passed: 51
+  focused_current_head_failed: 0
+  focused_current_head_skipped: 0
+  focused_current_head_inconclusive: 0
+  focused_current_head_xml: "TestResults/m3c3-focused-final-20260808T100100330Z/results.xml"
+  full_editmode_current_head_executed: 1148
+  full_editmode_current_head_passed: 1148
+  full_editmode_current_head_failed: 0
+  full_editmode_current_head_skipped: 0
+  full_editmode_current_head_inconclusive: 0
+  full_editmode_current_head_xml: "TestResults/20260808T100240926Z-5de1e3ef96c442db80abecaefe3bd351/EditMode/results.xml"
+  playmode_current_head_executed: 1
+  playmode_current_head_passed: 1
+  playmode_current_head_failed: 0
+  playmode_current_head_skipped: 0
+  playmode_current_head_inconclusive: 0
+  playmode_current_head_xml: "TestResults/20260808T100405224Z-02b4cd2315df4130a9ddc3112915d939/PlayMode/results.xml"
   historical_xml_reused_as_current_evidence: false
 verification:
   static_diff_check: passed
+  focused_unity_exit: 0
+  focused_shell_exit: 0
+  focused_forced_post_result_shutdown: true
+  full_editmode_unity_exit: 0
+  full_editmode_shell_exit: 0
+  full_editmode_forced_post_result_shutdown: false
+  playmode_unity_exit: 0
+  playmode_shell_exit: 0
+  playmode_forced_post_result_shutdown: true
+  repository_validation_ps51: "passed: assets=244, meta=244, matrix=149, evidence=114, violations=0"
+  repository_validation_ps7: "passed: assets=244, meta=244, matrix=149, evidence=114, violations=0"
+  repository_validation_regressions: "passed: 46 across PS5.1 and PS7"
+  copyright_ps51: "passed: candidates=842, ignored_probes=13/13, violations=0"
+  copyright_ps7: "passed: candidates=842, ignored_probes=13/13, violations=0"
+  copyright_regressions: "passed: 22 across PS5.1 and PS7"
+  content_wrapper_regressions_ps51: "passed: 51 (CSF=11, INI=15, PAL=10, SHP=9, forensic=6)"
+  content_wrapper_regressions_ps7: "passed: 51 (CSF=11, INI=15, PAL=10, SHP=9, forensic=6)"
   project_baseline_packed_audit: not_run
-  repository_validation: pending_final_tree
-  copyright_scan: pending_final_tree
   repository_safety: pending_push
 compatibility:
   overlay_pack_raw_array: Synthetic

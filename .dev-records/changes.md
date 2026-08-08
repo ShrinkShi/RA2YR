@@ -548,8 +548,12 @@
 ### Verification boundary
 
 - Focused M3-C3 worktree XML: 51/51 passed; this is synthetic behavior only.
-- Full EditMode, PlayMode, repository validation, copyright, wrappers, and
-  Repository safety remain pending for the final documentation tree.
+- Final-code-tree gates at `82fa0239edafd7174a6386a1fc80f43b6440f169` passed:
+  focused 51/51, EditMode 1148/1148, PlayMode 1/1, PS5.1/PS7 validation and
+  copyright, repository regressions 46, copyright regressions 22, and content
+  wrapper regressions 51 in each host.
+- The result-record commit is documentation-only; no C# or test source changed
+  after the validated tree. Repository safety remains pending until push.
 - No ProjectBaseline packed data was read; no Overlay semantic registry,
   Preview, TMP, palette, renderer, gameplay, or real LZO implementation was
   added.

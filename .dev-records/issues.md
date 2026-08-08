@@ -453,5 +453,7 @@ copyright, wrapper, and safety gates. Fail closed if any host gate is blocked.
 ### 验证方式
 
 The focused worktree XML is 51/51 passed and includes the new
-`OverlayPackedArrayTests`; full-suite and remote safety results must be
-generated for the pushed final HEAD.
+`OverlayPackedArrayTests`; full-suite results are now current for validation
+commit `82fa0239edafd7174a6386a1fc80f43b6440f169`: focused 51/51, EditMode
+1148/1148, and PlayMode 1/1. The remaining gate is Repository safety for the
+pushed documentation-only result-record head.

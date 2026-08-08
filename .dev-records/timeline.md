@@ -657,5 +657,7 @@
 
 ### 后续事项
 
-- 完成 final-tree Unity/static/wrapper/safety gates，推送并创建 Draft PR；
+- 已在 validation commit `82fa0239edafd7174a6386a1fc80f43b6440f169` 完成 Unity、
+  PS5.1/PS7 static/copyright、repository regression 和 content wrapper regression。
+- 推送文档结果记录并创建 Draft PR，等待 exact pushed HEAD Repository safety；
   通过后停止，不开始 M3-C4。
