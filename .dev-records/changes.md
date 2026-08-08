@@ -529,3 +529,27 @@
   forced post-result shutdown false.
 - Repository validation, copyright, regressions, and content wrapper regressions
   passed under PS5.1 and PS7.
+
+## 2026-08-08 - M3-C3 Overlay raw packed-array foundation
+
+### Change scope
+
+- Added UnityEngine-free `OverlayPackedArrayModels` and
+  `OverlayPackedArrayReader` for explicit `OverlayPack` and `OverlayDataPack`
+  section selection.
+- Reused the M3-C1 packed pipeline with an explicit absolute Format80 profile;
+  RawLzo1X remains rejected at this layer because no LZO algorithm is present.
+- Added exact ordinary `512 x 512` raw-array validation, defensive byte views,
+  explicit candidate storage indexes, provenance retention, and fail-closed
+  child/parent execution state.
+- Added 51 focused NUnit executions (37 `[Test]`, 14 `[TestCase]`) and narrowed
+  the old IsoMap prohibition to Preview/TMP-only assertions.
+
+### Verification boundary
+
+- Focused M3-C3 worktree XML: 51/51 passed; this is synthetic behavior only.
+- Full EditMode, PlayMode, repository validation, copyright, wrappers, and
+  Repository safety remain pending for the final documentation tree.
+- No ProjectBaseline packed data was read; no Overlay semantic registry,
+  Preview, TMP, palette, renderer, gameplay, or real LZO implementation was
+  added.

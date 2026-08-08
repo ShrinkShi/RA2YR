@@ -167,7 +167,7 @@ sources:
     license:
       spdx: "GPL-3.0-or-later"
       verification: "upstream LICENSE.md, README license section, and MissionEditor source headers"
-    purpose: "FinalAlert 2 RA2/YR INI behavior reference plus official-editor use of XCC SHP(TS) structures and decoding lineage"
+    purpose: "FinalAlert 2 RA2/YR INI behavior reference plus official-editor use of XCC SHP(TS) structures, Overlay raw-array storage, and decoding lineage"
     contains_code: true
     reference_only: true
     code_imported: false

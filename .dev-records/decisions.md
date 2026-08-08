@@ -432,3 +432,25 @@ interpretation from becoming an undocumented runtime contract.
 ### Cost
 The branch cannot claim real packed-map compatibility and requires a future
 authorized backend plus format-specific evidence before ProjectBaseline audit.
+
+## 2026-08-08 - M3-C3 raw Overlay arrays remain section-explicit
+
+### Background
+
+The Overlay dossier distinguishes two compressed sections, ordinary 512x512
+byte storage, competing coordinate formulas, and unresolved type/data
+semantics.
+
+### Decision
+
+Implement only separate raw `OverlayPack` and `OverlayDataPack` adapters over
+the existing bounded M3-C1 pipeline. Require exact 262144-byte output, retain
+defensive raw bytes and provenance, and expose row-major and transposed index
+candidates as explicit profiles. Do not infer section policy, interpret
+`0xFF`, bind `[OverlayTypes]`, or create visual/runtime objects.
+
+### Reason
+
+This preserves the reversible byte and provenance boundary while avoiding a
+silent choice among conflicting coordinate and semantic claims. Synthetic
+success is not original-runtime compatibility.

@@ -15,12 +15,14 @@
 - [x] 完成 M3-C2 的双 PowerShell repository validation、copyright、content wrapper regressions 和 exact final-head Repository safety；run `31245165415` 为 `completed/success`。
 
 ## 待处理
-- [ ] 使用 Unity 2022.3.60f1c1 从当前 HEAD 重新运行 M3-C1 focused/full Unity 门禁。
-- [ ] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 三个独立提交，更新 Draft PR #36。
-- [ ] 后续独立工作包研究并实现 IsoMap/Overlay/Preview/TMP，必须重新建立格式证据。
+- [x] 使用 Unity 2022.3.60f1c1 从 M3-C1 交付 HEAD 重新运行 focused/full Unity 门禁（历史 M3-C1 交付记录）。
+- [x] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 修复，更新 Draft PR #36；PR #36 已合并。
+- [x] 完成 M3-C2 IsoMapPack5 raw-record foundation，并开始 M3-C3 OverlayPack/OverlayDataPack raw-array foundation；语义、PreviewPack 和 TMP 仍需独立证据。
 
 - [ ] 在授权并具备实际 backend 后设计 ProjectBaseline packed-section audit；不得在 M3-C1 伪造地图兼容性。
-- [ ] 研究并实现后续 IsoMapPack5、OverlayPack、PreviewPack、TMP 和 LZO 读取工作包。
+- [x] 完成 IsoMapPack5 raw record 与显式 coordinate/trailing policy foundation。
+- [x] 完成 OverlayPack/OverlayDataPack ordinary raw-array adapter foundation；当前分支仅保留 synthetic/configured 兼容边界。
+- [ ] 研究并实现 PreviewPack、TMP/theater 绑定和真实 LZO backend；不得把 raw-array foundation 当作语义或运行时兼容。
 
 - [ ] 获取并登记干净、解包的 YR 1.001 内容基线。
 - [ ] 建立 FinalAlert 2 A/B/C/D 往返黄金样本。

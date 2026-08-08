@@ -623,3 +623,39 @@
 - Focused: 164/164; full EditMode: 1097/1097; PlayMode: 1/1.
 - Static and wrapper gates passed; compatibility remains synthetic and no
   ProjectBaseline packed data was read.
+
+## 2026-08-08 - M3-C3 Overlay raw-array foundation
+
+### 用户目标
+
+- 从 exact main 开始 M3-C3，只实现 OverlayPack/OverlayDataPack raw packed
+  array、trailing/length、防御性结果和显式 storage index foundation。
+
+### 本轮处理
+
+- 建立 `feature/m3-c3-overlay-packed-array-foundation`，实现独立 section
+  selection、ordinary 512x512 exact-length raw arrays、candidate index
+  profiles、provenance 和 fail-closed execution state。
+- 复用 M3-C1 packed pipeline；RawLzo1X、Preview、TMP、registry、palette、
+  rendering、pathfinding、gameplay 和 ProjectBaseline packed audit 均未做。
+- 新增 focused M3-C3 suite，当前 worktree XML 为 51/51 passed。
+
+### 关键结论
+
+- `OverlayPack` 与 `OverlayDataPack` 必须保持两个独立 child；缺失、空、选中、
+  歧义和失败不能互相合成。
+- `0xFF` 与坐标方向仍是 raw/candidate policy，不提升为原版 runtime 事实。
+
+### 影响文件
+
+- `Assets/RA2YR/Core/Formats/PackedMap/OverlayPackedArrayModels.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/OverlayPackedArrayReader.cs`
+- `Assets/RA2YR/Tests/EditMode/Formats/PackedMap/OverlayPackedArrayTests.cs`
+- `docs/adr/0025-overlay-packed-array-foundation.md`
+- `docs/formats/overlay-packed-arrays.md`
+- `docs/compatibility/evidence/m3c3-overlay-packed-array-synthetic-20260808.yml`
+
+### 后续事项
+
+- 完成 final-tree Unity/static/wrapper/safety gates，推送并创建 Draft PR；
+  通过后停止，不开始 M3-C4。

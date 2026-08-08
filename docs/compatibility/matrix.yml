@@ -588,7 +588,7 @@ entries:
         description: "Only explicit synthetic fragment, Base64, chunk, and Format80 profiles are implemented; LZO is contract-only and no ProjectBaseline packed audit was run."
       - id: format.map-pack-codec.map-specific-unimplemented
         status: "已知限制"
-        description: "IsoMap, OverlayPack, OverlayDataPack, PreviewPack, TMP, palette, rendering, writer, and original runtime behavior remain unimplemented or unconfirmed."
+        description: "IsoMap semantic interpretation, PreviewPack, TMP, palette, rendering, writer, and original runtime behavior remain unimplemented or unconfirmed; OverlayPack and OverlayDataPack now have only a synthetic raw-array foundation."
   - id: format.isomap-pack5-record
     domain: format
     feature: "IsoMapPack5 11-byte raw records, explicit trailing policy, and coordinate occurrence analysis"
@@ -609,7 +609,7 @@ entries:
         description: "Current-head evidence covers bounded ReadOnlyDataWindow input; no real or synthetic MIX entry fixture was executed in this review correction."
       - id: format.isomap-pack5.map-family-unimplemented
         status: "已知限制"
-        description: "OverlayPack, OverlayDataPack, PreviewPack, TMP, theater binding, palette, rendering, writer, pathfinding, and gameplay remain unimplemented."
+        description: "OverlayPack and OverlayDataPack have only a synthetic raw-array foundation; PreviewPack, TMP, theater binding, palette, rendering, writer, pathfinding, and gameplay remain unimplemented."
   - id: format.yro-wrapper
     domain: format
     feature: "YRO opaque prefix, INI body, digest, and trailing-data preservation"
@@ -1005,24 +1005,39 @@ entries:
   - id: map.isomappack5
     domain: map
     feature: "IsoMapPack5 cells, height, tile, and sub-tile indices"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.PackedMap.IsoMapPack5Tests"
+    evidence:
+      - "docs/compatibility/evidence/m3c2-isomap-pack5-synthetic-20260805.yml#components"
+    limitations:
+      - id: map.isomappack5.raw-only
+        status: "已知限制"
+        description: "Only the M3-C2 raw 11-byte record and coordinate occurrence boundary is implemented; tile, height, and runtime cell semantics remain unresolved."
   - id: map.overlay-pack
     domain: map
-    feature: "OverlayPack"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    feature: "OverlayPack raw packed byte array"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.PackedMap.OverlayPackedArrayTests"
+    evidence:
+      - "docs/compatibility/evidence/m3c3-overlay-packed-array-synthetic-20260808.yml#components"
+    limitations:
+      - id: map.overlay-pack.raw-only
+        status: "已知限制"
+        description: "Only the explicit ordinary 512x512 raw byte-array profile and candidate storage indexes are implemented; 0xFF meaning, resource binding, and original runtime behavior are not confirmed."
   - id: map.overlay-data-pack
     domain: map
-    feature: "OverlayDataPack"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    feature: "OverlayDataPack raw packed byte array"
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.PackedMap.OverlayPackedArrayTests"
+    evidence:
+      - "docs/compatibility/evidence/m3c3-overlay-packed-array-synthetic-20260808.yml#components"
+    limitations:
+      - id: map.overlay-data-pack.raw-only
+        status: "已知限制"
+        description: "Only the explicit ordinary 512x512 raw byte-array profile and candidate storage indexes are implemented; partner semantics, type registry, and original runtime behavior are not confirmed."
   - id: map.preview-pack
     domain: map
     feature: "PreviewPack and preview metadata"

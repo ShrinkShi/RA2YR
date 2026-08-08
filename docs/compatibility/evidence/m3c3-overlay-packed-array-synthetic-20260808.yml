@@ -1,0 +1,50 @@
+schema_version: 1
+work_package: M3-C3
+evidence_level: Synthetic
+project_baseline_read: false
+source_payload_published: false
+code_imported: false
+gpl_reference_only: true
+implementation_commit: 975593a
+components:
+  section_selection: "OverlayPack and OverlayDataPack explicit Missing/PresentEmpty/Selected/Ambiguous states"
+  overlay_pack: "ordinary 512x512 byte-array raw view"
+  overlay_data_pack: "ordinary 512x512 byte-array raw view"
+  storage_index: "explicit external row-major and official-editor transposed candidate formulas"
+  packed_pipeline: "M3-C1 PackedSectionDecodePipeline with explicit absolute Format80 policy"
+  lzo: "RawLzo1X rejected at adapter boundary; injected algorithm contract remains unavailable"
+  execution_aggregation: "fail-closed parent/child states with highest severity and saturating suppression count"
+  provenance: "lossless INI provenance and packed child trace retained"
+tests:
+  focused_defined_nunit_executions: 51
+  focused_test_attributes: 37
+  focused_test_case_attributes: 14
+  focused_behavior_method_declarations: 41
+  current_worktree_executed: 51
+  current_worktree_passed: 51
+  current_worktree_failed: 0
+  current_worktree_skipped: 0
+  current_worktree_inconclusive: 0
+  current_worktree_xml: "TestResults/focused-20260808T094027132Z-39c99b631a1d47f7822661486d907f65/results.xml"
+  historical_xml_reused_as_current_evidence: false
+verification:
+  static_diff_check: passed
+  project_baseline_packed_audit: not_run
+  repository_validation: pending_final_tree
+  copyright_scan: pending_final_tree
+  repository_safety: pending_push
+compatibility:
+  overlay_pack_raw_array: Synthetic
+  overlay_data_pack_raw_array: Synthetic
+  storage_index_semantics: ExplicitProfileOnly
+  overlay_type_meaning: Unresolved
+  original_runtime: NotConfirmed
+  project_baseline_packed_decode: NotRun
+  lzo_algorithm: NotImplemented
+  preview: NotImplemented
+  tmp: NotImplemented
+  renderer: NotImplemented
+license_boundary:
+  gpl_sources_reference_only: true
+  code_imported: false
+  original_payload_in_repository: false

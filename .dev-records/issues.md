@@ -430,3 +430,28 @@ Current reproducible checks are limited to clean source diff validation and repo
   installed on this host.
 - PS5.1 and PS7 repository validation/copyright scans pass; regression suites
   pass with 46 repository-validation cases and 22 copyright cases.
+
+## 2026-08-08 - M3-C3 final-tree gate status
+
+### 现象
+
+M3-C3 raw Overlay array code and focused tests are present on
+`feature/m3-c3-overlay-packed-array-foundation`, but the final documentation
+and evidence commit has not yet been pushed.
+
+### 根因
+
+The implementation was intentionally staged before documentation and gate
+refresh so the code/test commit remains independently reviewable.
+
+### 解决方案
+
+Finish the ADR, format document, compatibility/evidence updates, and
+development records; then run the current final tree through Unity, repository,
+copyright, wrapper, and safety gates. Fail closed if any host gate is blocked.
+
+### 验证方式
+
+The focused worktree XML is 51/51 passed and includes the new
+`OverlayPackedArrayTests`; full-suite and remote safety results must be
+generated for the pushed final HEAD.
