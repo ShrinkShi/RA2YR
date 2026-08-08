@@ -410,3 +410,25 @@ Directory and raw indexed decoding can be promoted independently. Strict synthet
 Section/key comparison, duplicate sections and keys, inline semicolons,
 whitespace, and empty-value override/deletion remain separate policies. The
 cross-document composition decision does not select them implicitly.
+
+## 2026-08-04 - M3-C2 IsoMapPack5 remains raw and evidence-gated
+
+### Background
+M3-C2 adds a bounded reader for decoded 11-byte IsoMapPack5 records and a
+packed-section adapter over the injected `RawLzo1X` contract. The record bytes
+do not establish a unique tile or coordinate interpretation.
+
+### Decision
+Keep the reader lossless and raw: preserve both 32-bit and split-16 tile views,
+retain trailing data only under an explicit policy, and keep coordinate indexing
+separate from record parsing. Real LZO, ProjectBaseline packed decode,
+OverlayPack, PreviewPack, TMP, rendering, and runtime coordinate semantics stay
+unimplemented or unconfirmed.
+
+### Reason
+This preserves reversible evidence and prevents a plausible tile or trailer
+interpretation from becoming an undocumented runtime contract.
+
+### Cost
+The branch cannot claim real packed-map compatibility and requires a future
+authorized backend plus format-specific evidence before ProjectBaseline audit.

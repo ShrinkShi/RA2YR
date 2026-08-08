@@ -391,3 +391,42 @@ INI 聚焦测试已写出 Passed XML 并进入 Shutdown，但 Unity 进程未退
 - Git push 已在先前交付完成；本轮修复尚未提交或推送。
 - Unity Hub 记录并确认 Unity 2022.3.60f1c1 可执行文件存在；当前 HEAD Unity 测试必须重新生成，历史 XML 不作为当前证据。
 - PR #36 保持 Draft，未 Ready、未合并；后续 M3-C2、IsoMap、Overlay、Preview、TMP、palette 和 renderer 均未开始。
+## 2026-08-04 - M3-C2 Unity and remote delivery remain environment-blocked
+
+### Symptom
+- Current M3-C2 HEAD has no newly generated Unity focused/full XML.
+- This branch has not yet completed remote push or Draft PR creation; no PR URL or Actions result is claimable.
+
+### Root cause
+The current host has unstable Unity process-launch behavior, and the GitHub credential/prompt session is unavailable. This is not evidence of a production-code failure.
+
+### Resolution
+Keep synthetic evidence and compatibility boundaries explicit, do not reuse historical XML as current-head proof, and defer remote delivery until a usable Unity/GitHub host is available.
+
+### Verification
+Current reproducible checks are limited to clean source diff validation and repository state. Unity, wrappers, copyright, and Repository safety remain unverified for this HEAD.
+## 2026-08-05 - PR #42 diagnostic budget fail-open review
+
+### 现象
+- reader/indexer 的 `IsSuccess` 可被诊断列表容量间接影响；当 `MaxDiagnostics=0` 或诊断预算已满时，错误可能无法进入列表。
+
+### 根因
+- 执行结果状态仅由已保存诊断推导，诊断列表不是可靠的完成状态载体。
+
+### 解决方案
+- 引入独立 `IsoMapExecutionState`，错误先更新失败状态，再按预算保存或抑制诊断；暴露最高严重级别和抑制计数。
+- reader、coordinate analyzer 和 packed result 统一使用完成状态。
+
+### 验证方式
+- 新增零诊断预算、预算填满后错误、duplicate policy 和 trailer overflow 测试；修复后必须重新生成当前 HEAD XML。
+
+## 2026-08-07 - M3-C2 P1 resolution state
+
+- Resolved the remaining packed-result aggregation gap: child packed,
+  record, and coordinate execution state now contributes to top-level status,
+  fatal flag, highest severity, and suppressed count.
+- Current-head Unity focused/full EditMode and PlayMode remain `NotRun`; no
+  historical XML is being reused. The required Unity Editor executable is not
+  installed on this host.
+- PS5.1 and PS7 repository validation/copyright scans pass; regression suites
+  pass with 46 repository-validation cases and 22 copyright cases.

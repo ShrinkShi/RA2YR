@@ -210,6 +210,7 @@ Tools/Testing/                  Unity 命令行测试入口
 - [MAP/TMP 格式研究](docs/research/map-tmp/README.md)
 - [Westwood 地图压缩研究](docs/research/map-compression/README.md)
 - [Packed map compression foundation](docs/formats/map-packed-compression.md)
+- [IsoMapPack5 raw record foundation](docs/formats/isomap-pack5.md)
 - [SHP(TS) 格式研究](docs/research/shp/README.md)
 - [SHP(TS) RLE 行宽冲突研究](docs/research/shp-rle-conflict/README.md)
 - [VXL/HVA 格式研究](docs/research/vxl-hva/README.md)

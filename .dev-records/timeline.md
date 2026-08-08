@@ -1,5 +1,34 @@
 # 开发时间线
 
+## 2026-08-04 - M3-C2 IsoMapPack5 raw-record foundation
+
+### 用户目标
+- 从精确 main 开始 M3-C2，只实现 IsoMapPack5 raw record、trailing-data、
+  coordinate-index 和 packed-section adapter foundation。
+
+### 本轮处理
+- 创建 `feature/m3-c2-isomap-pack5-record-foundation`，基线和 `origin/main`
+  均为 `6b6cf581cd2e58c05c33952d5ead2546f4842554`。
+- 实现 11-byte raw record reader、三种 trailing policy、坐标 occurrence/index
+  和注入式 RawLzo1X packed adapter。
+- 将 focused synthetic tests 扩展到 127 个独立执行 case。
+
+### 关键结论
+- 不选择 tile 解释，不创建 TMP/renderer/map object。
+- 不实现真实 LZO，不读取 ProjectBaseline packed 内容。
+- 当前 Unity headless XML 受宿主 `PATH`/`Path` 变量冲突和无进展启动阻塞，
+  不把历史 XML 当作当前 HEAD 证据。
+
+### 影响文件
+- `Assets/RA2YR/Core/Formats/PackedMap/`
+- `Assets/RA2YR/Tests/EditMode/Formats/PackedMap/IsoMapPack5Tests.cs`
+- `docs/adr/0024-isomap-pack5-raw-record-foundation.md`
+- `docs/formats/isomap-pack5.md`
+- `docs/compatibility/evidence/m3c2-isomap-pack5-synthetic-20260805.yml`
+
+### 后续事项
+- 静态门禁通过后推送分支并创建 Draft PR；Unity 与 Repository safety 需在可用主机/连接器上重跑。
+
 ## 2026-08-04 - M3-C1 contract review fixes
 
 ### 用户目标
@@ -557,3 +586,40 @@
 ### Next step
 - Commit and push the normal merge, verify PR #27 state, wait for PR #20
   Repository safety, then squash merge PR #20 without starting PR #21 work.
+# 2026-08-05 PR #42 审查修复
+
+- 在 `feature/m3-c2-isomap-pack5-record-foundation` 上继续修复 active diff 审查问题；保持原五个提交不变。
+- 修复诊断预算 fail-open、duplicate policy、trailer 防御性返回、offset overflow 和测试 helper 确定性问题。
+- 当前 HEAD 的 Unity/包装器/版权/Repository safety 结果尚待新提交后重新执行，未使用历史 XML 冒充证据。
+
+## 2026-08-07 - M3-C2 P1 aggregation and gate refresh
+
+- Audited the remote feature branch at `3e6a8b623dac916daf5ff80a3c64705f477b1159`; no unpushed local M3-C2 commits were present before this fix.
+- Added top-level execution aggregation for packed, record, and coordinate stages with saturating suppressed-count merge.
+- Recomputed source coverage as 146 defined NUnit executions and 103 behavior methods.
+- Repository validation and copyright gates passed under Windows PowerShell 5.1 and PowerShell 7; Unity execution remains NotRun because the required Editor executable is unavailable.
+
+## 2026-08-07 - M3-C2 final independent-review correction
+
+- Started from synchronized review head `6551e01472404886da8f8a3aad4a514d863f8406` with `behind=0` against `ea1eb5505a71d9da28cb1cef6ed8b089bd7e193a`.
+- Added unconditional RawLzo1X backend gating, explicit empty-input and zero-chunk failures, deterministic enum validation, and a positive both-or-neither coordinate rectangle contract.
+- Expanded the source matrix to 164 defined NUnit executions and 118 behavior
+  methods; Unity was `NotRun` at that review head pending the required editor.
+
+## 2026-08-08 - M3-C2 current-head gates
+
+### User goal
+- Re-run the current-head gates after the packed empty-input boundary fix and
+  retain accurate evidence for PR #42.
+
+### Work completed
+- Added a bounded first-occurrence peek/replay before packed pipeline decode;
+  empty input now fails as `EmptyPackedInput` and never reaches record parsing.
+- Re-ran focused M3-C2 EditMode, full EditMode, and PlayMode on Unity
+  2022.3.60f1c1, plus PS5.1/PS7 repository, copyright, regression, and content
+  wrapper gates.
+
+### Key results
+- Focused: 164/164; full EditMode: 1097/1097; PlayMode: 1/1.
+- Static and wrapper gates passed; compatibility remains synthetic and no
+  ProjectBaseline packed data was read.

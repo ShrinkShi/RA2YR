@@ -438,3 +438,94 @@
 - The synchronized `main` does not yet contain an SHP audit wrapper; PR #20 did
   not migrate one from the separate SHP workstream.
 - Original-runtime INI syntax and precedence confirmation remains unimplemented.
+
+## 2026-08-04 - M3-C2 IsoMapPack5 raw-record foundation
+
+### Change scope
+- Added UnityEngine-free IsoMapPack5 11-byte raw records, defensive raw-byte
+  views, source offsets/order, and packed provenance.
+- Added explicit decoded-stream trailing policies, including exact four-zero
+  trailer acceptance only under its named profile.
+- Added separate coordinate occurrence/index analysis with explicit duplicate,
+  axis, signedness, domain, sparse, and dense-count candidate policies.
+- Added the packed-section adapter over the existing injected RawLzo1X pipeline;
+  upstream failures stop record parsing and no LZO algorithm was added.
+- The original M3-C2 delivery recorded 127 defined NUnit executions. At the
+  previous PR #42 review head, the source defined 139 executions
+  (89 `[Test]`, 50 `[TestCase]`) across 96 behavior-method declarations.
+
+## 2026-08-05 - PR #42 review correction scope
+
+### 变更范围
+- 修复 IsoMapPack5 reader/coordinate analyzer 的诊断预算 fail-open 风险。
+- 冻结三种 duplicate policy 的成功/失败语义，补充零诊断预算覆盖。
+- 修复测试中的强类型字节拼接、显式 section 传递、独立 backend length mismatch 覆盖和真实 assembly 引用边界检查。
+- 修复 trailer 防御性返回与 checked offset overflow 诊断。
+- 更正 M3-C2 evidence 的测试计数和当前 HEAD 执行状态。
+
+### 验证情况
+- 当前尚未生成修复后 Unity XML；未将历史 XML 作为当前 HEAD 证据。
+- Repository safety 需要在新提交后重新运行。
+
+### 风险
+- Unity、PS5.1/PS7、wrapper 和 copyright 门禁需在新 HEAD 上重新执行。
+
+### Verification boundary
+- `git diff --check` is clean.
+- Current-head Unity XML was not generated: the desktop host's PowerShell
+  process launcher fails on duplicate case-insensitive `PATH`/`Path` variables,
+  and direct Unity launches made no progress before controlled termination.
+- Historical M3-C1 XML is not used as M3-C2 evidence.
+
+### Compatibility
+- IsoMapPack5 reader: Synthetic; tile interpretation and coordinate runtime
+  semantics: Unresolved/NotConfirmed.
+- Real packed ProjectBaseline decode: NotRun; LZO remains contract-only.
+- OverlayPack, PreviewPack, TMP, palette, rendering, writer, pathfinding, and
+  gameplay remain outside this work package.
+
+## 2026-08-07 - M3-C2 packed execution aggregation follow-up
+
+- Aggregated packed, record, and coordinate child execution state at the
+  IsoMapPack5 adapter boundary.
+- Preserved fatal status and highest severity when diagnostic storage is full,
+  including a zero-diagnostic budget; suppressed counts use saturating merge.
+- Added current source coverage for packed-child failure, coordinate-child
+  failure, multi-child suppression, warning severity, consumed-length stop,
+  null-record termination, and deterministic duplicate-group ordering.
+- At that review head, the source defined 146 NUnit executions (96 `[Test]`,
+  50 `[TestCase]`) across 103 behavior-method declarations. Unity execution remains NotRun
+  because the required Unity 2022.3.60f1c1 Editor executable is unavailable.
+- PS5.1/PS7 repository validation and copyright gates pass with zero violations.
+
+## 2026-08-07 - M3-C2 final independent-review corrections
+
+- Enforced the injected RawLzo1X backend requirement before fragment or chunk
+  processing; empty fragment input and a zero-block envelope are separate
+  structured failures and never reach the record stage.
+- Validated every M3-C2 policy/profile enum at its configuration boundary.
+  Coordinate rectangle bounds require positive width and height together;
+  dense-count candidates require the same complete rectangle.
+- Added direct regressions for record-child failure under a zero diagnostic
+  budget, suppressed-count saturation, missing coordinate stage, truncated
+  chunk input, empty input, zero chunks, and invalid policy/profile values.
+- At the review head before the current-head gate refresh, the source defined
+  164 NUnit executions (110 `[Test]`, 54 `[TestCase]`) across 118
+  behavior-method declarations; Unity was then `NotRun`.
+
+## 2026-08-08 - M3-C2 current-head verification refresh
+
+### Change scope
+- Added bounded first-occurrence peek/replay in the packed adapter so an empty
+  occurrence sequence returns `EmptyPackedInput` without unbounded materialization.
+- Updated synthetic evidence and compatibility metadata with current-head XML
+  results; compatibility claims remain synthetic and unconfirmed.
+
+### Verification
+- Focused IsoMapPack5 EditMode: 164/164 passed.
+- Full EditMode: 1097/1097 passed; Unity exit 0; shell exit 0;
+  forced post-result shutdown false.
+- PlayMode: 1/1 passed; Unity exit 0; shell exit 0;
+  forced post-result shutdown false.
+- Repository validation, copyright, regressions, and content wrapper regressions
+  passed under PS5.1 and PS7.
