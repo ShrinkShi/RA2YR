@@ -661,3 +661,17 @@
   PS5.1/PS7 static/copyright、repository regression 和 content wrapper regression。
 - 推送文档结果记录并创建 Draft PR，等待 exact pushed HEAD Repository safety；
   通过后停止，不开始 M3-C4。
+
+## 2026-08-08 - M3-C3 independent-review finding closure
+
+- 在既有 M3-C3 分支上只修复 policy validation、bounded occurrence input 和
+  packed result defensive snapshot；没有新增 Overlay 语义或后续 work package。
+- unknown nested policy 在 occurrence source 之前 fail-closed；Overlay 输入只在
+  `MaxFragments + 1` probe 内消费；`DecodedBytes`/`BlockOutputs` getter 不再暴露
+  可修改内部数组。
+- focused source definition 更新为 61 NUnit executions、51 behavior methods；旧
+  51/51 XML 明确属于祖先 commit `82fa0239...`，本次修复后的 Unity 执行保持
+  `NotRun`，不复用旧 XML。
+- 当前主机未发现 Unity 2022.3.60f1c1 Editor；PS5.1/PS7 repository validation
+  工作树检查通过，后续 exact-head Unity、copyright、wrapper 和 Repository safety
+  仍需真实执行后才能宣称通过。

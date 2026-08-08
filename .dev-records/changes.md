@@ -557,3 +557,26 @@
 - No ProjectBaseline packed data was read; no Overlay semantic registry,
   Preview, TMP, palette, renderer, gameplay, or real LZO implementation was
   added.
+
+## 2026-08-08 - M3-C3 independent-review finding closure
+
+### Change scope
+
+- Packed decode policy validation now rejects unknown fragment ordering, Base64,
+  chunk sentinel, codec, and Format80 variant values before source enumeration.
+- Overlay section input no longer materializes arbitrary occurrence enumerables
+  in its constructor; the reader takes only the configured bounded budget probe.
+- Packed decode byte getters now return defensive snapshots for aggregate and
+  per-block bytes.
+
+### Evidence boundary
+
+- The focused source now defines 61 NUnit executions (47 `[Test]`, 14
+  `[TestCase]`) across 51 behavior methods.
+- The prior Unity XML belongs to commit
+  `82fa0239edafd7174a6386a1fc80f43b6440f169`; it is historical evidence, not
+  a pass claim for this finding-closure tree. Post-closure Unity and Repository
+  safety evidence remains `NotRun` until this code/test change is committed and
+  executed.
+- No ProjectBaseline packed data, real LZO, Overlay semantics, Preview, TMP,
+  palette, rendering, writer, pathfinding, or gameplay was added.

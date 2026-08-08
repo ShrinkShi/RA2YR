@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using RA2YR.Core.Binary;
@@ -35,23 +36,90 @@ namespace RA2YR.Core.Formats.PackedMap
         public WestwoodChunkReadLimits ChunkLimits { get; }
         public Format80ReadLimits Format80Limits { get; }
         public CancellationToken CancellationToken { get; }
+
+        internal bool TryValidate(out PackedMapDiagnostic diagnostic)
+        {
+            diagnostic = null;
+            if (!IsKnownFragmentOrdering(FragmentOrdering))
+            {
+                diagnostic = Invalid("The packed fragment ordering policy is unknown.");
+                return false;
+            }
+            if (!IsKnownBase64Policy(Base64Policy))
+            {
+                diagnostic = Invalid("The packed Base64 policy is unknown.");
+                return false;
+            }
+            if (!IsKnownChunkSentinelPolicy(ChunkSentinelPolicy))
+            {
+                diagnostic = Invalid("The packed chunk sentinel policy is unknown.");
+                return false;
+            }
+            if (!IsKnownCodec(Codec))
+            {
+                diagnostic = Invalid("The packed codec policy is unknown.");
+                return false;
+            }
+            if (Format80Profile == null || !IsKnownFormat80Variant(Format80Profile.Variant))
+            {
+                diagnostic = Invalid("The packed Format80 profile variant is unknown.");
+                return false;
+            }
+            return true;
+        }
+
+        private static PackedMapDiagnostic Invalid(string message)
+        {
+            return new PackedMapDiagnostic(PackedMapDiagnosticCode.InvalidPolicy, BinaryDiagnosticSeverity.Error, message);
+        }
+
+        private static bool IsKnownFragmentOrdering(PackedIniFragmentOrderingPolicy value)
+        {
+            return value == PackedIniFragmentOrderingPolicy.SourceOccurrenceOrder ||
+                value == PackedIniFragmentOrderingPolicy.NumericAscendingUnique ||
+                value == PackedIniFragmentOrderingPolicy.StrictSequentialFromOne;
+        }
+
+        private static bool IsKnownBase64Policy(StrictBase64Policy value)
+        {
+            return value == StrictBase64Policy.StandardAlphabetNoWhitespace;
+        }
+
+        private static bool IsKnownChunkSentinelPolicy(ChunkSentinelPolicy value)
+        {
+            return value == ChunkSentinelPolicy.RejectAllZero || value == ChunkSentinelPolicy.AllowZeroZeroAsTerminator;
+        }
+
+        private static bool IsKnownCodec(PackedCodecKind value)
+        {
+            return value == PackedCodecKind.Format80 || value == PackedCodecKind.RawLzo1X;
+        }
+
+        private static bool IsKnownFormat80Variant(Format80Variant value)
+        {
+            return value == Format80Variant.Absolute || value == Format80Variant.Relative;
+        }
     }
 
     internal sealed class PackedSectionDecodeResult
     {
+        private readonly IReadOnlyList<byte[]> blockOutputs;
+        private readonly byte[] decodedBytes;
+
         internal PackedSectionDecodeResult(PackedIniFragmentCollection fragments, StrictBase64DecodeResult base64, WestwoodChunkEnvelopeReadResult envelope, IReadOnlyList<byte[]> blockOutputs, IReadOnlyList<PackedMapDiagnostic> diagnostics)
         {
             Fragments = fragments;
             Base64 = base64;
             Envelope = envelope;
-            BlockOutputs = Array.AsReadOnly((blockOutputs ?? Array.Empty<byte[]>()).Select(item => item == null ? null : (byte[])item.Clone()).ToArray());
+            byte[][] copiedOutputs = (blockOutputs ?? Array.Empty<byte[]>()).Select(item => item == null ? null : (byte[])item.Clone()).ToArray();
+            this.blockOutputs = Array.AsReadOnly(copiedOutputs);
             var diagnosticList = new List<PackedMapDiagnostic>(diagnostics ?? throw new ArgumentNullException(nameof(diagnostics)));
             if (diagnosticList.All(item => item.Severity != BinaryDiagnosticSeverity.Error))
             {
                 try
                 {
-                    DecodedBytes = Concatenate(BlockOutputs);
-                    if (DecodedBytes == null && BlockOutputs.Any(item => item == null || item.Length != 0))
+                    decodedBytes = Concatenate(this.blockOutputs);
+                    if (decodedBytes == null && this.blockOutputs.Any(item => item == null || item.Length != 0))
                         diagnosticList.Add(new PackedMapDiagnostic(PackedMapDiagnosticCode.PipelineBudgetExceeded, BinaryDiagnosticSeverity.Error, "Aggregate decoded output cannot be materialized within the result budget."));
                 }
                 catch (OverflowException)
@@ -64,8 +132,14 @@ namespace RA2YR.Core.Formats.PackedMap
         public PackedIniFragmentCollection Fragments { get; }
         public StrictBase64DecodeResult Base64 { get; }
         public WestwoodChunkEnvelopeReadResult Envelope { get; }
-        public IReadOnlyList<byte[]> BlockOutputs { get; }
-        public byte[] DecodedBytes { get; }
+        public IReadOnlyList<byte[]> BlockOutputs
+        {
+            get
+            {
+                return new ReadOnlyCollection<byte[]>(blockOutputs.Select(item => item == null ? null : (byte[])item.Clone()).ToArray());
+            }
+        }
+        public byte[] DecodedBytes => decodedBytes == null ? null : (byte[])decodedBytes.Clone();
         public IReadOnlyList<PackedMapDiagnostic> Diagnostics { get; }
         public bool IsSuccess => Diagnostics.All(d => d.Severity != BinaryDiagnosticSeverity.Error);
 
@@ -98,14 +172,15 @@ namespace RA2YR.Core.Formats.PackedMap
         {
             if (occurrences == null) throw new ArgumentNullException(nameof(occurrences));
             if (policy == null) throw new ArgumentNullException(nameof(policy));
-            if (policy.Codec != PackedCodecKind.Format80 && policy.Codec != PackedCodecKind.RawLzo1X)
+            PackedMapDiagnostic invalidPolicy;
+            if (!policy.TryValidate(out invalidPolicy))
             {
                 return new PackedSectionDecodeResult(
                     null,
                     null,
                     null,
                     Array.Empty<byte[]>(),
-                    new[] { new PackedMapDiagnostic(PackedMapDiagnosticCode.BackendInvalidCodec, BinaryDiagnosticSeverity.Error, "The selected packed codec is not supported by this pipeline.") });
+                    new[] { invalidPolicy });
             }
             PackedIniFragmentCollection fragments = new PackedIniFragmentCollector().Collect(occurrences, policy.FragmentOrdering, policy.FragmentLimits);
             var diagnostics = new List<PackedMapDiagnostic>(fragments.Diagnostics);

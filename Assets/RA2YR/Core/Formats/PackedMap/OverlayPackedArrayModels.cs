@@ -46,8 +46,11 @@ namespace RA2YR.Core.Formats.PackedMap
         PresentButEmptySection,
         AmbiguousSectionOccurrence,
         NoFragmentOccurrences,
+        InvalidFragmentOccurrence,
+        OccurrenceInputBudgetExceeded,
         UnsupportedStorageProfile,
         UnsupportedFormat80Profile,
+        InvalidPackedPolicy,
         WrongCodec,
         PackedStageFailure,
         ZeroBlockPackedResult,
@@ -284,15 +287,14 @@ namespace RA2YR.Core.Formats.PackedMap
             OverlayStorageProfiles.Validate(selectionStatus, nameof(selectionStatus));
             if (string.IsNullOrWhiteSpace(sectionName)) throw new ArgumentException("A section name is required.", nameof(sectionName));
             if (candidateSectionOccurrenceCount < 0 || selectedSectionOccurrenceOrdinal < -1) throw new ArgumentOutOfRangeException();
-            PackedIniFragmentOccurrence[] occurrenceArray = (occurrences ?? throw new ArgumentNullException(nameof(occurrences))).ToArray();
-            if (occurrenceArray.Any(item => item == null)) throw new ArgumentException("Section occurrences cannot contain null values.", nameof(occurrences));
-            ValidateSelection(selectionStatus, selectedSectionOccurrenceOrdinal, candidateSectionOccurrenceCount, occurrenceArray.Length);
+            if (occurrences == null) throw new ArgumentNullException(nameof(occurrences));
+            ValidateSelection(selectionStatus, selectedSectionOccurrenceOrdinal, candidateSectionOccurrenceCount);
             SectionKind = sectionKind;
             SectionName = sectionName;
             SelectionStatus = selectionStatus;
             SelectedSectionOccurrenceOrdinal = selectedSectionOccurrenceOrdinal;
             CandidateSectionOccurrenceCount = candidateSectionOccurrenceCount;
-            Occurrences = Array.AsReadOnly(occurrenceArray);
+            Occurrences = occurrences;
             Source = source ?? throw new ArgumentNullException(nameof(source));
             IniSourceProvenance[] chain = (provenance ?? throw new ArgumentNullException(nameof(provenance))).ToArray();
             if (chain.Length == 0 || chain.Any(item => item == null))
@@ -305,20 +307,20 @@ namespace RA2YR.Core.Formats.PackedMap
         public OverlaySectionSelectionStatus SelectionStatus { get; }
         public int SelectedSectionOccurrenceOrdinal { get; }
         public int CandidateSectionOccurrenceCount { get; }
-        public IReadOnlyList<PackedIniFragmentOccurrence> Occurrences { get; }
+        public IEnumerable<PackedIniFragmentOccurrence> Occurrences { get; }
         public BinarySourceContext Source { get; }
         public IReadOnlyList<IniSourceProvenance> Provenance { get; }
 
-        private static void ValidateSelection(OverlaySectionSelectionStatus status, int selectedOrdinal, int candidateCount, int occurrenceCount)
+        private static void ValidateSelection(OverlaySectionSelectionStatus status, int selectedOrdinal, int candidateCount)
         {
             switch (status)
             {
                 case OverlaySectionSelectionStatus.Missing:
-                    if (selectedOrdinal != -1 || candidateCount != 0 || occurrenceCount != 0)
+                    if (selectedOrdinal != -1 || candidateCount != 0)
                         throw new ArgumentException("A missing section cannot carry selected occurrences.");
                     return;
                 case OverlaySectionSelectionStatus.PresentEmpty:
-                    if (selectedOrdinal < 0 || candidateCount != 1 || occurrenceCount != 0)
+                    if (selectedOrdinal < 0 || candidateCount != 1)
                         throw new ArgumentException("A present-empty section must identify exactly one empty source occurrence.");
                     return;
                 case OverlaySectionSelectionStatus.Selected:
@@ -326,7 +328,7 @@ namespace RA2YR.Core.Formats.PackedMap
                         throw new ArgumentException("A selected section must identify exactly one section occurrence.");
                     return;
                 case OverlaySectionSelectionStatus.Ambiguous:
-                    if (selectedOrdinal != -1 || candidateCount < 2 || occurrenceCount != 0)
+                    if (selectedOrdinal != -1 || candidateCount < 2)
                         throw new ArgumentException("An ambiguous section cannot select or combine candidate occurrences.");
                     return;
                 default:

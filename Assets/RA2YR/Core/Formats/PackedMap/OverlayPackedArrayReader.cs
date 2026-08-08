@@ -20,9 +20,14 @@ namespace RA2YR.Core.Formats.PackedMap
 
             var diagnostics = new List<OverlayDiagnostic>();
             var execution = new OverlayExecutionState();
+            PackedMapDiagnostic invalidPolicy;
+            if (!policy.PackedPolicy.TryValidate(out invalidPolicy))
+            {
+                Add(diagnostics, policy.Limits, execution, Error(input, OverlayDiagnosticCode.InvalidPackedPolicy, "packed-policy", invalidPolicy.Message));
+                return new OverlayArrayReadResult(input, null, null, diagnostics, execution);
+            }
             string expectedSectionName = OverlayStorageProfiles.GetExpectedSectionName(expectedSectionKind);
-            if (input.SectionKind != expectedSectionKind || !string.Equals(input.SectionName, expectedSectionName, StringComparison.Ordinal) ||
-                input.Occurrences.Any(item => !string.Equals(item.SectionName, expectedSectionName, StringComparison.Ordinal)))
+            if (input.SectionKind != expectedSectionKind || !string.Equals(input.SectionName, expectedSectionName, StringComparison.Ordinal))
             {
                 Add(diagnostics, policy.Limits, execution, Error(input, OverlayDiagnosticCode.WrongSectionKind, "selection", "The selected source does not match the required Overlay section kind."));
                 return new OverlayArrayReadResult(input, null, null, diagnostics, execution);
@@ -46,7 +51,20 @@ namespace RA2YR.Core.Formats.PackedMap
                     return new OverlayArrayReadResult(input, null, null, diagnostics, execution);
             }
 
-            if (input.Occurrences.Count == 0)
+            List<PackedIniFragmentOccurrence> occurrences;
+            OverlayDiagnosticCode occurrenceFailure;
+            string occurrenceFailureMessage;
+            if (!TrySnapshotOccurrences(input.Occurrences, policy.PackedPolicy.FragmentLimits.MaxFragments, out occurrences, out occurrenceFailure, out occurrenceFailureMessage))
+            {
+                Add(diagnostics, policy.Limits, execution, Error(input, occurrenceFailure, "selection", occurrenceFailureMessage));
+                return new OverlayArrayReadResult(input, null, null, diagnostics, execution);
+            }
+            if (occurrences.Any(item => !string.Equals(item.SectionName, expectedSectionName, StringComparison.Ordinal)))
+            {
+                Add(diagnostics, policy.Limits, execution, Error(input, OverlayDiagnosticCode.WrongSectionKind, "selection", "The selected source does not match the required Overlay section kind."));
+                return new OverlayArrayReadResult(input, null, null, diagnostics, execution);
+            }
+            if (occurrences.Count == 0)
             {
                 Add(diagnostics, policy.Limits, execution, Error(input, OverlayDiagnosticCode.NoFragmentOccurrences, "selection", "The selected Overlay section contains no fragment occurrences."));
                 return new OverlayArrayReadResult(input, null, null, diagnostics, execution);
@@ -81,7 +99,7 @@ namespace RA2YR.Core.Formats.PackedMap
             PackedSectionDecodeResult packed;
             try
             {
-                packed = new PackedSectionDecodePipeline().Decode(input.Occurrences, policy.PackedPolicy);
+                packed = new PackedSectionDecodePipeline().Decode(occurrences, policy.PackedPolicy);
             }
             catch (Exception exception)
             {
@@ -90,7 +108,8 @@ namespace RA2YR.Core.Formats.PackedMap
             }
 
             execution.ObservePacked(packed);
-            if (packed == null || !packed.IsSuccess || packed.DecodedBytes == null)
+            byte[] decodedBytes = packed == null ? null : packed.DecodedBytes;
+            if (packed == null || !packed.IsSuccess || decodedBytes == null)
             {
                 Add(diagnostics, policy.Limits, execution, Error(input, OverlayDiagnosticCode.PackedStageFailure, "packed", "Packed section decoding failed; raw array construction was not attempted."));
                 return new OverlayArrayReadResult(input, packed, null, diagnostics, execution);
@@ -114,7 +133,7 @@ namespace RA2YR.Core.Formats.PackedMap
                 return new OverlayArrayReadResult(input, packed, null, diagnostics, execution);
             }
 
-            if (declaredLength != expectedLength || packed.DecodedBytes.Length != expectedLength || declaredLength != packed.DecodedBytes.LongLength)
+            if (declaredLength != expectedLength || decodedBytes.Length != expectedLength || declaredLength != decodedBytes.LongLength)
             {
                 Add(diagnostics, policy.Limits, execution, Error(input, OverlayDiagnosticCode.ArrayLengthMismatch, "array", "Overlay decoded bytes must exactly match the selected storage profile and chunk declarations."));
                 return new OverlayArrayReadResult(input, packed, null, diagnostics, execution);
@@ -125,7 +144,7 @@ namespace RA2YR.Core.Formats.PackedMap
                 policy.StorageProfile,
                 expectedLength,
                 declaredLength,
-                packed.DecodedBytes,
+                decodedBytes,
                 packed,
                 input.Provenance);
             execution.MarkSucceeded();
@@ -140,6 +159,48 @@ namespace RA2YR.Core.Formats.PackedMap
                 !profile.AllowTrailingAfterTerminator &&
                 !profile.AllowInitialMarker &&
                 profile.RejectZeroFill;
+        }
+
+        private static bool TrySnapshotOccurrences(
+            IEnumerable<PackedIniFragmentOccurrence> source,
+            int maxFragments,
+            out List<PackedIniFragmentOccurrence> occurrences,
+            out OverlayDiagnosticCode failureCode,
+            out string failureMessage)
+        {
+            occurrences = new List<PackedIniFragmentOccurrence>();
+            failureCode = OverlayDiagnosticCode.PackedStageFailure;
+            failureMessage = null;
+            try
+            {
+                using (IEnumerator<PackedIniFragmentOccurrence> enumerator = source.GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        if (occurrences.Count >= maxFragments)
+                        {
+                            failureCode = OverlayDiagnosticCode.OccurrenceInputBudgetExceeded;
+                            failureMessage = "Overlay fragment occurrences exceed the configured packed fragment budget.";
+                            return false;
+                        }
+
+                        PackedIniFragmentOccurrence occurrence = enumerator.Current;
+                        if (occurrence == null)
+                        {
+                            failureCode = OverlayDiagnosticCode.InvalidFragmentOccurrence;
+                            failureMessage = "Overlay fragment occurrences cannot contain null values.";
+                            return false;
+                        }
+                        occurrences.Add(occurrence);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                failureMessage = "Overlay fragment enumeration threw " + exception.GetType().Name + ".";
+                return false;
+            }
+            return true;
         }
 
         private static void Add(IList<OverlayDiagnostic> diagnostics, OverlayReadLimits limits, OverlayExecutionState execution, OverlayDiagnostic diagnostic)

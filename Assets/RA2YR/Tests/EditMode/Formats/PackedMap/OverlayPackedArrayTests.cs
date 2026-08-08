@@ -176,6 +176,141 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         }
 
         [Test]
+        public void UnknownFragmentOrderingIsRejectedBeforeOccurrenceEnumeration()
+        {
+            int moves = 0;
+            OverlayArrayReadResult result = ReadArray(
+                Input(OverlaySectionKind.OverlayPack, OverlaySectionSelectionStatus.Selected, occurrences: ExplosiveOccurrences(() => moves++)),
+                Policy(ordering: (PackedIniFragmentOrderingPolicy)99));
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.Packed, Is.Null);
+            Assert.That(moves, Is.EqualTo(0));
+            Assert.That(HasDiagnostic(result, OverlayDiagnosticCode.InvalidPackedPolicy), Is.True);
+        }
+
+        [Test]
+        public void UnknownChunkSentinelIsRejectedBeforeOccurrenceEnumeration()
+        {
+            int moves = 0;
+            OverlayArrayReadResult result = ReadArray(
+                Input(OverlaySectionKind.OverlayPack, OverlaySectionSelectionStatus.Selected, occurrences: ExplosiveOccurrences(() => moves++)),
+                Policy(sentinel: (ChunkSentinelPolicy)99));
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(moves, Is.EqualTo(0));
+            Assert.That(HasDiagnostic(result, OverlayDiagnosticCode.InvalidPackedPolicy), Is.True);
+        }
+
+        [Test]
+        public void UnknownBase64PolicyIsRejectedBeforeOccurrenceEnumeration()
+        {
+            int moves = 0;
+            OverlayArrayReadResult result = ReadArray(
+                Input(OverlaySectionKind.OverlayPack, OverlaySectionSelectionStatus.Selected, occurrences: ExplosiveOccurrences(() => moves++)),
+                Policy(base64Policy: (StrictBase64Policy)99));
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(moves, Is.EqualTo(0));
+            Assert.That(HasDiagnostic(result, OverlayDiagnosticCode.InvalidPackedPolicy), Is.True);
+        }
+
+        [Test]
+        public void UnknownPackedCodecIsRejectedBeforeOccurrenceEnumeration()
+        {
+            int moves = 0;
+            OverlayArrayReadResult result = ReadArray(
+                Input(OverlaySectionKind.OverlayPack, OverlaySectionSelectionStatus.Selected, occurrences: ExplosiveOccurrences(() => moves++)),
+                Policy(codec: (PackedCodecKind)99));
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(moves, Is.EqualTo(0));
+            Assert.That(HasDiagnostic(result, OverlayDiagnosticCode.InvalidPackedPolicy), Is.True);
+        }
+
+        [Test]
+        public void UnknownFormat80VariantIsRejectedWithoutFallback()
+        {
+            int moves = 0;
+            OverlayArrayReadResult result = ReadArray(
+                Input(OverlaySectionKind.OverlayPack, OverlaySectionSelectionStatus.Selected, occurrences: ExplosiveOccurrences(() => moves++)),
+                Policy(format80: new Format80Profile((Format80Variant)99, true, false, true, false)));
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.Packed, Is.Null);
+            Assert.That(moves, Is.EqualTo(0));
+            Assert.That(HasDiagnostic(result, OverlayDiagnosticCode.InvalidPackedPolicy), Is.True);
+        }
+
+        [Test]
+        public void OverlayOccurrenceEnumerationStopsAtPackedFragmentBudget()
+        {
+            int moves = 0;
+            IEnumerable<PackedIniFragmentOccurrence> Lazy()
+            {
+                for (int index = 0; index < 8; index++)
+                {
+                    moves++;
+                    if (moves > 3) throw new InvalidOperationException("enumerated beyond the budget probe");
+                    yield return Occurrence("OverlayPack", (index + 1).ToString(), "AA==", index);
+                }
+            }
+
+            OverlayArrayReadResult result = ReadArray(
+                Input(OverlaySectionKind.OverlayPack, OverlaySectionSelectionStatus.Selected, occurrences: Lazy()),
+                Policy(fragmentLimits: new PackedIniFragmentCollectorLimits(2, 32)));
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.Packed, Is.Null);
+            Assert.That(moves, Is.EqualTo(3));
+            Assert.That(HasDiagnostic(result, OverlayDiagnosticCode.OccurrenceInputBudgetExceeded), Is.True);
+        }
+
+        [Test]
+        public void ZeroFragmentBudgetFailsOnTheFirstOccurrence()
+        {
+            int moves = 0;
+            IEnumerable<PackedIniFragmentOccurrence> Lazy()
+            {
+                moves++;
+                yield return Occurrence("OverlayPack", "1", "AA==", 0);
+            }
+
+            OverlayArrayReadResult result = ReadArray(
+                Input(OverlaySectionKind.OverlayPack, OverlaySectionSelectionStatus.Selected, occurrences: Lazy()),
+                Policy(fragmentLimits: new PackedIniFragmentCollectorLimits(0, 32)));
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.Packed, Is.Null);
+            Assert.That(moves, Is.EqualTo(1));
+            Assert.That(HasDiagnostic(result, OverlayDiagnosticCode.OccurrenceInputBudgetExceeded), Is.True);
+        }
+
+        [Test]
+        public void ExactOneFragmentBudgetAcceptsOneOccurrence()
+        {
+            int moves = 0;
+            IEnumerable<PackedIniFragmentOccurrence> Lazy()
+            {
+                moves++;
+                yield return Occurrence("OverlayPack", "1", "AA==", 0);
+            }
+
+            OverlayArrayReadResult result = ReadArray(
+                Input(OverlaySectionKind.OverlayPack, OverlaySectionSelectionStatus.Selected, occurrences: Lazy()),
+                Policy(fragmentLimits: new PackedIniFragmentCollectorLimits(1, 32)));
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.Packed, Is.Not.Null);
+            Assert.That(moves, Is.EqualTo(1));
+            Assert.That(result.Packed.Diagnostics.Any(item => item.Code == PackedMapDiagnosticCode.ChunkHeaderTruncated), Is.True);
+        }
+
+        [Test]
+        public void MaximumFragmentBudgetDoesNotOverflowTheBoundedProbe()
+        {
+            OverlayArrayReadResult result = ReadArray(
+                Input(OverlaySectionKind.OverlayPack, OverlaySectionSelectionStatus.Selected, "AA=="),
+                Policy(fragmentLimits: new PackedIniFragmentCollectorLimits(int.MaxValue, 32)));
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.Packed, Is.Not.Null);
+            Assert.That(HasDiagnostic(result, OverlayDiagnosticCode.OccurrenceInputBudgetExceeded), Is.False);
+            Assert.That(result.Packed.Diagnostics.Any(item => item.Code == PackedMapDiagnosticCode.ChunkHeaderTruncated), Is.True);
+        }
+
+        [Test]
         public void MissingFormat80TerminatorFailsWithoutFallback()
         {
             byte[] payload = new byte[] { 0xfe, 4, 0, 0x11 };
@@ -373,6 +508,20 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         }
 
         [Test]
+        public void OverlayPackedSnapshotsRemainImmutableAfterCallerMutation()
+        {
+            OverlayArrayReadResult result = ReadArray(OverlaySectionKind.OverlayPack, FullBase64(0x5a));
+            byte[] decoded = result.Packed.DecodedBytes;
+            byte[] firstBlock = result.Packed.BlockOutputs[0];
+            decoded[0] = 0;
+            firstBlock[0] = 0;
+            Assert.That(result.Packed.DecodedBytes[0], Is.EqualTo(0x5a));
+            Assert.That(result.Packed.BlockOutputs[0][0], Is.EqualTo(0x5a));
+            Assert.That(result.Raw.GetByteAt(0), Is.EqualTo(0x5a));
+            Assert.That(result.Packed.DecodedBytes, Is.EqualTo(result.Packed.DecodedBytes));
+        }
+
+        [Test]
         public void Format80MemoryStreamAndWindowPathsRemainEquivalentForOverlayFixture()
         {
             byte[] payload = new byte[] { 0xfe, 4, 0, 0x22, 0x80 };
@@ -451,14 +600,17 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
             Format80Profile format80 = null,
             ChunkSentinelPolicy sentinel = ChunkSentinelPolicy.RejectAllZero,
             PackedIniFragmentOrderingPolicy ordering = PackedIniFragmentOrderingPolicy.StrictSequentialFromOne,
+            StrictBase64Policy base64Policy = StrictBase64Policy.StandardAlphabetNoWhitespace,
+            PackedIniFragmentCollectorLimits fragmentLimits = null,
             OverlayReadLimits limits = null)
         {
             return new OverlayPackedReadPolicy(new PackedSectionDecodePolicy(
                 ordering,
-                StrictBase64Policy.StandardAlphabetNoWhitespace,
+                base64Policy,
                 sentinel,
                 codec,
                 format80 ?? new Format80Profile(Format80Variant.Absolute, true, false, true, false),
+                fragmentLimits: fragmentLimits,
                 chunkLimits: new WestwoodChunkReadLimits(maxOutputBytes: 300000),
                 format80Limits: new Format80ReadLimits(maxOutputBytes: 300000)),
                 OverlayStorageProfile.OrdinaryByte512,
@@ -476,10 +628,17 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
             string name = sectionName ?? OverlayStorageProfiles.GetExpectedSectionName(kind);
             int selected = status == OverlaySectionSelectionStatus.Missing || status == OverlaySectionSelectionStatus.Ambiguous ? -1 : 0;
             int candidates = candidateCount >= 0 ? candidateCount : status == OverlaySectionSelectionStatus.Missing ? 0 : status == OverlaySectionSelectionStatus.Ambiguous ? 2 : 1;
-            PackedIniFragmentOccurrence[] values = occurrences == null
+            IEnumerable<PackedIniFragmentOccurrence> values = occurrences == null
                 ? status == OverlaySectionSelectionStatus.Selected ? new[] { Occurrence(name, "1", base64 ?? string.Empty, 0) } : Array.Empty<PackedIniFragmentOccurrence>()
-                : occurrences.ToArray();
+                : occurrences;
             return new OverlaySectionInput(kind, name, status, selected, candidates, values, Source(), Provenance());
+        }
+
+        private static IEnumerable<PackedIniFragmentOccurrence> ExplosiveOccurrences(Action moved)
+        {
+            if (moved == null) yield break;
+            moved();
+            throw new InvalidOperationException("Occurrence source must not be enumerated.");
         }
 
         private static PackedIniFragmentOccurrence Occurrence(string section, string key, string value, int sourceOrder)

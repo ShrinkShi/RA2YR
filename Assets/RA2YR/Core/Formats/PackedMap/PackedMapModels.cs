@@ -63,6 +63,7 @@ namespace RA2YR.Core.Formats.PackedMap
         BackendProvenanceMismatch,
         BackendCancelled,
         BackendException,
+        InvalidPolicy,
         PipelineStageFailure,
         PipelineBudgetExceeded
     }

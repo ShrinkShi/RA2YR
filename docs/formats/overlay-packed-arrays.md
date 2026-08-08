@@ -26,9 +26,11 @@ must both satisfy that length. The adapter does not pad, truncate, repair, or
 use a partner section to fill a failed child.
 
 The packed policy must explicitly select absolute Format80, a required
-terminator, no initial marker, and no trailing compressed bytes. Relative
-profiles and `RawLzo1X` are rejected at the adapter boundary; the latter has
-no algorithm implementation in this repository.
+terminator, no initial marker, and no trailing compressed bytes. Unknown
+nested policy enums are rejected before the adapter enumerates fragment input;
+there is no default profile or fallback. Relative profiles and `RawLzo1X` are
+rejected at the adapter boundary; the latter has no algorithm implementation
+in this repository.
 
 ## Raw and indexed views
 
@@ -49,7 +51,9 @@ All child packed results and diagnostics are preserved. Any fatal child state
 prevents later raw-array construction and sets the parent execution state
 before diagnostic-list admission. Suppressed diagnostics are counted with
 saturating arithmetic, so a zero diagnostic budget cannot become success by
-omission. Source and INI provenance are retained through the packed result.
+omission. Fragment input is materialized only through the configured fragment
+budget; source enumeration stops at the bounded over-budget probe. Source and
+INI provenance are retained through the packed result.
 
 ## Compatibility boundary
 
@@ -62,7 +66,7 @@ omission. Source and INI provenance are retained through the packed result.
 - PreviewPack, TMP, theater, palette, rendering, writer, pathfinding, and
   gameplay: Not implemented.
 
-The focused M3-C3 suite contains 51 NUnit executions (37 `[Test]` methods and
-14 `[TestCase]` executions across 41 behavior methods). This count describes
-the focused contract suite; full-suite results are recorded only after the
-current final tree is executed.
+The focused M3-C3 suite defines 61 NUnit executions (47 `[Test]` methods and
+14 `[TestCase]` executions across 51 behavior methods). This is a source
+definition count, not a current-head pass claim; execution provenance is
+recorded separately in the synthetic evidence.

@@ -6,7 +6,8 @@ source_payload_published: false
 code_imported: false
 gpl_reference_only: true
 implementation_commit: 975593a
-validation_commit: 82fa0239edafd7174a6386a1fc80f43b6440f169
+historical_unity_execution_commit: 82fa0239edafd7174a6386a1fc80f43b6440f169
+prior_delivery_head: ec5f70bd2dd463205ffda930cbb592f596c7f4f8
 components:
   section_selection: "OverlayPack and OverlayDataPack explicit Missing/PresentEmpty/Selected/Ambiguous states"
   overlay_pack: "ordinary 512x512 byte-array raw view"
@@ -17,29 +18,32 @@ components:
   execution_aggregation: "fail-closed parent/child states with highest severity and saturating suppression count"
   provenance: "lossless INI provenance and packed child trace retained"
 tests:
-  focused_defined_nunit_executions: 51
-  focused_test_attributes: 37
+  focused_defined_nunit_executions: 61
+  focused_test_attributes: 47
   focused_test_case_attributes: 14
-  focused_behavior_method_declarations: 41
-  focused_current_head_executed: 51
-  focused_current_head_passed: 51
-  focused_current_head_failed: 0
-  focused_current_head_skipped: 0
-  focused_current_head_inconclusive: 0
-  focused_current_head_xml: "TestResults/m3c3-focused-final-20260808T100100330Z/results.xml"
-  full_editmode_current_head_executed: 1148
-  full_editmode_current_head_passed: 1148
-  full_editmode_current_head_failed: 0
-  full_editmode_current_head_skipped: 0
-  full_editmode_current_head_inconclusive: 0
-  full_editmode_current_head_xml: "TestResults/20260808T100240926Z-5de1e3ef96c442db80abecaefe3bd351/EditMode/results.xml"
-  playmode_current_head_executed: 1
-  playmode_current_head_passed: 1
-  playmode_current_head_failed: 0
-  playmode_current_head_skipped: 0
-  playmode_current_head_inconclusive: 0
-  playmode_current_head_xml: "TestResults/20260808T100405224Z-02b4cd2315df4130a9ddc3112915d939/PlayMode/results.xml"
-  historical_xml_reused_as_current_evidence: false
+  focused_behavior_method_declarations: 51
+  historical_execution_commit: 82fa0239edafd7174a6386a1fc80f43b6440f169
+  historical_focused_executed: 51
+  historical_focused_passed: 51
+  historical_focused_failed: 0
+  historical_focused_skipped: 0
+  historical_focused_inconclusive: 0
+  historical_focused_xml: "TestResults/m3c3-focused-final-20260808T100100330Z/results.xml"
+  historical_full_editmode_executed: 1148
+  historical_full_editmode_passed: 1148
+  historical_full_editmode_failed: 0
+  historical_full_editmode_skipped: 0
+  historical_full_editmode_inconclusive: 0
+  historical_full_editmode_xml: "TestResults/20260808T100240926Z-5de1e3ef96c442db80abecaefe3bd351/EditMode/results.xml"
+  historical_playmode_executed: 1
+  historical_playmode_passed: 1
+  historical_playmode_failed: 0
+  historical_playmode_skipped: 0
+  historical_playmode_inconclusive: 0
+  historical_playmode_xml: "TestResults/20260808T100405224Z-02b4cd2315df4130a9ddc3112915d939/PlayMode/results.xml"
+  post_finding_closure_executed_on_current_head: 0
+  post_finding_closure_passed: unknown
+  post_finding_closure_xml: not_run
 verification:
   static_diff_check: passed
   focused_unity_exit: 0
@@ -60,7 +64,8 @@ verification:
   content_wrapper_regressions_ps51: "passed: 51 (CSF=11, INI=15, PAL=10, SHP=9, forensic=6)"
   content_wrapper_regressions_ps7: "passed: 51 (CSF=11, INI=15, PAL=10, SHP=9, forensic=6)"
   project_baseline_packed_audit: not_run
-  repository_safety: pending_push
+  prior_repository_safety: "31255615318 completed/success for ec5f70bd2dd463205ffda930cbb592f596c7f4f8"
+  post_finding_closure_repository_safety: not_run
 compatibility:
   overlay_pack_raw_array: Synthetic
   overlay_data_pack_raw_array: Synthetic

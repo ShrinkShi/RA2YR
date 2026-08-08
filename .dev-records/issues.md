@@ -457,3 +457,31 @@ The focused worktree XML is 51/51 passed and includes the new
 commit `82fa0239edafd7174a6386a1fc80f43b6440f169`: focused 51/51, EditMode
 1148/1148, and PlayMode 1/1. The remaining gate is Repository safety for the
 pushed documentation-only result-record head.
+
+## 2026-08-08 - M3-C3 finding-closure execution provenance
+
+### 现象
+
+独立复审发现 unknown nested packed-policy enum 可在 adapter 边界发生默认化或被
+宽泛异常包装，`OverlaySectionInput` 还会无界 `ToArray()` 任意 occurrence source，
+且 packed byte getter 会暴露可变内部数组。旧 evidence 也将祖先 commit 的 Unity XML
+称为 current-head 结果。
+
+### 处理
+
+- 所有 nested packed policy 先返回 `InvalidPolicy`/`InvalidPackedPolicy`，再读取
+  occurrence；无默认 profile 或 fallback。
+- Overlay reader 仅在 `MaxFragments + 1` 的有界 probe 内快照 occurrence；超限、null
+  occurrence 和 source exception 均 fail-closed。
+- `DecodedBytes` 与 `BlockOutputs` 均改为防御性 snapshots；Overlay raw copy 与 packed
+  snapshot 不再可被调用者 mutation 破坏。
+- evidence 改为明确 historical execution commit，并将 post-finding-closure Unity 与
+  Repository safety 标为 `NotRun`，直至新的 code/test HEAD 实际完成。
+
+### 当前边界
+
+- 当前主机未发现 Unity 2022.3.60f1c1 Editor；不得复用旧 XML 作为本次修复后的通过
+  证据。
+- Windows PowerShell 5.1 与 PowerShell 7 repository validation 已在本次工作树通过；
+  Unity、wrapper、copyright regression 与 Repository safety 仍需在提交后的 exact HEAD
+  上重跑或重新确认。
