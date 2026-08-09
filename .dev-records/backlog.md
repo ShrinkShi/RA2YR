@@ -15,12 +15,14 @@
 - [x] 完成 M3-C2 的双 PowerShell repository validation、copyright、content wrapper regressions 和 exact final-head Repository safety；run `31245165415` 为 `completed/success`。
 
 ## 待处理
-- [ ] 使用 Unity 2022.3.60f1c1 从当前 HEAD 重新运行 M3-C1 focused/full Unity 门禁。
-- [ ] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 三个独立提交，更新 Draft PR #36。
-- [ ] 后续独立工作包研究并实现 IsoMap/Overlay/Preview/TMP，必须重新建立格式证据。
+- [x] 使用 Unity 2022.3.60f1c1 从 M3-C1 交付 HEAD 重新运行 focused/full Unity 门禁（历史 M3-C1 交付记录）。
+- [x] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 修复，更新 Draft PR #36；PR #36 已合并。
+- [x] 完成 M3-C2 IsoMapPack5 raw-record foundation，并开始 M3-C3 OverlayPack/OverlayDataPack raw-array foundation；语义、PreviewPack 和 TMP 仍需独立证据。
 
 - [ ] 在授权并具备实际 backend 后设计 ProjectBaseline packed-section audit；不得在 M3-C1 伪造地图兼容性。
-- [ ] 研究并实现后续 IsoMapPack5、OverlayPack、PreviewPack、TMP 和 LZO 读取工作包。
+- [x] 完成 IsoMapPack5 raw record 与显式 coordinate/trailing policy foundation。
+- [x] 完成 OverlayPack/OverlayDataPack ordinary raw-array adapter foundation；当前分支仅保留 synthetic/configured 兼容边界。
+- [ ] 研究并实现 PreviewPack、TMP/theater 绑定和真实 LZO backend；不得把 raw-array foundation 当作语义或运行时兼容。
 
 - [ ] 获取并登记干净、解包的 YR 1.001 内容基线。
 - [ ] 建立 FinalAlert 2 A/B/C/D 往返黄金样本。
@@ -69,3 +71,14 @@
 - [x] 在该历史 review head 重新扫描 M3-C2 测试计数：146 defined NUnit executions、103 behavior methods。
 - [x] 在该历史 review head 完成 PS5.1/PS7 repository validation、copyright scan 和 regression gates；Unity 与依赖 Unity 的 wrappers 当时保持 NotRun。
 - [x] 随后在代码 HEAD `c23601084b944c71d06ffd9c2ab89e9df67f9c63` 生成 focused/full EditMode 与 PlayMode XML；本次 backlog-only 提交未重复执行这些测试。
+
+## 2026-08-09 - M3-C3 P2-2 evidence closure
+
+- [x] 将 M3-C3 evidence 的 historical execution 与 current finding candidate 分离，
+  不再把旧 PS7/copyright/wrapper/Unity 结果当作当前通过。
+- [x] 记录当前候选 `141aed104a4c572f61f011541fa6929318388dbd` 的真实 PS5.1、PS7、
+  copyright、wrapper 和 Unity 状态；implementation candidate safety 为
+  `31312939491` completed/success。
+- [x] 本轮保持 docs/evidence-only；没有修改代码、测试、兼容语义或研究正文。
+- [ ] 推送本 docs-only HEAD 并取得新的 exact-head Repository safety；结果记录在
+  PR #43 delivery metadata，不回写 evidence 以避免自引用递归。

@@ -1,0 +1,106 @@
+schema_version: 1
+work_package: M3-C3
+evidence_level: Synthetic
+project_baseline_read: false
+source_payload_published: false
+code_imported: false
+gpl_reference_only: true
+implementation_commit: 975593a
+historical_unity_execution_commit: 82fa0239edafd7174a6386a1fc80f43b6440f169
+prior_delivery_head: ec5f70bd2dd463205ffda930cbb592f596c7f4f8
+components:
+  section_selection: "OverlayPack and OverlayDataPack explicit Missing/PresentEmpty/Selected/Ambiguous states"
+  overlay_pack: "ordinary 512x512 byte-array raw view"
+  overlay_data_pack: "ordinary 512x512 byte-array raw view"
+  storage_index: "explicit external row-major and official-editor transposed candidate formulas"
+  packed_pipeline: "M3-C1 PackedSectionDecodePipeline with explicit absolute Format80 policy"
+  lzo: "RawLzo1X rejected at adapter boundary; injected algorithm contract remains unavailable"
+  execution_aggregation: "fail-closed parent/child states with highest severity and saturating suppression count"
+  provenance: "lossless INI provenance and packed child trace retained"
+tests:
+  current_source_definition_commit: 141aed104a4c572f61f011541fa6929318388dbd
+  current_source_definition_status: defined_only_not_executed_on_current_candidate
+  focused_defined_nunit_executions: 61
+  focused_test_attributes: 47
+  focused_test_case_attributes: 14
+  focused_behavior_method_declarations: 51
+  historical_execution_commit: 82fa0239edafd7174a6386a1fc80f43b6440f169
+  historical_focused_executed: 51
+  historical_focused_passed: 51
+  historical_focused_failed: 0
+  historical_focused_skipped: 0
+  historical_focused_inconclusive: 0
+  historical_focused_xml: "TestResults/m3c3-focused-final-20260808T100100330Z/results.xml"
+  historical_full_editmode_executed: 1148
+  historical_full_editmode_passed: 1148
+  historical_full_editmode_failed: 0
+  historical_full_editmode_skipped: 0
+  historical_full_editmode_inconclusive: 0
+  historical_full_editmode_xml: "TestResults/20260808T100240926Z-5de1e3ef96c442db80abecaefe3bd351/EditMode/results.xml"
+  historical_playmode_executed: 1
+  historical_playmode_passed: 1
+  historical_playmode_failed: 0
+  historical_playmode_skipped: 0
+  historical_playmode_inconclusive: 0
+  historical_playmode_xml: "TestResults/20260808T100405224Z-02b4cd2315df4130a9ddc3112915d939/PlayMode/results.xml"
+  post_finding_closure_executed_on_current_head: 0
+  post_finding_closure_passed: unknown
+  post_finding_closure_xml: not_run
+verification:
+  historical:
+    execution_commit: 82fa0239edafd7174a6386a1fc80f43b6440f169
+    focused_unity_exit: 0
+    focused_shell_exit: 0
+    focused_forced_post_result_shutdown: true
+    full_editmode_unity_exit: 0
+    full_editmode_shell_exit: 0
+    full_editmode_forced_post_result_shutdown: false
+    playmode_unity_exit: 0
+    playmode_shell_exit: 0
+    playmode_forced_post_result_shutdown: true
+    repository_validation_ps51: "passed: assets=244, meta=244, matrix=149, evidence=114, violations=0"
+    repository_validation_ps7: "passed: assets=244, meta=244, matrix=149, evidence=114, violations=0"
+    repository_validation_regressions: "passed: 46 across PS5.1 and PS7"
+    copyright_ps51: "passed: candidates=842, ignored_probes=13/13, violations=0"
+    copyright_ps7: "passed: candidates=842, ignored_probes=13/13, violations=0"
+    copyright_regressions: "passed: 22 across PS5.1 and PS7"
+    content_wrapper_regressions_ps51: "passed: 51 (CSF=11, INI=15, PAL=10, SHP=9, forensic=6)"
+    content_wrapper_regressions_ps7: "passed: 51 (CSF=11, INI=15, PAL=10, SHP=9, forensic=6)"
+    project_baseline_packed_audit: not_run
+  current_candidate:
+    execution_commit: 141aed104a4c572f61f011541fa6929318388dbd
+    static_diff_check: passed
+    unity: "not_run: EnvironmentBlocked; exact Unity 2022.3.60f1c1 unavailable"
+    focused_unity: "not_run: no current-head XML"
+    full_editmode: "not_run: no current-head XML"
+    playmode: "not_run: no current-head XML"
+    repository_validation_ps51: "passed: assets=244, meta=244, matrix=149, evidence=114, violations=0"
+    repository_validation_ps7: "not_run: EnvironmentBlocked; pwsh child cannot start"
+    repository_validation_regressions: "not_run: EnvironmentBlocked; PS5.1 fixture phase=23 passed, PS7 child=Windows 1312"
+    copyright_ps51: "not_run: EnvironmentBlocked; repository root unresolved under Git safe-directory context"
+    copyright_ps7: "not_run: EnvironmentBlocked; repository root unresolved under Git safe-directory context"
+    copyright_regressions: "not_run: EnvironmentBlocked"
+    content_wrapper_regressions_ps51: "not_run: EnvironmentBlocked"
+    content_wrapper_regressions_ps7: "not_run: EnvironmentBlocked"
+    project_baseline_packed_audit: not_run
+    implementation_candidate_repository_safety:
+      run_id: 31312939491
+      sha: 141aed104a4c572f61f011541fa6929318388dbd
+      status: completed
+      conclusion: success
+    final_docs_only_delivery_repository_safety: "not_run: generated only after the docs/evidence closure push"
+compatibility:
+  overlay_pack_raw_array: Synthetic
+  overlay_data_pack_raw_array: Synthetic
+  storage_index_semantics: ExplicitProfileOnly
+  overlay_type_meaning: Unresolved
+  original_runtime: NotConfirmed
+  project_baseline_packed_decode: NotRun
+  lzo_algorithm: NotImplemented
+  preview: NotImplemented
+  tmp: NotImplemented
+  renderer: NotImplemented
+license_boundary:
+  gpl_sources_reference_only: true
+  code_imported: false
+  original_payload_in_repository: false

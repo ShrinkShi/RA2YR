@@ -29,3 +29,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0022 | ProjectBaseline INI uses ordered multi-document semantic composition | Accepted as configured project policy |
 | 0023 | Packed map compression foundation is codec-neutral and evidence-gated | Accepted for synthetic/configured implementation |
 | 0024 | IsoMapPack5 remains a raw-record and policy boundary | Accepted for synthetic/configured implementation |
+| 0025 | Overlay packed arrays remain raw, bounded, and section-explicit | Accepted for synthetic/configured implementation |

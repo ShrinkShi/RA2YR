@@ -623,3 +623,82 @@
 - Focused: 164/164; full EditMode: 1097/1097; PlayMode: 1/1.
 - Static and wrapper gates passed; compatibility remains synthetic and no
   ProjectBaseline packed data was read.
+
+## 2026-08-08 - M3-C3 Overlay raw-array foundation
+
+### 用户目标
+
+- 从 exact main 开始 M3-C3，只实现 OverlayPack/OverlayDataPack raw packed
+  array、trailing/length、防御性结果和显式 storage index foundation。
+
+### 本轮处理
+
+- 建立 `feature/m3-c3-overlay-packed-array-foundation`，实现独立 section
+  selection、ordinary 512x512 exact-length raw arrays、candidate index
+  profiles、provenance 和 fail-closed execution state。
+- 复用 M3-C1 packed pipeline；RawLzo1X、Preview、TMP、registry、palette、
+  rendering、pathfinding、gameplay 和 ProjectBaseline packed audit 均未做。
+- 新增 focused M3-C3 suite，当前 worktree XML 为 51/51 passed。
+
+### 关键结论
+
+- `OverlayPack` 与 `OverlayDataPack` 必须保持两个独立 child；缺失、空、选中、
+  歧义和失败不能互相合成。
+- `0xFF` 与坐标方向仍是 raw/candidate policy，不提升为原版 runtime 事实。
+
+### 影响文件
+
+- `Assets/RA2YR/Core/Formats/PackedMap/OverlayPackedArrayModels.cs`
+- `Assets/RA2YR/Core/Formats/PackedMap/OverlayPackedArrayReader.cs`
+- `Assets/RA2YR/Tests/EditMode/Formats/PackedMap/OverlayPackedArrayTests.cs`
+- `docs/adr/0025-overlay-packed-array-foundation.md`
+- `docs/formats/overlay-packed-arrays.md`
+- `docs/compatibility/evidence/m3c3-overlay-packed-array-synthetic-20260808.yml`
+
+### 后续事项
+
+- 已在 validation commit `82fa0239edafd7174a6386a1fc80f43b6440f169` 完成 Unity、
+  PS5.1/PS7 static/copyright、repository regression 和 content wrapper regression。
+- 推送文档结果记录并创建 Draft PR，等待 exact pushed HEAD Repository safety；
+  通过后停止，不开始 M3-C4。
+
+## 2026-08-08 - M3-C3 independent-review finding closure
+
+- 在既有 M3-C3 分支上只修复 policy validation、bounded occurrence input 和
+  packed result defensive snapshot；没有新增 Overlay 语义或后续 work package。
+- unknown nested policy 在 occurrence source 之前 fail-closed；Overlay 输入只在
+  `MaxFragments + 1` probe 内消费；`DecodedBytes`/`BlockOutputs` getter 不再暴露
+  可修改内部数组。
+- focused source definition 更新为 61 NUnit executions、51 behavior methods；旧
+  51/51 XML 明确属于祖先 commit `82fa0239...`，本次修复后的 Unity 执行保持
+  `NotRun`，不复用旧 XML。
+- 当前主机未发现 Unity 2022.3.60f1c1 Editor；仅 PS5.1 validation 通过，PS7、
+  copyright、wrapper 和当前-head Unity 仍为 `NotRun / EnvironmentBlocked`。
+  implementation candidate safety run `31312939491` 已对 `141aed1...` 成功，
+  docs-only 新 HEAD 仍需新 run。
+
+## 2026-08-09 - M3-C3 P2-2 evidence/provenance closure
+
+### 用户目标
+- 只关闭 PR #43 当前唯一剩余的 P2-2 evidence/provenance consistency finding，
+  不重做已关闭的代码 finding，不开始 M3-C4。
+
+### 本轮处理
+- 将 M3-C3 synthetic evidence 的历史执行与当前 finding candidate 分成独立的
+  `historical` / `current_candidate` 结构。
+- 纠正当前 PS7、repository regression、copyright、wrapper 和 Unity 状态；保留
+  PS5.1 validation 的真实通过结果。
+- 记录 implementation candidate safety `31312939491`，不把它冒充即将产生的
+  docs-only HEAD safety。
+
+### 关键结论
+- 本轮是 docs/evidence-only；不修改 production C#、NUnit、Unity assets、Packages、
+  ProjectSettings、compatibility semantics 或 research dossier。
+- 推送后等待新 exact-head Repository safety，PR 保持 Open/Draft/Unmerged。
+
+### 影响文件
+- `docs/compatibility/evidence/m3c3-overlay-packed-array-synthetic-20260808.yml`
+- `.dev-records/issues.md`
+- `.dev-records/timeline.md`
+- `.dev-records/changes.md`
+- `.dev-records/backlog.md`

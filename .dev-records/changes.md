@@ -529,3 +529,78 @@
   forced post-result shutdown false.
 - Repository validation, copyright, regressions, and content wrapper regressions
   passed under PS5.1 and PS7.
+
+## 2026-08-08 - M3-C3 Overlay raw packed-array foundation
+
+### Change scope
+
+- Added UnityEngine-free `OverlayPackedArrayModels` and
+  `OverlayPackedArrayReader` for explicit `OverlayPack` and `OverlayDataPack`
+  section selection.
+- Reused the M3-C1 packed pipeline with an explicit absolute Format80 profile;
+  RawLzo1X remains rejected at this layer because no LZO algorithm is present.
+- Added exact ordinary `512 x 512` raw-array validation, defensive byte views,
+  explicit candidate storage indexes, provenance retention, and fail-closed
+  child/parent execution state.
+- Added 51 focused NUnit executions (37 `[Test]`, 14 `[TestCase]`) and narrowed
+  the old IsoMap prohibition to Preview/TMP-only assertions.
+
+### Verification boundary
+
+- Focused M3-C3 worktree XML: 51/51 passed; this is synthetic behavior only.
+- Final-code-tree gates at `82fa0239edafd7174a6386a1fc80f43b6440f169` passed:
+  focused 51/51, EditMode 1148/1148, PlayMode 1/1, PS5.1/PS7 validation and
+  copyright, repository regressions 46, copyright regressions 22, and content
+  wrapper regressions 51 in each host.
+- The result-record commit is documentation-only; no C# or test source changed
+  after the validated tree. Repository safety remains pending until push.
+- No ProjectBaseline packed data was read; no Overlay semantic registry,
+  Preview, TMP, palette, renderer, gameplay, or real LZO implementation was
+  added.
+
+## 2026-08-08 - M3-C3 independent-review finding closure
+
+### Change scope
+
+- Packed decode policy validation now rejects unknown fragment ordering, Base64,
+  chunk sentinel, codec, and Format80 variant values before source enumeration.
+- Overlay section input no longer materializes arbitrary occurrence enumerables
+  in its constructor; the reader takes only the configured bounded budget probe.
+- Packed decode byte getters now return defensive snapshots for aggregate and
+  per-block bytes.
+
+### Evidence boundary
+
+- The focused source now defines 61 NUnit executions (47 `[Test]`, 14
+  `[TestCase]`) across 51 behavior methods.
+- The prior Unity XML belongs to commit
+  `82fa0239edafd7174a6386a1fc80f43b6440f169`; it is historical evidence, not
+  a pass claim for this finding-closure tree. Post-closure Unity and Repository
+  safety evidence remains `NotRun` until this code/test change is committed and
+  executed.
+- No ProjectBaseline packed data, real LZO, Overlay semantics, Preview, TMP,
+  palette, rendering, writer, pathfinding, or gameplay was added.
+
+## 2026-08-09 - M3-C3 P2-2 evidence/provenance closure
+
+### 变更范围
+- 仅修正 M3-C3 machine-readable evidence 与开发记录的 historical/current
+  provenance 分层。
+- 没有修改 production C#、NUnit tests、Unity assets、Packages、ProjectSettings、
+  compatibility semantics 或研究正文。
+
+### 具体改动
+- `verification.historical` 绑定 validation commit
+  `82fa0239edafd7174a6386a1fc80f43b6440f169`。
+- `verification.current_candidate` 绑定 finding candidate
+  `141aed104a4c572f61f011541fa6929318388dbd`，明确记录当前环境阻塞。
+- implementation candidate safety 保留为 run `31312939491`；docs-only final safety
+  留给推送后的 PR delivery metadata，避免 evidence 自引用递归。
+
+### 验证情况
+- `git diff --check` 与 docs-only 文件范围检查待提交后执行。
+- Unity、PS7、copyright、wrapper 本轮不重跑；保持真实 `NotRun / EnvironmentBlocked`。
+
+### 风险
+- 新 docs-only HEAD 必须取得独立 exact-head Repository safety；旧 run
+  `31312939491` 不能复用。

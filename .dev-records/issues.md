@@ -430,3 +430,88 @@ Current reproducible checks are limited to clean source diff validation and repo
   installed on this host.
 - PS5.1 and PS7 repository validation/copyright scans pass; regression suites
   pass with 46 repository-validation cases and 22 copyright cases.
+
+## 2026-08-08 - M3-C3 final-tree gate status
+
+### 现象
+
+M3-C3 raw Overlay array code and focused tests are present on
+`feature/m3-c3-overlay-packed-array-foundation`, but the final documentation
+and evidence commit has not yet been pushed.
+
+### 根因
+
+The implementation was intentionally staged before documentation and gate
+refresh so the code/test commit remains independently reviewable.
+
+### 解决方案
+
+Finish the ADR, format document, compatibility/evidence updates, and
+development records; then run the current final tree through Unity, repository,
+copyright, wrapper, and safety gates. Fail closed if any host gate is blocked.
+
+### 验证方式
+
+The focused worktree XML is 51/51 passed and includes the new
+`OverlayPackedArrayTests`; full-suite results are now current for validation
+commit `82fa0239edafd7174a6386a1fc80f43b6440f169`: focused 51/51, EditMode
+1148/1148, and PlayMode 1/1. The remaining gate is Repository safety for the
+pushed documentation-only result-record head.
+
+## 2026-08-08 - M3-C3 finding-closure execution provenance
+
+### 现象
+
+独立复审发现 unknown nested packed-policy enum 可在 adapter 边界发生默认化或被
+宽泛异常包装，`OverlaySectionInput` 还会无界 `ToArray()` 任意 occurrence source，
+且 packed byte getter 会暴露可变内部数组。旧 evidence 也将祖先 commit 的 Unity XML
+称为 current-head 结果。
+
+### 处理
+
+- 所有 nested packed policy 先返回 `InvalidPolicy`/`InvalidPackedPolicy`，再读取
+  occurrence；无默认 profile 或 fallback。
+- Overlay reader 仅在 `MaxFragments + 1` 的有界 probe 内快照 occurrence；超限、null
+  occurrence 和 source exception 均 fail-closed。
+- `DecodedBytes` 与 `BlockOutputs` 均改为防御性 snapshots；Overlay raw copy 与 packed
+  snapshot 不再可被调用者 mutation 破坏。
+- evidence 改为明确 historical execution commit，并将 post-finding-closure Unity 与
+  Repository safety 标为 `NotRun`，直至新的 code/test HEAD 实际完成。
+
+### 当前边界
+
+- 当前主机未发现 Unity 2022.3.60f1c1 Editor；不得复用旧 XML 作为本次修复后的通过
+  证据。
+- 当前 candidate 的 PS5.1 repository validation 通过（244 assets、244 meta、149 matrix、
+  114 evidence、0 violations）。PS7 为 `NotRun / EnvironmentBlocked`；repository-
+  validation regressions 仅有 PS5.1 fixture phase 的 23 项通过，PS7 child 以 Windows
+  error 1312 阻塞，整体不能记为通过。
+- 当前 candidate 的 Unity、copyright、copyright regressions 和 content wrappers 均为
+  `NotRun / EnvironmentBlocked`。implementation candidate 的 Repository safety 为
+  run `31312939491`，对应 `141aed104a4c572f61f011541fa6929318388dbd`，
+  `completed / success`；docs/evidence-only 新 HEAD 仍需新的 exact-head safety。
+
+## 2026-08-09 - M3-C3 P2-2 evidence/provenance closure
+
+### 现象
+
+`m3c3-overlay-packed-array-synthetic-20260808.yml` 将祖先执行结果与当前 finding
+candidate 混在同一个 `verification` 层级，并把 PS7、copyright、wrapper 和
+post-finding Repository safety 写成与当前事实不符的状态。
+
+### 处理
+
+- 将 evidence 拆为绑定 `82fa0239...` 的 `historical` 与绑定 `141aed1...` 的
+  `current_candidate` 两组。
+- 保留历史 Unity、双宿主静态门禁和 wrapper 结果，但不再将其解释为当前候选通过。
+- 当前候选明确记录 Unity/PS7/copyright/wrapper 的 `NotRun / EnvironmentBlocked`，
+  并记录 PS5.1 validation 的真实通过结果与 23 项 PS5.1 fixture partial pass。
+- 将 run `31312939491` 记录为 implementation candidate pre-docs safety；最终
+  docs-only safety 不写入 evidence，避免形成自引用提交递归。
+
+### 验证方式
+
+- 本轮仅修改 evidence 和开发记录；没有 C#、NUnit、Unity asset、Packages、
+  ProjectSettings 或研究正文变更。
+- 新 docs-only HEAD 推送后必须取得新的 exact-head Repository safety；PR 继续保持
+  Open/Draft/Unmerged。

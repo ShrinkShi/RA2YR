@@ -662,8 +662,35 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
                     ChunkSentinelPolicy.RejectAllZero,
                     (PackedCodecKind)99));
             Assert.That(result.IsSuccess, Is.False);
-            Assert.That(HasCode(result, PackedMapDiagnosticCode.BackendInvalidCodec), Is.True);
+            Assert.That(HasCode(result, PackedMapDiagnosticCode.InvalidPolicy), Is.True);
             Assert.That(result.Fragments, Is.Null);
+        }
+
+        [Test]
+        public void PipelineRejectsUnknownNestedPoliciesBeforeCollectingInput()
+        {
+            PackedSectionDecodePolicy[] policies =
+            {
+                new PackedSectionDecodePolicy((PackedIniFragmentOrderingPolicy)99, StrictBase64Policy.StandardAlphabetNoWhitespace, ChunkSentinelPolicy.RejectAllZero, PackedCodecKind.Format80),
+                new PackedSectionDecodePolicy(PackedIniFragmentOrderingPolicy.SourceOccurrenceOrder, (StrictBase64Policy)99, ChunkSentinelPolicy.RejectAllZero, PackedCodecKind.Format80),
+                new PackedSectionDecodePolicy(PackedIniFragmentOrderingPolicy.SourceOccurrenceOrder, StrictBase64Policy.StandardAlphabetNoWhitespace, (ChunkSentinelPolicy)99, PackedCodecKind.Format80),
+                new PackedSectionDecodePolicy(PackedIniFragmentOrderingPolicy.SourceOccurrenceOrder, StrictBase64Policy.StandardAlphabetNoWhitespace, ChunkSentinelPolicy.RejectAllZero, PackedCodecKind.Format80, new Format80Profile((Format80Variant)99))
+            };
+            foreach (PackedSectionDecodePolicy policy in policies)
+            {
+                int moves = 0;
+                IEnumerable<PackedIniFragmentOccurrence> Lazy()
+                {
+                    if (moves < 0) yield break;
+                    moves++;
+                    throw new InvalidOperationException("invalid policy must fail before source enumeration");
+                }
+
+                PackedSectionDecodeResult result = new PackedSectionDecodePipeline().Decode(Lazy(), policy);
+                Assert.That(result.IsSuccess, Is.False);
+                Assert.That(HasCode(result, PackedMapDiagnosticCode.InvalidPolicy), Is.True);
+                Assert.That(moves, Is.EqualTo(0));
+            }
         }
 
         [Test]
@@ -712,6 +739,20 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
             PackedSectionDecodeResult result = DecodeWithBackend(new FakeBackend(new byte[] { 1 }, consumed: 1, identity: "fake"));
             Assert.That(result.IsSuccess, Is.True);
             Assert.That(result.DecodedBytes, Is.EqualTo(new byte[] { 1 }));
+        }
+
+        [Test]
+        public void PackedDecodeResultByteSnapshotsAreDefensive()
+        {
+            PackedSectionDecodeResult result = DecodeWithBackend(new FakeBackend(new byte[] { 0x11 }, consumed: 1, identity: "fake"));
+            byte[] decoded = result.DecodedBytes;
+            byte[] block = result.BlockOutputs[0];
+            decoded[0] = 0;
+            block[0] = 0;
+            Assert.That(result.DecodedBytes, Is.EqualTo(new byte[] { 0x11 }));
+            Assert.That(result.BlockOutputs[0], Is.EqualTo(new byte[] { 0x11 }));
+            Assert.That(result.DecodedBytes, Is.EqualTo(result.DecodedBytes));
+            Assert.That(result.BlockOutputs[0], Is.EqualTo(result.BlockOutputs[0]));
         }
 
         [Test]
