@@ -580,3 +580,27 @@
   executed.
 - No ProjectBaseline packed data, real LZO, Overlay semantics, Preview, TMP,
   palette, rendering, writer, pathfinding, or gameplay was added.
+
+## 2026-08-09 - M3-C3 P2-2 evidence/provenance closure
+
+### 变更范围
+- 仅修正 M3-C3 machine-readable evidence 与开发记录的 historical/current
+  provenance 分层。
+- 没有修改 production C#、NUnit tests、Unity assets、Packages、ProjectSettings、
+  compatibility semantics 或研究正文。
+
+### 具体改动
+- `verification.historical` 绑定 validation commit
+  `82fa0239edafd7174a6386a1fc80f43b6440f169`。
+- `verification.current_candidate` 绑定 finding candidate
+  `141aed104a4c572f61f011541fa6929318388dbd`，明确记录当前环境阻塞。
+- implementation candidate safety 保留为 run `31312939491`；docs-only final safety
+  留给推送后的 PR delivery metadata，避免 evidence 自引用递归。
+
+### 验证情况
+- `git diff --check` 与 docs-only 文件范围检查待提交后执行。
+- Unity、PS7、copyright、wrapper 本轮不重跑；保持真实 `NotRun / EnvironmentBlocked`。
+
+### 风险
+- 新 docs-only HEAD 必须取得独立 exact-head Repository safety；旧 run
+  `31312939491` 不能复用。

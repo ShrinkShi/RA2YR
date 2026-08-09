@@ -672,6 +672,33 @@
 - focused source definition 更新为 61 NUnit executions、51 behavior methods；旧
   51/51 XML 明确属于祖先 commit `82fa0239...`，本次修复后的 Unity 执行保持
   `NotRun`，不复用旧 XML。
-- 当前主机未发现 Unity 2022.3.60f1c1 Editor；PS5.1/PS7 repository validation
-  工作树检查通过，后续 exact-head Unity、copyright、wrapper 和 Repository safety
-  仍需真实执行后才能宣称通过。
+- 当前主机未发现 Unity 2022.3.60f1c1 Editor；仅 PS5.1 validation 通过，PS7、
+  copyright、wrapper 和当前-head Unity 仍为 `NotRun / EnvironmentBlocked`。
+  implementation candidate safety run `31312939491` 已对 `141aed1...` 成功，
+  docs-only 新 HEAD 仍需新 run。
+
+## 2026-08-09 - M3-C3 P2-2 evidence/provenance closure
+
+### 用户目标
+- 只关闭 PR #43 当前唯一剩余的 P2-2 evidence/provenance consistency finding，
+  不重做已关闭的代码 finding，不开始 M3-C4。
+
+### 本轮处理
+- 将 M3-C3 synthetic evidence 的历史执行与当前 finding candidate 分成独立的
+  `historical` / `current_candidate` 结构。
+- 纠正当前 PS7、repository regression、copyright、wrapper 和 Unity 状态；保留
+  PS5.1 validation 的真实通过结果。
+- 记录 implementation candidate safety `31312939491`，不把它冒充即将产生的
+  docs-only HEAD safety。
+
+### 关键结论
+- 本轮是 docs/evidence-only；不修改 production C#、NUnit、Unity assets、Packages、
+  ProjectSettings、compatibility semantics 或 research dossier。
+- 推送后等待新 exact-head Repository safety，PR 保持 Open/Draft/Unmerged。
+
+### 影响文件
+- `docs/compatibility/evidence/m3c3-overlay-packed-array-synthetic-20260808.yml`
+- `.dev-records/issues.md`
+- `.dev-records/timeline.md`
+- `.dev-records/changes.md`
+- `.dev-records/backlog.md`

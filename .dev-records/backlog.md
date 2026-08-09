@@ -71,3 +71,14 @@
 - [x] 在该历史 review head 重新扫描 M3-C2 测试计数：146 defined NUnit executions、103 behavior methods。
 - [x] 在该历史 review head 完成 PS5.1/PS7 repository validation、copyright scan 和 regression gates；Unity 与依赖 Unity 的 wrappers 当时保持 NotRun。
 - [x] 随后在代码 HEAD `c23601084b944c71d06ffd9c2ab89e9df67f9c63` 生成 focused/full EditMode 与 PlayMode XML；本次 backlog-only 提交未重复执行这些测试。
+
+## 2026-08-09 - M3-C3 P2-2 evidence closure
+
+- [x] 将 M3-C3 evidence 的 historical execution 与 current finding candidate 分离，
+  不再把旧 PS7/copyright/wrapper/Unity 结果当作当前通过。
+- [x] 记录当前候选 `141aed104a4c572f61f011541fa6929318388dbd` 的真实 PS5.1、PS7、
+  copyright、wrapper 和 Unity 状态；implementation candidate safety 为
+  `31312939491` completed/success。
+- [x] 本轮保持 docs/evidence-only；没有修改代码、测试、兼容语义或研究正文。
+- [ ] 推送本 docs-only HEAD 并取得新的 exact-head Repository safety；结果记录在
+  PR #43 delivery metadata，不回写 evidence 以避免自引用递归。

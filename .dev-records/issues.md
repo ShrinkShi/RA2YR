@@ -482,6 +482,36 @@ pushed documentation-only result-record head.
 
 - 当前主机未发现 Unity 2022.3.60f1c1 Editor；不得复用旧 XML 作为本次修复后的通过
   证据。
-- Windows PowerShell 5.1 与 PowerShell 7 repository validation 已在本次工作树通过；
-  Unity、wrapper、copyright regression 与 Repository safety 仍需在提交后的 exact HEAD
-  上重跑或重新确认。
+- 当前 candidate 的 PS5.1 repository validation 通过（244 assets、244 meta、149 matrix、
+  114 evidence、0 violations）。PS7 为 `NotRun / EnvironmentBlocked`；repository-
+  validation regressions 仅有 PS5.1 fixture phase 的 23 项通过，PS7 child 以 Windows
+  error 1312 阻塞，整体不能记为通过。
+- 当前 candidate 的 Unity、copyright、copyright regressions 和 content wrappers 均为
+  `NotRun / EnvironmentBlocked`。implementation candidate 的 Repository safety 为
+  run `31312939491`，对应 `141aed104a4c572f61f011541fa6929318388dbd`，
+  `completed / success`；docs/evidence-only 新 HEAD 仍需新的 exact-head safety。
+
+## 2026-08-09 - M3-C3 P2-2 evidence/provenance closure
+
+### 现象
+
+`m3c3-overlay-packed-array-synthetic-20260808.yml` 将祖先执行结果与当前 finding
+candidate 混在同一个 `verification` 层级，并把 PS7、copyright、wrapper 和
+post-finding Repository safety 写成与当前事实不符的状态。
+
+### 处理
+
+- 将 evidence 拆为绑定 `82fa0239...` 的 `historical` 与绑定 `141aed1...` 的
+  `current_candidate` 两组。
+- 保留历史 Unity、双宿主静态门禁和 wrapper 结果，但不再将其解释为当前候选通过。
+- 当前候选明确记录 Unity/PS7/copyright/wrapper 的 `NotRun / EnvironmentBlocked`，
+  并记录 PS5.1 validation 的真实通过结果与 23 项 PS5.1 fixture partial pass。
+- 将 run `31312939491` 记录为 implementation candidate pre-docs safety；最终
+  docs-only safety 不写入 evidence，避免形成自引用提交递归。
+
+### 验证方式
+
+- 本轮仅修改 evidence 和开发记录；没有 C#、NUnit、Unity asset、Packages、
+  ProjectSettings 或研究正文变更。
+- 新 docs-only HEAD 推送后必须取得新的 exact-head Repository safety；PR 继续保持
+  Open/Draft/Unmerged。
