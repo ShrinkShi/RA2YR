@@ -18,13 +18,13 @@ decoder:
   oracle_validation: independent_external_reference_only
   lzo_writer: not_implemented
 tests:
-  focused_xml: TestResults/20260810T122440642-m3c4-focused/results.xml
+  focused_xml: TestResults/20260810T123502298-m3c4-focused-final/results.xml
   focused_executed: 25
   focused_passed: 25
   focused_failed: 0
   focused_skipped: 0
   focused_inconclusive: 0
-  editmode_xml: TestResults/20260810T040346729Z-d320a64364074b80a15db4e540f9ccaf/EditMode/results.xml
+  editmode_xml: TestResults/20260810T043620698Z-a3749b6fbe384d569b3660df69ff2a4f/EditMode/results.xml
   editmode_executed: 1185
   editmode_passed: 1185
   editmode_failed: 0
@@ -32,7 +32,7 @@ tests:
   editmode_inconclusive: 0
   unity_exit: 0
   forced_post_result_shutdown: false
-  playmode_xml: TestResults/20260810T042136612Z-1a1bd99aec444968afc321d9f2b251aa/PlayMode/results.xml
+  playmode_xml: TestResults/20260810T043715102Z-cafd1cbf331e41cab4a2cafa2c74d78a/PlayMode/results.xml
   playmode_executed: 1
   playmode_passed: 1
   playmode_failed: 0
