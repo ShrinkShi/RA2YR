@@ -18,26 +18,31 @@ decoder:
   oracle_validation: independent_external_reference_only
   lzo_writer: not_implemented
 tests:
-  focused_xml: TestResults/20260810T123502298-m3c4-focused-final/results.xml
+  focused_xml: TestResults/20260810T125421794-m3c4-focused-exact/results.xml
   focused_executed: 25
   focused_passed: 25
   focused_failed: 0
   focused_skipped: 0
   focused_inconclusive: 0
+  focused_unity_exit: -1
+  focused_forced_post_result_shutdown: true
+  focused_process_cleanup: controlled_after_valid_xml
   editmode_xml: TestResults/20260810T043620698Z-a3749b6fbe384d569b3660df69ff2a4f/EditMode/results.xml
   editmode_executed: 1185
   editmode_passed: 1185
   editmode_failed: 0
   editmode_skipped: 0
   editmode_inconclusive: 0
-  unity_exit: 0
-  forced_post_result_shutdown: false
+  editmode_unity_exit: 0
+  editmode_forced_post_result_shutdown: false
   playmode_xml: TestResults/20260810T043715102Z-cafd1cbf331e41cab4a2cafa2c74d78a/PlayMode/results.xml
   playmode_executed: 1
   playmode_passed: 1
   playmode_failed: 0
   playmode_skipped: 0
   playmode_inconclusive: 0
+  playmode_unity_exit: 0
+  playmode_forced_post_result_shutdown: false
 audit:
   command: Tools/Content/Invoke-IsoMapPack5ProjectBaselineAudit.ps1
   summary_manifest: RA2YR.IsoMapPack5ProjectBaselineAuditSanitized
