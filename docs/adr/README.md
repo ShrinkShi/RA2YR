@@ -30,3 +30,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0023 | Packed map compression foundation is codec-neutral and evidence-gated | Accepted for synthetic/configured implementation |
 | 0024 | IsoMapPack5 remains a raw-record and policy boundary | Accepted for synthetic/configured implementation |
 | 0025 | Overlay packed arrays remain raw, bounded, and section-explicit | Accepted for synthetic/configured implementation |
+| 0026 | Managed RawLzo1X decoding remains bounded and evidence-gated | Accepted for managed synthetic/configured implementation |

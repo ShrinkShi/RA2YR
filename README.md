@@ -2,7 +2,7 @@
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
-> 项目目前处于 M3-C3 OverlayPack/OverlayDataPack 原始 packed byte-array 基础阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
+> 项目目前处于 M3-C4 Managed RawLZO1X 解码与脱敏审计阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
 ## 项目定位
 
@@ -29,7 +29,7 @@ RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项�
 - 确定性的逐值候选链与完整来源追踪；ProjectBaseline 层序固定为 `ra2 -> ra2md -> expandmd01..99 -> loose`，但仍不宣称原版运行时对照通过；
 - 只消费显式 `Complete` INI resolution 的最小 typed scalar、Rules 类型注册表和 Art 资源路由视图；Art 多重匹配与 Rules 重复 ordinal 均保留全部候选并 fail-closed，不选择首项赢家；
 - Westwood SHP(TS) 8 字节头、24 字节帧目录、不可变局部索引帧，以及 flags 0/1 raw 解码；严格 flags 3 RLE-Zero 已通过合成测试，独立探针进一步确认 257 个失败帧同时包含精确宽度行和多一个透明输出的行，因此保持门槛 B 和未提升的黄金兼容状态；
-- M3-C1 codec-neutral packed foundation、M3-C2 IsoMapPack5 raw 11-byte records，以及 M3-C3 OverlayPack/OverlayDataPack ordinary 512x512 raw byte-array adapters；这些能力均保持显式 policy、bounded input、provenance 和 synthetic/configured compatibility boundary；
+- M3-C1 codec-neutral packed foundation、M3-C2 IsoMapPack5 raw 11-byte records、M3-C3 OverlayPack/OverlayDataPack ordinary 512x512 raw byte-array adapters，以及 M3-C4 managed RawLzo1X backend 与脱敏 ProjectBaseline IsoMapPack5 audit；这些能力均保持显式 policy、bounded input、provenance 和 synthetic/configured compatibility boundary，不提升为原版 runtime 兼容；
 - EditMode、PlayMode、仓库静态验证和 CI 入口；
 - 明确区分“未实现”“可解析”和原版对照等兼容状态。
 

@@ -365,6 +365,25 @@ sources:
     repository_use: "reference-only; no source or binary imported"
     approval_status: "approved-reference-only-no-reuse"
 
+  - id: axiodl-lzokay-raw-lzo1x-db2df1f
+    name: "AxioDL/lzokay Raw LZO1X behavior reference"
+    source:
+      type: "external-git-reference"
+      canonical_upstream: "https://github.com/AxioDL/lzokay"
+      commit: "https://github.com/AxioDL/lzokay/commit/db2df1fcbebc2ed06c10f727f72567d40f06a2be"
+      observed_location: "external reference only; no repository-local source"
+    version_or_hash:
+      commit: "db2df1fcbebc2ed06c10f727f72567d40f06a2be"
+    license:
+      spdx: "MIT"
+      verification: "upstream license at pinned commit"
+    purpose: "Independent Raw LZO1X behavior and oracle validation reference"
+    contains_code: true
+    reference_only: true
+    code_imported: false
+    repository_use: "reference-only; no source, translation, mechanical rewrite, or binary imported"
+    approval_status: "approved-reference-only"
+
   - id: iron-curtain-cnc-formats-pal-77da596
     name: "iron-curtain-engine/cnc-formats PAL, CSF, and SHP(TS) implementation"
     source:

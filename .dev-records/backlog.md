@@ -22,7 +22,11 @@
 - [ ] 在授权并具备实际 backend 后设计 ProjectBaseline packed-section audit；不得在 M3-C1 伪造地图兼容性。
 - [x] 完成 IsoMapPack5 raw record 与显式 coordinate/trailing policy foundation。
 - [x] 完成 OverlayPack/OverlayDataPack ordinary raw-array adapter foundation；当前分支仅保留 synthetic/configured 兼容边界。
-- [ ] 研究并实现 PreviewPack、TMP/theater 绑定和真实 LZO backend；不得把 raw-array foundation 当作语义或运行时兼容。
+- [x] 完成 M3-C4 managed RawLzo1X backend、注入式 packed integration 与脱敏
+  ProjectBaseline IsoMapPack5 audit；managed backend 已实现，但不等于原版 runtime
+  确认。
+- [ ] 研究并实现 PreviewPack、TMP/theater 绑定；不得把 raw-array foundation 或
+  managed decoder 当作语义或运行时兼容。
 
 - [ ] 获取并登记干净、解包的 YR 1.001 内容基线。
 - [ ] 建立 FinalAlert 2 A/B/C/D 往返黄金样本。
@@ -41,6 +45,17 @@
 - [ ] Implement palette binding, remap, shadow pairing, visual comparison, and Unity rendering only in later work packages.
 
 ## 已放弃
+
+## 2026-08-10 - M3-C4 delivery status
+
+- [x] managed RawLzo1X decoder、synthetic tests、packed integration、audit command
+  和 sanitized summary 已完成。
+- [x] 当前 EditMode XML：1185/1185 passed，Unity exit 0，forced shutdown false。
+- [x] 外部 patched development source audit 已执行并保留失败事实：status
+  `CompleteWithFailures`，200 candidates、200 successes、1 mount-level failure。
+- [ ] PlayMode、双 PowerShell repository/copyright/wrapper gates、Repository safety
+  和 Draft PR 仍需在提交后的 exact HEAD 上验证。
+- [ ] 不开始 M3-C5、Preview、TMP、Overlay semantics、palette、renderer 或 gameplay。
 
 ## 已完成
 
