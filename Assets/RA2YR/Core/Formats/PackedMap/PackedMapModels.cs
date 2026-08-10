@@ -63,6 +63,17 @@ namespace RA2YR.Core.Formats.PackedMap
         BackendProvenanceMismatch,
         BackendCancelled,
         BackendException,
+        BackendInputTruncated,
+        BackendMalformedStream,
+        BackendLookbehindOverrun,
+        BackendOutputOverflow,
+        BackendOutputUnderflow,
+        BackendMissingTerminator,
+        BackendTrailingInput,
+        BackendArithmeticOverflow,
+        BackendBudgetExceeded,
+        BackendNoProgress,
+        BackendProducedLengthMismatch,
         InvalidPolicy,
         PipelineStageFailure,
         PipelineBudgetExceeded
@@ -327,12 +338,35 @@ namespace RA2YR.Core.Formats.PackedMap
     internal sealed class LzoDecodeResult
     {
         internal LzoDecodeResult(byte[] bytes, int consumed, string backendIdentity, IEnumerable<PackedMapDiagnostic> diagnostics)
-            : this(bytes, consumed, backendIdentity, diagnostics, Array.Empty<IniSourceProvenance>()) { }
+            : this(bytes, consumed, bytes == null ? 0 : bytes.Length, false, backendIdentity, diagnostics, Array.Empty<IniSourceProvenance>()) { }
 
         internal LzoDecodeResult(byte[] bytes, int consumed, string backendIdentity, IEnumerable<PackedMapDiagnostic> diagnostics, IEnumerable<IniSourceProvenance> provenance)
-        { Bytes = bytes == null ? null : (byte[])bytes.Clone(); ConsumedInput = consumed; BackendIdentity = backendIdentity; Diagnostics = Array.AsReadOnly((diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray()); IniSourceProvenance[] chain = (provenance ?? throw new ArgumentNullException(nameof(provenance))).ToArray(); if (chain.Any(item => item == null)) throw new ArgumentException("LZO result provenance cannot contain null entries.", nameof(provenance)); Provenance = Array.AsReadOnly(chain); }
+            : this(bytes, consumed, bytes == null ? 0 : bytes.Length, false, backendIdentity, diagnostics, provenance) { }
+
+        internal LzoDecodeResult(
+            byte[] bytes,
+            int consumed,
+            int produced,
+            bool terminatorSeen,
+            string backendIdentity,
+            IEnumerable<PackedMapDiagnostic> diagnostics,
+            IEnumerable<IniSourceProvenance> provenance)
+        {
+            if (consumed < 0 || produced < 0) throw new ArgumentOutOfRangeException();
+            Bytes = bytes == null ? null : (byte[])bytes.Clone();
+            ConsumedInput = consumed;
+            ProducedOutput = produced;
+            TerminatorSeen = terminatorSeen;
+            BackendIdentity = backendIdentity;
+            Diagnostics = Array.AsReadOnly((diagnostics ?? throw new ArgumentNullException(nameof(diagnostics))).ToArray());
+            IniSourceProvenance[] chain = (provenance ?? throw new ArgumentNullException(nameof(provenance))).ToArray();
+            if (chain.Any(item => item == null)) throw new ArgumentException("LZO result provenance cannot contain null entries.", nameof(provenance));
+            Provenance = Array.AsReadOnly(chain);
+        }
         public byte[] Bytes { get; }
         public int ConsumedInput { get; }
+        public int ProducedOutput { get; }
+        public bool TerminatorSeen { get; }
         public string BackendIdentity { get; }
         public IReadOnlyList<PackedMapDiagnostic> Diagnostics { get; }
         public IReadOnlyList<IniSourceProvenance> Provenance { get; }

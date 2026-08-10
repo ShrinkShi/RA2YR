@@ -274,6 +274,11 @@ namespace RA2YR.Core.Formats.PackedMap
                         diagnostics.Add(new PackedMapDiagnostic(PackedMapDiagnosticCode.BackendNullOutput, BinaryDiagnosticSeverity.Error, "LZO backend returned null output."));
                         return new PackedSectionDecodeResult(fragments, base64, envelope, Array.Empty<byte[]>(), diagnostics);
                     }
+                    if (decoded.ProducedOutput != decoded.Bytes.Length)
+                    {
+                        diagnostics.Add(new PackedMapDiagnostic(PackedMapDiagnosticCode.BackendProducedLengthMismatch, BinaryDiagnosticSeverity.Error, "LZO backend produced-length metadata differs from the returned bytes."));
+                        return new PackedSectionDecodeResult(fragments, base64, envelope, Array.Empty<byte[]>(), diagnostics);
+                    }
                     if (decoded.ConsumedInput != block.CompressedSize)
                     {
                         diagnostics.Add(new PackedMapDiagnostic(PackedMapDiagnosticCode.BackendConsumedInputMismatch, BinaryDiagnosticSeverity.Error, "LZO backend consumed input different from the bounded compressed payload."));
