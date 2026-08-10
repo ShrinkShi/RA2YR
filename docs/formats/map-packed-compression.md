@@ -41,12 +41,14 @@ All chunk results retain the supplied provenance chain. Window, Stream and
 materialized input paths apply the same maximum-input budget before allocation;
 the production core never reads an unbounded stream into memory first.
 
-LZO has a contract only.  Requests are bounded by compressed-input and output
-budgets, carry exact expected output, cancellation, backend identity, and
-provenance.  The pipeline requires exact consumed input, exact output length,
-non-empty identity, matching provenance, and no error diagnostics.  Backend
-exceptions, cancellation, null results/bytes, and unavailable backends become
-structured failures; no LZO algorithm or native dependency is present.
+The M3-C1 layer still exposes an injectable LZO contract, and M3-C4 supplies
+one independently authored managed `RawLzo1X` backend. Requests remain bounded
+by compressed-input and output budgets, carry exact expected output,
+cancellation, backend identity, and provenance. The pipeline requires exact
+consumed input, exact output length, non-empty identity, matching provenance,
+and no error diagnostics. Backend exceptions, cancellation, null results/bytes,
+and unavailable backends become structured failures. No miniLZO/GPL source,
+native plugin, P/Invoke binding, NuGet LZO dependency, or writer is included.
 
 ## Compatibility boundary
 
@@ -54,13 +56,20 @@ structured failures; no LZO algorithm or native dependency is present.
 - strict Base64: implemented and synthetic tested;
 - chunk envelope: implemented and synthetic tested;
 - Format80: implemented only for explicit synthetic profiles;
-- LZO, IsoMap, Overlay, Preview, TMP, palette, rendering and original runtime:
-  not implemented or not confirmed.
+- managed RawLzo1X decode backend: implemented and synthetic tested;
+- external LZO oracle comparison: independent validation only;
+- ProjectBaseline IsoMapPack5 audit: executed against an external patched
+  development source and published only as a sanitized aggregate; failures are
+  retained as `CompleteWithFailures` where observed;
+- IsoMap tile/coordinate runtime meaning, Overlay, Preview, TMP, palette,
+  rendering and original runtime: not implemented or not confirmed.
 
 No ProjectBaseline packed payload, decoded bytes, image, coordinate, or map
 record is published or used by this work package.
 
-The synthetic behavioral matrix contains 109 independent execution cases across
-fragment policies, strict Base64, chunk envelopes, Format80 profiles, bounded
-input equivalence, and LZO backend/pipeline contracts.  This count is not
-inflated with equivalent Base64 spellings.
+The M3-C1 synthetic behavioral matrix contains 109 independent execution cases
+across fragment policies, strict Base64, chunk envelopes, Format80 profiles,
+bounded input equivalence, and LZO backend/pipeline contracts. M3-C4 adds 23
+managed decoder cases and 2 sanitized-audit service cases; the focused M3-C4
+current-head XML therefore executes 25 cases. These counts are not inflated
+with equivalent Base64 spellings.

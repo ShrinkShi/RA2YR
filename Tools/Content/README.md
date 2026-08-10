@@ -380,3 +380,42 @@ this workflow; do not point it at the authoritative game baseline. These
 commands validate staged files and always report
 `realXccExecutionEvidence: false`; separate controlled human records are
 required to prove that the staged files were actually produced by XCC Mixer.
+
+## M3-C4 managed RawLzo1X and IsoMapPack5 audit
+
+`Invoke-IsoMapPack5ProjectBaselineAudit.ps1` invokes
+`RA2YR.Editor.IsoMapPack5ProjectBaselineAuditCommand.Run` with the managed
+`RawLzo1X` backend. It requires Unity `2022.3.60f1c1`, a closed project, and
+the ignored external configuration whose enabled source is the patched
+`YR1001_ProjectBaseline` development source.
+
+The command reuses the bounded MIX virtual-entry window and the existing
+fragment/Base64/chunk/IsoMapPack5 pipeline. It publishes only a sanitized JSON
+summary below ignored `TestResults`: counts, status, diagnostic categories,
+source fingerprints, backend identity, and aggregate hashes. It never publishes
+section names, fragment text, compressed bytes, decoded bytes, records,
+coordinates, images, or host paths. A `CompleteWithFailures` status is retained
+as a failure-bearing observation; the wrapper intentionally rejects it as a
+release-success claim.
+
+Run from the repository root:
+
+```powershell
+./Tools/Content/Invoke-IsoMapPack5ProjectBaselineAudit.ps1 `
+    -UnityEditorPath 'C:\Path\To\Unity.exe'
+```
+
+The wrapper is intended for Windows PowerShell 5.1 and PowerShell 7. Its
+regression contract is:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
+    ./Tools/Content/Tests/Invoke-IsoMapPack5ProjectBaselineAudit.Tests.ps1
+
+pwsh.exe -NoProfile -File `
+    ./Tools/Content/Tests/Invoke-IsoMapPack5ProjectBaselineAudit.Tests.ps1
+```
+
+The managed decoder is not a writer and does not establish original-runtime,
+clean-baseline, tile, coordinate, Overlay, Preview, TMP, palette, rendering,
+pathfinding, or gameplay compatibility.

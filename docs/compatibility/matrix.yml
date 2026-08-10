@@ -1,5 +1,5 @@
 schema_version: 1
-last_updated: "2026-08-08"
+last_updated: "2026-08-10"
 baseline:
   game: "Command & Conquer: Yuri's Revenge 1.001"
   content_role: "YR1001_ProjectBaseline patched development content source; not a clean YR 1.001 golden baseline"
@@ -582,10 +582,11 @@ entries:
       - "RA2YR.Tests.EditMode.Formats.PackedMap.PackedMapCoreTests"
     evidence:
       - "docs/compatibility/evidence/m3c1-packed-map-synthetic-20260804.yml#components"
+      - "docs/compatibility/evidence/m3c4-managed-raw-lzo1x-20260810.yml#decoder"
     limitations:
       - id: format.map-pack-codec.synthetic-only
         status: "已知限制"
-        description: "Only explicit synthetic fragment, Base64, chunk, and Format80 profiles are implemented; LZO is contract-only and no ProjectBaseline packed audit was run."
+        description: "Fragment, Base64, chunk, and Format80 behavior remains explicit and synthetic/configured; managed RawLzo1X is implemented and externally audited, but original-runtime equivalence is not confirmed."
       - id: format.map-pack-codec.map-specific-unimplemented
         status: "已知限制"
         description: "IsoMap semantic interpretation, PreviewPack, TMP, palette, rendering, writer, and original runtime behavior remain unimplemented or unconfirmed; OverlayPack and OverlayDataPack now have only a synthetic raw-array foundation."
@@ -597,16 +598,17 @@ entries:
       - "RA2YR.Tests.EditMode.Formats.PackedMap.IsoMapPack5Tests"
     evidence:
       - "docs/compatibility/evidence/m3c2-isomap-pack5-synthetic-20260805.yml#components"
+      - "docs/compatibility/evidence/m3c4-managed-raw-lzo1x-20260810.yml#audit"
     limitations:
       - id: format.isomap-pack5.synthetic-only
         status: "已知限制"
         description: "The reader and coordinate analysis are synthetic/configured only; policies reject unknown enum values, rectangle bounds require positive width and height together, and tile meaning, coordinate runtime semantics, and original behavior are not confirmed."
       - id: format.isomap-pack5.packed-not-run
         status: "已知限制"
-        description: "No real packed ProjectBaseline decode was run because the M3-C1 LZO algorithm remains unavailable by design."
+        description: "A sanitized audit was run against the external patched development source with the managed RawLzo1X backend; it is not a clean YR 1.001 or original-runtime compatibility claim."
       - id: format.isomap-pack5.mix-entry-not-run
         status: "已知限制"
-        description: "Current-head evidence covers bounded ReadOnlyDataWindow input; no real or synthetic MIX entry fixture was executed in this review correction."
+        description: "Synthetic input-equivalence tests cover bounded windows; the external audit consumes MIX virtual-entry windows but publishes only aggregate results."
       - id: format.isomap-pack5.map-family-unimplemented
         status: "已知限制"
         description: "OverlayPack and OverlayDataPack have only a synthetic raw-array foundation; PreviewPack, TMP, theater binding, palette, rendering, writer, pathfinding, and gameplay remain unimplemented."

@@ -368,6 +368,29 @@
 - `.dev-records/issues.md`
 - `.dev-records/backlog.md`
 
+## 2026-08-10 - M3-C4 managed RawLzo1X backend
+
+### 用户目标
+- 在既有 M3-C1/M3-C2 packed boundary 上实现 managed RawLzo1X decode backend，
+  并提供 ProjectBaseline IsoMapPack5 的脱敏聚合审计；不开始 M3-C5 或任何
+  Preview/TMP/Overlay 语义、渲染和 gameplay。
+
+### 本轮处理
+- 新增 bounded、exact-length、cancellation-aware、UnityEngine-free managed
+  decoder，identity 为 `ra2yr-managed-raw-lzo1x-v1`。
+- 新增只输出 aggregate 的 ProjectBaseline audit service/Editor command/wrapper，
+  使用外部 patched development source，不发布 map names、records、coordinates、
+  compressed bytes、decoded bytes、images 或 absolute paths。
+- 更新 ADR 0026、格式文档、兼容矩阵、evidence、third-party ledger 和开发记录。
+
+### 关键结论
+- 当前 EditMode 真实 XML 为 `1185/1185` passed，Unity exit 0；这不是 ProjectBaseline
+  audit 的成功声明。
+- 最近 audit status 为 `CompleteWithFailures`：200 candidate、200 successful、
+  1 mount-level failure；fingerprint before/after 相同。该失败必须保留。
+- managed decoder 实现不等于原版 runtime confirmation；LZO writer、Preview、TMP、
+  Overlay semantics、palette、renderer、pathfinding 和 gameplay 仍未实现。
+
 ### 后续事项
 - 完成本机 XCC 静态识别、XCC 源码与许可证固定、MIX 头部研究和基线只读调查，再开始自主 C# 实现。
 

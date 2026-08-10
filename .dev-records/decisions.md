@@ -454,3 +454,34 @@ candidates as explicit profiles. Do not infer section policy, interpret
 This preserves the reversible byte and provenance boundary while avoiding a
 silent choice among conflicting coordinate and semantic claims. Synthetic
 success is not original-runtime compatibility.
+
+## 2026-08-10 - M3-C4 managed RawLzo1X remains bounded and evidence-gated
+
+### Background
+
+M3-C1 deliberately stopped at an injectable LZO contract. M3-C4 needs a
+repository-owned managed backend for exact packed-section testing without
+introducing GPL code, native dependencies, or map-specific semantics.
+
+### Decision
+
+Implement one independently authored managed `RawLzo1X` backend behind the
+existing bounded pipeline. Require explicit codec selection, exact consumed and
+produced lengths, output/input budgets, cancellation, backend identity,
+provenance, terminal marker validation, overlap copying, and structured failure.
+Run the ProjectBaseline audit only against the external patched development
+source and publish sanitized aggregates. Preserve `CompleteWithFailures` when
+any mount or section fails; do not convert it into original-runtime proof.
+
+### Reason
+
+This adds the missing execution backend while keeping codec, map-record, and
+visual responsibilities separate. Sanitized aggregate evidence is useful for
+triage without making packed payloads reconstructible or silently selecting a
+tile/coordinate interpretation.
+
+### Cost
+
+The project still cannot claim clean YR 1.001 packed compatibility or runtime
+map loading. The managed decoder is not a writer and does not implement Preview,
+TMP, Overlay semantics, palette, rendering, pathfinding, or gameplay.

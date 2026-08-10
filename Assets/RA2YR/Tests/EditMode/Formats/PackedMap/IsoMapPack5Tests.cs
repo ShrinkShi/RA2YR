@@ -7,6 +7,7 @@ using NUnit.Framework;
 using RA2YR.Core.Binary;
 using RA2YR.Core.Binary.Seekable;
 using RA2YR.Core.Content;
+using RA2YR.Core.Content.PackedMap.Audit;
 using RA2YR.Core.Formats.Ini;
 using RA2YR.Core.Formats.PackedMap;
 
@@ -380,7 +381,23 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         public void PackedAdapterProvenanceIsAvailableToRecords() { IsoMapPack5PackedReadResult r = PackedRead(new FakeBackend(Record(1, 2, 3, 4, 5, 6))); Assert.That(r.Records.Records[0].Provenance[0].SourceId, Is.EqualTo("synthetic")); }
 
         [Test]
-        public void PackedAdapterDoesNotExposeProjectBaseline() { Assert.That(typeof(IsoMapPack5PackedSectionReader).Assembly.GetTypes().Any(t => t.Name.IndexOf("ProjectBaseline", StringComparison.OrdinalIgnoreCase) >= 0 && t.Namespace != null && t.Namespace.Contains("PackedMap")), Is.False); }
+        public void PackedAdapterExposesOnlyTheSanitizedProjectBaselineAuditBoundary()
+        {
+            Type[] allowedAuditTypes =
+            {
+                typeof(IsoMapPack5ProjectBaselineAuditService),
+                typeof(IsoMapPack5ProjectBaselineAuditProfile),
+                typeof(IsoMapPack5ProjectBaselineAuditDelivery),
+                typeof(IsoMapPack5ProjectBaselineAuditStatus)
+            };
+            Type[] projectBaselineTypes = typeof(IsoMapPack5PackedSectionReader).Assembly.GetTypes()
+                .Where(t => t.Name.IndexOf("ProjectBaseline", StringComparison.OrdinalIgnoreCase) >= 0
+                    && t.Namespace != null
+                    && t.Namespace.Contains("PackedMap"))
+                .ToArray();
+            Assert.That(projectBaselineTypes, Is.EquivalentTo(allowedAuditTypes));
+            Assert.That(projectBaselineTypes.Any(t => t.Name.IndexOf("Payload", StringComparison.OrdinalIgnoreCase) >= 0), Is.False);
+        }
 
         [Test]
         public void CoreTypesDoNotReferenceUnityEngine() { string[] references = typeof(RA2YR.Core.AssemblyMarker).Assembly.GetReferencedAssemblies().Select(item => item.Name).ToArray(); Assert.That(references.Any(item => item != null && (item.StartsWith("UnityEngine", StringComparison.Ordinal) || item.StartsWith("UnityEditor", StringComparison.Ordinal))), Is.False); }
@@ -389,7 +406,7 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         public void NoPreviewOrTmpModelsWereAdded() { Assert.That(typeof(IsoMapPack5RecordRaw).Assembly.GetTypes().Where(t => t.Namespace != null && t.Namespace.StartsWith("RA2YR.Core.Formats.PackedMap", StringComparison.Ordinal)).Select(t => t.Name), Has.None.Matches<string>(name => name.IndexOf("Preview", StringComparison.OrdinalIgnoreCase) >= 0 || name.Equals("TMP", StringComparison.OrdinalIgnoreCase))); }
 
         [Test]
-        public void NoLzoAlgorithmTypeWasAdded() { Assert.That(typeof(IsoMapPack5RecordRaw).Assembly.GetTypes().Where(t => t.Namespace != null && t.Namespace.StartsWith("RA2YR.Core.Formats.PackedMap", StringComparison.Ordinal)).Select(t => t.Name), Has.None.Matches<string>(name => name.IndexOf("Lzo1X", StringComparison.OrdinalIgnoreCase) >= 0 && name != nameof(ILzoDecodeBackend))); }
+        public void OnlyManagedRawLzo1XBackendTypeWasAdded() { Assert.That(typeof(IsoMapPack5RecordRaw).Assembly.GetTypes().Where(t => t.Namespace != null && t.Namespace.StartsWith("RA2YR.Core.Formats.PackedMap", StringComparison.Ordinal)).Select(t => t.Name), Has.None.Matches<string>(name => name.IndexOf("Lzo1X", StringComparison.OrdinalIgnoreCase) >= 0 && name != nameof(ILzoDecodeBackend) && name != nameof(ManagedRawLzo1XDecodeBackend))); }
 
         [Test]
         public void SyntheticRecordOracleDoesNotCallReader() { byte[] expected = Record(1, 2, 3, 4, 5, 6); Assert.That(expected.Length, Is.EqualTo(11)); Assert.That(expected[10], Is.EqualTo(6)); }

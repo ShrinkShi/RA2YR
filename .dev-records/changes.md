@@ -581,6 +581,32 @@
 - No ProjectBaseline packed data, real LZO, Overlay semantics, Preview, TMP,
   palette, rendering, writer, pathfinding, or gameplay was added.
 
+## 2026-08-10 - M3-C4 managed RawLzo1X backend and sanitized audit
+
+### 变更范围
+
+- 新增 UnityEngine-free managed `RawLzo1X` decode backend，复用既有 bounded
+  packed pipeline；不引入 miniLZO、GPL source、native plugin、P/Invoke、NuGet
+  dependency 或 writer。
+- 新增 ProjectBaseline `IsoMapPack5` 脱敏聚合 audit service、Editor command、
+  wrapper 和 synthetic regression；审计读取仓库外 patched development source，
+  不把 payload、记录、坐标、路径或原始片段写入仓库或 summary。
+- 更新 map-packed/IsoMap 文档、ADR、兼容矩阵、third-party source ledger 和
+  M3-C4 evidence；不修改 `docs/research/`。
+
+### 验证事实
+
+- 当前 EditMode XML：`TestResults/20260810T040346729Z-d320a64364074b80a15db4e540f9ccaf/EditMode/results.xml`，
+  `1185/1185` passed，Unity exit `0`，forced post-result shutdown `false`。
+- 最近一次真实外部审计：8 roots、282 mounted entries、200 candidates、200
+  successful sections、1 mount-level failure、36,? decoded bytes and records are
+  published only as sanitized aggregate values; status is `CompleteWithFailures`.
+  Source fingerprint before/after is identical. This failure-bearing result is not
+  promoted to original-runtime compatibility.
+- Aggregate values are `37,166,225` decoded bytes and `3,378,675` decoded
+  records; ProjectBaseline source remains external patched development content; no packed
+  payload is committed.
+
 ## 2026-08-09 - M3-C3 P2-2 evidence/provenance closure
 
 ### 变更范围

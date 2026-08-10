@@ -515,3 +515,24 @@ post-finding Repository safety 写成与当前事实不符的状态。
   ProjectSettings 或研究正文变更。
 - 新 docs-only HEAD 推送后必须取得新的 exact-head Repository safety；PR 继续保持
   Open/Draft/Unmerged。
+
+## 2026-08-10 - M3-C4 audit and gate status
+
+### 已解决
+
+- M3-C4 managed RawLzo1X backend 已加入现有 bounded packed pipeline；不含
+  miniLZO/GPL/native/PInvoke/NuGet 或 writer。
+- 当前 EditMode 已由 Unity `2022.3.60f1c1` 在当前工作树真实执行：1185/1185
+  passed，Unity exit 0，forced post-result shutdown false，lockfile 已清理。
+
+### 保留的限制
+
+- 最近 ProjectBaseline audit status 为 `CompleteWithFailures`，不是 Complete：
+  8 roots、282 mounted entries、200 candidates、200 successful sections、1
+  mount-level failure；fingerprint before/after 相同。该状态和失败事实必须继续
+  对外公开为失败携带的 aggregate 观察。
+- audit 输入是仓库外 patched development source；没有 clean YR 1.001 或
+  original-runtime confirmation。没有发布 packed/decoded bytes、records、coordinates、
+  images、路径或可重建内容。
+- PlayMode、双 PowerShell repository/copyright/wrapper 门禁和 Repository safety
+  仍需在提交后的 exact HEAD 上执行；不得用历史 XML 代替。

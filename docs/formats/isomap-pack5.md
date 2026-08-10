@@ -1,5 +1,10 @@
 # IsoMapPack5 raw record foundation
 
+M3-C4 adds an independently authored managed `RawLzo1X` decoder and a
+sanitized ProjectBaseline audit command on top of this raw-record boundary.
+The decoder is a bounded read-only backend; it is not a writer, map loader, or
+proof of original-runtime behavior.
+
 The current synthetic matrix defines 164 NUnit executions (110 `[Test]`
 declarations and 54 parameterized `[TestCase]` executions). On the current
 HEAD, the focused M3-C2 XML executed and passed 164 cases; the full EditMode
@@ -14,9 +19,10 @@ physical offset into an outer MIX archive unless the caller supplies that
 mapping as provenance.
 
 The current evidence covers Memory, seekable Stream, short-read Stream, and
-bounded ReadOnlyDataWindow paths. No real MIX entry fixture has been executed
-on this head; any earlier MIX-window wording is therefore treated as bounded
-window coverage, not ProjectBaseline or archive-entry proof.
+bounded ReadOnlyDataWindow paths. The ProjectBaseline audit uses the existing
+MIX virtual-entry window outside the repository and publishes only sanitized
+aggregates; it does not publish names, payloads, records, coordinates, or
+physical paths.
 
 This document describes the M3-C2 Core boundary. It is not a claim that the
 repository can load a complete RA2/YR map or that any coordinate or tile
@@ -69,9 +75,13 @@ missing-cell synthesis, or dense-map assumption is applied.
 ## Packed adapter boundary
 
 `IsoMapPack5PackedSectionReader` requires an explicit `RawLzo1X` policy and an
-injected backend before any fragment or chunk processing. Empty fragment input
-and a successful zero-block envelope are distinct structured failures. It retains fragment, Base64, chunk, backend, decoded-stream,
-record, and coordinate-stage results. Upstream failures stop record parsing.
+injected backend before any fragment or chunk processing. The M3-C4 managed
+backend identity is `ra2yr-managed-raw-lzo1x-v1`; it enforces bounded input,
+exact output, terminal-marker and consumed-length checks, overlap expansion,
+cancellation, and structured diagnostics. Empty fragment input and a
+successful zero-block envelope are distinct structured failures. The adapter
+retains fragment, Base64, chunk, backend, decoded-stream, record, and
+coordinate-stage results. Upstream failures stop record parsing.
 The adapter never reads OverlayPack, PreviewPack, TMP, or ProjectBaseline data.
 
 The packed result aggregates completion state from the packed, record, and
@@ -86,6 +96,8 @@ turn a packed, record, or coordinate failure into a successful result.
 - Tile interpretation: Unresolved.
 - Four-zero decoded trailer: ExplicitProfileOnly.
 - Coordinate runtime semantics: NotConfirmed.
-- Real packed ProjectBaseline decode: NotRun.
-- LZO algorithm: NotImplemented.
+- Real packed ProjectBaseline decode: Executed only as an external patched
+  development-source audit; no original-runtime compatibility claim.
+- LZO algorithm: Managed RawLzo1X implemented; external oracle comparison is
+  independent validation only.
 - OverlayPack, PreviewPack, TMP, palette, rendering, writer: NotImplemented.
