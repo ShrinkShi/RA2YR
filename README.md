@@ -1,8 +1,25 @@
 # RA2YR
 
+## M3-C5 PreviewPack raw foundation
+
+The current PreviewPack work package adds a bounded, Unity-free raw component
+reader and an explicit packed-section adapter. It preserves the four raw
+metadata fields, requires explicit channel/row profiles, and enforces the
+exact `width * height * 3` decoded-byte contract. See
+[PreviewPack raw component foundation](docs/formats/preview-pack.md) and
+[ADR-0027](docs/adr/0027-preview-pack-raw-component-foundation.md).
+
+The configured read-only ProjectBaseline PreviewPack audit has now executed
+against the patched development source and publishes only sanitized aggregates:
+184 candidate entries, 184 exact decoded streams, zero section failures, one
+MIX mount-level failure (`CompleteWithFailures`), positive dimensions for all
+184, fragment range 54..1138, and chunk range 2..15. No payload, filename,
+path, pixel, or original-runtime compatibility claim is included. M3-C5
+reuses the M3-C4 managed `RawLzo1X` backend; it adds no codec or writer.
+
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
-> 项目目前处于 M3-C4 Managed RawLZO1X 解码与脱敏审计阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
+> 项目目前处于 M3-C5 PreviewPack raw component foundation 阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
 ## 项目定位
 

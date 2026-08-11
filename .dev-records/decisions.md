@@ -485,3 +485,20 @@ tile/coordinate interpretation.
 The project still cannot claim clean YR 1.001 packed compatibility or runtime
 map loading. The managed decoder is not a writer and does not implement Preview,
 TMP, Overlay semantics, palette, rendering, pathfinding, or gameplay.
+## ADR-0027 - PreviewPack raw component boundary
+
+PreviewPack is implemented as a bounded raw foundation only. Metadata keeps
+all four signed fields, fields 2/3 are the only configured dimension
+candidates, and section/duplicate selection is explicit. The packed adapter
+requires the existing injected `RawLzo1X` contract and exact checked
+`width * height * 3` output. Raw bytes are independent from explicit RGB/BGR
+and row-order views. No palette, texture, sprite, TMP, theater, renderer, or
+original-runtime claim is introduced.
+
+The configured read-only ProjectBaseline PreviewPack audit is now executed
+against the patched development source and publishes only sanitized aggregate
+facts. It returned `CompleteWithFailures` (184 candidates, 184 exact decoded
+streams, one MIX mount-level failure). This does not confirm original runtime
+behavior; no clean YR 1.001 claim, payload publication, or per-map detail is
+allowed. The current repaired tree has a 1210/1210 EditMode pass; PlayMode and
+final pushed-head gates remain independent delivery obligations.

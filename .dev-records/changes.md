@@ -630,3 +630,53 @@
 ### 风险
 - 新 docs-only HEAD 必须取得独立 exact-head Repository safety；旧 run
   `31312939491` 不能复用。
+## 2026-08-12 - M3-C5 PreviewPack raw component foundation
+
+### Changes
+
+- Added `PreviewPackModels`, `PreviewMetadataReader`, and
+  `PreviewPackSectionReader` under the UnityEngine-free packed-map Core.
+- Added explicit metadata selection, four-field raw `Size` preservation,
+  checked exact three-component length, immutable decoded bytes, channel/row
+  profiles, provenance, limits, and independent execution state.
+- Added 20 PreviewPack test methods and a synthetic evidence record. The old
+  IsoMap architecture guard now forbids TMP only; PreviewPack is the current
+  work package and is not a rendering implementation.
+- Added ADR-0027 and the PreviewPack format/compatibility documentation.
+
+### Verification status
+
+- The previous failed EditMode XML identified a missing successful-execution
+  mark in the metadata reader; that fix is included here.
+- A post-fix Unity invocation was attempted with a normalized `Path`/`PATH`
+  environment but produced no valid current-head XML. Unity results remain
+  `NotRun`; no historical XML is reused.
+- Post-commit PS5.1 static gates and hosted exact-head Repository safety run
+  `31516022532` completed successfully for the recorded HEAD.
+- ProjectBaseline packed PreviewPack data was not read.
+
+## 2026-08-12 - M3-C5 maintainer closeout and configured PreviewPack audit
+
+### Changes
+
+- Added the read-only `PreviewPackProjectBaselineAuditService`, sanitized
+  Editor command, wrapper, and wrapper regression. It reads only the enabled
+  `YR1001_ProjectBaseline` source from the configured external-content root,
+  reuses the M3-C4 managed `RawLzo1X` backend, and emits aggregate counts and
+  hashes only.
+- The configured audit completed with failures: 184 candidate entries, 184
+  exact decoded streams, zero section failures, one MIX mount-level failure,
+  all 184 dimensions positive, fields 0/1 zero for all 184 entries, fragment
+  range 54..1138, and chunk range 2..15. The result remains
+  `CompleteWithFailures`; it is not runtime proof.
+- The first current-tree Unity XML was a pre-fix failure (1198/1205). After
+  fixing metadata execution state, cancellation policy handling, section
+  occurrence test data, chunk-declared-length fixtures, and the stale IsoMap
+  guard, the current tree produced 1210/1210 EditMode passes. PlayMode and
+  final pushed-head gates remain separately reported until executed.
+
+### Boundary
+
+M3-C5 adds no new LZO codec or writer. No rendering, palette, TMP, theater,
+map loading, or gameplay behavior was added, and no per-map ProjectBaseline
+payload or path is published.

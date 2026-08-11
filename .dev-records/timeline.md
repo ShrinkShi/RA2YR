@@ -725,3 +725,27 @@
 - `.dev-records/timeline.md`
 - `.dev-records/changes.md`
 - `.dev-records/backlog.md`
+## 2026-08-12 - M3-C5 PreviewPack foundation
+
+- Added the raw metadata reader, packed adapter, immutable decoded stream, and
+  explicit channel/row layout views.
+- Added ADR-0027, format documentation, compatibility evidence, and matrix
+  entry. All compatibility claims remain synthetic/configured or unresolved.
+- Corrected successful metadata execution state after the first current-tree
+  compile/test run exposed the fail-closed result bug.
+- Attempted a normalized-environment Unity rerun; no valid current-head XML was
+  produced, so Unity and dependent gates remain NotRun.
+- No ProjectBaseline packed PreviewPack data, rendering code, or M3-C6 work was
+  introduced.
+
+## 2026-08-12 - M3-C5 maintainer closeout
+
+- Implemented and ran the configured, read-only PreviewPack ProjectBaseline
+  aggregate audit using the existing MIX/content layer and M3-C4 managed
+  RawLzo1X backend.
+- Sanitized result: `CompleteWithFailures`, 184 candidates, 184 exact decoded
+  streams, zero section failures, one MIX mount-level failure, all dimensions
+  positive, fields 0/1 zero, fragments 54..1138, and chunks 2..15. No
+  payload, filename, path, pixel, or original-runtime claim was emitted.
+- Repaired current-tree behavior now passes the full EditMode XML 1210/1210;
+  the earlier 1198/1205 result remains explicitly pre-fix history.
