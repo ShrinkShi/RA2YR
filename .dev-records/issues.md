@@ -536,3 +536,22 @@ post-finding Repository safety 写成与当前事实不符的状态。
   images、路径或可重建内容。
 - PlayMode、双 PowerShell repository/copyright/wrapper 门禁和 Repository safety
   仍需在提交后的 exact HEAD 上执行；不得用历史 XML 代替。
+## 2026-08-12 - M3-C5 verification blocker
+
+### Observed
+
+- The initial PreviewPack EditMode run compiled the new code but reported six
+  PreviewPack failures plus one stale IsoMap guard failure. The successful
+  metadata path remained `NotRun` because it did not mark execution when no
+  diagnostics were emitted.
+- The metadata execution-state fix and the narrowed TMP-only guard are now in
+  the working tree.
+- Subsequent wrapper/direct Unity invocations were blocked by the host's
+  duplicate `Path`/`PATH` environment and then produced no valid result XML
+  after normalization. No passing result is claimed.
+
+### Boundary
+
+No ProjectBaseline packed PreviewPack data was read. This issue is an
+environment/test-execution blocker, not an original-runtime compatibility
+claim.

@@ -1,5 +1,22 @@
 # Backlog
 
+## 2026-08-12 - M3-C5 PreviewPack raw foundation
+
+- [x] Add bounded Preview metadata and PreviewPack raw component models.
+- [x] Preserve all four signed `Size` fields and require explicit section and
+  duplicate selection; fields 0/1 remain unresolved.
+- [x] Reuse the M3-C1 packed pipeline with an explicit `RawLzo1X` policy and
+  injected backend; fail closed before layout interpretation on upstream error.
+- [x] Keep decoded bytes immutable and expose RGB/BGR and row-order views only
+  through explicit profiles.
+- [x] Add synthetic PreviewPack tests and evidence definitions. Current-head
+  Unity execution remains `NotRun` because the local Unity invocation was
+  environment-blocked before producing a valid XML; no historical XML is
+  reused.
+- [x] Confirm no packed ProjectBaseline PreviewPack data was read or published.
+- [ ] Run current-head Unity, repository, copyright, wrapper, and exact-head
+  Repository safety gates after the additive commits.
+
 ## 2026-08-07 - M3-C2 authoritative closeout status
 
 - [x] Draft PR #42 exists and remains Open/Draft/Unmerged.
@@ -17,7 +34,7 @@
 ## 待处理
 - [x] 使用 Unity 2022.3.60f1c1 从 M3-C1 交付 HEAD 重新运行 focused/full Unity 门禁（历史 M3-C1 交付记录）。
 - [x] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 修复，更新 Draft PR #36；PR #36 已合并。
-- [x] 完成 M3-C2 IsoMapPack5 raw-record foundation，并开始 M3-C3 OverlayPack/OverlayDataPack raw-array foundation；语义、PreviewPack 和 TMP 仍需独立证据。
+- [x] 完成 M3-C2 IsoMapPack5 raw-record foundation，并开始 M3-C3 OverlayPack/OverlayDataPack raw-array foundation；IsoMap/Overlay 语义和 TMP 仍需独立证据，PreviewPack 现有 raw foundation 不提升为语义兼容。
 
 - [ ] 在授权并具备实际 backend 后设计 ProjectBaseline packed-section audit；不得在 M3-C1 伪造地图兼容性。
 - [x] 完成 IsoMapPack5 raw record 与显式 coordinate/trailing policy foundation。
@@ -25,8 +42,9 @@
 - [x] 完成 M3-C4 managed RawLzo1X backend、注入式 packed integration 与脱敏
   ProjectBaseline IsoMapPack5 audit；managed backend 已实现，但不等于原版 runtime
   确认。
-- [ ] 研究并实现 PreviewPack、TMP/theater 绑定；不得把 raw-array foundation 或
-  managed decoder 当作语义或运行时兼容。
+- [x] 完成 PreviewPack raw component foundation；保持 synthetic/configured 边界。
+- [ ] 研究并实现 TMP/theater 绑定；不得把 raw-array foundation 或 managed
+  decoder 当作语义或运行时兼容。
 
 - [ ] 获取并登记干净、解包的 YR 1.001 内容基线。
 - [ ] 建立 FinalAlert 2 A/B/C/D 往返黄金样本。

@@ -589,7 +589,7 @@ entries:
         description: "Fragment, Base64, chunk, and Format80 behavior remains explicit and synthetic/configured; managed RawLzo1X is implemented and externally audited, but original-runtime equivalence is not confirmed."
       - id: format.map-pack-codec.map-specific-unimplemented
         status: "已知限制"
-        description: "IsoMap semantic interpretation, PreviewPack, TMP, palette, rendering, writer, and original runtime behavior remain unimplemented or unconfirmed; OverlayPack and OverlayDataPack now have only a synthetic raw-array foundation."
+        description: "IsoMap semantic interpretation, TMP, palette, rendering, writer, and original runtime behavior remain unimplemented or unconfirmed; PreviewPack now has only a synthetic raw component foundation, and OverlayPack and OverlayDataPack have only synthetic raw-array foundations."
   - id: format.isomap-pack5-record
     domain: format
     feature: "IsoMapPack5 11-byte raw records, explicit trailing policy, and coordinate occurrence analysis"
@@ -1043,10 +1043,18 @@ entries:
   - id: map.preview-pack
     domain: map
     feature: "PreviewPack and preview metadata"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.PackedMap.PreviewPackTests"
+    evidence:
+      - "docs/compatibility/evidence/m3c5-preview-pack-synthetic-20260812.yml#components"
+    limitations:
+      - id: map.preview-pack.synthetic-only
+        status: "已知限制"
+        description: "Preview metadata and raw component layout are synthetic/configured only; channel order, row order, fields 0/1 meaning, palette semantics, and original runtime behavior are not confirmed."
+      - id: map.preview-pack.project-baseline-not-run
+        status: "已知限制"
+        description: "No packed ProjectBaseline PreviewPack data was read or published in M3-C5."
   - id: map.terrain-semantics
     domain: map
     feature: "Height, ramps, cliffs, water, bridges, overlays, and resources"

@@ -630,3 +630,25 @@
 ### 风险
 - 新 docs-only HEAD 必须取得独立 exact-head Repository safety；旧 run
   `31312939491` 不能复用。
+## 2026-08-12 - M3-C5 PreviewPack raw component foundation
+
+### Changes
+
+- Added `PreviewPackModels`, `PreviewMetadataReader`, and
+  `PreviewPackSectionReader` under the UnityEngine-free packed-map Core.
+- Added explicit metadata selection, four-field raw `Size` preservation,
+  checked exact three-component length, immutable decoded bytes, channel/row
+  profiles, provenance, limits, and independent execution state.
+- Added 20 PreviewPack test methods and a synthetic evidence record. The old
+  IsoMap architecture guard now forbids TMP only; PreviewPack is the current
+  work package and is not a rendering implementation.
+- Added ADR-0027 and the PreviewPack format/compatibility documentation.
+
+### Verification status
+
+- The previous failed EditMode XML identified a missing successful-execution
+  mark in the metadata reader; that fix is included here.
+- A post-fix Unity invocation was attempted with a normalized `Path`/`PATH`
+  environment but produced no valid current-head XML. Unity results remain
+  `NotRun`; no historical XML is reused.
+- ProjectBaseline packed PreviewPack data was not read.

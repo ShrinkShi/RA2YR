@@ -61,8 +61,9 @@ native plugin, P/Invoke binding, NuGet LZO dependency, or writer is included.
 - ProjectBaseline IsoMapPack5 audit: executed against an external patched
   development source and published only as a sanitized aggregate; failures are
   retained as `CompleteWithFailures` where observed;
-- IsoMap tile/coordinate runtime meaning, Overlay, Preview, TMP, palette,
-  rendering and original runtime: not implemented or not confirmed.
+- IsoMap tile/coordinate runtime meaning, Overlay, TMP, palette, rendering and
+  original runtime: not implemented or not confirmed. PreviewPack has only a
+  separate M3-C5 raw component foundation with explicit profiles.
 
 No ProjectBaseline packed payload, decoded bytes, image, coordinate, or map
 record is published or used by this work package.

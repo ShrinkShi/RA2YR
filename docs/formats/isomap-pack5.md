@@ -100,4 +100,6 @@ turn a packed, record, or coordinate failure into a successful result.
   development-source audit; no original-runtime compatibility claim.
 - LZO algorithm: Managed RawLzo1X implemented; external oracle comparison is
   independent validation only.
-- OverlayPack, PreviewPack, TMP, palette, rendering, writer: NotImplemented.
+- OverlayPack, TMP, palette, rendering, writer: NotImplemented. PreviewPack
+  has a separate M3-C5 raw component foundation; this IsoMap adapter does not
+  read or interpret PreviewPack.
