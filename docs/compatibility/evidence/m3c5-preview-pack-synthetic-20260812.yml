@@ -21,7 +21,7 @@ tests:
   current_head_xml: "TestResults/20260811T181209204Z-debc8aaf601f4ac188008160b3c8cea5/EditMode/results.xml"
   historical_xml_reused_as_current_evidence: false
 verification:
-  project_baseline_preview_audit: "CompleteWithFailures: 184 candidates, 184 exact decoded, 0 section failures, 1 MIX mount-level failure"
+  project_baseline_preview_audit: "CompleteWithFailures: 184 candidates, 184 exact decoded, 0 section failures, 1 MIX mount-level failure; fields0/1 zero=184/184, dimensions positive=184, fragments=54..1138, chunks=2..15"
   unity_editmode: "passed: 1210 total, 1210 passed, 0 failed"
   full_editmode: "passed: 1210 total, 1210 passed, 0 failed"
   playmode: not_run
@@ -31,7 +31,7 @@ verification:
   copyright_ps51: "passed: candidates=873, violations=0, ignored_probes=13/13"
   copyright_ps7: "passed in hosted exact-head Repository safety"
   content_wrapper_regressions_ps51: "passed: 51"
-  preview_audit_summary: "TestResults/20260811T181351970Z-af4f6e46d3354fe49dc713f693b7b7c0/m3-c5-preview-pack-project-baseline-summary.json"
+  preview_audit_summary: "TestResults/20260811T184342592Z-c989694a1c9245d49366d18e0ee72d6f/m3-c5-preview-pack-project-baseline-summary.json"
 compatibility:
   preview_metadata_reader: Synthetic
   preview_raw_component_reader: Synthetic

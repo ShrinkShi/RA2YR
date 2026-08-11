@@ -59,8 +59,10 @@ into success; suppressed diagnostic counts are retained.
 - Original runtime comparison: NotConfirmed.
 - ProjectBaseline packed PreviewPack audit: `CompleteWithFailures` on the
   configured patched development source. The sanitized run observed 184
-  candidate entries, 184 exact decoded streams, zero section failures, and
-  one MIX mount-level failure. No payload, filename, path, pixel, or per-entry
+  candidate entries, 184 exact decoded streams, zero section failures, one
+  MIX mount-level failure, zero-valued fields 0/1 for all 184 metadata
+  occurrences, positive dimensions for all 184, fragment range 54..1138,
+  and chunk range 2..15. No payload, filename, path, pixel, or per-entry
   value was published.
 - LZO: M3-C5 reuses the existing M3-C4 managed `RawLzo1X` backend; no new
   codec, writer, or recompressor is part of this work package.

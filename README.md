@@ -11,8 +11,9 @@ exact `width * height * 3` decoded-byte contract. See
 
 The configured read-only ProjectBaseline PreviewPack audit has now executed
 against the patched development source and publishes only sanitized aggregates:
-184 candidate entries, 184 exact decoded streams, zero section failures, and
-one MIX mount-level failure (`CompleteWithFailures`). No payload, filename,
+184 candidate entries, 184 exact decoded streams, zero section failures, one
+MIX mount-level failure (`CompleteWithFailures`), positive dimensions for all
+184, fragment range 54..1138, and chunk range 2..15. No payload, filename,
 path, pixel, or original-runtime compatibility claim is included. M3-C5
 reuses the M3-C4 managed `RawLzo1X` backend; it adds no codec or writer.
 

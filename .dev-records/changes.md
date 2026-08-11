@@ -665,8 +665,10 @@
   reuses the M3-C4 managed `RawLzo1X` backend, and emits aggregate counts and
   hashes only.
 - The configured audit completed with failures: 184 candidate entries, 184
-  exact decoded streams, zero section failures, and one MIX mount-level
-  failure. The result remains `CompleteWithFailures`; it is not runtime proof.
+  exact decoded streams, zero section failures, one MIX mount-level failure,
+  all 184 dimensions positive, fields 0/1 zero for all 184 entries, fragment
+  range 54..1138, and chunk range 2..15. The result remains
+  `CompleteWithFailures`; it is not runtime proof.
 - The first current-tree Unity XML was a pre-fix failure (1198/1205). After
   fixing metadata execution state, cancellation policy handling, section
   occurrence test data, chunk-declared-length fixtures, and the stale IsoMap
