@@ -116,6 +116,16 @@ namespace RA2YR.Core.Content.PackedMap.Audit
                 aggregate.MissingPreviewPack,
                 aggregate.ValidMetadata,
                 aggregate.InvalidMetadata,
+                aggregate.Field0Zero,
+                aggregate.Field0NonZero,
+                aggregate.Field1Zero,
+                aggregate.Field1NonZero,
+                aggregate.PositiveDimensions,
+                aggregate.InvalidDimensions,
+                aggregate.MinFragments,
+                aggregate.MaxFragments,
+                aggregate.MinChunks,
+                aggregate.MaxChunks,
                 aggregate.ExactDecoded,
                 aggregate.Underflow,
                 aggregate.Overflow,
@@ -255,6 +265,17 @@ namespace RA2YR.Core.Content.PackedMap.Audit
         {
             if (result == null) return;
             ObservePreviewDiagnostics(result.Diagnostics, aggregate);
+            if (result.Size != null)
+            {
+                if (result.Size.Field0Raw == 0) aggregate.Field0Zero = checked(aggregate.Field0Zero + 1);
+                else if (result.Size.Field0Raw.HasValue) aggregate.Field0NonZero = checked(aggregate.Field0NonZero + 1);
+                if (result.Size.Field1Raw == 0) aggregate.Field1Zero = checked(aggregate.Field1Zero + 1);
+                else if (result.Size.Field1Raw.HasValue) aggregate.Field1NonZero = checked(aggregate.Field1NonZero + 1);
+                bool dimensionsPositive = result.Size.Field2Raw.HasValue && result.Size.Field3Raw.HasValue &&
+                                           result.Size.Field2Raw.Value > 0 && result.Size.Field3Raw.Value > 0;
+                if (dimensionsPositive) aggregate.PositiveDimensions = checked(aggregate.PositiveDimensions + 1);
+                else aggregate.InvalidDimensions = checked(aggregate.InvalidDimensions + 1);
+            }
             if (result.IsSuccess) aggregate.ValidMetadata = checked(aggregate.ValidMetadata + 1);
             else if (result.HasFatalError) aggregate.InvalidMetadata = checked(aggregate.InvalidMetadata + 1);
         }
@@ -267,6 +288,15 @@ namespace RA2YR.Core.Content.PackedMap.Audit
                 return;
             }
             ObservePreviewDiagnostics(result.Diagnostics, aggregate);
+            if (result.Packed != null)
+            {
+                int fragments = result.Packed.Fragments == null ? 0 : result.Packed.Fragments.Occurrences.Count;
+                int chunks = result.Packed.Envelope == null ? 0 : result.Packed.Envelope.Blocks.Count;
+                aggregate.MinFragments = Math.Min(aggregate.MinFragments, fragments);
+                aggregate.MaxFragments = Math.Max(aggregate.MaxFragments, fragments);
+                aggregate.MinChunks = Math.Min(aggregate.MinChunks, chunks);
+                aggregate.MaxChunks = Math.Max(aggregate.MaxChunks, chunks);
+            }
             if (result.Decoded != null)
             {
                 switch (result.Decoded.LengthStatus)
@@ -404,6 +434,14 @@ namespace RA2YR.Core.Content.PackedMap.Audit
             builder.Append(",\"candidateEntryCount\":").Append(aggregate.CandidateEntries);
             builder.Append(",\"validMetadataCount\":").Append(aggregate.ValidMetadata);
             builder.Append(",\"invalidMetadataCount\":").Append(aggregate.InvalidMetadata);
+            builder.Append(",\"field0ZeroCount\":").Append(aggregate.Field0Zero);
+            builder.Append(",\"field0NonZeroCount\":").Append(aggregate.Field0NonZero);
+            builder.Append(",\"field1ZeroCount\":").Append(aggregate.Field1Zero);
+            builder.Append(",\"field1NonZeroCount\":").Append(aggregate.Field1NonZero);
+            builder.Append(",\"positiveDimensionCount\":").Append(aggregate.PositiveDimensions);
+            builder.Append(",\"invalidDimensionCount\":").Append(aggregate.InvalidDimensions);
+            builder.Append(",\"fragmentCountRange\":{\"min\":").Append(aggregate.MinFragments == int.MaxValue ? 0 : aggregate.MinFragments).Append(",\"max\":").Append(aggregate.MaxFragments).Append('}');
+            builder.Append(",\"chunkCountRange\":{\"min\":").Append(aggregate.MinChunks == int.MaxValue ? 0 : aggregate.MinChunks).Append(",\"max\":").Append(aggregate.MaxChunks).Append('}');
             builder.Append(",\"exactDecodedCount\":").Append(aggregate.ExactDecoded);
             builder.Append(",\"underflowCount\":").Append(aggregate.Underflow);
             builder.Append(",\"overflowCount\":").Append(aggregate.Overflow);
@@ -451,6 +489,16 @@ namespace RA2YR.Core.Content.PackedMap.Audit
             internal int MissingPreviewPack;
             internal int ValidMetadata;
             internal int InvalidMetadata;
+            internal int Field0Zero;
+            internal int Field0NonZero;
+            internal int Field1Zero;
+            internal int Field1NonZero;
+            internal int PositiveDimensions;
+            internal int InvalidDimensions;
+            internal int MinFragments = int.MaxValue;
+            internal int MaxFragments;
+            internal int MinChunks = int.MaxValue;
+            internal int MaxChunks;
             internal int ExactDecoded;
             internal int Underflow;
             internal int Overflow;

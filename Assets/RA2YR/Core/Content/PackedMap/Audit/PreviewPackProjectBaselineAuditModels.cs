@@ -69,6 +69,16 @@ namespace RA2YR.Core.Content.PackedMap.Audit
             int missingPreviewPackCount,
             int validMetadataCount,
             int invalidMetadataCount,
+            int field0ZeroCount,
+            int field0NonZeroCount,
+            int field1ZeroCount,
+            int field1NonZeroCount,
+            int positiveDimensionCount,
+            int invalidDimensionCount,
+            int minFragmentCount,
+            int maxFragmentCount,
+            int minChunkCount,
+            int maxChunkCount,
             int exactDecodedCount,
             int underflowCount,
             int overflowCount,
@@ -91,6 +101,16 @@ namespace RA2YR.Core.Content.PackedMap.Audit
             MissingPreviewPackCount = missingPreviewPackCount;
             ValidMetadataCount = validMetadataCount;
             InvalidMetadataCount = invalidMetadataCount;
+            Field0ZeroCount = field0ZeroCount;
+            Field0NonZeroCount = field0NonZeroCount;
+            Field1ZeroCount = field1ZeroCount;
+            Field1NonZeroCount = field1NonZeroCount;
+            PositiveDimensionCount = positiveDimensionCount;
+            InvalidDimensionCount = invalidDimensionCount;
+            MinFragmentCount = minFragmentCount;
+            MaxFragmentCount = maxFragmentCount;
+            MinChunkCount = minChunkCount;
+            MaxChunkCount = maxChunkCount;
             ExactDecodedCount = exactDecodedCount;
             UnderflowCount = underflowCount;
             OverflowCount = overflowCount;
@@ -112,6 +132,16 @@ namespace RA2YR.Core.Content.PackedMap.Audit
         public int MissingPreviewPackCount { get; }
         public int ValidMetadataCount { get; }
         public int InvalidMetadataCount { get; }
+        public int Field0ZeroCount { get; }
+        public int Field0NonZeroCount { get; }
+        public int Field1ZeroCount { get; }
+        public int Field1NonZeroCount { get; }
+        public int PositiveDimensionCount { get; }
+        public int InvalidDimensionCount { get; }
+        public int MinFragmentCount { get; }
+        public int MaxFragmentCount { get; }
+        public int MinChunkCount { get; }
+        public int MaxChunkCount { get; }
         public int ExactDecodedCount { get; }
         public int UnderflowCount { get; }
         public int OverflowCount { get; }
