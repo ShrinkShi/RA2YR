@@ -60,7 +60,7 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         [Test]
         public void MetadataRequiresExplicitSelectionForAmbiguousPreviewSections()
         {
-            PreviewMetadataSectionOccurrence[] sections = new[] { MetadataSection("0,0,1,1", 1), MetadataSection("0,0,1,1", 2) };
+            PreviewMetadataSectionOccurrence[] sections = new[] { MetadataSection("0,0,1,1", 0), MetadataSection("0,0,1,1", 1) };
             PreviewMetadataReadResult ambiguous = new PreviewMetadataReader().Read(sections, new PreviewMetadataReadPolicy(PreviewSectionSelectionStatus.AmbiguousMultipleOccurrences));
             Assert.That(ambiguous.IsSuccess, Is.False);
             PreviewMetadataReadResult selected = new PreviewMetadataReader().Read(sections, new PreviewMetadataReadPolicy(PreviewSectionSelectionStatus.SelectedOccurrence, 1));
@@ -150,7 +150,7 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         [Test]
         public void PreviewPackRejectsShortDecodedOutput()
         {
-            PreviewPackReadResult result = ReadPack(ReadMetadata("0,0,1,1"), SelectedInput(3), new FakeBackend(new byte[] { 1, 2 }));
+            PreviewPackReadResult result = ReadPack(ReadMetadata("0,0,1,1"), SelectedInput(2), new FakeBackend(new byte[] { 1, 2 }));
             Assert.That(result.IsSuccess, Is.False);
             Assert.That(result.Diagnostics.Any(item => item.Code == PreviewDiagnosticCode.LengthUnderflow), Is.True);
         }
@@ -158,7 +158,7 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         [Test]
         public void PreviewPackRejectsLongDecodedOutput()
         {
-            PreviewPackReadResult result = ReadPack(ReadMetadata("0,0,1,1"), SelectedInput(3), new FakeBackend(new byte[] { 1, 2, 3, 4 }));
+            PreviewPackReadResult result = ReadPack(ReadMetadata("0,0,1,1"), SelectedInput(4), new FakeBackend(new byte[] { 1, 2, 3, 4 }));
             Assert.That(result.IsSuccess, Is.False);
             Assert.That(result.Diagnostics.Any(item => item.Code == PreviewDiagnosticCode.LengthOverflow), Is.True);
         }
@@ -235,7 +235,7 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
         {
             var limits = new PreviewReadLimits(maxDiagnostics: 0);
             var policy = new PreviewMetadataReadPolicy(limits: limits);
-            PreviewMetadataReadResult result = new PreviewMetadataReader().Read(new[] { MetadataSection("0,0,1") }, policy);
+            PreviewMetadataReadResult result = new PreviewMetadataReader().Read(new[] { MetadataSection(new[] { new PreviewSizeOccurrence("0,0,1", 1, Provenance()) }) }, policy);
             Assert.That(result.IsSuccess, Is.False);
             Assert.That(result.HasFatalError, Is.True);
             Assert.That(result.Diagnostics, Is.Empty);

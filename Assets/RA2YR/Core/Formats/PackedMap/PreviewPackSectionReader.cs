@@ -64,7 +64,7 @@ namespace RA2YR.Core.Formats.PackedMap
                 Add(diagnostics, policy.Limits, execution, Error(input, PreviewDiagnosticCode.BackendUnavailable, "packed", "PreviewPack RawLzo1X decoding requires an injected backend."));
                 return new PreviewPackReadResult(metadata, input, null, null, null, diagnostics, execution);
             }
-            if (policy.CancellationToken.IsCancellationRequested)
+            if (policy.CancellationToken.IsCancellationRequested || policy.PackedPolicy.CancellationToken.IsCancellationRequested)
             {
                 Add(diagnostics, policy.Limits, execution, Error(input, PreviewDiagnosticCode.Cancellation, "packed", "PreviewPack decoding was cancelled before input consumption."));
                 return new PreviewPackReadResult(metadata, input, null, null, null, diagnostics, execution);

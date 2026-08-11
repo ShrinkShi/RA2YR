@@ -388,7 +388,11 @@ namespace RA2YR.Tests.EditMode.Formats.PackedMap
                 typeof(IsoMapPack5ProjectBaselineAuditService),
                 typeof(IsoMapPack5ProjectBaselineAuditProfile),
                 typeof(IsoMapPack5ProjectBaselineAuditDelivery),
-                typeof(IsoMapPack5ProjectBaselineAuditStatus)
+                typeof(IsoMapPack5ProjectBaselineAuditStatus),
+                typeof(PreviewPackProjectBaselineAuditService),
+                typeof(PreviewPackProjectBaselineAuditProfile),
+                typeof(PreviewPackProjectBaselineAuditDelivery),
+                typeof(PreviewPackProjectBaselineAuditStatus)
             };
             Type[] projectBaselineTypes = typeof(IsoMapPack5PackedSectionReader).Assembly.GetTypes()
                 .Where(t => t.Name.IndexOf("ProjectBaseline", StringComparison.OrdinalIgnoreCase) >= 0
