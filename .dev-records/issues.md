@@ -555,3 +555,15 @@ post-finding Repository safety 写成与当前事实不符的状态。
 No ProjectBaseline packed PreviewPack data was read. This issue is an
 environment/test-execution blocker, not an original-runtime compatibility
 claim.
+
+## 2026-08-12 - M3-C5 closeout state
+
+The configured read-only PreviewPack ProjectBaseline audit is implemented and
+executed. It returned `CompleteWithFailures` with 184 candidates, 184 exact
+decoded streams, zero section failures, and one MIX mount-level failure. The
+failure-bearing aggregate is retained and is not promoted to compatibility.
+
+Current Unity EditMode on the repaired tree is 1210/1210 passed. The original
+1198/1205 XML remains historical pre-fix evidence. PlayMode and final pushed
+HEAD delivery gates are still pending until their own current-head artifacts
+exist; no historical XML is reused.

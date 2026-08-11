@@ -16,8 +16,12 @@
 - [x] Confirm no packed ProjectBaseline PreviewPack data was read or published.
 - [x] Run current-head PS5.1 repository validation, copyright, wrapper, and
   exact-head Repository safety gates after the additive commits.
-- [ ] Run current-head Unity EditMode/full EditMode/PlayMode; the local host
-  remains blocked before producing a valid XML.
+- [x] Execute the configured read-only ProjectBaseline PreviewPack audit and
+  retain only sanitized aggregates (`CompleteWithFailures`: 184 candidates,
+  184 exact decoded streams, zero section failures, one MIX mount failure).
+- [x] Run current-head Unity EditMode/full EditMode; the authoritative XML is
+  1210/1210 passed. PlayMode remains a separate delivery gate until executed
+  on the final pushed HEAD.
 
 ## 2026-08-07 - M3-C2 authoritative closeout status
 

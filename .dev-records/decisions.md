@@ -495,7 +495,10 @@ requires the existing injected `RawLzo1X` contract and exact checked
 and row-order views. No palette, texture, sprite, TMP, theater, renderer, or
 original-runtime claim is introduced.
 
-The current Unity environment did not produce a valid post-fix XML, so the
-evidence records definitions separately from execution. ProjectBaseline
-PreviewPack packed data remains unread and the compatibility state remains
-synthetic/configured.
+The configured read-only ProjectBaseline PreviewPack audit is now executed
+against the patched development source and publishes only sanitized aggregate
+facts. It returned `CompleteWithFailures` (184 candidates, 184 exact decoded
+streams, one MIX mount-level failure). This does not confirm original runtime
+behavior; no clean YR 1.001 claim, payload publication, or per-map detail is
+allowed. The current repaired tree has a 1210/1210 EditMode pass; PlayMode and
+final pushed-head gates remain independent delivery obligations.

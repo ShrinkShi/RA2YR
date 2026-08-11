@@ -57,11 +57,22 @@ into success; suppressed diagnostic counts are retained.
 - Channel order and row order: ExplicitProfileOnly.
 - `Size` fields 0/1 meaning: Unresolved.
 - Original runtime comparison: NotConfirmed.
-- ProjectBaseline packed PreviewPack audit: NotRun; no packed ProjectBaseline
-  data was read or published in M3-C5.
-- LZO algorithm: provided only by the existing injected backend contract; no
-  new decoder, writer, or recompressor is part of this work package.
+- ProjectBaseline packed PreviewPack audit: `CompleteWithFailures` on the
+  configured patched development source. The sanitized run observed 184
+  candidate entries, 184 exact decoded streams, zero section failures, and
+  one MIX mount-level failure. No payload, filename, path, pixel, or per-entry
+  value was published.
+- LZO: M3-C5 reuses the existing M3-C4 managed `RawLzo1X` backend; no new
+  codec, writer, or recompressor is part of this work package.
 - Palette, rendering, TMP, theater, gameplay, and M3-C6: NotImplemented.
 
-The synthetic tests are independent of any ProjectBaseline payload and do
-not establish original-runtime compatibility.
+The ProjectBaseline audit is read-only and aggregate-only. The source is a
+patched development corpus, not a clean YR 1.001 installation, and the audit
+does not establish original-runtime compatibility. The synthetic tests remain
+independent of ProjectBaseline payload bytes.
+
+The controlled entry point is
+`Tools/Content/Invoke-PreviewPackProjectBaselineAudit.ps1`. It requires an
+explicit external-content configuration whose only enabled source is
+`YR1001_ProjectBaseline`; it refuses repository-local caches and writes a
+sanitized JSON summary below `TestResults`.

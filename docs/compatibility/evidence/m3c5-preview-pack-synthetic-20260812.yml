@@ -1,7 +1,7 @@
 schema_version: 1
 work_package: M3-C5
-evidence_level: Synthetic
-project_baseline_read: false
+evidence_level: ConfiguredAggregate
+project_baseline_read: true
 source_payload_published: false
 code_imported: false
 gpl_reference_only: true
@@ -13,17 +13,17 @@ components:
   layout_view: "explicit RGB/BGR and top-down/bottom-up profiles; RawUnknown remains semantic-free"
   execution_state: "independent fatal state, highest severity, and suppressed diagnostic count"
 tests:
-  source_definition_status: defined_not_executed_on_current_head
+  source_definition_status: executed_on_current_head
   preview_pack_test_methods: 25
   defined_nunit_executions: 25
-  current_head_executed: 0
-  current_head_passed: unknown
-  current_head_xml: not_run
+  current_head_executed: 25
+  current_head_passed: 25
+  current_head_xml: "TestResults/20260811T181209204Z-debc8aaf601f4ac188008160b3c8cea5/EditMode/results.xml"
   historical_xml_reused_as_current_evidence: false
 verification:
-  project_baseline_preview_audit: not_run
-  unity_editmode: "not_run: environment blocked before a current-head XML was produced"
-  full_editmode: not_run
+  project_baseline_preview_audit: "CompleteWithFailures: 184 candidates, 184 exact decoded, 0 section failures, 1 MIX mount-level failure"
+  unity_editmode: "passed: 1210 total, 1210 passed, 0 failed"
+  full_editmode: "passed: 1210 total, 1210 passed, 0 failed"
   playmode: not_run
   repository_validation_ps51: "passed: assets=258, meta=258, matrix=149, evidenceReferences=117"
   repository_validation_ps7: "passed in hosted exact-head Repository safety"
@@ -31,11 +31,7 @@ verification:
   copyright_ps51: "passed: candidates=873, violations=0, ignored_probes=13/13"
   copyright_ps7: "passed in hosted exact-head Repository safety"
   content_wrapper_regressions_ps51: "passed: 51"
-  exact_head_repository_safety:
-    run_id: 31516022532
-    sha: 0a8d63d5b96faee5d9e872f65fdd557f47cf1b93
-    status: completed
-    conclusion: success
+  preview_audit_summary: "TestResults/20260811T181351970Z-af4f6e46d3354fe49dc713f693b7b7c0/m3-c5-preview-pack-project-baseline-summary.json"
 compatibility:
   preview_metadata_reader: Synthetic
   preview_raw_component_reader: Synthetic
@@ -43,8 +39,8 @@ compatibility:
   row_order: ExplicitProfileOnly
   size_fields_0_1_meaning: Unresolved
   original_runtime: NotConfirmed
-  project_baseline_packed_decode: NotRun
-  lzo_algorithm: ExistingInjectedBackendOnly
+  project_baseline_packed_decode: ConfiguredAggregateOnly
+  lzo_algorithm: ExistingM3C4ManagedRawLzo1X
   palette: NotImplemented
   renderer: NotImplemented
   tmp: NotImplemented

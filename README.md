@@ -9,9 +9,12 @@ exact `width * height * 3` decoded-byte contract. See
 [PreviewPack raw component foundation](docs/formats/preview-pack.md) and
 [ADR-0027](docs/adr/0027-preview-pack-raw-component-foundation.md).
 
-This is synthetic/configured behavior only. No ProjectBaseline packed Preview
-data was read, and no palette, texture, sprite, TMP, theater, renderer, or
-original-runtime compatibility claim is included.
+The configured read-only ProjectBaseline PreviewPack audit has now executed
+against the patched development source and publishes only sanitized aggregates:
+184 candidate entries, 184 exact decoded streams, zero section failures, and
+one MIX mount-level failure (`CompleteWithFailures`). No payload, filename,
+path, pixel, or original-runtime compatibility claim is included. M3-C5
+reuses the M3-C4 managed `RawLzo1X` backend; it adds no codec or writer.
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 

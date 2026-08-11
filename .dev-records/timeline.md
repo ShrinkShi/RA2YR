@@ -737,3 +737,14 @@
   produced, so Unity and dependent gates remain NotRun.
 - No ProjectBaseline packed PreviewPack data, rendering code, or M3-C6 work was
   introduced.
+
+## 2026-08-12 - M3-C5 maintainer closeout
+
+- Implemented and ran the configured, read-only PreviewPack ProjectBaseline
+  aggregate audit using the existing MIX/content layer and M3-C4 managed
+  RawLzo1X backend.
+- Sanitized result: `CompleteWithFailures`, 184 candidates, 184 exact decoded
+  streams, zero section failures, and one MIX mount-level failure. No payload,
+  filename, path, pixel, or original-runtime claim was emitted.
+- Repaired current-tree behavior now passes the full EditMode XML 1210/1210;
+  the earlier 1198/1205 result remains explicitly pre-fix history.

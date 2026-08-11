@@ -654,3 +654,27 @@
 - Post-commit PS5.1 static gates and hosted exact-head Repository safety run
   `31516022532` completed successfully for the recorded HEAD.
 - ProjectBaseline packed PreviewPack data was not read.
+
+## 2026-08-12 - M3-C5 maintainer closeout and configured PreviewPack audit
+
+### Changes
+
+- Added the read-only `PreviewPackProjectBaselineAuditService`, sanitized
+  Editor command, wrapper, and wrapper regression. It reads only the enabled
+  `YR1001_ProjectBaseline` source from the configured external-content root,
+  reuses the M3-C4 managed `RawLzo1X` backend, and emits aggregate counts and
+  hashes only.
+- The configured audit completed with failures: 184 candidate entries, 184
+  exact decoded streams, zero section failures, and one MIX mount-level
+  failure. The result remains `CompleteWithFailures`; it is not runtime proof.
+- The first current-tree Unity XML was a pre-fix failure (1198/1205). After
+  fixing metadata execution state, cancellation policy handling, section
+  occurrence test data, chunk-declared-length fixtures, and the stale IsoMap
+  guard, the current tree produced 1210/1210 EditMode passes. PlayMode and
+  final pushed-head gates remain separately reported until executed.
+
+### Boundary
+
+M3-C5 adds no new LZO codec or writer. No rendering, palette, TMP, theater,
+map loading, or gameplay behavior was added, and no per-map ProjectBaseline
+payload or path is published.

@@ -1054,7 +1054,7 @@ entries:
         description: "Preview metadata and raw component layout are synthetic/configured only; channel order, row order, fields 0/1 meaning, palette semantics, and original runtime behavior are not confirmed."
       - id: map.preview-pack.project-baseline-not-run
         status: "已知限制"
-        description: "No packed ProjectBaseline PreviewPack data was read or published in M3-C5."
+        description: "A configured read-only ProjectBaseline PreviewPack audit is available and has produced only aggregate evidence (`CompleteWithFailures`: 184 candidates, 184 exact decoded streams, one MIX mount-level failure); no payload, per-map detail, or original-runtime confirmation is published."
   - id: map.terrain-semantics
     domain: map
     feature: "Height, ramps, cliffs, water, bridges, overlays, and resources"
