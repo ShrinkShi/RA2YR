@@ -14,8 +14,10 @@
   environment-blocked before producing a valid XML; no historical XML is
   reused.
 - [x] Confirm no packed ProjectBaseline PreviewPack data was read or published.
-- [ ] Run current-head Unity, repository, copyright, wrapper, and exact-head
-  Repository safety gates after the additive commits.
+- [x] Run current-head PS5.1 repository validation, copyright, wrapper, and
+  exact-head Repository safety gates after the additive commits.
+- [ ] Run current-head Unity EditMode/full EditMode/PlayMode; the local host
+  remains blocked before producing a valid XML.
 
 ## 2026-08-07 - M3-C2 authoritative closeout status
 

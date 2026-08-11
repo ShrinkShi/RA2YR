@@ -651,4 +651,6 @@
 - A post-fix Unity invocation was attempted with a normalized `Path`/`PATH`
   environment but produced no valid current-head XML. Unity results remain
   `NotRun`; no historical XML is reused.
+- Post-commit PS5.1 static gates and hosted exact-head Repository safety run
+  `31516022532` completed successfully for the recorded HEAD.
 - ProjectBaseline packed PreviewPack data was not read.

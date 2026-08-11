@@ -25,7 +25,17 @@ verification:
   unity_editmode: "not_run: environment blocked before a current-head XML was produced"
   full_editmode: not_run
   playmode: not_run
-  repository_validation: pending_until_commit
+  repository_validation_ps51: "passed: assets=258, meta=258, matrix=149, evidenceReferences=117"
+  repository_validation_ps7: "passed in hosted exact-head Repository safety"
+  repository_validation_regressions_ps51: "passed: 23"
+  copyright_ps51: "passed: candidates=873, violations=0, ignored_probes=13/13"
+  copyright_ps7: "passed in hosted exact-head Repository safety"
+  content_wrapper_regressions_ps51: "passed: 51"
+  exact_head_repository_safety:
+    run_id: 31516022532
+    sha: 0a8d63d5b96faee5d9e872f65fdd557f47cf1b93
+    status: completed
+    conclusion: success
 compatibility:
   preview_metadata_reader: Synthetic
   preview_raw_component_reader: Synthetic
