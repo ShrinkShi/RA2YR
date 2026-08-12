@@ -522,10 +522,17 @@ entries:
   - id: format.tmp-theaters
     domain: format
     feature: "TMP plus TEM/SNO/URB/UBN/DES/LUN theater variants"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.Tmp.TmpTheaterTests"
+      - "RA2YR.Tests.EditMode.Formats.Tmp.TheaterControlTests"
+    evidence:
+      - "docs/compatibility/evidence/m3c6-tmp-theater-foundation-20260812.yml#components"
+      - "docs/compatibility/evidence/m3c6-tmp-theater-foundation-20260812.yml#verification"
+    limitations:
+      - id: format.tmp-theaters.raw-and-registry-only
+        status: "已知限制"
+        description: "TMP raw structure, explicit plane candidates, theater profiles, and deterministic TileSet ranges are synthetic/configured; terrain, palette, rendering, and original-runtime semantics remain unresolved."
   - id: format.pcx
     domain: format
     feature: "PCX images and indexed palettes"

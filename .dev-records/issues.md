@@ -567,3 +567,11 @@ Current Unity EditMode on the repaired tree is 1210/1210 passed. The original
 1198/1205 XML remains historical pre-fix evidence. PlayMode and final pushed
 HEAD delivery gates are still pending until their own current-head artifacts
 exist; no historical XML is reused.
+# 2026-08-12 - M3-C6 delivery notes
+
+- The configured patched ProjectBaseline TMP/theater audit completed with
+  failures because no named TMP candidate was available and one aggregate
+  failure remained. This is recorded as an audit result, not hidden or
+  promoted to success.
+- Unity 2022.3.60f1c1 current-head EditMode completed 1249/1249 passed after
+  the audit namespace fix. Full delivery gates remain separately reportable.

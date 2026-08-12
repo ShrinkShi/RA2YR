@@ -1,25 +1,24 @@
 # RA2YR
 
-## M3-C5 PreviewPack raw foundation
+## M3-C6 TMP and theater registry foundation
 
-The current PreviewPack work package adds a bounded, Unity-free raw component
-reader and an explicit packed-section adapter. It preserves the four raw
-metadata fields, requires explicit channel/row profiles, and enforces the
-exact `width * height * 3` decoded-byte contract. See
-[PreviewPack raw component foundation](docs/formats/preview-pack.md) and
-[ADR-0027](docs/adr/0027-preview-pack-raw-component-foundation.md).
+The current work package adds a bounded, Unity-free TMP raw reader, explicit
+theater control profiles, deterministic TileSet/GlobalTileId ranges, and an
+asset-candidate resolver. It preserves the exact 52-byte cell header and
+requires an explicit plane-layout policy. See [TMP and theater registry
+foundation](docs/formats/tmp-theater.md) and [ADR-0028](docs/adr/0028-tmp-theater-registry-foundation.md).
 
-The configured read-only ProjectBaseline PreviewPack audit has now executed
-against the patched development source and publishes only sanitized aggregates:
-184 candidate entries, 184 exact decoded streams, zero section failures, one
-MIX mount-level failure (`CompleteWithFailures`), positive dimensions for all
-184, fragment range 54..1138, and chunk range 2..15. No payload, filename,
-path, pixel, or original-runtime compatibility claim is included. M3-C5
-reuses the M3-C4 managed `RawLzo1X` backend; it adds no codec or writer.
+The configured read-only ProjectBaseline TMP/theater audit executed against
+the patched development source and publishes only sanitized aggregates:
+8 root archives, 282 mounted entries, zero named TMP candidates, and one
+failure (`CompleteWithFailures`). No payload, filename, path, cell, pixel, or
+original-runtime compatibility claim is included. The implementation reuses
+the M3-C4 managed `RawLzo1X` backend where packed input is used; it adds no
+codec or writer.
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
-> 项目目前处于 M3-C5 PreviewPack raw component foundation 阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
+> 项目目前处于 M3-C6 TMP/theater raw foundation 阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
 ## 项目定位
 
@@ -47,6 +46,7 @@ RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项�
 - 只消费显式 `Complete` INI resolution 的最小 typed scalar、Rules 类型注册表和 Art 资源路由视图；Art 多重匹配与 Rules 重复 ordinal 均保留全部候选并 fail-closed，不选择首项赢家；
 - Westwood SHP(TS) 8 字节头、24 字节帧目录、不可变局部索引帧，以及 flags 0/1 raw 解码；严格 flags 3 RLE-Zero 已通过合成测试，独立探针进一步确认 257 个失败帧同时包含精确宽度行和多一个透明输出的行，因此保持门槛 B 和未提升的黄金兼容状态；
 - M3-C1 codec-neutral packed foundation、M3-C2 IsoMapPack5 raw 11-byte records、M3-C3 OverlayPack/OverlayDataPack ordinary 512x512 raw byte-array adapters，以及 M3-C4 managed RawLzo1X backend 与脱敏 ProjectBaseline IsoMapPack5 audit；这些能力均保持显式 policy、bounded input、provenance 和 synthetic/configured compatibility boundary，不提升为原版 runtime 兼容；
+- M3-C5 PreviewPack raw component foundation，以及 M3-C6 TMP 52-byte raw cell reader、六剧院 profile、TileSet registry 和 deterministic GlobalTileId ranges；这些能力保持显式 policy、bounded input、provenance 和 synthetic/configured compatibility boundary，不实现 palette、terrain semantics、rendering 或原版 runtime 兼容；
 - EditMode、PlayMode、仓库静态验证和 CI 入口；
 - 明确区分“未实现”“可解析”和原版对照等兼容状态。
 
@@ -228,6 +228,7 @@ Tools/Testing/                  Unity 命令行测试入口
 - [MAP/TMP 格式研究](docs/research/map-tmp/README.md)
 - [Westwood 地图压缩研究](docs/research/map-compression/README.md)
 - [Packed map compression foundation](docs/formats/map-packed-compression.md)
+- [TMP and theater registry foundation](docs/formats/tmp-theater.md)
 - [IsoMapPack5 raw record foundation](docs/formats/isomap-pack5.md)
 - [OverlayPack and OverlayDataPack raw packed arrays](docs/formats/overlay-packed-arrays.md)
 - [SHP(TS) 格式研究](docs/research/shp/README.md)

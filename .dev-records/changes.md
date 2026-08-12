@@ -680,3 +680,14 @@
 M3-C5 adds no new LZO codec or writer. No rendering, palette, TMP, theater,
 map loading, or gameplay behavior was added, and no per-map ProjectBaseline
 payload or path is published.
+# 2026-08-12 - M3-C6 TMP/theater foundation
+
+- Added Unity-free TMP raw models and bounded reader for the 16-byte file
+  header, offset table, exact 52-byte cell header, raw flags, and explicit
+  declared/sequential plane profiles.
+- Added composed-theater control views, six profile descriptors, deterministic
+  TileSet ranges, GlobalTileId lookup, and explicit variation/fallback asset
+  resolution traces.
+- Added sanitized read-only ProjectBaseline audit command and wrapper. The
+  current configured source yielded `CompleteWithFailures` with zero named TMP
+  candidates and one failure; this is not original-runtime evidence.

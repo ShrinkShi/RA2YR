@@ -1,0 +1,50 @@
+schema_version: 1
+work_package: M3-C6
+evidence_level: SyntheticAndSanitizedExternalAudit
+project_baseline_read: true_external_only
+project_baseline_source_role: patched_development_content_source
+source_payload_published: false
+code_imported: false
+gpl_reference_only: true
+components:
+  tmp_raw_reader: "16-byte file header, bounded offset table, exact 52-byte cell header, raw planes"
+  plane_profiles: "DeclaredOffsets, SequentialWithZ, SequentialWithoutZ"
+  theater_profiles: "Temperate, Snow, Urban, NewUrban, Desert, Lunar"
+  registry: "numeric TileSet ordering, retained gaps, checked cumulative GlobalTileId ranges"
+  asset_resolution: "explicit base/variation and NewUrban editor fallback candidates"
+tests:
+  tmp_theater_methods: 39
+  defined_nunit_executions: 39
+  current_head_editmode_xml: "TestResults/20260811T200824121Z-a489564fffb141f7957504e9613557e7/EditMode/results.xml"
+  current_head_executed: 1249
+  current_head_passed: 1249
+  current_head_failed: 0
+  current_head_skipped: 0
+  current_head_inconclusive: 0
+verification:
+  project_baseline_tmp_theater_audit: "CompleteWithFailures"
+  audit_summary: "TestResults/20260811T200909646Z-6864dbe3b2e548ba8ee7f382a0d5f577/m3-c6-tmp-theater-project-baseline-summary.json"
+  root_archive_count: 8
+  mounted_entry_count: 282
+  tmp_candidate_count: 0
+  valid_tmp_count: 0
+  invalid_tmp_count: 1
+  declared_offset_success_count: 0
+  sequential_with_z_success_count: 0
+  sequential_without_z_success_count: 0
+  memory_stream_equivalent_count: 0
+  source_fingerprint_stable: true
+  audit_payload_published: false
+  original_runtime_compatibility: NotConfirmed
+compatibility:
+  tmp_raw_structure: Synthetic
+  theater_registry: Synthetic
+  tile_semantics: Unresolved
+  plane_layout: ExplicitProfileOnly
+  palette: NotImplemented
+  rendering: NotImplemented
+  original_runtime: NotConfirmed
+license_boundary:
+  gpl_sources_reference_only: true
+  code_imported: false
+  original_payload_in_repository: false
