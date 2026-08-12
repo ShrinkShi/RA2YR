@@ -755,3 +755,9 @@
 - Implemented TMP raw and theater registry foundation, then executed the
   configured sanitized ProjectBaseline audit and current-head EditMode gate.
 2026-08-12 — M3-C6 merged after PS7 recovery; M3-C7 branch created from squash main and terrain composition/audit implementation started.
+## 2026-08-13 - M3-C8 real-map integration
+
+Created the C8 branch from main squash `30a0d59e`. Reused C1-C7 bounded audits
+and executed the configured ProjectBaseline integration with truthful aggregate
+failure classification. No renderer, gameplay, writer, or compatibility
+promotion was introduced.

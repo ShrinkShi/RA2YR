@@ -695,3 +695,8 @@ payload or path is published.
 
 - Added immutable Unity-free MapTerrain composition models and explicit tile, overlay, ramp, and terrain profiles.
 - Added map-driven sanitized ProjectBaseline audit; current configured source completed with no map candidates.
+## 2026-08-13 - M3-C8 real-map integration
+
+- Added a read-only C1-C7 vertical integration service and sanitized wrapper.
+- Executed the configured ProjectBaseline source: 200 IsoMap candidates (200 successful, 1 failed), 184 exact Preview candidates, zero named TMP candidates, and zero fully bound terrain documents.
+- Classified the result as `CompleteWithFailures`; no original-runtime or clean YR 1.001 claim was promoted.

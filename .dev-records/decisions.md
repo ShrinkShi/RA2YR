@@ -513,3 +513,8 @@ final pushed-head gates remain independent delivery obligations.
 ## 2026-08-12 — M3-C7 semantic boundary
 
 Map terrain composition preserves raw IsoMap Level, TMP Height/Ramp/Terrain fields and explicit profile choices. Missing resources remain incomplete bindings; no runtime semantics, rendering, palette conversion, or gameplay are inferred.
+## 2026-08-13 - M3-C8 status is aggregate and fail-closed
+
+M3-C8 reuses existing bounded audits and preserves stage independence. Packed
+success does not imply terrain binding success; missing map-driven TMP/registry
+selection remains unresolved and produces `CompleteWithFailures`.

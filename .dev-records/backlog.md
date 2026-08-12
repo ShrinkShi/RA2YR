@@ -136,3 +136,9 @@
 - [ ] 推送本 docs-only HEAD 并取得新的 exact-head Repository safety；结果记录在
   PR #43 delivery metadata，不回写 evidence 以避免自引用递归。
 M3-C7 read-only terrain composition is in progress. Future deferred scope remains renderer, passability/runtime, writer, clean YR 1.001 comparison, and original-runtime black-box validation.
+## M3-C8 real-map integration closeout
+
+- [x] Execute the configured read-only ProjectBaseline C1-C7 integration aggregate.
+- [x] Preserve source fingerprint checks and sanitized aggregate output.
+- [x] Record `CompleteWithFailures` when packed observations do not yield fully bound terrain.
+- [ ] Clean YR 1.001 baseline comparison, original-runtime black-box validation, writer, renderer, passability/runtime, and gameplay remain future work.

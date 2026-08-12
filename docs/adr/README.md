@@ -34,3 +34,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0027 | PreviewPack remains a raw, explicitly profiled component boundary | Accepted for synthetic/configured implementation |
 | 0028 | TMP and theater data remain explicit raw foundations | Accepted for synthetic/configured implementation |
 | 0029 | Read-only map terrain composition remains profile-explicit | Accepted for synthetic/configured implementation |
+| 0030 | M3-C8 real-map integration remains aggregate and fail-closed | Accepted for patched-development ProjectBaseline observation |

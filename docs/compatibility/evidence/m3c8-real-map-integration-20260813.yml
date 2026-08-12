@@ -1,0 +1,29 @@
+schema_version: 1
+evidence_id: m3c8-real-map-integration-20260813
+status: CompleteWithFailures
+source_role: patched-development-content-source
+source_logical_name: YR1001_ProjectBaseline
+integration:
+  root_archives: 8
+  mounted_entries: 282
+  map_candidate_count: 200
+  iso_map_candidate_count: 200
+  iso_map_success_count: 200
+  iso_map_failure_count: 1
+  preview_candidate_count: 184
+  preview_exact_count: 184
+  preview_failure_count: 0
+  theater_candidate_count: 0
+  theater_success_count: 0
+  theater_failure_count: 1
+  terrain_fully_bound_count: 0
+  terrain_partially_bound_count: 0
+  terrain_unresolved_count: 200
+  source_fingerprint_stable: true
+  original_runtime: NotConfirmed
+  clean_yr_1_001_comparison: Unresolved
+  map_driven_aggregate_hash: "f598d25770401387e750f17ea775648842fb22f20a3b9efa1815761628a0d65d"
+limitations:
+  - Packed stage observations are aggregated across authorized map-section candidates.
+  - No per-map identity, payload, coordinates, pixels, or per-map hash is published.
+  - Terrain fully-bound count remains zero because no authorized map-driven TMP/registry selection was exposed by the configured source.

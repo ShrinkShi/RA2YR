@@ -1,19 +1,20 @@
 # RA2YR
 
-## M3-C7 read-only terrain semantic composition foundation
+## M3-C8 real-map integration and M3 closeout
 
-The current work package composes existing bounded IsoMapPack5, Overlay,
-Preview, TMP, and theater registry results into an immutable, Unity-free
-candidate terrain document. Tile-id, overlay coordinate, ramp, and terrain
-interpretation remain explicit profiles; incomplete bindings are preserved.
-See [terrain composition](docs/formats/map-terrain.md) and [ADR-0029](docs/adr/0029-map-terrain-composition.md).
+The current work package composes the existing bounded C1-C7 readers into a
+read-only ProjectBaseline vertical integration observation. Packed candidates,
+Preview exact streams, theater/TMP availability, and C7 terrain binding are
+reported as separate aggregate stages; unresolved terrain binding remains a
+failure rather than a compatibility claim. See [M3-C8 integration](docs/formats/m3-c8-real-map-integration.md)
+and [ADR-0030](docs/adr/0030-m3-c8-real-map-integration.md).
 
-The configured read-only ProjectBaseline map-driven audit executed against
-the patched development source and publishes only sanitized aggregates:
-8 root archives, 282 mounted entries, zero map candidates (`CompleteWithNoCandidates`).
-No payload, filename, path, cell, pixel, or original-runtime compatibility claim
-is included. The implementation reuses the existing managed `RawLzo1X` backend;
-it adds no codec or writer.
+The configured read-only ProjectBaseline integration executed against the
+patched development source and publishes only sanitized aggregates:
+8 roots, 282 mounted entries, 200 IsoMap candidates (200 successful, 1 failed),
+184 Preview candidates (184 exact), and unresolved terrain binding recorded as
+`CompleteWithFailures`. No payload, filename, path, cell, pixel, or
+original-runtime compatibility claim is included.
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
