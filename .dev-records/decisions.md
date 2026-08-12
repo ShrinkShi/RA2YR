@@ -502,3 +502,11 @@ streams, one MIX mount-level failure). This does not confirm original runtime
 behavior; no clean YR 1.001 claim, payload publication, or per-map detail is
 allowed. The current repaired tree has a 1210/1210 EditMode pass; PlayMode and
 final pushed-head gates remain independent delivery obligations.
+# 2026-08-12 - M3-C6 decisions
+
+- Keep TMP plane interpretation explicit (`DeclaredOffsets`, `SequentialWithZ`,
+  `SequentialWithoutZ`) and never auto-select a strategy from parse success.
+- Allocate GlobalTileId ranges solely from validated control `TilesInSet`
+  values; missing assets do not shift the ranges.
+- Keep HeightRaw, TerrainTypeRaw, RampTypeRaw, depth bytes, palette roles, and
+  theater special roles as raw/candidate data. Semantic binding is deferred.

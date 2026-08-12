@@ -749,3 +749,8 @@
   payload, filename, path, pixel, or original-runtime claim was emitted.
 - Repaired current-tree behavior now passes the full EditMode XML 1210/1210;
   the earlier 1198/1205 result remains explicitly pre-fix history.
+# 2026-08-12 - M3-C6
+
+- Branched from `c5739f485d24e9db62b2e1dcf9ddad6216ddc339`.
+- Implemented TMP raw and theater registry foundation, then executed the
+  configured sanitized ProjectBaseline audit and current-head EditMode gate.

@@ -1,5 +1,19 @@
 # Backlog
 
+## 2026-08-12 - M3-C6 TMP/theater foundation
+
+- [x] Add bounded TMP raw header, offset-table, 52-byte cell-header, and
+  explicit plane-directory models.
+- [x] Add six explicit theater profiles, composed-INI control reader, numeric
+  TileSet registry, checked GlobalTileId ranges, and explicit asset candidates.
+- [x] Execute the configured read-only ProjectBaseline TMP/theater audit. It
+  completed with failures: 8 root archives, 282 mounted entries, zero named
+  TMP candidates, and one failed aggregate. The source fingerprint was stable;
+  no payload or per-entry data was published.
+- [x] Current-head TMP/theater EditMode XML: 1249/1249 passed. PlayMode and
+  remaining delivery gates are tracked by the final validation record and are
+  not inferred from this focused result.
+
 ## 2026-08-12 - M3-C5 PreviewPack raw foundation
 
 - [x] Add bounded Preview metadata and PreviewPack raw component models.

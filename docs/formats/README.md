@@ -13,3 +13,4 @@ promoted only by the tests and local comparisons required for that entry.
 - [IsoMapPack5 raw record foundation](isomap-pack5.md)
 - [OverlayPack and OverlayDataPack raw arrays](overlay-packed-arrays.md)
 - [PreviewPack raw component foundation](preview-pack.md)
+- [TMP and theater registry foundation](tmp-theater.md)
