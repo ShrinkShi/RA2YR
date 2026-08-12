@@ -33,7 +33,8 @@ namespace RA2YR.Core.Formats.MapTerrain
         LatIncomplete,
         LatCycle,
         DiagnosticBudgetExceeded,
-        ArithmeticOverflow
+        ArithmeticOverflow,
+        OverlayCoordinateOutOfRange
     }
 
     internal enum MapTerrainCompletionStatus { NotRun, Succeeded, Incomplete, Failed }

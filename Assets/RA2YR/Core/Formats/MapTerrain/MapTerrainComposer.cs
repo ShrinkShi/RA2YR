@@ -87,9 +87,9 @@ namespace RA2YR.Core.Formats.MapTerrain
                 bool empty = slotInRange && document.OffsetTable[subTile.Value].IsEmptyCandidate;
                 TmpCellRaw tmpCell = slotInRange ? document.Cells.FirstOrDefault(c => c.SlotOrdinal == subTile.Value) : null;
                 if (document != null && !slotInRange)
-                    Add(cellDiagnostics, execution, policy.Limits, Error(MapTerrainDiagnosticCode.SubTileOutOfRange, "subtile", "SubTile raw value is outside the TMP slot range.", source, record.Provenance));
+                    AddCell(cellDiagnostics, diagnostics, execution, policy.Limits, Error(MapTerrainDiagnosticCode.SubTileOutOfRange, "subtile", "SubTile raw value is outside the TMP slot range.", source, record.Provenance));
                 else if (empty)
-                    Add(cellDiagnostics, execution, policy.Limits, Warning(MapTerrainDiagnosticCode.SubTileEmpty, "subtile", "SubTile points at an empty TMP slot candidate.", source, record.Provenance));
+                    AddCell(cellDiagnostics, diagnostics, execution, policy.Limits, Warning(MapTerrainDiagnosticCode.SubTileEmpty, "subtile", "SubTile points at an empty TMP slot candidate.", source, record.Provenance));
                 OverlayRawCellPair pair = default(OverlayRawCellPair);
                 MapTerrainOverlayRawBinding binding = null;
                 if (overlayView != null)
@@ -104,19 +104,21 @@ namespace RA2YR.Core.Formats.MapTerrain
                             index = checked(record.YRawU16LittleEndian + OverlayStorageProfiles.StorageSideLength * record.XRawU16LittleEndian);
                             break;
                         default:
-                            Add(cellDiagnostics, execution, policy.Limits, Error(MapTerrainDiagnosticCode.InvalidOverlayProfile, "overlay", "Unknown Overlay index profile.", source, record.Provenance));
+                            AddCell(cellDiagnostics, diagnostics, execution, policy.Limits, Error(MapTerrainDiagnosticCode.InvalidOverlayProfile, "overlay", "Unknown Overlay index profile.", source, record.Provenance));
                             index = -1;
                             break;
                     }
-                    if (overlayView.TryGetPairAtIndex(index, out pair)) binding = new MapTerrainOverlayRawBinding(index, pair.TypeRaw, pair.DataRaw, policy.OverlayProfile);
+                    if (index < 0 || index >= OverlayStorageProfiles.OrdinaryByteLength)
+                        AddCell(cellDiagnostics, diagnostics, execution, policy.Limits, Warning(MapTerrainDiagnosticCode.OverlayCoordinateOutOfRange, "overlay", "Raw IsoMap coordinate is outside the explicit Overlay storage domain.", source, record.Provenance));
+                    else if (overlayView.TryGetPairAtIndex(index, out pair)) binding = new MapTerrainOverlayRawBinding(index, pair.TypeRaw, pair.DataRaw, policy.OverlayProfile);
                 }
                 byte? height = tmpCell == null ? (byte?)null : tmpCell.Header.HeightRaw;
                 byte? ramp = tmpCell == null ? (byte?)null : tmpCell.Header.RampTypeRaw;
                 byte? terrainRaw = tmpCell == null ? (byte?)null : tmpCell.Header.TerrainTypeRaw;
                 if (ramp.HasValue && policy.RampProfile == MapTerrainRampProfile.Candidate0Through20 && ramp.Value > 20)
-                    Add(cellDiagnostics, execution, policy.Limits, Warning(MapTerrainDiagnosticCode.UnknownRampCandidate, "ramp", "Ramp raw value is outside the explicit candidate profile.", source, record.Provenance));
+                    AddCell(cellDiagnostics, diagnostics, execution, policy.Limits, Warning(MapTerrainDiagnosticCode.UnknownRampCandidate, "ramp", "Ramp raw value is outside the explicit candidate profile.", source, record.Provenance));
                 if (terrainRaw.HasValue && policy.TerrainProfile == MapTerrainTypeProfile.CandidateConfigured && terrainRaw.Value > 31)
-                    Add(cellDiagnostics, execution, policy.Limits, Warning(MapTerrainDiagnosticCode.UnknownTerrainCandidate, "terrain", "Terrain raw value is outside the configured candidate profile.", source, record.Provenance));
+                    AddCell(cellDiagnostics, diagnostics, execution, policy.Limits, Warning(MapTerrainDiagnosticCode.UnknownTerrainCandidate, "terrain", "Terrain raw value is outside the configured candidate profile.", source, record.Provenance));
                 cells.Add(new MapTerrainCellBinding(record, tileId, new MapTerrainResourceBinding(tileId, range.TileSetIndex, localOrdinal, asset, document, subTile, empty), binding, height, ramp, terrainRaw, cellDiagnostics));
             }
             if (overlay == null || !overlay.IsSuccess) AddIncomplete(diagnostics, execution, policy.Limits, Warning(MapTerrainDiagnosticCode.MissingOverlay, "overlay", "Overlay raw binding is unavailable; no automatic profile was selected.", source, provenance));
@@ -154,6 +156,8 @@ namespace RA2YR.Core.Formats.MapTerrain
         { execution.Observe(diagnostic.Severity); if (list.Count < limits.MaxDiagnostics) list.Add(diagnostic); else execution.Suppress(); }
         private static void AddIncomplete(IList<MapTerrainDiagnostic> list, MapTerrainExecutionState execution, MapTerrainReadLimits limits, MapTerrainDiagnostic diagnostic)
         { execution.Incomplete(); if (list.Count < limits.MaxDiagnostics) list.Add(diagnostic); else execution.Suppress(); }
+        private static void AddCell(IList<MapTerrainDiagnostic> cell, IList<MapTerrainDiagnostic> all, MapTerrainExecutionState execution, MapTerrainReadLimits limits, MapTerrainDiagnostic diagnostic)
+        { Add(all, execution, limits, diagnostic); if (cell.Count < limits.MaxDiagnostics) cell.Add(diagnostic); }
         private static MapTerrainDiagnostic Error(MapTerrainDiagnosticCode code, string stage, string message, BinarySourceContext source, IEnumerable<IniSourceProvenance> provenance) => new MapTerrainDiagnostic(BinaryDiagnosticSeverity.Error, code, stage, message, source, provenance);
         private static MapTerrainDiagnostic Warning(MapTerrainDiagnosticCode code, string stage, string message, BinarySourceContext source, IEnumerable<IniSourceProvenance> provenance) => new MapTerrainDiagnostic(BinaryDiagnosticSeverity.Warning, code, stage, message, source, provenance);
         private static MapTerrainDiagnostic Error(MapTerrainDiagnosticCode code, string stage, string message, BinarySourceContext source, IniSourceProvenance provenance) => Error(code, stage, message, source, new[] { provenance });
