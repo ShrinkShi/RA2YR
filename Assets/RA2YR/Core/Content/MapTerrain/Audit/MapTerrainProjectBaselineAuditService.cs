@@ -38,11 +38,11 @@ namespace RA2YR.Core.Content.MapTerrain.Audit
                 }
                 ContentSourceIndex after = new ContentIndexer().Build(configuration).Sources.Single(s => s.Source.Id == BaselineLogicalName && s.IsComplete);
                 if (!string.Equals(before, after.Fingerprint, StringComparison.Ordinal)) throw new InvalidOperationException("The ProjectBaseline source changed during map terrain audit.");
-                string hash = Hash(roots.Length, mounted, candidates, failures, before);
                 // Candidate discovery is implemented; full map-to-terrain binding is intentionally not
                 // executed by this audit until a map-specific reader is available. Never call that
                 // state Complete when candidates are present.
                 if (candidates > 0) failures = checked(failures + candidates);
+                string hash = Hash(roots.Length, mounted, candidates, failures, before);
                 MapTerrainProjectBaselineAuditStatus status = candidates == 0 ? MapTerrainProjectBaselineAuditStatus.CompleteWithNoCandidates : MapTerrainProjectBaselineAuditStatus.CompleteWithFailures;
                 string summary = Serialize(status, roots.Length, mounted, candidates, failures, before, after.Fingerprint, hash);
                 return new MapTerrainProjectBaselineAuditDelivery(status, roots.Length, mounted, candidates, 0, candidates, failures, before, after.Fingerprint, hash, summary);
