@@ -1065,9 +1065,11 @@ entries:
   - id: map.terrain-semantics
     domain: map
     feature: "Height, ramps, cliffs, water, bridges, overlays, and resources"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.MapTerrain.MapTerrainTests"
+    evidence:
+      - "docs/compatibility/evidence/m3c7-map-terrain-composition-20260812.yml#map_driven_audit"
     limitations: []
   - id: map.objects
     domain: map

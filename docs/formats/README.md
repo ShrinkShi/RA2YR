@@ -14,3 +14,4 @@ promoted only by the tests and local comparisons required for that entry.
 - [OverlayPack and OverlayDataPack raw arrays](overlay-packed-arrays.md)
 - [PreviewPack raw component foundation](preview-pack.md)
 - [TMP and theater registry foundation](tmp-theater.md)
+- [Read-only map terrain composition](map-terrain.md)

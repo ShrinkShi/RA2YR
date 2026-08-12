@@ -135,3 +135,4 @@
 - [x] 本轮保持 docs/evidence-only；没有修改代码、测试、兼容语义或研究正文。
 - [ ] 推送本 docs-only HEAD 并取得新的 exact-head Repository safety；结果记录在
   PR #43 delivery metadata，不回写 evidence 以避免自引用递归。
+M3-C7 read-only terrain composition is in progress. Future deferred scope remains renderer, passability/runtime, writer, clean YR 1.001 comparison, and original-runtime black-box validation.

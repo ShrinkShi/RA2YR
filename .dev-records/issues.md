@@ -575,3 +575,4 @@ exist; no historical XML is reused.
   promoted to success.
 - Unity 2022.3.60f1c1 current-head EditMode completed 1249/1249 passed after
   the audit namespace fix. Full delivery gates remain separately reportable.
+M3-C7 ProjectBaseline map-driven audit currently reports CompleteWithNoCandidates for the configured patched source; no map binding is fabricated and no compatibility claim is promoted.

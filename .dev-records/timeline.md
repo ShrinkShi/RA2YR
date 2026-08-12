@@ -754,3 +754,4 @@
 - Branched from `c5739f485d24e9db62b2e1dcf9ddad6216ddc339`.
 - Implemented TMP raw and theater registry foundation, then executed the
   configured sanitized ProjectBaseline audit and current-head EditMode gate.
+2026-08-12 — M3-C6 merged after PS7 recovery; M3-C7 branch created from squash main and terrain composition/audit implementation started.
