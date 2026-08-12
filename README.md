@@ -1,24 +1,23 @@
 # RA2YR
 
-## M3-C6 TMP and theater registry foundation
+## M3-C7 read-only terrain semantic composition foundation
 
-The current work package adds a bounded, Unity-free TMP raw reader, explicit
-theater control profiles, deterministic TileSet/GlobalTileId ranges, and an
-asset-candidate resolver. It preserves the exact 52-byte cell header and
-requires an explicit plane-layout policy. See [TMP and theater registry
-foundation](docs/formats/tmp-theater.md) and [ADR-0028](docs/adr/0028-tmp-theater-registry-foundation.md).
+The current work package composes existing bounded IsoMapPack5, Overlay,
+Preview, TMP, and theater registry results into an immutable, Unity-free
+candidate terrain document. Tile-id, overlay coordinate, ramp, and terrain
+interpretation remain explicit profiles; incomplete bindings are preserved.
+See [terrain composition](docs/formats/map-terrain.md) and [ADR-0029](docs/adr/0029-map-terrain-composition.md).
 
-The configured read-only ProjectBaseline TMP/theater audit executed against
+The configured read-only ProjectBaseline map-driven audit executed against
 the patched development source and publishes only sanitized aggregates:
-8 root archives, 282 mounted entries, zero named TMP candidates, and one
-failure (`CompleteWithFailures`). No payload, filename, path, cell, pixel, or
-original-runtime compatibility claim is included. The implementation reuses
-the M3-C4 managed `RawLzo1X` backend where packed input is used; it adds no
-codec or writer.
+8 root archives, 282 mounted entries, zero map candidates (`CompleteWithNoCandidates`).
+No payload, filename, path, cell, pixel, or original-runtime compatibility claim
+is included. The implementation reuses the existing managed `RawLzo1X` backend;
+it adds no codec or writer.
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
-> 项目目前处于 M3-C6 TMP/theater raw foundation 阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
+> 项目目前处于 M3-C7 read-only terrain composition 阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
 ## 项目定位
 

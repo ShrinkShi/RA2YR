@@ -1,0 +1,9 @@
+[CmdletBinding()]
+param([Parameter(Mandatory)][string]$UnityEditorPath,[string]$ProjectRoot,[string]$ConfigurationPath,[ValidateRange(60,86400)][int]$TimeoutSeconds=3600)
+Set-StrictMode -Version 2.0; $ErrorActionPreference='Stop'
+if([string]::IsNullOrWhiteSpace($ProjectRoot)){$ProjectRoot=Join-Path $PSScriptRoot '..\..'}
+$root=[IO.Path]::GetFullPath($ProjectRoot); if([string]::IsNullOrWhiteSpace($ConfigurationPath)){$ConfigurationPath=Join-Path $root 'Config\ExternalContent.local.xml'}
+$run=(Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssfffZ')+'-'+[Guid]::NewGuid().ToString('N'); $out=Join-Path $root "TestResults\$run\m3-c7-map-terrain-project-baseline-summary.json"; $log=Join-Path $root "TestResults\$run\unity.log"; [IO.Directory]::CreateDirectory((Split-Path $out))|Out-Null
+$p=Start-Process -FilePath $UnityEditorPath -ArgumentList @('-batchmode','-nographics','-quit','-projectPath',$root,'-executeMethod','RA2YR.Editor.MapTerrainProjectBaselineAuditCommand.Run','-ra2yrExternalContentConfig',[IO.Path]::GetFullPath($ConfigurationPath),'-ra2yrSummaryOutput',$out,'-logFile',$log) -PassThru -WindowStyle Hidden
+try{if(-not $p.WaitForExit($TimeoutSeconds*1000)){$p.Kill();$p.WaitForExit();throw 'Map terrain audit timed out.'};$p.Refresh();$code=[int]$p.ExitCode}finally{$p.Dispose()}
+if($code -ne 0){throw "Map terrain audit exited with code $code."}; $text=Get-Content -Raw -LiteralPath $out; if($text -notmatch 'RA2YR\.MapTerrainProjectBaselineAuditSanitized'){throw 'Sanitized summary identity is invalid.'}; if($text -match '([A-Za-z]:\\|"records"\s*:|"pixels"\s*:|"filename"\s*:)'){throw 'Forbidden detail in map terrain audit summary.'}; "Unity process exit code: $code"; "Audit status: $((ConvertFrom-Json $text).status)"; "Map candidates: $((ConvertFrom-Json $text).mapCandidateCount)"; "Sanitized summary: TestResults/$run/m3-c7-map-terrain-project-baseline-summary.json"

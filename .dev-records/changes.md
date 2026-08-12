@@ -691,3 +691,7 @@ payload or path is published.
 - Added sanitized read-only ProjectBaseline audit command and wrapper. The
   current configured source yielded `CompleteWithFailures` with zero named TMP
   candidates and one failure; this is not original-runtime evidence.
+## 2026-08-12 — M3-C7 terrain composition foundation
+
+- Added immutable Unity-free MapTerrain composition models and explicit tile, overlay, ramp, and terrain profiles.
+- Added map-driven sanitized ProjectBaseline audit; current configured source completed with no map candidates.

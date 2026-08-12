@@ -510,3 +510,6 @@ final pushed-head gates remain independent delivery obligations.
   values; missing assets do not shift the ranges.
 - Keep HeightRaw, TerrainTypeRaw, RampTypeRaw, depth bytes, palette roles, and
   theater special roles as raw/candidate data. Semantic binding is deferred.
+## 2026-08-12 — M3-C7 semantic boundary
+
+Map terrain composition preserves raw IsoMap Level, TMP Height/Ramp/Terrain fields and explicit profile choices. Missing resources remain incomplete bindings; no runtime semantics, rendering, palette conversion, or gameplay are inferred.

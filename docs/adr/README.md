@@ -33,3 +33,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0026 | Managed RawLzo1X decoding remains bounded and evidence-gated | Accepted for managed synthetic/configured implementation |
 | 0027 | PreviewPack remains a raw, explicitly profiled component boundary | Accepted for synthetic/configured implementation |
 | 0028 | TMP and theater data remain explicit raw foundations | Accepted for synthetic/configured implementation |
+| 0029 | Read-only map terrain composition remains profile-explicit | Accepted for synthetic/configured implementation |
