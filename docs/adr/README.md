@@ -47,3 +47,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0040 | M5-C1 house, player, and economy authority | Accepted for project-enhancement implementation |
 | 0041 | M5-C2 resource economy foundation | Accepted for project-enhancement implementation |
 | 0042 | M5-C3 production and technology foundation | Accepted for project-enhancement implementation |
+| 0043 | M5-C4 structures and placement foundation | Accepted for project-enhancement implementation |
+| 0043 | M5-C4 structures and placement foundation | Accepted for project-enhancement implementation |

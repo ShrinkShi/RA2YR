@@ -1307,10 +1307,18 @@ entries:
   - id: base.placement-tech-power
     domain: gameplay
     feature: "Building placement, tech tree, prerequisites, owners, countries, and power"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.StructuresPlacementTests.PlacementBuildsExplicitRectangularFootprint"
+      - "RA2YR.Tests.EditMode.Simulation.StructuresPlacementTests.PlacementRejectsOutOfBoundsWithoutClamping"
+      - "RA2YR.Tests.EditMode.Simulation.StructuresPlacementTests.PowerProjectionIsCheckedAndDeterministic"
+      - "RA2YR.Tests.EditMode.Simulation.StructuresPlacementTests.RepairCandidateRequiresDamage"
+    evidence:
+      - "docs/compatibility/evidence/m5c4-structures-placement-synthetic-20260814.yml#contracts"
+    limitations:
+      - id: base.runtime-placement-deferred
+        status: "已知限制"
+        description: "Actor creation, occupancy mutation, repair/sell/capture/deploy execution, and original-runtime building semantics remain deferred."
   - id: base.building-interactions
     domain: gameplay
     feature: "Repair, sell, capture, infiltration, damage states, walls, and gates"

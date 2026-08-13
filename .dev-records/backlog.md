@@ -234,3 +234,11 @@ comparison, and original-runtime black-box validation.
 - [x] Current EditMode tree: 1397/1397 passed; ProjectBaseline packed data not read.
 - [ ] Payment/refund, factory runtime, placement/exits, completion actors, UI,
   campaign triggers, and original-runtime compatibility remain deferred.
+
+## M5-C4 structures and placement foundation
+
+- [x] Add raw structure definitions, footprint bounds/overlap, and power projection.
+- [x] Add explicit repair/sell/capture/deploy interaction candidates.
+- [x] Current EditMode tree: 1410/1410 passed; ProjectBaseline packed data not read.
+- [ ] Actor creation, map occupancy mutation, renderer/UI, and original-runtime
+  building compatibility remain deferred.

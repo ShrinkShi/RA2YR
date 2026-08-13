@@ -1,0 +1,20 @@
+schema_version: 1
+evidence_id: m5c4-structures-placement-synthetic-20260814
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+implementation:
+  assembly: RA2YR.Simulation
+  behavior_methods: 12
+  edit_mode_total: 1410
+  edit_mode_passed: 1410
+  edit_mode_failed: 0
+  no_engine_references: true
+contracts:
+  raw_structure_definition: true
+  bounded_rectangular_placement: true
+  checked_power_projection: true
+  explicit_interaction_candidates: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+limitations:
+  - No actor creation, map occupancy mutation, repair/sell/capture/deploy execution, renderer, or original-runtime building claim.

@@ -78,6 +78,12 @@ unload timing, storage mutation, rendering, and original-runtime economy
 compatibility remain unimplemented and unconfirmed. No ProjectBaseline packed
 data is read by M5-C2.
 
+M5-C4 adds raw structure definitions, bounded rectangular placement candidates,
+checked power projections, and explicit repair/sell/capture/deploy candidates.
+These do not occupy a map, create actors, mutate credits, render structures, or
+claim original-runtime building compatibility; ProjectBaseline packed data is
+not read.
+
 M5-C3 adds raw production definitions, explicit TechLevel/BuildLimit/
 prerequisite availability blockers, and bounded deterministic queue candidates.
 Payment, refunds, factory runtime, placement/exits, completion actors,
