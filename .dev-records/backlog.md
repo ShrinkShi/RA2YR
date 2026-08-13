@@ -51,20 +51,46 @@
 - [x] 在可用 GitHub 凭据下推送 `feature/m3-c2-isomap-pack5-record-foundation` 并创建 Draft PR `format: implement IsoMapPack5 raw record foundation`。
 - [x] 完成 M3-C2 的双 PowerShell repository validation、copyright、content wrapper regressions 和 exact final-head Repository safety；run `31245165415` 为 `completed/success`。
 
+# M3 COMPLETE
+
+## Final closeout (merged main `82e2c6a46f842d09ee9786657065c942753cc435`)
+
+M3 is complete at the repository-foundation and read-only aggregate level. The
+following work packages are merged: M3-C1 packed-map foundation, M3-C2
+IsoMapPack5, M3-C3 OverlayPack/OverlayDataPack, M3-C4 managed RawLzo1X,
+M3-C5 PreviewPack, M3-C6 TMP/theater raw registry, M3-C7 read-only terrain
+composition, and M3-C8 real ProjectBaseline aggregate integration.
+
+Final validation recorded for the merged M3 tree:
+
+- EditMode 1260/1260 passed; PlayMode 1/1 passed.
+- Windows PowerShell 5.1 and PowerShell 7 repository/copyright/regression and
+  wrapper gates passed.
+- Post-merge Repository safety run `31670085049` completed successfully.
+
+M3 COMPLETE does not mean original-runtime compatibility, clean YR 1.001
+equivalence, visual rendering, palette RGB runtime, TMP/theater runtime
+semantic binding, passability, pathfinding, unit movement, deterministic
+simulation, gameplay, writer, or roundtrip compatibility. The configured
+ProjectBaseline remains a patched development corpus.
+
 ## 待处理
 - [x] 使用 Unity 2022.3.60f1c1 从 M3-C1 交付 HEAD 重新运行 focused/full Unity 门禁（历史 M3-C1 交付记录）。
 - [x] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 修复，更新 Draft PR #36；PR #36 已合并。
 - [x] 完成 M3-C2 IsoMapPack5 raw-record foundation，并开始 M3-C3 OverlayPack/OverlayDataPack raw-array foundation；IsoMap/Overlay 语义和 TMP 仍需独立证据，PreviewPack 现有 raw foundation 不提升为语义兼容。
 
-- [ ] 在授权并具备实际 backend 后设计 ProjectBaseline packed-section audit；不得在 M3-C1 伪造地图兼容性。
+- [x] 在具备 managed RawLzo1X backend 后执行 ProjectBaseline packed-section
+  audits；M3-C4/C5/C8 仅发布脱敏聚合，不宣称地图兼容性。
 - [x] 完成 IsoMapPack5 raw record 与显式 coordinate/trailing policy foundation。
 - [x] 完成 OverlayPack/OverlayDataPack ordinary raw-array adapter foundation；当前分支仅保留 synthetic/configured 兼容边界。
 - [x] 完成 M3-C4 managed RawLzo1X backend、注入式 packed integration 与脱敏
   ProjectBaseline IsoMapPack5 audit；managed backend 已实现，但不等于原版 runtime
   确认。
 - [x] 完成 PreviewPack raw component foundation；保持 synthetic/configured 边界。
-- [ ] 研究并实现 TMP/theater 绑定；不得把 raw-array foundation 或 managed
-  decoder 当作语义或运行时兼容。
+- [x] 完成 TMP raw parser foundation、theater registry foundation 和
+  read-only terrain composition foundation。
+- [ ] 实现 TMP/theater runtime semantic binding；不得把 foundation 或
+  managed decoder 当作运行时兼容。
 
 - [ ] 获取并登记干净、解包的 YR 1.001 内容基线。
 - [ ] 建立 FinalAlert 2 A/B/C/D 往返黄金样本。
@@ -133,12 +159,18 @@
   copyright、wrapper 和 Unity 状态；implementation candidate safety 为
   `31312939491` completed/success。
 - [x] 本轮保持 docs/evidence-only；没有修改代码、测试、兼容语义或研究正文。
-- [ ] 推送本 docs-only HEAD 并取得新的 exact-head Repository safety；结果记录在
-  PR #43 delivery metadata，不回写 evidence 以避免自引用递归。
-M3-C7 read-only terrain composition is in progress. Future deferred scope remains renderer, passability/runtime, writer, clean YR 1.001 comparison, and original-runtime black-box validation.
+- [x] PR #43 evidence/provenance closure was pushed, received exact-head
+  Repository safety, and was merged; this historical pending note is superseded
+  by the merged PR record.
+M3-C7 read-only terrain composition was completed and merged in PR #47. Future
+deferred scope remains renderer, passability/runtime, writer, clean YR 1.001
+comparison, and original-runtime black-box validation.
 ## M3-C8 real-map integration closeout
 
 - [x] Execute the configured read-only ProjectBaseline C1-C7 integration aggregate.
 - [x] Preserve source fingerprint checks and sanitized aggregate output.
 - [x] Record `CompleteWithFailures` when packed observations do not yield fully bound terrain.
+- [x] PR #48 merged into main; C8 remains `CompleteWithFailures` with 200
+  IsoMap candidates, 184 Preview candidates, unresolved terrain binding, and
+  stable source fingerprints. Only sanitized aggregates are published.
 - [ ] Clean YR 1.001 baseline comparison, original-runtime black-box validation, writer, renderer, passability/runtime, and gameplay remain future work.

@@ -761,3 +761,18 @@ Created the C8 branch from main squash `30a0d59e`. Reused C1-C7 bounded audits
 and executed the configured ProjectBaseline integration with truthful aggregate
 failure classification. No renderer, gameplay, writer, or compatibility
 promotion was introduced.
+## 2026-08-13 - M3 final repository closeout
+
+- PR #46 (TMP/theater foundation), PR #47 (read-only terrain composition), and
+  PR #48 (real-map aggregate integration) are merged.
+- Final main is `82e2c6a46f842d09ee9786657065c942753cc435`.
+- C8 validation recorded EditMode 1260/1260 and PlayMode 1/1, with PS5.1/PS7
+  repository, copyright, regression, and wrapper gates passing.
+- The configured patched ProjectBaseline aggregate remains
+  `CompleteWithFailures`: 200 IsoMap candidates, 184 Preview candidates,
+  unresolved terrain binding, stable source fingerprint, and sanitized output
+  only. This is not original-runtime confirmation.
+- M3 is closed at the repository-record/foundation level. Runtime semantic
+  binding, rendering, passability, pathfinding, gameplay, writer/roundtrip,
+  clean YR 1.001 equivalence, and original-runtime validation remain future
+  scope; M4 has not started.
