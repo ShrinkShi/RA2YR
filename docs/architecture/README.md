@@ -70,6 +70,12 @@ identities for provenance reports; they never act as an implicit tie-breaker.
 must never be authoritative simulation state. Unity components consume state;
 they do not define it.
 
+M4-C1 supplies the first Unity-free kernel: generation-checked entity handles,
+bounded component stores, ordered structural commands, explicit logical time and
+scheduler phases, seed-and-stream randomness, immutable read snapshots,
+canonical state hashes, and deterministic proposal ordering. These are synthetic
+project-enhancement contracts, not original-runtime compatibility.
+
 ## Logical time and authoritative data
 
 - Simulation advances only through an explicit `AdvanceOneTick()` boundary.

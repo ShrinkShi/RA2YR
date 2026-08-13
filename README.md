@@ -28,6 +28,14 @@ M4 production implementation has not yet started; Neural/Hybrid policies remain
 future contracts and no trained model is included. See [M4 simulation architecture](docs/architecture/m4-deterministic-simulation.md)
 and [ADR-0031](docs/adr/0031-m4-deterministic-simulation-governance.md).
 
+M4-C1 now provides the Unity-free deterministic ECS reference kernel: stable
+generation-checked entities, bounded component stores, ordered structural
+commands, explicit logical time and phases, seed-and-stream RNG, immutable
+snapshots, canonical state hashes, deterministic proposals, and explicit
+Manual/Assisted/Automatic autonomy contracts. This is synthetic
+project-enhancement evidence only; it does not claim original-runtime
+compatibility or implement pathfinding, combat, rendering, or gameplay.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

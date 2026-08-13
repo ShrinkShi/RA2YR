@@ -787,3 +787,10 @@ promotion was introduced.
   M4 deterministic ECS, single-authority commit, tactical autonomy, legal-agent
   observation, and future neural policy boundaries. No simulation production
   code was added.
+## 2026-08-13 - M4-C1 deterministic ECS kernel
+
+- Created `feature/m4-c1-deterministic-ecs-kernel` from the exact P0 squash
+  main and added the Unity-free simulation kernel.
+- Current EditMode XML passed 1275/1275, including 15 C1 behavior methods.
+- C1 remains project-enhancement/synthetic evidence only; no ProjectBaseline
+  packed data, renderer, pathfinding, combat, or gameplay was introduced.

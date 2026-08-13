@@ -116,6 +116,15 @@ ProjectBaseline remains a patched development corpus.
 - [ ] Audit real flags 2, high-bit coordinates, and `00 00` command semantics if future fixed samples expose them.
 - [ ] Implement palette binding, remap, shadow pairing, visual comparison, and Unity rendering only in later work packages.
 
+## M4-C1 deterministic ECS kernel
+
+- [x] Add the Unity-free `RA2YR.Simulation` deterministic ECS reference kernel.
+- [x] Cover entity generations, bounded components, structural ordering,
+  logical time, scheduler phases, RNG streams, hashes, snapshots, proposals,
+  autonomy modes, and deterministic decision staggering with synthetic tests.
+- [ ] Continue to C2 only after the C1 branch receives its exact-head safety
+  result and merge closeout; no original-runtime compatibility is implied.
+
 ## 已放弃
 
 ## 2026-08-10 - M3-C4 delivery status

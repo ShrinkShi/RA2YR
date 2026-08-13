@@ -1,0 +1,29 @@
+schema_version: 1
+evidence_id: m4c1-deterministic-ecs-synthetic-20260813
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+source_logical_name: M4-C1 deterministic ECS contracts
+implementation:
+  assembly: RA2YR.Simulation
+  no_engine_references: true
+  focused_behavior_methods: 15
+  edit_mode_total: 1275
+  edit_mode_passed: 1275
+  edit_mode_failed: 0
+  unity_exit: 0
+  forced_post_result_shutdown: false
+contracts:
+  entity_generation_and_reuse: true
+  bounded_component_storage: true
+  structural_command_order: true
+  explicit_logical_clock: true
+  deterministic_scheduler: true
+  explicit_rng_streams: true
+  canonical_state_hash: true
+  immutable_read_snapshot: true
+  stable_proposal_order: true
+  autonomy_modes: [Manual, Assisted, Automatic]
+limitations:
+  - Synthetic project-enhancement evidence only.
+  - No ProjectBaseline packed data was read.
+  - No original-runtime, clean YR 1.001, renderer, pathfinding, combat, or gameplay claim is made.
