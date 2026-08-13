@@ -1,0 +1,16 @@
+schema_version: 1
+evidence_id: m5c1-house-economy-synthetic-20260813
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+implementation:
+  assembly: RA2YR.Simulation
+  focused_behavior_methods: 10
+  focused_edit_mode_total: 1371
+  focused_edit_mode_passed: 1371
+  focused_edit_mode_failed: 0
+contracts:
+  authoritative_checked_credit_transactions: true
+  directed_alliance_identity: true
+  power_and_technology_snapshots: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
