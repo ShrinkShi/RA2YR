@@ -807,3 +807,9 @@ promotion was introduced.
 - Implemented bounded managed pathfinding, movement route following,
   reservations, cache invalidation, and deterministic local avoidance.
 - Focused EditMode passed 1313/1313; stock path semantics remain unresolved.
+## 2026-08-13 - M4-C4 commands missions targeting autonomy
+
+- Created C4 from exact main `230ad313257b73e62b7ef48ec8afadc9c8b83e43`.
+- Added declarative command queues, mission snapshots, perception/targeting,
+  action arbitration, and explicit autonomy/hold policies.
+- Focused EditMode passed 1331/1331; combat/economy remain out of scope.

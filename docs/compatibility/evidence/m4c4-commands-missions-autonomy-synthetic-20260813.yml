@@ -1,0 +1,27 @@
+schema_version: 1
+evidence_id: m4c4-commands-missions-autonomy-synthetic-20260813
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+source_logical_name: M4-C4 declarative command mission targeting autonomy contracts
+implementation:
+  assembly: RA2YR.Simulation
+  focused_behavior_methods: 18
+  focused_edit_mode_total: 1331
+  focused_edit_mode_passed: 1331
+  focused_edit_mode_failed: 0
+  unity_exit: 0
+  forced_post_result_shutdown: false
+contracts:
+  declarative_command_sources: [Human, ComputerAI, Script, Trigger, Internal]
+  bounded_replace_append_queue: true
+  raw_mission_preservation: true
+  spatial_index_perception: true
+  profile_target_scoring: true
+  target_memory_hysteresis: true
+  deterministic_action_arbitration: true
+  forced_player_authority: true
+  manual_assisted_automatic_boundaries: true
+  combat_or_gameplay_execution: false
+limitations:
+  - Stock mission catalogs, lifecycle, AI, target, and player precedence remain unresolved/profile-explicit.
+  - No ProjectBaseline packed data was read.

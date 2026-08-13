@@ -39,3 +39,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0032 | M4-C1 deterministic ECS kernel | Accepted for project-enhancement implementation |
 | 0033 | M4-C2 terrain, occupancy, and spatial foundation | Accepted for project-enhancement implementation |
 | 0034 | M4-C3 pathfinding and movement foundation | Accepted for project-enhancement implementation |
+| 0035 | M4-C4 commands, missions, targeting, and autonomy | Accepted for project-enhancement implementation |
