@@ -78,6 +78,12 @@ unload timing, storage mutation, rendering, and original-runtime economy
 compatibility remain unimplemented and unconfirmed. No ProjectBaseline packed
 data is read by M5-C2.
 
+M5-C3 adds raw production definitions, explicit TechLevel/BuildLimit/
+prerequisite availability blockers, and bounded deterministic queue candidates.
+Payment, refunds, factory runtime, placement/exits, completion actors,
+sidebar/UI, campaign triggers, and original-runtime production compatibility
+remain unimplemented and unconfirmed. No ProjectBaseline packed data is read.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

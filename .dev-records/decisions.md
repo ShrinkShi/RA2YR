@@ -581,3 +581,11 @@ selection remains unresolved and produces `CompleteWithFailures`.
 - Keep cargo, capacity, refinery acceptance, docking descriptors, and future
   credit settlement separate. No movement, queue, renderer, or runtime timing
   is inferred from research conventions.
+
+## 2026-08-14 - M5-C3 production boundary
+
+- Preserve prerequisite syntax and authored numeric fields; availability is an
+  explicit capability/limit profile with multi-blocker diagnostics.
+- Keep queue acceptance, progress, payment, completion, placement, and actor
+  creation separate. No default factory, modifier, capture, refund, or runtime
+  timing semantics are selected.

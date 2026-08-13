@@ -832,6 +832,12 @@ promotion was introduced.
 - Created from exact post-M5-C1 main `eb9b2c719a72945fb80698b119ae90af55e65828`.
 - Added bounded raw resource, cargo, and refinery Core contracts; focused
   EditMode passed 1384/1384 with no ProjectBaseline reads.
+
+## 2026-08-14 - M5-C3 production and technology
+
+- Created from exact post-M5-C2 main `c8029c746e19cb4c2722fc0192acc1be08ad8295`.
+- Added bounded raw definition/availability/queue contracts; EditMode passed
+  1397/1397 with no ProjectBaseline reads.
 ## 2026-08-13 - M4-C4 commands missions targeting autonomy
 
 - Created C4 from exact main `230ad313257b73e62b7ef48ec8afadc9c8b83e43`.

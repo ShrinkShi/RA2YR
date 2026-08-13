@@ -804,3 +804,10 @@ payload or path is published.
   acceptance/docking descriptors.
 - Focused EditMode current tree: 1384/1384 passed, including 12 C2 methods;
   no ProjectBaseline packed data or original-runtime economy claim was added.
+
+## 2026-08-14 - M5-C3 production and technology foundation
+
+- Added raw production definitions, explicit availability blockers, bounded FIFO
+  queue candidates, checked progress, and deterministic queue hashing.
+- Current EditMode tree: 1397/1397 passed, including 12 C3 methods; no
+  ProjectBaseline data or original-runtime production claim was added.

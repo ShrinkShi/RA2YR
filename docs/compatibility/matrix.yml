@@ -1292,10 +1292,18 @@ entries:
   - id: economy.production
     domain: gameplay
     feature: "Production queues, build time, multiple factories, exits, airports, and docks"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.ProductionTechTests.AvailabilityReportsAllExplicitBlockers"
+      - "RA2YR.Tests.EditMode.Simulation.ProductionTechTests.AvailabilitySucceedsOnlyWithExplicitCapabilitiesAndLimits"
+      - "RA2YR.Tests.EditMode.Simulation.ProductionTechTests.QueueEnqueuePreservesStableFifoOrder"
+      - "RA2YR.Tests.EditMode.Simulation.ProductionTechTests.QueueProgressIsCheckedAndExact"
+    evidence:
+      - "docs/compatibility/evidence/m5c3-production-tech-synthetic-20260814.yml#contracts"
+    limitations:
+      - id: economy.production-runtime-deferred
+        status: "已知限制"
+        description: "Payment, refunds, factory runtime, placement/exits, completion actors, and stock runtime timing remain deferred."
   - id: base.placement-tech-power
     domain: gameplay
     feature: "Building placement, tech tree, prerequisites, owners, countries, and power"
