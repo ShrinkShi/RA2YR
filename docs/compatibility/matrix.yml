@@ -1270,6 +1270,17 @@ entries:
     tests: []
     evidence: []
     limitations: []
+  - id: economy.authoritative-credits
+    domain: gameplay
+    feature: "Runtime player identity, checked economy transactions, power and technology snapshots"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.EconomyAuthorityTests.StartingCreditsAndSpendUseTransactions"
+      - "RA2YR.Tests.EditMode.Simulation.EconomyAuthorityTests.InsufficientFundsFailsClosed"
+      - "RA2YR.Tests.EditMode.Simulation.EconomyAuthorityTests.OverflowFailsWithoutMutation"
+    evidence:
+      - "docs/compatibility/evidence/m5c1-house-economy-synthetic-20260813.yml#contracts"
+    limitations: []
   - id: economy.production
     domain: gameplay
     feature: "Production queues, build time, multiple factories, exits, airports, and docks"
