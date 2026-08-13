@@ -713,3 +713,21 @@ payload or path is published.
 - This is a docs/dev-records closeout only. No code, tests, compatibility
   evidence level, or research dossier was changed; M4 and runtime semantic
   work were not started.
+## 2026-08-13 - M4 P0 governance refresh
+
+### 变更范围
+
+- Modernized the tracked canonical three-stage requirements document without
+  deleting its long-term compatibility, legal, FinalAlert, or YR 1.001 goals.
+- Added M1-M3 status, explicit evidence layers, deterministic ECS/simulation
+  architecture, single logical authority plus deterministic commit, Unit Tactical
+  Autonomy, Manual/Assisted/Automatic modes, legal AI observation/command
+  boundaries, and future Neural/Hybrid policy contracts.
+- Added M4 architecture documentation and ADR-0031. No production simulation,
+  Unity scene, renderer, or AI model code was added.
+
+### 验证情况
+
+- External and tracked requirements copies have identical SHA-256.
+- This remains a documentation/governance change; Unity simulation tests were
+  not run because no production simulation code changed.
