@@ -1,0 +1,21 @@
+schema_version: 1
+evidence_id: m5c3-production-tech-synthetic-20260814
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+implementation:
+  assembly: RA2YR.Simulation
+  behavior_methods: 12
+  edit_mode_total: 1397
+  edit_mode_passed: 1397
+  edit_mode_failed: 0
+  no_engine_references: true
+contracts:
+  raw_production_definition_preservation: true
+  explicit_availability_blockers: true
+  bounded_fifo_queue_candidates: true
+  checked_progress: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+limitations:
+  - Synthetic project-enhancement evidence only.
+  - No credit payment/refund, factory runtime, placement, completion actor, UI, renderer, or campaign trigger is implemented.

@@ -226,3 +226,11 @@ comparison, and original-runtime black-box validation.
 - [x] Focused EditMode current tree: 1384/1384 passed; ProjectBaseline packed data not read.
 - [ ] Runtime harvest movement, docking queues, unload timing, storage mutation,
   renderer/UI, and original-runtime compatibility remain deferred.
+
+## M5-C3 production and technology foundation
+
+- [x] Add raw definitions and explicit prerequisite/TechLevel/BuildLimit availability.
+- [x] Add bounded deterministic FIFO queue candidates and checked progress.
+- [x] Current EditMode tree: 1397/1397 passed; ProjectBaseline packed data not read.
+- [ ] Payment/refund, factory runtime, placement/exits, completion actors, UI,
+  campaign triggers, and original-runtime compatibility remain deferred.
