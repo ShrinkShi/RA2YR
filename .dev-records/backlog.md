@@ -125,6 +125,14 @@ ProjectBaseline remains a patched development corpus.
 - [ ] Continue to C2 only after the C1 branch receives its exact-head safety
   result and merge closeout; no original-runtime compatibility is implied.
 
+## M4-C2 terrain / occupancy / spatial foundation
+
+- [x] Add bounded terrain topology and explicit passability/movement candidates.
+- [x] Add simulation-owned static, dynamic, foundation, and reservation
+  occupancy with deterministic spatial insert/remove/move/query contracts.
+- [ ] Continue to C3 pathfinding and movement only after C2 exact-head safety
+  and merge closeout; no stock terrain semantics are confirmed.
+
 ## 已放弃
 
 ## 2026-08-10 - M3-C4 delivery status

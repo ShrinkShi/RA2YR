@@ -36,6 +36,11 @@ Manual/Assisted/Automatic autonomy contracts. This is synthetic
 project-enhancement evidence only; it does not claim original-runtime
 compatibility or implement pathfinding, combat, rendering, or gameplay.
 
+M4-C2 adds synthetic terrain topology, explicit passability candidates,
+simulation-owned occupancy and deterministic spatial queries. Pathfinding,
+movement execution, terrain runtime binding, rendering, and gameplay remain
+later work and no original-runtime compatibility is claimed.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

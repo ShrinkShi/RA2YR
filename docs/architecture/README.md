@@ -76,6 +76,12 @@ scheduler phases, seed-and-stream randomness, immutable read snapshots,
 canonical state hashes, and deterministic proposal ordering. These are synthetic
 project-enhancement contracts, not original-runtime compatibility.
 
+M4-C2 adds the next boundary: source-order terrain topology candidates,
+explicit passability and movement capability profiles, simulation-owned static /
+foundation / dynamic / reservation occupancy, and a deterministic spatial index.
+These models preserve sparse, duplicate, out-of-domain, and unknown states and
+do not implement pathfinding or infer stock terrain semantics.
+
 ## Logical time and authoritative data
 
 - Simulation advances only through an explicit `AdvanceOneTick()` boundary.
