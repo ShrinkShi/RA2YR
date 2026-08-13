@@ -1515,6 +1515,22 @@ entries:
     evidence:
       - "docs/compatibility/evidence/m4c7-integrated-world-synthetic-20260813.yml#contracts"
     limitations: []
+  - id: simulation.economic-agent
+    domain: gameplay
+    feature: "Legal deterministic economic-agent observations and bounded action proposals"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.EconomicAgentTests.ValidObservationProducesDeterministicCandidatesWithoutMutation"
+      - "RA2YR.Tests.EditMode.Simulation.EconomicAgentTests.ResourceChildFailurePropagatesAndStopsActions"
+      - "RA2YR.Tests.EditMode.Simulation.EconomicAgentTests.InsufficientCreditsDoesNotMutateAuthorityOrProposePayment"
+      - "RA2YR.Tests.EditMode.Simulation.EconomicAgentTests.PowerDeficitIsWarningOnlyAndExplicit"
+      - "RA2YR.Tests.EditMode.Simulation.EconomicAgentTests.ProposalOrderingAndHashAreStableAcrossEquivalentInputs"
+    evidence:
+      - "docs/compatibility/evidence/m5c5-economic-agent-synthetic-20260814.yml#contracts"
+    limitations:
+      - id: simulation.economic-agent-mutation-deferred
+        status: "已知限制"
+        description: "Proposals do not mutate credits, cargo, queues, power, occupancy, actors, or gameplay state; neural/ONNX execution and stock YR AI compatibility remain unimplemented."
   - id: ai.trigger-types
     domain: ai
     feature: "AITriggerTypes, conditions, weights, cooldowns, and difficulty"

@@ -818,3 +818,14 @@ payload or path is published.
   checked power projection, and explicit interaction candidates.
 - Current EditMode tree: 1410/1410 passed, including 12 C4 methods; no
   ProjectBaseline data or original-runtime building claim was added.
+
+## 2026-08-14 - M5-C5 economic computer-agent foundation
+
+- Added Unity-free legal economic observations and deterministic bounded action
+  proposals composing the C1-C4 economy, resource, production, and structure
+  contracts.
+- Added explicit strategy labels, fail-closed child execution propagation,
+  diagnostic budgets, immutable proposal snapshots, and canonical hashes.
+- Current EditMode tree: 1422/1422 passed, including 12 C5 methods; no
+  ProjectBaseline packed data, neural model, renderer, or gameplay loop was
+  added.

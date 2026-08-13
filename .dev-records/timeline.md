@@ -844,6 +844,12 @@ promotion was introduced.
 - Created from exact post-M5-C3 main `0b05a688d9458aab3f4a180deac44d819afa9ca1`.
 - Added bounded structure/placement and interaction candidates; EditMode passed
   1410/1410 with no ProjectBaseline reads.
+
+## 2026-08-14 - M5-C5 economic computer-agent
+
+- Created the C5 branch from exact main `b2f3b6082f61e01ab4b65821bbde97e909ebea5e`.
+- Added deterministic legal economic observations and bounded action proposals;
+  EditMode passed 1422/1422. No ProjectBaseline packed data was read.
 ## 2026-08-13 - M4-C4 commands missions targeting autonomy
 
 - Created C4 from exact main `230ad313257b73e62b7ef48ec8afadc9c8b83e43`.

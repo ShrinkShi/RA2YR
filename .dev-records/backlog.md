@@ -242,3 +242,14 @@ comparison, and original-runtime black-box validation.
 - [x] Current EditMode tree: 1410/1410 passed; ProjectBaseline packed data not read.
 - [ ] Actor creation, map occupancy mutation, renderer/UI, and original-runtime
   building compatibility remain deferred.
+
+## M5-C5 economic computer-agent foundation
+
+- [x] Add legal immutable economic observation and deterministic bounded action
+  proposal contracts composing M5-C1 through M5-C4.
+- [x] Add explicit strategy profiles, child execution fail-closed behavior,
+  diagnostic budgets, and canonical proposal hashes.
+- [x] Current EditMode tree: 1422/1422 passed; no ProjectBaseline packed data
+  was read.
+- [ ] Neural/ONNX execution, payment/queue mutation, gameplay loop, renderer,
+  and original-runtime AI compatibility remain deferred to later scope.

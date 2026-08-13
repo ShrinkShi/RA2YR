@@ -1,0 +1,25 @@
+schema_version: 1
+evidence_id: m5c5-economic-agent-synthetic-20260814
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+implementation:
+  assembly: RA2YR.Simulation
+  behavior_methods: 12
+  edit_mode_total: 1422
+  edit_mode_passed: 1422
+  edit_mode_failed: 0
+  no_engine_references: true
+contracts:
+  legal_observation: true
+  deterministic_rule_policy: true
+  explicit_strategy_profiles: true
+  bounded_action_proposals: true
+  child_execution_fail_closed: true
+  project_baseline_read: false
+  neural_or_onnx_runtime: false
+  renderer_or_gameplay: false
+limitations:
+  - Proposals are candidates only; credits, cargo, queues, power, structures,
+    and actors are not mutated.
+  - Strategy labels and priorities are project-enhancement behavior, not stock
+    YR AI or ai.ini compatibility evidence.

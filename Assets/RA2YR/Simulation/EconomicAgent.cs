@@ -27,14 +27,24 @@ namespace RA2YR.Simulation
     public enum EconomicAgentPolicy { ConservativeDeterministic }
     public enum EconomicAgentStrategyProfile { AllIn, Rush, Pressure, Balanced, Macro, Turtle }
     public enum EconomicAgentIntent { Harvest, Build, Produce, ExpandCandidate, Repair, Sell, DefendEconomy }
+    public enum EconomicAgentNeed { NeedEconomy, NeedArmy, NeedPower, NeedFactory, NeedDefense, AttackReady }
+    public enum EconomicAgentBackendStatus { RuleBasedFallback, NeuralUnavailable }
+    public interface IEconomicAgentPolicyBackend
+    {
+        EconomicAgentBackendStatus Status { get; }
+    }
     public enum EconomicAgentActionKind
     {
         HarvestCandidate,
         QueueProductionCandidate,
+        BuildPowerCandidate,
+        BuildFactoryCandidate,
+        ExpandCandidate,
         RepairCandidate,
         SellCandidate,
         CaptureCandidate,
-        DeployCandidate
+        DeployCandidate,
+        DefendEconomyCandidate
     }
 
     public sealed class EconomicAgentDiagnostic
@@ -174,6 +184,20 @@ namespace RA2YR.Simulation
         public IReadOnlyList<string> VisibleEnemyComposition { get; }
         public int OwnTech { get; }
         public long OwnPower => Power.Produced - Power.Consumed;
+        public IReadOnlyList<EconomicAgentNeed> Needs
+        {
+            get
+            {
+                var needs = new List<EconomicAgentNeed>();
+                if (Cargo == null || Cargo.TotalQuantity == 0) needs.Add(EconomicAgentNeed.NeedEconomy);
+                if (OwnPower < 0) needs.Add(EconomicAgentNeed.NeedPower);
+                if (OwnFactories.Count == 0) needs.Add(EconomicAgentNeed.NeedFactory);
+                if (OwnArmyComposition.Count == 0) needs.Add(EconomicAgentNeed.NeedArmy);
+                if (Interaction.Allowed) needs.Add(EconomicAgentNeed.NeedDefense);
+                if (OwnArmyComposition.Count > 0 && VisibleEnemyComposition.Count > 0) needs.Add(EconomicAgentNeed.AttackReady);
+                return new ReadOnlyCollection<EconomicAgentNeed>(needs);
+            }
+        }
 
         private static IReadOnlyList<string> Freeze(IEnumerable<string> values)
         {
@@ -183,12 +207,13 @@ namespace RA2YR.Simulation
 
     public sealed class EconomicAgentDecision
     {
-        internal EconomicAgentDecision(EconomicAgentExecution execution, IEnumerable<EconomicAgentDiagnostic> diagnostics, IEnumerable<EconomicAgentActionProposal> proposals, EconomicAgentPolicy policy)
+        internal EconomicAgentDecision(EconomicAgentExecution execution, IEnumerable<EconomicAgentDiagnostic> diagnostics, IEnumerable<EconomicAgentActionProposal> proposals, EconomicAgentPolicy policy, EconomicAgentBackendStatus backendStatus = EconomicAgentBackendStatus.RuleBasedFallback)
         {
             Execution = execution;
             Diagnostics = new ReadOnlyCollection<EconomicAgentDiagnostic>((diagnostics ?? Enumerable.Empty<EconomicAgentDiagnostic>()).ToList());
             Proposals = new ReadOnlyCollection<EconomicAgentActionProposal>((proposals ?? Enumerable.Empty<EconomicAgentActionProposal>()).OrderBy(x => x).ToList());
             Policy = policy;
+            BackendStatus = backendStatus;
         }
 
         public EconomicAgentExecution Execution { get; }
@@ -196,6 +221,7 @@ namespace RA2YR.Simulation
         public IReadOnlyList<EconomicAgentDiagnostic> Diagnostics { get; }
         public IReadOnlyList<EconomicAgentActionProposal> Proposals { get; }
         public EconomicAgentPolicy Policy { get; }
+        public EconomicAgentBackendStatus BackendStatus { get; }
         public string CanonicalHash
         {
             get
@@ -211,6 +237,14 @@ namespace RA2YR.Simulation
         public static EconomicAgentDecision Evaluate(EconomicAgentObservation observation, EconomicAgentPolicy policy, EconomicAgentReadLimits limits)
         {
             return Evaluate(observation, policy, EconomicAgentStrategyProfile.Balanced, limits);
+        }
+
+        public static EconomicAgentDecision EvaluateWithBackend(EconomicAgentObservation observation, EconomicAgentPolicy policy, EconomicAgentStrategyProfile strategy, EconomicAgentReadLimits limits, IEconomicAgentPolicyBackend backend)
+        {
+            var fallback = Evaluate(observation, policy, strategy, limits);
+            if (backend == null || backend.Status == EconomicAgentBackendStatus.NeuralUnavailable)
+                return new EconomicAgentDecision(fallback.Execution, fallback.Diagnostics, fallback.Proposals, fallback.Policy, EconomicAgentBackendStatus.NeuralUnavailable);
+            return fallback;
         }
 
         public static EconomicAgentDecision Evaluate(EconomicAgentObservation observation, EconomicAgentPolicy policy, EconomicAgentStrategyProfile strategy, EconomicAgentReadLimits limits)
@@ -246,6 +280,11 @@ namespace RA2YR.Simulation
             if (observation.Interaction.Allowed)
                 AddProposal(proposals, new EconomicAgentActionProposal(observation.Interaction.Action == StructureInteractionAction.RepairCandidate ? EconomicAgentActionKind.RepairCandidate : MapInteraction(observation.Interaction.Action), observation.Interaction.SourceOwner, -1, "structure", 0, StrategyPriority(strategy, EconomicAgentIntent.Repair), "ConservativeDeterministic", EconomicAgentIntent.Repair), collector, limits);
 
+            if (observation.OwnPower < 0)
+                AddProposal(proposals, new EconomicAgentActionProposal(EconomicAgentActionKind.BuildPowerCandidate, observation.Credits.Player, -2, "power", 0, StrategyPriority(strategy, EconomicAgentIntent.Build), "ConservativeDeterministic", EconomicAgentIntent.Build), collector, limits);
+            if (observation.OwnFactories.Count == 0)
+                AddProposal(proposals, new EconomicAgentActionProposal(EconomicAgentActionKind.BuildFactoryCandidate, observation.Credits.Player, -3, "factory", 0, StrategyPriority(strategy, EconomicAgentIntent.Build), "ConservativeDeterministic", EconomicAgentIntent.Build), collector, limits);
+
             if (observation.Production.IsRequestable)
             {
                 if (observation.ProductionDefinition.Raw.RawCost < 0)
@@ -274,12 +313,12 @@ namespace RA2YR.Simulation
             if (!Enum.IsDefined(typeof(EconomicAgentStrategyProfile), strategy)) return 100;
             switch (strategy)
             {
-                case EconomicAgentStrategyProfile.Rush: return intent == EconomicAgentIntent.Produce ? 5 : 40;
+                case EconomicAgentStrategyProfile.Rush: return intent == EconomicAgentIntent.Produce || intent == EconomicAgentIntent.Build ? 5 : 40;
                 case EconomicAgentStrategyProfile.Macro: return intent == EconomicAgentIntent.Harvest ? 5 : 35;
                 case EconomicAgentStrategyProfile.Turtle: return intent == EconomicAgentIntent.Repair || intent == EconomicAgentIntent.DefendEconomy ? 5 : 45;
-                case EconomicAgentStrategyProfile.AllIn: return intent == EconomicAgentIntent.Produce ? 5 : 50;
+                case EconomicAgentStrategyProfile.AllIn: return intent == EconomicAgentIntent.Produce || intent == EconomicAgentIntent.Build ? 5 : 50;
                 case EconomicAgentStrategyProfile.Pressure: return intent == EconomicAgentIntent.Produce ? 10 : 30;
-                default: return intent == EconomicAgentIntent.Repair ? 10 : (intent == EconomicAgentIntent.Produce ? 20 : 30);
+                default: return intent == EconomicAgentIntent.Repair ? 10 : (intent == EconomicAgentIntent.Produce ? 20 : (intent == EconomicAgentIntent.Harvest ? 30 : 25));
             }
         }
 
