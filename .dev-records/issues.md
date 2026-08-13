@@ -576,3 +576,9 @@ exist; no historical XML is reused.
 - Unity 2022.3.60f1c1 current-head EditMode completed 1249/1249 passed after
   the audit namespace fix. Full delivery gates remain separately reportable.
 M3-C7 ProjectBaseline map-driven audit currently reports CompleteWithNoCandidates for the configured patched source; no map binding is fabricated and no compatibility claim is promoted.
+## 2026-08-13 - M3-C8 ProjectBaseline integration limitation
+
+The configured patched ProjectBaseline exposes packed IsoMap/Preview candidates
+but no named TMP candidates and no map-driven terrain candidates. The C8
+aggregate therefore remains `CompleteWithFailures`; this is not original-runtime
+evidence and does not claim a fully bound real map.

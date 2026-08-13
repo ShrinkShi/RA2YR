@@ -1,0 +1,9 @@
+[CmdletBinding()]
+param([Parameter(Mandatory)][string]$UnityEditorPath,[string]$ProjectRoot,[string]$ConfigurationPath,[ValidateRange(60,86400)][int]$TimeoutSeconds=3600)
+Set-StrictMode -Version 2.0; $ErrorActionPreference='Stop'
+if([string]::IsNullOrWhiteSpace($ProjectRoot)){$ProjectRoot=Join-Path $PSScriptRoot '..\..'}
+$root=[IO.Path]::GetFullPath($ProjectRoot); if([string]::IsNullOrWhiteSpace($ConfigurationPath)){$ConfigurationPath=Join-Path $root 'Config\ExternalContent.local.xml'}
+$run=(Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssfffZ')+'-'+[Guid]::NewGuid().ToString('N'); $out=Join-Path $root "TestResults\$run\m3-c8-real-map-integration-summary.json"; $log=Join-Path $root "TestResults\$run\unity.log"; [IO.Directory]::CreateDirectory((Split-Path $out))|Out-Null
+$p=Start-Process -FilePath $UnityEditorPath -ArgumentList @('-batchmode','-nographics','-quit','-projectPath',$root,'-executeMethod','RA2YR.Editor.M3C8RealMapIntegrationCommand.Run','-ra2yrExternalContentConfig',[IO.Path]::GetFullPath($ConfigurationPath),'-ra2yrSummaryOutput',$out,'-logFile',$log) -PassThru -WindowStyle Hidden
+try{if(-not $p.WaitForExit($TimeoutSeconds*1000)){$p.Kill();$p.WaitForExit();throw 'M3-C8 integration timed out.'};$p.Refresh();$code=[int]$p.ExitCode}finally{$p.Dispose()}
+if($code -ne 0){throw "M3-C8 integration exited with code $code."}; $text=Get-Content -Raw -LiteralPath $out; if($text -notmatch 'RA2YR\.M3C8RealMapIntegrationSanitized'){throw 'M3-C8 summary identity is invalid.'}; if($text -match '([A-Za-z]:\\|"records"\s*:|"pixels"\s*:|"filename"\s*:)'){throw 'M3-C8 summary contains forbidden detail.'}; "Unity process exit code: $code"; "Integration status: $((ConvertFrom-Json $text).status)"; "Map candidates: $((ConvertFrom-Json $text).mapCandidateCount)"; "Sanitized summary: TestResults/$run/m3-c8-real-map-integration-summary.json"
