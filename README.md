@@ -64,6 +64,11 @@ and a Neural backend contract. It does not expose SimulationWorld to agents,
 read ProjectBaseline data, or claim scenario, fog, economy, renderer, or stock
 AI compatibility.
 
+M4-C7 composes these foundations in a bounded headless synthetic battle and
+checks repeated-run hashes and input-order canonicalization. This remains a
+deterministic project-enhancement harness, not a playable YR map/runtime or
+performance compatibility claim.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

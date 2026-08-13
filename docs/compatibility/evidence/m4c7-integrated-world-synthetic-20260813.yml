@@ -1,0 +1,23 @@
+schema_version: 1
+evidence_id: m4c7-integrated-world-synthetic-20260813
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+source_logical_name: M4-C7 integrated headless battle and deterministic performance contracts
+implementation:
+  assembly: RA2YR.Simulation
+  focused_behavior_methods: 8
+  focused_edit_mode_total: 1361
+  focused_edit_mode_passed: 1361
+  focused_edit_mode_failed: 0
+  unity_exit: 0
+  forced_post_result_shutdown: false
+contracts:
+  integrated_headless_battle: true
+  deterministic_damage_commit: true
+  repeated_run_hash_equivalence: true
+  input_order_canonicalization: true
+  bounded_unit_budget: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+limitations:
+  - No stock map, economy, special mechanisms, renderer, writer, or neural training is included.

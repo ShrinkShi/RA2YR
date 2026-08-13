@@ -42,3 +42,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0035 | M4-C4 commands, missions, targeting, and autonomy | Accepted for project-enhancement implementation |
 | 0036 | M4-C5 minimal combat and ability contracts | Accepted for project-enhancement implementation |
 | 0037 | M4-C6 scenario spawn and agent boundaries | Accepted for project-enhancement implementation |
+| 0038 | M4-C7 integrated synthetic world and performance | Accepted for project-enhancement implementation |

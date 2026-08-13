@@ -788,3 +788,11 @@ payload or path is published.
   Neural descriptor/backend contract, and headless deterministic stepping.
 - Current EditMode tree: 1353/1353 passed, including 10 C6 methods; no
   ProjectBaseline data or original-runtime AI claim was added.
+
+## 2026-08-13 - M4-C7 integrated synthetic world
+
+- Added a bounded integer headless battle composing unit state, attack
+  proposals, damage/death commit, cooldown, canonical hashing, repeated-run
+  and input-order determinism checks.
+- Current EditMode tree: 1361/1361 passed, including 8 C7 methods; no
+  ProjectBaseline reads or renderer/gameplay parity claim was added.

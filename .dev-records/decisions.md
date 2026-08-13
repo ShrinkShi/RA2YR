@@ -567,3 +567,9 @@ selection remains unresolved and produces `CompleteWithFailures`.
   legal observations and return normal command requests.
 - RuleBased remains the deterministic fallback; Neural is an explicit backend
   contract with unavailable/schema-mismatch states and no model dependency.
+
+## 2026-08-13 - M4-C7 integration boundary
+
+- Use a small synthetic headless battle as the deterministic integration gate;
+  canonical state hashes are independent of insertion order and Unity frame
+  execution. Environment-specific timing is diagnostic only.
