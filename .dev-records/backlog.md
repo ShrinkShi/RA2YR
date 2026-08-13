@@ -218,3 +218,11 @@ comparison, and original-runtime black-box validation.
   IsoMap candidates, 184 Preview candidates, unresolved terrain binding, and
   stable source fingerprints. Only sanitized aggregates are published.
 - [ ] Clean YR 1.001 baseline comparison, original-runtime black-box validation, writer, renderer, passability/runtime, and gameplay remain future work.
+
+## M5-C2 resource economy foundation
+
+- [x] Add raw resource/type and explicit quantity/value candidate contracts.
+- [x] Add bounded harvester capacity/cargo and refinery acceptance/dock descriptors.
+- [x] Focused EditMode current tree: 1384/1384 passed; ProjectBaseline packed data not read.
+- [ ] Runtime harvest movement, docking queues, unload timing, storage mutation,
+  renderer/UI, and original-runtime compatibility remain deferred.

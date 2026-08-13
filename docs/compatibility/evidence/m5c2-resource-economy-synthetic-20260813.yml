@@ -1,0 +1,22 @@
+schema_version: 1
+evidence_id: m5c2-resource-economy-synthetic-20260813
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+implementation:
+  assembly: RA2YR.Simulation
+  behavior_methods: 12
+  edit_mode_total: 1384
+  edit_mode_passed: 1384
+  edit_mode_failed: 0
+  no_engine_references: true
+contracts:
+  raw_resource_cell_preservation: true
+  explicit_quantity_and_value_profiles: true
+  checked_cargo_capacity: true
+  explicit_refinery_acceptance_and_docks: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+limitations:
+  - Synthetic project-enhancement evidence only.
+  - No runtime harvester movement, docking queue, unload timing, storage mutation, or credit settlement is implemented.
+  - No renderer, UI, writer, or ProjectBaseline packed data was used.

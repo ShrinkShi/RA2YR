@@ -69,6 +69,15 @@ checks repeated-run hashes and input-order canonicalization. This remains a
 deterministic project-enhancement harness, not a playable YR map/runtime or
 performance compatibility claim.
 
+M5-C1 adds authoritative checked credit transactions and explicit house,
+player, alliance, power, technology, and ownership snapshots. M5-C2 adds
+bounded raw resource/type, explicit quantity/value candidates, harvester cargo,
+and refinery capability/docking descriptors. These are synthetic
+project-enhancement contracts only: runtime harvesting, movement, docking,
+unload timing, storage mutation, rendering, and original-runtime economy
+compatibility remain unimplemented and unconfirmed. No ProjectBaseline packed
+data is read by M5-C2.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

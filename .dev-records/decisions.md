@@ -573,3 +573,11 @@ selection remains unresolved and produces `CompleteWithFailures`.
 - Use a small synthetic headless battle as the deterministic integration gate;
   canonical state hashes are independent of insertion order and Unity frame
   execution. Environment-specific timing is diagnostic only.
+
+## 2026-08-13 - M5-C2 resource economy boundary
+
+- Preserve resource raw fields separately from explicit quantity/value
+  candidates; `OverlayDataPlusOne` and Rules values are named profiles only.
+- Keep cargo, capacity, refinery acceptance, docking descriptors, and future
+  credit settlement separate. No movement, queue, renderer, or runtime timing
+  is inferred from research conventions.

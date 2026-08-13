@@ -796,3 +796,11 @@ payload or path is published.
   and input-order determinism checks.
 - Current EditMode tree: 1361/1361 passed, including 8 C7 methods; no
   ProjectBaseline reads or renderer/gameplay parity claim was added.
+
+## 2026-08-13 - M5-C2 resource economy foundation
+
+- Added Unity-free raw resource cell/type contracts, explicit quantity/value
+  candidates, bounded harvester cargo/capacity validation, and refinery
+  acceptance/docking descriptors.
+- Focused EditMode current tree: 1384/1384 passed, including 12 C2 methods;
+  no ProjectBaseline packed data or original-runtime economy claim was added.
