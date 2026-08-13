@@ -1166,9 +1166,13 @@ entries:
   - id: movement.occupancy-foundation
     domain: gameplay
     feature: "Cell occupancy, Foundation, reservations, and building exits"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.TerrainOccupancySpatialTests.FoundationOccupancyCoversCheckedRectangle"
+      - "RA2YR.Tests.EditMode.Simulation.TerrainOccupancySpatialTests.OccupancyRejectsStaticDynamicAndReservationCollisions"
+      - "RA2YR.Tests.EditMode.Simulation.TerrainOccupancySpatialTests.OccupancyMoveIsAtomicOnBlockedDestination"
+    evidence:
+      - "docs/compatibility/evidence/m4c2-terrain-occupancy-spatial-synthetic-20260813.yml#contracts"
     limitations: []
   - id: movement.locomotors
     domain: gameplay

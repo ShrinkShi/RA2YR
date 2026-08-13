@@ -1,0 +1,26 @@
+schema_version: 1
+evidence_id: m4c2-terrain-occupancy-spatial-synthetic-20260813
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+source_logical_name: M4-C2 terrain occupancy spatial contracts
+implementation:
+  assembly: RA2YR.Simulation
+  focused_behavior_methods: 17
+  focused_edit_mode_total: 1292
+  focused_edit_mode_passed: 1292
+  focused_edit_mode_failed: 0
+  unity_exit: 0
+  forced_post_result_shutdown: false
+contracts:
+  terrain_raw_and_candidate_topology: true
+  sparse_dense_duplicate_preservation: true
+  explicit_unknown_passability: true
+  movement_node_edge_candidates: true
+  static_dynamic_reservation_foundation_occupancy: true
+  deterministic_spatial_grid_index: true
+  no_unity_physics_authority: true
+  pathfinding_implemented: false
+limitations:
+  - Research conflicts for stock terrain, locomotor, bridge, tunnel, and cost semantics remain unresolved/profile-explicit.
+  - No ProjectBaseline packed terrain data was read.
+  - No original-runtime, clean YR 1.001, renderer, pathfinding, combat, or gameplay claim is made.

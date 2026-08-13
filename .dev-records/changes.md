@@ -742,3 +742,13 @@ payload or path is published.
 - Current EditMode result for the implementation tree: 1275/1275 passed;
   these are synthetic project-enhancement tests and not original-runtime
   compatibility evidence. No ProjectBaseline packed data was read.
+## 2026-08-13 - M4-C2 terrain occupancy spatial foundation
+
+- Added bounded source-order terrain topology candidates with sparse/dense and
+  duplicate diagnostics, explicit passability states, movement node/edge
+  candidates, capability raw fields, and no automatic Unknown-to-Passable rule.
+- Added simulation-owned static, foundation, dynamic, and reservation occupancy
+  plus a deterministic ordered spatial index for insert/remove/move/neighbor
+  queries.
+- Current focused EditMode result: 1292/1292 passed, including 17 C2 methods;
+  synthetic project-enhancement evidence only, with no ProjectBaseline reads.

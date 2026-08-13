@@ -526,3 +526,11 @@ selection remains unresolved and produces `CompleteWithFailures`.
   state hashes as the deterministic reference contract.
 - Manual/Assisted/Automatic autonomy is explicit policy data; no tactical
   gameplay or original-runtime compatibility is inferred.
+## 2026-08-13 - M4-C2 terrain and occupancy boundary
+
+- Preserve raw and candidate terrain data, duplicate/missing/out-of-domain
+  observations, and Unknown passability without heuristic promotion.
+- Keep occupancy authoritative in Simulation and use ordered cell/entity
+  buckets for deterministic spatial queries; Unity Physics is not authoritative.
+- Defer pathfinding, bridge/tunnel runtime semantics, terrain binding, and
+  movement execution to later work packages.

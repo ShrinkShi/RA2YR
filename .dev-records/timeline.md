@@ -794,3 +794,10 @@ promotion was introduced.
 - Current EditMode XML passed 1275/1275, including 15 C1 behavior methods.
 - C1 remains project-enhancement/synthetic evidence only; no ProjectBaseline
   packed data, renderer, pathfinding, combat, or gameplay was introduced.
+## 2026-08-13 - M4-C2 terrain occupancy spatial foundation
+
+- Created the C2 branch from exact main `12fd0755418e3b3c83ac655f02add0368bbef3ab`.
+- Implemented raw terrain topology, candidate movement graph data,
+  simulation-owned occupancy, and deterministic spatial indexing.
+- Focused EditMode passed 1292/1292; pathfinding and movement execution remain
+  intentionally out of scope.
