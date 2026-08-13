@@ -1191,9 +1191,14 @@ entries:
   - id: movement.pathfinding
     domain: gameplay
     feature: "Stable pathfinding, avoidance, formation, rerouting, and destination adjustment"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.PathfindingMovementTests.SimplePathIsDeterministicAndImmutable"
+      - "RA2YR.Tests.EditMode.Simulation.PathfindingMovementTests.ExpansionAndRouteBudgetsFailClosed"
+      - "RA2YR.Tests.EditMode.Simulation.PathfindingMovementTests.CancellationIsStructured"
+      - "RA2YR.Tests.EditMode.Simulation.PathfindingMovementTests.LocalAvoidanceYieldIsStable"
+    evidence:
+      - "docs/compatibility/evidence/m4c3-pathfinding-movement-synthetic-20260813.yml#contracts"
     limitations: []
   - id: command.selection-groups
     domain: gameplay

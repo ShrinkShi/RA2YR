@@ -41,6 +41,12 @@ simulation-owned occupancy and deterministic spatial queries. Pathfinding,
 movement execution, terrain runtime binding, rendering, and gameplay remain
 later work and no original-runtime compatibility is claimed.
 
+M4-C3 adds an independently implemented bounded managed A* reference,
+immutable path results, integer route following, reservations, cancellation,
+cache invalidation, and deterministic local-avoidance proposals. It is synthetic
+project-enhancement behavior; stock path/cost semantics and gameplay remain
+unconfirmed.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

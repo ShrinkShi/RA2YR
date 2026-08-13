@@ -752,3 +752,12 @@ payload or path is published.
   queries.
 - Current focused EditMode result: 1292/1292 passed, including 17 C2 methods;
   synthetic project-enhancement evidence only, with no ProjectBaseline reads.
+## 2026-08-13 - M4-C3 pathfinding movement foundation
+
+- Added deterministic managed A* over C2 candidate graphs, immutable results,
+  explicit capability checks, cancellation, request/route/expansion budgets,
+  per-tick batch limits, and invalidatable cache contracts.
+- Added integer route following through Simulation-owned occupancy/reservation
+  state and deterministic local-avoidance proposal ordering.
+- Focused EditMode: 1313/1313 passed, including 19 C3 methods; no ProjectBaseline
+  terrain data or original-runtime path claim was added.
