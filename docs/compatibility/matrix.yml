@@ -1456,6 +1456,18 @@ entries:
     tests: []
     evidence: []
     limitations: []
+  - id: simulation.scenario-spawn-agent
+    domain: gameplay
+    feature: "Bounded scenario placement spawn requests and legal computer-agent observation/policy contracts"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.ScenarioAgentPlatformTests.SpawnPreservesRawPlacementAndUsesStructuralRequest"
+      - "RA2YR.Tests.EditMode.Simulation.ScenarioAgentPlatformTests.ObservationDoesNotExposeWorldTruth"
+      - "RA2YR.Tests.EditMode.Simulation.ScenarioAgentPlatformTests.RuleBasedPolicyProducesLegalCommandFromObservation"
+      - "RA2YR.Tests.EditMode.Simulation.ScenarioAgentPlatformTests.HeadlessRepeatedRunsHaveSameStateHash"
+    evidence:
+      - "docs/compatibility/evidence/m4c6-scenario-agent-synthetic-20260813.yml#contracts"
+    limitations: []
   - id: ai.trigger-types
     domain: ai
     feature: "AITriggerTypes, conditions, weights, cooldowns, and difficulty"
