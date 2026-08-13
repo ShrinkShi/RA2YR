@@ -589,3 +589,10 @@ selection remains unresolved and produces `CompleteWithFailures`.
 - Keep queue acceptance, progress, payment, completion, placement, and actor
   creation separate. No default factory, modifier, capture, refund, or runtime
   timing semantics are selected.
+
+## 2026-08-14 - M5-C4 structures boundary
+
+- Placement preserves origin and fails closed on bounds/overlap; it never
+  clamps, rewrites occupancy, or creates actors.
+- Repair, sell, capture, deploy, power, and ownership remain explicit
+  candidates with no default stock runtime behavior.

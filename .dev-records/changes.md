@@ -811,3 +811,10 @@ payload or path is published.
   queue candidates, checked progress, and deterministic queue hashing.
 - Current EditMode tree: 1397/1397 passed, including 12 C3 methods; no
   ProjectBaseline data or original-runtime production claim was added.
+
+## 2026-08-14 - M5-C4 structures and placement foundation
+
+- Added raw structure definitions, bounded rectangular placement validation,
+  checked power projection, and explicit interaction candidates.
+- Current EditMode tree: 1410/1410 passed, including 12 C4 methods; no
+  ProjectBaseline data or original-runtime building claim was added.
