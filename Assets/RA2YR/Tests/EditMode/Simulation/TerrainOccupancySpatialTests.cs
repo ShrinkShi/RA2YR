@@ -22,6 +22,14 @@ namespace RA2YR.Tests.EditMode.Simulation
         }
 
         [Test]
+        public void HugeDomainDoesNotOverflowDenseClassification()
+        {
+            TerrainTopologyDocument result = TerrainTopologyBuilder.Build(new[] { Cell(0, 0) }, new TerrainTopologyPolicy(int.MaxValue, int.MaxValue));
+            Assert.That(result.IsSparse, Is.True);
+            Assert.That(result.IsDense, Is.False);
+        }
+
+        [Test]
         public void DuplicateCellsPreserveSourceOrderAndConflict()
         {
             TerrainTopologyDocument result = TerrainTopologyBuilder.Build(new[] { Cell(2, 3, 1, ordinal: 10), Cell(2, 3, 2, ordinal: 11) });
@@ -131,6 +139,16 @@ namespace RA2YR.Tests.EditMode.Simulation
             index.Insert(new EntityId(3, 1), new CellCoordinate(0, 0));
             index.Insert(new EntityId(1, 1), new CellCoordinate(0, 0));
             Assert.That(index.QueryNeighbors(new CellCoordinate(0, 0), 0).Select(x => x.Index).ToArray(), Is.EqualTo(new[] { 1, 3 }));
+        }
+
+        [Test]
+        public void SpatialQueryRejectsCoordinateOverflowAndResultBudget()
+        {
+            DeterministicSpatialIndex index = new DeterministicSpatialIndex(1);
+            index.Insert(new EntityId(0, 1), new CellCoordinate(0, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => index.QueryNeighbors(new CellCoordinate(int.MaxValue, 0), 1));
+            index.Insert(new EntityId(1, 1), new CellCoordinate(0, 0));
+            Assert.Throws<InvalidOperationException>(() => index.QueryNeighbors(new CellCoordinate(0, 0), 0));
         }
 
         [Test]

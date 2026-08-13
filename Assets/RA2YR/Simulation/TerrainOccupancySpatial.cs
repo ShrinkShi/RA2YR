@@ -102,7 +102,9 @@ namespace RA2YR.Simulation
                 Add(diagnostics, policy, new TerrainCellDiagnostic(identical ? TerrainCellDiagnosticCode.DuplicateCell : TerrainCellDiagnosticCode.ConflictingDuplicateCell, pair.Value[0].SourceOrdinal, pair.Key, identical ? "Byte-identical duplicate cell." : "Conflicting duplicate cell."));
                 if (policy.DuplicatePolicy == DuplicateCellPolicy.RejectAnyDuplicate || (policy.DuplicatePolicy == DuplicateCellPolicy.AllowByteIdenticalDuplicatesButDiagnose && !identical)) success = false;
             }
-            bool dense = policy.Width > 0 && policy.Height > 0 && cells.Count == checked(policy.Width * policy.Height); bool sparse = policy.Width > 0 && policy.Height > 0 && cells.Count < checked(policy.Width * policy.Height);
+            long expectedCells = policy.Width > 0 && policy.Height > 0 ? (long)policy.Width * policy.Height : 0L;
+            bool dense = expectedCells > 0 && expectedCells <= int.MaxValue && cells.Count == expectedCells;
+            bool sparse = expectedCells > 0 && cells.Count < expectedCells;
             return new TerrainTopologyDocument(cells, groups, diagnostics, success, sparse, dense);
         }
         private static void Add(List<TerrainCellDiagnostic> list, TerrainTopologyPolicy policy, TerrainCellDiagnostic diagnostic) { if (list.Count < policy.MaxDiagnostics) list.Add(diagnostic); }
@@ -198,10 +200,34 @@ namespace RA2YR.Simulation
     public sealed class DeterministicSpatialIndex
     {
         private readonly SortedDictionary<CellCoordinate, SortedSet<EntityId>> cells = new SortedDictionary<CellCoordinate, SortedSet<EntityId>>();
+        private readonly int maxQueryResults;
+        public DeterministicSpatialIndex(int maxQueryResults = 100000)
+        {
+            if (maxQueryResults <= 0) throw new ArgumentOutOfRangeException(nameof(maxQueryResults));
+            this.maxQueryResults = maxQueryResults;
+        }
         public int Count { get; private set; }
         public bool Insert(EntityId entity, CellCoordinate cell) { if (!entity.IsValid) throw new ArgumentException(nameof(entity)); SortedSet<EntityId> occupants; if (!cells.TryGetValue(cell, out occupants)) { occupants = new SortedSet<EntityId>(); cells.Add(cell, occupants); } if (!occupants.Add(entity)) return false; Count++; return true; }
         public bool Remove(EntityId entity, CellCoordinate cell) { SortedSet<EntityId> occupants; if (!cells.TryGetValue(cell, out occupants) || !occupants.Remove(entity)) return false; Count--; if (occupants.Count == 0) cells.Remove(cell); return true; }
         public bool Move(EntityId entity, CellCoordinate from, CellCoordinate to) { if (!Remove(entity, from)) return false; Insert(entity, to); return true; }
-        public IReadOnlyList<EntityId> QueryNeighbors(CellCoordinate center, int radius) { if (radius < 0) throw new ArgumentOutOfRangeException(nameof(radius)); var result = new List<EntityId>(); for (int y = checked(center.Y - radius); y <= checked(center.Y + radius); y++) for (int x = checked(center.X - radius); x <= checked(center.X + radius); x++) { SortedSet<EntityId> occupants; if (cells.TryGetValue(new CellCoordinate(x, y), out occupants)) result.AddRange(occupants); } result.Sort(); return new ReadOnlyCollection<EntityId>(result); }
+        public IReadOnlyList<EntityId> QueryNeighbors(CellCoordinate center, int radius)
+        {
+            if (radius < 0) throw new ArgumentOutOfRangeException(nameof(radius));
+            long minY = (long)center.Y - radius; long maxY = (long)center.Y + radius;
+            long minX = (long)center.X - radius; long maxX = (long)center.X + radius;
+            if (minY < int.MinValue || maxY > int.MaxValue || minX < int.MinValue || maxX > int.MaxValue) throw new ArgumentOutOfRangeException(nameof(radius), "Neighbor bounds exceed the coordinate domain.");
+            var result = new List<EntityId>();
+            for (int y = (int)minY; y <= (int)maxY; y++)
+            {
+                for (int x = (int)minX; x <= (int)maxX; x++)
+                {
+                    SortedSet<EntityId> occupants;
+                    if (!cells.TryGetValue(new CellCoordinate(x, y), out occupants)) continue;
+                    if (result.Count > maxQueryResults - occupants.Count) throw new InvalidOperationException("Spatial query result budget exceeded.");
+                    result.AddRange(occupants);
+                }
+            }
+            result.Sort(); return new ReadOnlyCollection<EntityId>(result);
+        }
     }
 }
