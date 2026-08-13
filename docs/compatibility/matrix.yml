@@ -1210,9 +1210,13 @@ entries:
   - id: command.order-set
     domain: gameplay
     feature: "Move, attack, force attack/move, waypoints, stop, guard, area guard, and deploy"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.CommandsMissionsAutonomyTests.ReplaceAndAppendQueueHaveCanonicalOrder"
+      - "RA2YR.Tests.EditMode.Simulation.CommandsMissionsAutonomyTests.QueueBudgetAndDuplicateFailClosed"
+      - "RA2YR.Tests.EditMode.Simulation.CommandsMissionsAutonomyTests.ArbitrationPlayerCommandWinsByPriority"
+    evidence:
+      - "docs/compatibility/evidence/m4c4-commands-missions-autonomy-synthetic-20260813.yml#contracts"
     limitations: []
   - id: command.interaction-set
     domain: gameplay

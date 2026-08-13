@@ -1,5 +1,14 @@
 # 变更记录
 
+## 2026-08-13 - M4-C4 commands missions targeting autonomy
+
+- Added declarative Human/ComputerAI/Script/Trigger/Internal command requests,
+  bounded replace/append queues, raw-preserving runtime mission snapshots,
+  spatial-index perception, profile target scoring, target-memory hysteresis,
+  deterministic arbitration, forced player authority, and hold/autonomy rules.
+- Focused EditMode: 1331/1331 passed, including 18 C4 methods; no combat or
+  ProjectBaseline read was added.
+
 ## 2026-08-04 - M3-C1 contract fixes and behavioral matrix
 
 ### 变更范围

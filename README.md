@@ -47,6 +47,13 @@ cache invalidation, and deterministic local-avoidance proposals. It is synthetic
 project-enhancement behavior; stock path/cost semantics and gameplay remain
 unconfirmed.
 
+M4-C4 adds declarative multi-source command requests, bounded canonical queues,
+raw-preserving runtime mission snapshots, spatial-index perception,
+profile-driven target scoring/hysteresis, deterministic arbitration, forced
+player authority, and explicit Manual/Assisted/Automatic autonomy boundaries.
+Combat, economy, transport, rendering, and original-runtime mission/AI parity
+remain unimplemented and unconfirmed.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

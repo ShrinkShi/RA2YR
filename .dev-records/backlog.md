@@ -142,6 +142,16 @@ ProjectBaseline remains a patched development corpus.
 - [ ] Continue to C4 commands/missions/targeting only after C3 exact-head
   safety and merge closeout; no stock path semantics are confirmed.
 
+## M4-C4 commands / missions / targeting / autonomy
+
+- [x] Add declarative multi-source command requests, bounded replace/append
+  queues, and raw-preserving runtime mission snapshots.
+- [x] Add spatial-index perception, profile target scoring/hysteresis,
+  deterministic arbitration, forced player authority, and explicit hold/
+  autonomy boundaries.
+- [ ] Continue to C5 combat/abilities only after C4 exact-head safety and merge
+  closeout; no stock mission or AI parity is confirmed.
+
 ## 已放弃
 
 ## 2026-08-10 - M3-C4 delivery status

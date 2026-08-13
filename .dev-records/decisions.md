@@ -541,3 +541,12 @@ selection remains unresolved and produces `CompleteWithFailures`.
 - Keep route following integer and Simulation-owned; reservations and occupancy
   are authoritative, with deterministic local-avoidance proposals.
 - Defer stock cost/Locomotor semantics, combat, renderer, and gameplay.
+## 2026-08-13 - M4-C4 command and autonomy boundary
+
+- Every source emits a declarative CommandRequest; only the simulation queue
+  and arbitration stage can authorize state changes.
+- Preserve authored mission raw text; use spatial-index perception and
+  deterministic target hysteresis; forced player commands have explicit
+  precedence.
+- Manual/Assisted/Automatic policies remain project contracts, not stock AI
+  proof; combat and economy are deferred.
