@@ -770,3 +770,13 @@ payload or path is published.
   state and deterministic local-avoidance proposal ordering.
 - Focused EditMode: 1313/1313 passed, including 19 C3 methods; no ProjectBaseline
   terrain data or original-runtime path claim was added.
+
+## 2026-08-13 - M4-C5 minimal combat and abilities
+
+- Added Unity-free weapon range/cooldown/target validation, attack proposals,
+  bounded damage events, canonical health/death commit, and immutable health
+  records.
+- Added generic ability descriptors/state/candidates/proposals, explicit
+  AutoCast/autonomy gating, retreat utility, and crush-threat proposals.
+- Focused EditMode current tree: 1342/1342 passed, including 11 C5 methods;
+  synthetic project-enhancement evidence only, with no ProjectBaseline reads.
