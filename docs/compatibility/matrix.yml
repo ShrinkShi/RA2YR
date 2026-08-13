@@ -1266,10 +1266,18 @@ entries:
   - id: economy.resources-harvest
     domain: gameplay
     feature: "Ore, gems, drills, harvesters, cargo, refineries, and funds"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
-    limitations: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.ResourceEconomyTests.RawCellPreservesOverlayFieldsAndProvenance"
+      - "RA2YR.Tests.EditMode.Simulation.ResourceEconomyTests.ExplicitQuantityAndValueProfilesRemainDerived"
+      - "RA2YR.Tests.EditMode.Simulation.ResourceEconomyTests.CargoSnapshotChecksCapacityAndKeepsStableOrder"
+      - "RA2YR.Tests.EditMode.Simulation.ResourceEconomyTests.RefineryAcceptanceIsExplicit"
+    evidence:
+      - "docs/compatibility/evidence/m5c2-resource-economy-synthetic-20260813.yml#contracts"
+    limitations:
+      - id: economy.runtime-harvest-deferred
+        status: "已知限制"
+        description: "Runtime harvest movement, docking, unload timing, storage mutation, and credit settlement remain deferred."
   - id: economy.authoritative-credits
     domain: gameplay
     feature: "Runtime player identity, checked economy transactions, power and technology snapshots"

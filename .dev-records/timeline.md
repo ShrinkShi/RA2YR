@@ -826,6 +826,12 @@ promotion was introduced.
 - Created C7 from C6 squash main `3abf57fc525aa63d55613426740e00af735b6888`.
 - Added a bounded synthetic battle and deterministic repeated-run/input-order
   checks; current EditMode passed 1361/1361.
+
+## 2026-08-13 - M5-C2 resource economy
+
+- Created from exact post-M5-C1 main `eb9b2c719a72945fb80698b119ae90af55e65828`.
+- Added bounded raw resource, cargo, and refinery Core contracts; focused
+  EditMode passed 1384/1384 with no ProjectBaseline reads.
 ## 2026-08-13 - M4-C4 commands missions targeting autonomy
 
 - Created C4 from exact main `230ad313257b73e62b7ef48ec8afadc9c8b83e43`.
