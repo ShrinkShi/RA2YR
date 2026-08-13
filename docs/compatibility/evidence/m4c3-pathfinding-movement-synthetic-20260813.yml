@@ -1,0 +1,27 @@
+schema_version: 1
+evidence_id: m4c3-pathfinding-movement-synthetic-20260813
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+source_logical_name: M4-C3 managed path and movement contracts
+implementation:
+  assembly: RA2YR.Simulation
+  focused_behavior_methods: 19
+  focused_edit_mode_total: 1313
+  focused_edit_mode_passed: 1313
+  focused_edit_mode_failed: 0
+  unity_exit: 0
+  forced_post_result_shutdown: false
+contracts:
+  deterministic_managed_astar: true
+  immutable_path_result: true
+  bounded_expansion_and_route: true
+  cancellation: true
+  per_tick_batch_budget: true
+  invalidatable_cache: true
+  integer_route_following: true
+  reservation_and_occupancy_commit: true
+  deterministic_local_avoidance: true
+  original_runtime_pathfinding: false
+limitations:
+  - Stock Locomotor, cost, bridge/tunnel, and original-runtime path semantics remain unresolved.
+  - No ProjectBaseline packed terrain data was read.

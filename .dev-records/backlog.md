@@ -133,6 +133,15 @@ ProjectBaseline remains a patched development corpus.
 - [ ] Continue to C3 pathfinding and movement only after C2 exact-head safety
   and merge closeout; no stock terrain semantics are confirmed.
 
+## M4-C3 pathfinding / movement foundation
+
+- [x] Add bounded deterministic managed pathfinding and immutable route results.
+- [x] Add integer route following, occupancy/reservation conflict handling,
+  cache invalidation, per-tick workload limits, and deterministic local
+  avoidance proposals.
+- [ ] Continue to C4 commands/missions/targeting only after C3 exact-head
+  safety and merge closeout; no stock path semantics are confirmed.
+
 ## 已放弃
 
 ## 2026-08-10 - M3-C4 delivery status

@@ -534,3 +534,10 @@ selection remains unresolved and produces `CompleteWithFailures`.
   buckets for deterministic spatial queries; Unity Physics is not authoritative.
 - Defer pathfinding, bridge/tunnel runtime semantics, terrain binding, and
   movement execution to later work packages.
+## 2026-08-13 - M4-C3 path/movement boundary
+
+- Use an independently authored managed A* reference with explicit stable tie
+  breaks and fail-closed budgets/cancellation; do not copy GPL pathfinding.
+- Keep route following integer and Simulation-owned; reservations and occupancy
+  are authoritative, with deterministic local-avoidance proposals.
+- Defer stock cost/Locomotor semantics, combat, renderer, and gameplay.

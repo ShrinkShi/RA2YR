@@ -801,3 +801,9 @@ promotion was introduced.
   simulation-owned occupancy, and deterministic spatial indexing.
 - Focused EditMode passed 1292/1292; pathfinding and movement execution remain
   intentionally out of scope.
+## 2026-08-13 - M4-C3 pathfinding movement foundation
+
+- Created C3 from exact main `a10eafde4fbee5ab31bde5be9ad5c272b9e84b19`.
+- Implemented bounded managed pathfinding, movement route following,
+  reservations, cache invalidation, and deterministic local avoidance.
+- Focused EditMode passed 1313/1313; stock path semantics remain unresolved.
