@@ -780,3 +780,11 @@ payload or path is published.
   AutoCast/autonomy gating, retreat utility, and crush-threat proposals.
 - Focused EditMode current tree: 1342/1342 passed, including 11 C5 methods;
   synthetic project-enhancement evidence only, with no ProjectBaseline reads.
+
+## 2026-08-13 - M4-C6 scenario and agent platform
+
+- Added raw family placement preservation, bounded owner-checked SpawnRequest
+  generation, immutable legal AgentObservation, RuleBased policy fallback,
+  Neural descriptor/backend contract, and headless deterministic stepping.
+- Current EditMode tree: 1353/1353 passed, including 10 C6 methods; no
+  ProjectBaseline data or original-runtime AI claim was added.

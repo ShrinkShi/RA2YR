@@ -58,6 +58,12 @@ proposal/range/cooldown validation, canonical damage/death commit, generic
 ability utility, retreat, and crush-threat proposal contracts; it does not claim
 stock weapon, projectile, warhead, armor, or special-ability compatibility.
 
+M4-C6 adds synthetic scenario placement-to-spawn requests, explicit owner
+binding, immutable legal agent observations, a deterministic RuleBased fallback,
+and a Neural backend contract. It does not expose SimulationWorld to agents,
+read ProjectBaseline data, or claim scenario, fog, economy, renderer, or stock
+AI compatibility.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

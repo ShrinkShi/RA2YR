@@ -814,6 +814,12 @@ promotion was introduced.
   commit combat and generic ability contracts.
 - Current EditMode XML passed 1342/1342; no renderer, writer, ProjectBaseline,
   or original-runtime compatibility claim was added.
+
+## 2026-08-13 - M4-C6 scenario agent platform
+
+- Created C6 from post-main C5 safety SHA `321f1e5b84d1b0d62c3bcb477b0c31858a3f892e`.
+- Added bounded spawn, explicit owner binding, legal observation/policy
+  interfaces, and headless synthetic environment; EditMode passed 1353/1353.
 ## 2026-08-13 - M4-C4 commands missions targeting autonomy
 
 - Created C4 from exact main `230ad313257b73e62b7ef48ec8afadc9c8b83e43`.

@@ -559,3 +559,11 @@ selection remains unresolved and produces `CompleteWithFailures`.
 - Generic ability utility and retreat/crush proposals are explicitly gated by
   autonomy capabilities and bounded profiles. Stock combat semantics remain
   unresolved and no ProjectBaseline data was read.
+
+## 2026-08-13 - M4-C6 scenario and agent boundary
+
+- Scenario parsing emits bounded structural spawn requests; it does not create
+  entities or infer map-local bindings. Agent policies receive only immutable
+  legal observations and return normal command requests.
+- RuleBased remains the deterministic fallback; Neural is an explicit backend
+  contract with unavailable/schema-mismatch states and no model dependency.

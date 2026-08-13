@@ -1,0 +1,27 @@
+schema_version: 1
+evidence_id: m4c6-scenario-agent-synthetic-20260813
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+source_logical_name: M4-C6 scenario spawn and agent platform contracts
+implementation:
+  assembly: RA2YR.Simulation
+  focused_behavior_methods: 10
+  focused_edit_mode_total: 1353
+  focused_edit_mode_passed: 1353
+  focused_edit_mode_failed: 0
+  unity_exit: 0
+  forced_post_result_shutdown: false
+contracts:
+  raw_family_placement_preservation: true
+  bounded_spawn_requests: true
+  explicit_owner_binding: true
+  immutable_agent_observation: true
+  world_truth_not_exposed: true
+  rule_based_fallback: true
+  neural_backend_contract_only: true
+  headless_step_and_state_hash: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+limitations:
+  - Full scenario placement parsing, map-local registry binding, fog, economy, and stock AI remain unresolved.
+  - No trained model, renderer, writer, or gameplay parity is claimed.
