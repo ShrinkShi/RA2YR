@@ -820,6 +820,12 @@ promotion was introduced.
 - Created C6 from post-main C5 safety SHA `321f1e5b84d1b0d62c3bcb477b0c31858a3f892e`.
 - Added bounded spawn, explicit owner binding, legal observation/policy
   interfaces, and headless synthetic environment; EditMode passed 1353/1353.
+
+## 2026-08-13 - M4-C7 integrated world
+
+- Created C7 from C6 squash main `3abf57fc525aa63d55613426740e00af735b6888`.
+- Added a bounded synthetic battle and deterministic repeated-run/input-order
+  checks; current EditMode passed 1361/1361.
 ## 2026-08-13 - M4-C4 commands missions targeting autonomy
 
 - Created C4 from exact main `230ad313257b73e62b7ef48ec8afadc9c8b83e43`.

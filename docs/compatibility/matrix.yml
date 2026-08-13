@@ -1468,6 +1468,18 @@ entries:
     evidence:
       - "docs/compatibility/evidence/m4c6-scenario-agent-synthetic-20260813.yml#contracts"
     limitations: []
+  - id: simulation.integrated-headless-battle
+    domain: gameplay
+    feature: "Integrated deterministic synthetic battle, repeated-run hashes, and input-order canonicalization"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.IntegratedBattleTests.SyntheticBattleRunsAttackAndDamageCommit"
+      - "RA2YR.Tests.EditMode.Simulation.IntegratedBattleTests.RepeatedSyntheticBattlesHaveIdenticalHashes"
+      - "RA2YR.Tests.EditMode.Simulation.IntegratedBattleTests.InputOrderDoesNotChangeCanonicalState"
+      - "RA2YR.Tests.EditMode.Simulation.IntegratedBattleTests.DeathIsDeterministicAndNoNegativeHealth"
+    evidence:
+      - "docs/compatibility/evidence/m4c7-integrated-world-synthetic-20260813.yml#contracts"
+    limitations: []
   - id: ai.trigger-types
     domain: ai
     feature: "AITriggerTypes, conditions, weights, cooldowns, and difficulty"
