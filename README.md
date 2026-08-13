@@ -24,8 +24,9 @@ original-runtime compatibility claim is included.
 M4 governance now defines a Unity-free deterministic data-oriented ECS,
 single-authority deterministic commit, first-class Manual/Assisted/Automatic
 unit autonomy, and legal observation-to-command computer-agent interfaces.
-M4 production implementation has not yet started; Neural/Hybrid policies remain
-future contracts and no trained model is included. See [M4 simulation architecture](docs/architecture/m4-deterministic-simulation.md)
+M4 production implementation now includes C1-C5 deterministic simulation
+foundations; Neural/Hybrid policies remain future contracts and no trained model
+is included. See [M4 simulation architecture](docs/architecture/m4-deterministic-simulation.md)
 and [ADR-0031](docs/adr/0031-m4-deterministic-simulation-governance.md).
 
 M4-C1 now provides the Unity-free deterministic ECS reference kernel: stable
@@ -52,7 +53,10 @@ raw-preserving runtime mission snapshots, spatial-index perception,
 profile-driven target scoring/hysteresis, deterministic arbitration, forced
 player authority, and explicit Manual/Assisted/Automatic autonomy boundaries.
 Combat, economy, transport, rendering, and original-runtime mission/AI parity
-remain unimplemented and unconfirmed.
+remain unimplemented and unconfirmed. M4-C5 adds only synthetic weapon
+proposal/range/cooldown validation, canonical damage/death commit, generic
+ability utility, retreat, and crush-threat proposal contracts; it does not claim
+stock weapon, projectile, warhead, armor, or special-ability compatibility.
 
 ## 项目定位
 

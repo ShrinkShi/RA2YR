@@ -1,0 +1,29 @@
+schema_version: 1
+evidence_id: m4c5-combat-abilities-synthetic-20260813
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+source_logical_name: M4-C5 minimal combat and ability contracts
+implementation:
+  assembly: RA2YR.Simulation
+  focused_behavior_methods: 11
+  focused_edit_mode_total: 1342
+  focused_edit_mode_passed: 1342
+  focused_edit_mode_failed: 0
+  unity_exit: 0
+  forced_post_result_shutdown: false
+contracts:
+  explicit_weapon_range_cooldown_target_validation: true
+  attack_proposal_to_damage_event_to_canonical_commit: true
+  workers_cannot_mutate_health: true
+  deterministic_damage_and_death_order: true
+  bounded_damage_event_input: true
+  generic_ability_target_utility: true
+  friendly_fire_rejection: true
+  autonomy_envelope_and_capability_gate: true
+  retreat_proposal: true
+  crush_threat_candidate_without_unity_physics: true
+  project_baseline_packed_data_read: false
+  original_runtime_confirmation: false
+limitations:
+  - Stock weapon, projectile, warhead, armor, Verses, ammo, veterancy and special ability semantics remain unresolved.
+  - No combat loop, renderer, VFX, writer or gameplay compatibility is claimed.

@@ -807,6 +807,13 @@ promotion was introduced.
 - Implemented bounded managed pathfinding, movement route following,
   reservations, cache invalidation, and deterministic local avoidance.
 - Focused EditMode passed 1313/1313; stock path semantics remain unresolved.
+
+## 2026-08-13 - M4-C5 combat abilities foundation
+
+- Created the C5 branch from exact C4 main and added deterministic proposal /
+  commit combat and generic ability contracts.
+- Current EditMode XML passed 1342/1342; no renderer, writer, ProjectBaseline,
+  or original-runtime compatibility claim was added.
 ## 2026-08-13 - M4-C4 commands missions targeting autonomy
 
 - Created C4 from exact main `230ad313257b73e62b7ef48ec8afadc9c8b83e43`.

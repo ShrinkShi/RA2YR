@@ -550,3 +550,12 @@ selection remains unresolved and produces `CompleteWithFailures`.
   precedence.
 - Manual/Assisted/Automatic policies remain project contracts, not stock AI
   proof; combat and economy are deferred.
+
+## 2026-08-13 - M4-C5 combat and ability boundary
+
+- Keep attack proposals, validation, damage events, and canonical health/death
+  commit as separate deterministic stages; worker evaluation never mutates
+  authoritative health.
+- Generic ability utility and retreat/crush proposals are explicitly gated by
+  autonomy capabilities and bounded profiles. Stock combat semantics remain
+  unresolved and no ProjectBaseline data was read.

@@ -1228,30 +1228,40 @@ entries:
   - id: combat.weapons-warheads
     domain: gameplay
     feature: "Weapons, warheads, armor, Verses, range damage, and falloff"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.CombatAbilitiesTests.AttackRequiresRangeAndTargetValidity"
+      - "RA2YR.Tests.EditMode.Simulation.CombatAbilitiesTests.AttackHonorsCooldownAndEmitsDamageOnlyAfterValidation"
+      - "RA2YR.Tests.EditMode.Simulation.CombatAbilitiesTests.DamageCommitCanonicalOrderAndDeathAreDeterministic"
+    evidence:
+      - "docs/compatibility/evidence/m4c5-combat-abilities-synthetic-20260813.yml#contracts"
     limitations: []
   - id: combat.projectiles-timing
     domain: gameplay
     feature: "Projectiles, Burst, ROF, trajectories, and deterministic impact ordering"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.CombatAbilitiesTests.CooldownArithmeticIsCheckedAndImmutable"
+    evidence:
+      - "docs/compatibility/evidence/m4c5-combat-abilities-synthetic-20260813.yml#contracts"
     limitations: []
   - id: combat.targeting
     domain: gameplay
     feature: "Target selection, ground/air/sea legality, turret, and firing FLH"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.CombatAbilitiesTests.AbilityCandidateOrderingIsStable"
+    evidence:
+      - "docs/compatibility/evidence/m4c5-combat-abilities-synthetic-20260813.yml#contracts"
     limitations: []
   - id: combat.veterancy-death
     domain: gameplay
     feature: "Experience, veterancy, hit reactions, death results, and remains"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可解析", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.CombatAbilitiesTests.DamageCommitCanonicalOrderAndDeathAreDeterministic"
+    evidence:
+      - "docs/compatibility/evidence/m4c5-combat-abilities-synthetic-20260813.yml#contracts"
     limitations: []
   - id: economy.resources-harvest
     domain: gameplay
