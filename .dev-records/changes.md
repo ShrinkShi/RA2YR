@@ -700,3 +700,16 @@ payload or path is published.
 - Added a read-only C1-C7 vertical integration service and sanitized wrapper.
 - Executed the configured ProjectBaseline source: 200 IsoMap candidates (200 successful, 1 failed), 184 exact Preview candidates, zero named TMP candidates, and zero fully bound terrain documents.
 - Classified the result as `CompleteWithFailures`; no original-runtime or clean YR 1.001 claim was promoted.
+## 2026-08-13 - M3 final closeout
+
+- Recorded the merged M3 chain through PR #46, PR #47, and PR #48 on final main
+  `82e2c6a46f842d09ee9786657065c942753cc435`.
+- Recorded final validation facts: EditMode 1260/1260, PlayMode 1/1,
+  PS5.1/PS7 repository and copyright gates, regressions, wrappers, and
+  post-main Repository safety `31670085049` all passed.
+- Kept the C8 ProjectBaseline result truthful as `CompleteWithFailures` with
+  200 IsoMap candidates, 184 Preview candidates, unresolved terrain binding,
+  stable source fingerprint, and sanitized aggregate output only.
+- This is a docs/dev-records closeout only. No code, tests, compatibility
+  evidence level, or research dossier was changed; M4 and runtime semantic
+  work were not started.

@@ -1,8 +1,9 @@
 # RA2YR
 
-## M3-C8 real-map integration and M3 closeout
+## M3 final closeout: real-map integration and read-only foundation
 
-The current work package composes the existing bounded C1-C7 readers into a
+M3 is complete at the read-only foundation and aggregate-observation level.
+The final work package composes the existing bounded C1-C7 readers into a
 read-only ProjectBaseline vertical integration observation. Packed candidates,
 Preview exact streams, theater/TMP availability, and C7 terrain binding are
 reported as separate aggregate stages; unresolved terrain binding remains a
@@ -18,7 +19,7 @@ original-runtime compatibility claim is included.
 
 基于 Unity 的《红色警戒 2：尤里的复仇》v1.001 数据驱动兼容引擎。
 
-> 项目目前处于 M3-C7 read-only terrain composition 阶段，尚不可玩。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
+> M3 已完成仓库基础设施与只读聚合观察，但项目尚不可玩。原版运行时兼容、干净 YR 1.001 等价性、渲染、运行时 TMP/theater 语义、寻路、游戏逻辑和 writer 仍未完成。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
 ## 项目定位
 
