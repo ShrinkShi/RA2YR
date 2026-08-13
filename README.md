@@ -24,7 +24,7 @@ original-runtime compatibility claim is included.
 M4 governance now defines a Unity-free deterministic data-oriented ECS,
 single-authority deterministic commit, first-class Manual/Assisted/Automatic
 unit autonomy, and legal observation-to-command computer-agent interfaces.
-M4 production implementation now includes C1-C5 deterministic simulation
+M4 production implementation now includes C1-C7 deterministic simulation
 foundations; Neural/Hybrid policies remain future contracts and no trained model
 is included. See [M4 simulation architecture](docs/architecture/m4-deterministic-simulation.md)
 and [ADR-0031](docs/adr/0031-m4-deterministic-simulation-governance.md).
