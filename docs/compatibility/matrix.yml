@@ -1140,9 +1140,11 @@ entries:
   - id: simulation.tick-clock
     domain: gameplay
     feature: "15 ticks/second clock independent of Unity frame rate"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.DeterministicEcsKernelTests.FixedClockDoesNotUseFrameDelta"
+    evidence:
+      - "docs/compatibility/evidence/m4c1-deterministic-ecs-synthetic-20260813.yml#implementation"
     limitations: []
   - id: simulation.integer-space
     domain: gameplay
@@ -1154,9 +1156,12 @@ entries:
   - id: simulation.rng-order
     domain: gameplay
     feature: "Versioned deterministic RNG, IDs, update order, and state hashes"
-    status: { implementation: "未实现", original_comparison: "未实现", roundtrip: "未实现" }
-    tests: []
-    evidence: []
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.DeterministicEcsKernelTests.RngIsExplicitAndRepeatablePerStream"
+      - "RA2YR.Tests.EditMode.Simulation.DeterministicEcsKernelTests.StateHashIsCanonicalAndChangesWithState"
+    evidence:
+      - "docs/compatibility/evidence/m4c1-deterministic-ecs-synthetic-20260813.yml#contracts"
     limitations: []
   - id: movement.occupancy-foundation
     domain: gameplay

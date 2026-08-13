@@ -36,3 +36,4 @@ that supersedes the old one instead of silently rewriting history.
 | 0029 | Read-only map terrain composition remains profile-explicit | Accepted for synthetic/configured implementation |
 | 0030 | M3-C8 real-map integration remains aggregate and fail-closed | Accepted for patched-development ProjectBaseline observation |
 | 0031 | M4 deterministic simulation and agent boundaries | Accepted as M4 governance and project-enhancement architecture |
+| 0032 | M4-C1 deterministic ECS kernel | Accepted for project-enhancement implementation |

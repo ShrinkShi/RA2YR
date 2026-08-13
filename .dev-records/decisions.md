@@ -518,3 +518,11 @@ Map terrain composition preserves raw IsoMap Level, TMP Height/Ramp/Terrain fiel
 M3-C8 reuses existing bounded audits and preserves stage independence. Packed
 success does not imply terrain binding success; missing map-driven TMP/registry
 selection remains unresolved and produces `CompleteWithFailures`.
+## 2026-08-13 - M4-C1 deterministic ECS boundary
+
+- Keep `RA2YR.Simulation` Unity-free and reference Core only.
+- Use generation-checked IDs, bounded component stores, ordered structural
+  commands, immutable snapshots, explicit scheduler phases, and canonical
+  state hashes as the deterministic reference contract.
+- Manual/Assisted/Automatic autonomy is explicit policy data; no tactical
+  gameplay or original-runtime compatibility is inferred.

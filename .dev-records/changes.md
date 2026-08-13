@@ -731,3 +731,14 @@ payload or path is published.
 - External and tracked requirements copies have identical SHA-256.
 - This remains a documentation/governance change; Unity simulation tests were
   not run because no production simulation code changed.
+## 2026-08-13 - M4-C1 deterministic ECS kernel
+
+- Added the Unity-free `RA2YR.Simulation` assembly with generation-checked
+  entities, bounded value-type component stores, ordered structural commands,
+  fixed logical time, deterministic scheduling and explicit RNG streams.
+- Added immutable snapshots, canonical state hashes, stable proposal ordering,
+  managed sequential proposal evaluation, and Manual/Assisted/Automatic
+  autonomy contracts.
+- Current EditMode result for the implementation tree: 1275/1275 passed;
+  these are synthetic project-enhancement tests and not original-runtime
+  compatibility evidence. No ProjectBaseline packed data was read.
