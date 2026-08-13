@@ -74,6 +74,14 @@ semantic binding, passability, pathfinding, unit movement, deterministic
 simulation, gameplay, writer, or roundtrip compatibility. The configured
 ProjectBaseline remains a patched development corpus.
 
+## M4 governance
+
+- [x] Refresh the tracked three-stage requirements and record its external
+  synchronization source and evidence-state layers.
+- [x] Define the Unity-free deterministic ECS, deterministic commit barrier,
+  tactical autonomy, and legal computer-agent boundary.
+- [ ] Implement M4-C1 deterministic ECS/intelligence kernel.
+
 ## 待处理
 - [x] 使用 Unity 2022.3.60f1c1 从 M3-C1 交付 HEAD 重新运行 focused/full Unity 门禁（历史 M3-C1 交付记录）。
 - [x] 提交并推送 M3-C1 contract、behavior matrix 和 delivery-state 修复，更新 Draft PR #36；PR #36 已合并。

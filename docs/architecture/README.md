@@ -32,6 +32,35 @@ Core assemblies use `noEngineReferences: true` and must not reference
 The rule is enforced by assembly definitions, dependency tests, and a
 headless test path that can execute core behavior without loading a scene.
 
+## M4 simulation architecture
+
+M4 uses a deterministic data-oriented ECS as the authoritative simulation
+boundary. The dependency direction is:
+
+```text
+Formats / Content Core → Simulation descriptors → RA2YR.Simulation
+                       → Presentation Adapter → Unity
+```
+
+`RA2YR.Simulation` must remain Unity-free. Entity identity, logical time,
+occupancy, commands, combat results, and state hashes are not derived from
+GameObjects, render frames, physics components, or NavMesh. Unity DOTS/Jobs/Burst
+may be optional execution backends only.
+
+Authoritative work follows `single logical authority + parallel compute +
+deterministic commit`: inputs are canonicalized, a read-only snapshot is
+evaluated, proposals are computed sequentially or in parallel, then stably
+ordered and committed by one logical authority before the state hash is emitted.
+Workers never mutate the world directly.
+
+Unit tactical autonomy and computer AI are capability and interface layers above
+the simulation. `Manual | Assisted | Automatic` is a permanent autonomy mode;
+player commands and `AutonomyEnvelope` are explicit authority boundaries.
+Computer policies receive immutable legal observations and emit validated command
+requests. RuleBased remains the deterministic fallback; Neural/Hybrid are future
+policy backends and never simulation authorities. Training telemetry is separate
+from authoritative replay state.
+
 Content names are also independent of host file-system enumeration. Logical
 paths use `/`, `OrdinalIgnoreCase` identity, preserved physical filename case,
 explicit stable ordering, and fail-closed priority ambiguity. Source IDs are

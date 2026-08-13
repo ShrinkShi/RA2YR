@@ -776,3 +776,14 @@ promotion was introduced.
   binding, rendering, passability, pathfinding, gameplay, writer/roundtrip,
   clean YR 1.001 equivalence, and original-runtime validation remain future
   scope; M4 has not started.
+## 2026-08-13 - M4 P0 governance refresh
+
+- Confirmed the external three-stage requirements document exists at
+  `E:\时锐\RA2\RA2YR-unity\三阶段开发需求分析.md` and matches the tracked
+  canonical copy `docs/requirements/三阶段开发需求分析.md` byte-for-byte.
+- Added explicit Requirement / Compatibility Target / Current Implementation
+  State / Evidence State / Project Enhancement / Future Research layers.
+- Recorded M3 as complete at foundation/read-only aggregate level and added the
+  M4 deterministic ECS, single-authority commit, tactical autonomy, legal-agent
+  observation, and future neural policy boundaries. No simulation production
+  code was added.

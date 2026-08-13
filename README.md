@@ -21,6 +21,13 @@ original-runtime compatibility claim is included.
 
 > M3 已完成仓库基础设施与只读聚合观察，但项目尚不可玩。原版运行时兼容、干净 YR 1.001 等价性、渲染、运行时 TMP/theater 语义、寻路、游戏逻辑和 writer 仍未完成。仓库不包含原版游戏素材，也不提供临时单位、临时地图或替代素材。
 
+M4 governance now defines a Unity-free deterministic data-oriented ECS,
+single-authority deterministic commit, first-class Manual/Assisted/Automatic
+unit autonomy, and legal observation-to-command computer-agent interfaces.
+M4 production implementation has not yet started; Neural/Hybrid policies remain
+future contracts and no trained model is included. See [M4 simulation architecture](docs/architecture/m4-deterministic-simulation.md)
+and [ADR-0031](docs/adr/0031-m4-deterministic-simulation-governance.md).
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。
