@@ -51,6 +51,9 @@ namespace RA2YR.Tests.EditMode
         [Test] public void IndexedUploadRejectsInvalidRawPalette()
         { byte[] palette = new byte[768]; palette[0] = 64; Assert.Throws<ArgumentOutOfRangeException>(() => IndexedTextureFactory.Build(new byte[] { 0 }, 1, 1, palette, PaletteDisplayProfile.ShiftLeftTwo)); }
 
+        [Test] public void UnsupportedSpriteFrameUsesExplicitPlaceholder()
+        { IndexedSpriteUploadResult result = IndexedSpriteRenderer.Upload(false, null, 0, 0, null, PaletteDisplayProfile.Unresolved); try { Assert.IsTrue(result.IsPlaceholder); Assert.IsNotNull(result.Resource); StringAssert.Contains("UnsupportedVisual", result.Diagnostic); } finally { if (result.Resource != null) result.Resource.Destroy(); } }
+
         [Test] public void MaterialPolicyMapsTranslucentDepthState()
         { Material material = Material(); if (material == null) Assert.Ignore("No test shader available."); try { UnityMaterialPolicy.Apply(material, PresentationAlphaMode.Translucent, PresentationDepthTestMode.TestAndWrite); Assert.AreEqual(1f, material.GetFloat("_ZWrite")); Assert.AreEqual((int)BlendMode.SrcAlpha, material.GetInt("_SrcBlend")); } finally { UnityEngine.Object.DestroyImmediate(material); } }
 
@@ -59,6 +62,9 @@ namespace RA2YR.Tests.EditMode
 
         [Test] public void CameraAdapterRejectsOutOfRangeZoom()
         { UnityIsometricCameraAdapter adapter = new UnityIsometricCameraAdapter(new UnityCameraAdapterPolicy(2f, 5f)); Assert.Throws<ArgumentOutOfRangeException>(() => adapter.SetZoom(1f)); Assert.Throws<ArgumentOutOfRangeException>(() => adapter.SetZoom(6f)); }
+
+        [Test] public void CameraAdapterKeepsViewportAspectExplicit()
+        { UnityIsometricCameraAdapter adapter = new UnityIsometricCameraAdapter(); adapter.SetViewportAspect(1.5f); Assert.AreEqual(1.5f, adapter.ViewportAspect); Assert.Throws<ArgumentOutOfRangeException>(() => adapter.SetViewportAspect(0f)); }
 
         [Test] public void ExposedVoxelBuilderUsesBoundedSurfaceMesh()
         { VxlMeshBuildResult result = VxlExposedFaceMeshBuilder.Build(new[] { new VoxelRenderCell(0, 0, 0, 1) }); try { Assert.IsTrue(result.IsSuccess); Assert.AreEqual(24, result.Mesh.vertexCount); Assert.AreEqual(36, result.Mesh.triangles.Length); } finally { if (result.Mesh != null) UnityEngine.Object.DestroyImmediate(result.Mesh); } }

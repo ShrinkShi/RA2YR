@@ -132,6 +132,25 @@ namespace RA2YR.UnityIntegration
         }
     }
 
+    public sealed class IndexedSpriteUploadResult
+    {
+        internal IndexedSpriteUploadResult(IndexedTextureResource resource, bool placeholder, string diagnostic) { Resource = resource; IsPlaceholder = placeholder; Diagnostic = diagnostic; }
+        public IndexedTextureResource Resource { get; }
+        public bool IsPlaceholder { get; }
+        public string Diagnostic { get; }
+    }
+
+    public static class IndexedSpriteRenderer
+    {
+        public static IndexedSpriteUploadResult Upload(bool decoderSucceeded, byte[] indices, int width, int height, byte[] paletteRaw, PaletteDisplayProfile profile)
+        {
+            if (decoderSucceeded) return new IndexedSpriteUploadResult(IndexedTextureFactory.Build(indices, width, height, paletteRaw, profile), false, null);
+            // Generated magenta marker is a repo-safe placeholder, never a compatibility success.
+            IndexedTextureResource placeholder = IndexedTextureFactory.Build(new byte[] { 255 }, 1, 1, null, PaletteDisplayProfile.Unresolved);
+            return new IndexedSpriteUploadResult(placeholder, true, "UnsupportedVisual: strict legacy frame was not renderable.");
+        }
+    }
+
     public static class UnityMaterialPolicy
     {
         public static void Apply(Material material, PresentationAlphaMode alpha, PresentationDepthTestMode depth)

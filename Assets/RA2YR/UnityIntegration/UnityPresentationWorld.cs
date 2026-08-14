@@ -80,7 +80,7 @@ namespace RA2YR.UnityIntegration
             if (!result.IsSuccess) return result;
             GameObject target;
             if (!chunks.TryGetValue(chunk.StableIdentity, out target)) { target = new GameObject("TerrainChunk_" + chunk.StableIdentity); target.transform.SetParent(transform, false); target.AddComponent<MeshFilter>(); target.AddComponent<MeshRenderer>(); chunks.Add(chunk.StableIdentity, target); }
-            target.GetComponent<MeshFilter>().sharedMesh = result.Mesh; return result;
+            MeshFilter filter = target.GetComponent<MeshFilter>(); Mesh previous = filter.sharedMesh; filter.sharedMesh = result.Mesh; if (previous != null && previous != result.Mesh) DestroyObject(previous); return result;
         }
 
         public void ClearSubmissions()
