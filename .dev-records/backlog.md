@@ -381,7 +381,8 @@ turn Unity presentation state into simulation authority.
 
 - [x] Add explicit cadence scheduling and Simulation state-hash equivalence.
 - [x] Cover bounded 500/1000/2000 entity tiers and Unity controller smoke.
-- [x] Current code-head EditMode 1657/1657 and PlayMode 3/3 passed.
+- [x] Current code-head EditMode 1657/1657 and PlayMode 3/3 passed, covering
+  15 behavior methods and 17 defined NUnit executions.
 - [ ] Draft PR exact-head Repository safety and final M6 closeout remain.
 - [ ] Wall-clock GPU FPS, original UI/network/map loading, writer, and M7 remain
   out of scope.

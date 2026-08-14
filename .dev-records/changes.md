@@ -947,5 +947,6 @@ payload or path is published.
 - Added 500/1000/2000 entity synthetic tiers, descriptor budgets, aggregate
   hashes, and a Unity controller that composes the existing world/client
   adapters without a simulation loop.
-- Current code-head EditMode is 1657/1657 passed, including 17 C8 behavior
-  methods; PlayMode is 3/3 passed. No ProjectBaseline packed data was read.
+- Current code-head EditMode is 1657/1657 passed, covering 15 C8 behavior
+  methods and 17 defined NUnit executions; PlayMode is 3/3 passed. No
+  ProjectBaseline packed data was read.

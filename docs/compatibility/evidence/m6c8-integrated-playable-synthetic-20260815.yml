@@ -8,7 +8,8 @@ contracts:
   equivalence: "state hashes match with and without presentation assembly"
   stress: "bounded 500/1000/2000 entity synthetic tiers"
 tests:
-  core_behavior_methods: 17
+  core_behavior_methods: 15
+  defined_nunit_executions: 17
   current_head_edit_mode_total: 1657
   current_head_edit_mode_passed: 1657
   current_head_edit_mode_failed: 0
