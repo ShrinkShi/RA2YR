@@ -2,7 +2,8 @@
     "name": "RA2YR.Tests.PlayMode",
     "rootNamespace": "RA2YR.Tests.PlayMode",
     "references": [
-        "RA2YR.UnityIntegration"
+        "RA2YR.UnityIntegration",
+        "RA2YR.Presentation"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
