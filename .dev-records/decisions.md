@@ -658,3 +658,11 @@ separate explicit contracts in the Unity-free Presentation assembly. Preserve
 logical entries when visual submission is hidden or unresolved, and never use
 shadow descriptors as occupancy or pathfinding authority. M6-C5 reuses the
 managed RawLzo1X backend and adds no codec or writer.
+
+## M6-C6 decision
+
+Keep Unity resource ownership in one central `UnityPresentationWorld` and keep
+the Presentation/Simulation assemblies Unity-free. Cache keys include provider,
+palette/profile, variant, representation, frame, and remap identity. Use shared
+material profiles, one terrain mesh per chunk, and one bounded exposed-face mesh
+for synthetic VXL geometry; none of these resources enter simulation authority.

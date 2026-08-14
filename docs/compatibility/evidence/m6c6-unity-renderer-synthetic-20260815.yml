@@ -1,0 +1,38 @@
+schema_version: 1
+evidence_id: m6c6-unity-renderer-synthetic-20260815
+status: synthetic
+scope: "M6-C6 Unity renderer integration foundation"
+contracts:
+  world: "central UnityPresentationWorld owns bounded object/effect/chunk lifecycle"
+  cache: "composite deterministic key, explicit capacity and eviction"
+  indexed: "indexed source texture plus optional 256x1 palette lookup with explicit display profile"
+  terrain: "one mesh object per terrain chunk"
+  voxel: "bounded exposed-face mesh with no voxel GameObjects"
+  camera: "presentation-only orthographic pan/zoom adapter"
+tests:
+  renderer_edit_mode_behavior_methods: 29
+  current_head_full_edit_mode_total: 1601
+  current_head_full_edit_mode_passed: 1601
+  current_head_full_edit_mode_failed: 0
+  current_head_full_edit_mode_skipped: 0
+  current_head_full_edit_mode_inconclusive: 0
+  current_head_full_edit_mode_xml: "TestResults/20260814T174428531Z-583158bc7d0247609fcfdeebc7017619/EditMode/results.xml"
+  current_head_play_mode_total: 2
+  current_head_play_mode_passed: 2
+  current_head_play_mode_failed: 0
+  current_head_play_mode_skipped: 0
+  current_head_play_mode_inconclusive: 0
+  current_head_play_mode_xml: "TestResults/20260814T174548393Z-997ef62f5f174594b55387d96497f040/PlayMode/results.xml"
+provenance:
+  synthetic_fixture: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+architecture:
+  presentation_assembly_unity_free: true
+  simulation_mutation: false
+  one_gameobject_per_tile: false
+  one_gameobject_per_voxel: false
+  cache_in_simulation_hash: false
+limitations:
+  - "No ProjectBaseline packed visual payload was read or published."
+  - "Full shader, camera, palette, TMP/theater, SHP compatibility, and original renderer parity remain unresolved."

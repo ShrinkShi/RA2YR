@@ -917,3 +917,14 @@ payload or path is published.
   retained and marked non-submittable; shadows never affect occupancy.
 - Current synthetic EditMode evidence is 1572/1572 passed, including 24 C5
   behavior methods. No ProjectBaseline packed visual data was read.
+
+## 2026-08-15 - M6-C6 Unity renderer integration
+
+- Added UnityIntegration `VisualAssetCache`, explicit indexed texture/palette
+  lookup factory, shared material policy, central presentation world, camera
+  adapter, and bounded exposed-face VXL mesh builder.
+- Added synthetic EditMode coverage for cache, palette, world lifecycle,
+  terrain chunk mesh reuse, depth mapping, and voxel geometry; PlayMode smoke
+  confirms the central world lifecycle.
+- Current code-head EditMode evidence is 1601/1601 passed and PlayMode is 2/2
+  passed. No ProjectBaseline packed visual data was read.
