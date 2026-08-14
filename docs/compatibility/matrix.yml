@@ -1740,6 +1740,19 @@ entries:
       - id: visual.interactive-client-runtime-unresolved
         status: "已知限制"
         description: "Original UI layout, camera raycast behavior, network input, palette/TMP/theater binding, weather rendering, gameplay authority, and original-runtime interaction parity remain unresolved; ProjectBaseline packed data was not read."
+  - id: visual.integrated-playable-presentation
+    domain: visual
+    feature: "Integrated Simulation-to-Presentation-to-Unity client loop with explicit cadence and state-hash equivalence"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.M6C8PlayablePresentationTests"
+      - "RA2YR.Tests.PlayMode.M6C8PlayableSmokeTests.SyntheticPlayableControllerRunsWithoutSimulationLoop"
+    evidence:
+      - "docs/compatibility/evidence/m6c8-integrated-playable-synthetic-20260815.yml#contracts"
+    limitations:
+      - id: visual.integrated-playable-runtime-unresolved
+        status: "已知限制"
+        description: "Cadence is a deterministic scheduling profile rather than a wall-clock GPU benchmark; original UI/network/map loading, runtime parity, and M7 content remain unresolved. ProjectBaseline packed data was not read."
   - id: visual.vxl-hva
     domain: visual
     feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"

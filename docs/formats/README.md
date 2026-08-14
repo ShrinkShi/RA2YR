@@ -23,3 +23,4 @@ promoted only by the tests and local comparisons required for that entry.
 - [Effects, depth, shadow, and fog presentation foundation](effects-depth-fog-presentation.md)
 - [Unity renderer integration foundation](unity-renderer-integration.md)
 - [Interactive client foundation](interactive-client.md)
+- [Integrated playable presentation closeout](integrated-playable-presentation.md)

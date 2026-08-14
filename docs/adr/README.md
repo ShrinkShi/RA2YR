@@ -58,4 +58,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0051 | M6-C5 effects, depth, shadow, and fog presentation foundation | Accepted for synthetic/configured implementation |
 | 0052 | M6-C6 Unity renderer integration foundation | Accepted for synthetic/configured implementation |
 | 0053 | M6-C7 interactive client foundation | Accepted for synthetic/configured implementation |
+| 0054 | M6-C8 integrated playable presentation closeout | Accepted for synthetic/configured implementation |
 | 0043 | M5-C4 structures and placement foundation | Accepted for project-enhancement implementation |

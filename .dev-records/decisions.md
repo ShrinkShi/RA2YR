@@ -674,3 +674,10 @@ snapshots. Visibility, selection, pointer projection, HUD, production, and
 placement remain explicit models; only the Human command gateway may submit
 `CommandRequest` values to the existing Simulation queue. Unity input does not
 advance simulation and no client profile becomes gameplay authority.
+
+## M6-C8 decision
+
+Use a checked cadence profile and state-hash equivalence harness for the
+integrated playable proof. Presentation assembly may consume snapshots and
+Unity may own resources, but neither may advance or author Simulation state.
+Cadence is a deterministic scheduling contract, not a wall-clock GPU claim.
