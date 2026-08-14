@@ -928,3 +928,14 @@ payload or path is published.
   confirms the central world lifecycle.
 - Current code-head EditMode evidence is 1603/1603 passed and PlayMode is 2/2
   passed. No ProjectBaseline packed visual data was read.
+
+## 2026-08-15 - M6-C7 interactive client foundation
+
+- Added Unity-free visibility, deterministic selection, bounded isometric pointer
+  projection, Human `CommandRequest` gateway, HUD snapshot, production panel,
+  placement preview, and lighting/weather profiles.
+- Added a UnityInteractiveClient adapter with bounded pick targets and no
+  simulation tick or per-entity Update loop.
+- Current code-head EditMode is 1640/1640 passed, including 37 C7 behavior
+  methods (29 Core and 8 Unity adapter); PlayMode is 2/2 passed. No
+  ProjectBaseline packed data was read.

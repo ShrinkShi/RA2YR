@@ -630,3 +630,25 @@ terrain/visual data was read.
   ordering, and clean YR runtime comparison remain unresolved.
 - No ProjectBaseline packed visual payload was read; generated textures,
   materials, meshes, and camera state are repository-safe test resources.
+
+## 2026-08-15 - M6-C7 Unity adapter assembly reference
+
+### 现象
+
+The first C7 compile could not resolve Simulation types from the Unity adapter.
+
+### 根因
+
+`RA2YR.UnityIntegration.asmdef` referenced Core and Presentation but not the
+existing Simulation assembly.
+
+### 解决方案
+
+Added the explicit Simulation assembly reference and disambiguated Unity's
+`QueueMode` from `RA2YR.Simulation.QueueMode`.
+
+### 验证方式
+
+Current-head EditMode 1640/1640 and PlayMode 2/2 passed. The failed compile and
+one corrected synthetic test remain historical local attempts, not success
+evidence.

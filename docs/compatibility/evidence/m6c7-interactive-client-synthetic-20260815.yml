@@ -1,0 +1,43 @@
+schema_version: 1
+evidence_id: m6c7-interactive-client-synthetic-20260815
+status: synthetic
+scope: "M6-C7 interactive client foundation"
+contracts:
+  visibility: "explicit visible/fogged/shrouded/unknown states with bounded diagnostics"
+  selection: "deterministic immutable entity selection with explicit budget"
+  pointer: "bounded isometric screen-to-cell projection with explicit tile and viewport profile"
+  commands: "human ClientCommandGateway emits Simulation CommandRequest values"
+  hud: "read-only tick, selection, visibility, queue, credits, and autonomy snapshot"
+  production: "availability blockers remain visible in the production panel model"
+  placement: "explicit occupied/out-of-bounds placement preview"
+  environment: "explicit lighting and weather profile, no renderer authority"
+tests:
+  behavior_methods: 37
+  core_behavior_methods: 29
+  unity_adapter_behavior_methods: 8
+  current_head_edit_mode_total: 1640
+  current_head_edit_mode_passed: 1640
+  current_head_edit_mode_failed: 0
+  current_head_edit_mode_skipped: 0
+  current_head_edit_mode_inconclusive: 0
+  current_head_edit_mode_xml: "TestResults/20260814T182931865Z-c9831325d0224e2a93d195a8f6c39a31/EditMode/results.xml"
+  current_head_edit_mode_forced_post_result_shutdown: false
+  current_head_play_mode_total: 2
+  current_head_play_mode_passed: 2
+  current_head_play_mode_failed: 0
+  current_head_play_mode_skipped: 0
+  current_head_play_mode_inconclusive: 0
+  current_head_play_mode_xml: "TestResults/20260814T183047982Z-75483f9410db43898aeee33644d90949/PlayMode/results.xml"
+  current_head_play_mode_forced_post_result_shutdown: false
+provenance:
+  synthetic_fixture: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+architecture:
+  presentation_assembly_unity_free: true
+  simulation_mutation_from_presentation_loop: false
+  human_commands_use_simulation_queue: true
+  per_entity_update_loop: false
+limitations:
+  - "No ProjectBaseline packed data, original UI, network protocol, or gameplay runtime was read."
+  - "Real camera raycasts, UI widgets, palette/TMP/theater binding, and original interaction parity remain unresolved."

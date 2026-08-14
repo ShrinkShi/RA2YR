@@ -666,3 +666,11 @@ the Presentation/Simulation assemblies Unity-free. Cache keys include provider,
 palette/profile, variant, representation, frame, and remap identity. Use shared
 material profiles, one terrain mesh per chunk, and one bounded exposed-face mesh
 for synthetic VXL geometry; none of these resources enter simulation authority.
+
+## M6-C7 decision
+
+Keep client state as a presentation boundary over immutable Simulation
+snapshots. Visibility, selection, pointer projection, HUD, production, and
+placement remain explicit models; only the Human command gateway may submit
+`CommandRequest` values to the existing Simulation queue. Unity input does not
+advance simulation and no client profile becomes gameplay authority.
