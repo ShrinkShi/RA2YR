@@ -6,9 +6,20 @@ implementation:
   assembly: RA2YR.Presentation
   behavior_methods: 22
   defined_nunit_executions: 22
+  focused_edit_mode_total: 22
+  focused_edit_mode_passed: 22
+  focused_edit_mode_failed: 0
+  focused_edit_mode_xml: "TestResults/m6c1-focused-20260814/EditMode/results.xml"
   edit_mode_total: 1487
   edit_mode_passed: 1487
   edit_mode_failed: 0
+  edit_mode_xml: "TestResults/20260814T072858627Z-e0ab879b9e7c4b89952815d22e5cfffd/EditMode/results.xml"
+  play_mode_total: 1
+  play_mode_passed: 1
+  play_mode_failed: 0
+  play_mode_xml: "TestResults/20260814T072926014Z-df696874ea0f492a8989796b9ab0c2f0/PlayMode/results.xml"
+  unity_wrapper_exit: 0
+  forced_post_result_shutdown: false
   no_engine_references: true
 contracts:
   immutable_presentation_snapshot: true
