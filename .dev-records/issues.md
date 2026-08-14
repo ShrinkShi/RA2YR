@@ -606,4 +606,11 @@ evidence and does not claim a fully bound real map.
   depth-sort, TMP/theater, palette, or renderer parity.
 - The Unity adapter is geometry-only and intentionally creates one bounded
   Mesh per chunk rather than tile GameObjects. No ProjectBaseline packed
-  terrain/visual data was read.
+terrain/visual data was read.
+
+## M6-C4 limits
+
+- Public research does not establish the original runtime family comparator,
+  foundation/depth semantics, or palette parity; C4 remains synthetic/configured.
+- Draw commands are an adapter seam, not a complete renderer, and no
+  ProjectBaseline packed visual payload was read.

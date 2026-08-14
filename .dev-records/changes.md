@@ -896,3 +896,14 @@ payload or path is published.
 - Current code-head EditMode evidence is 1528/1528 passed. ProjectBaseline
   packed terrain/visual data was not read and no new LZO algorithm or writer was
   added.
+
+## 2026-08-14 - M6-C4 object visual presentation
+
+- Added provider-neutral object family descriptors with explicit anchors,
+  independent bounds, elevation layers, attachments, and raw level/height
+  candidates.
+- Added checked camera-independent depth tuple ordering, duplicate and parent
+  diagnostics, and a UnityIntegration draw-command adapter with no GameObject
+  or palette/material creation.
+- Current code-head EditMode evidence is 1548/1548 passed; ProjectBaseline
+  packed visual data was not read.

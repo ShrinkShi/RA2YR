@@ -332,3 +332,15 @@ turn Unity presentation state into simulation authority.
   visual data was read.
 - [ ] TMP/theater semantic binding, palette parity, camera/depth sorting,
   complete renderer behavior, and original-runtime confirmation remain deferred.
+
+## M6-C4 object visual presentation foundation
+
+- [x] Add object families, explicit logical ground anchors, separate visual /
+  culling / selection / occupancy / foundation / shadow bounds, and explicit
+  bridge/air elevation candidates.
+- [x] Add deterministic camera-independent depth tuples, duplicate policy,
+  attachment parent checks, bounded diagnostics, and Unity draw commands.
+- [x] Current code-head EditMode evidence is 1548/1548 passed, including 20
+  C4 behavior methods; no ProjectBaseline packed visual data was read.
+- [ ] Original family comparator, foundation semantics, palette parity, full
+  renderer behavior, and original-runtime confirmation remain deferred.

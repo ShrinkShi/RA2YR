@@ -1,0 +1,31 @@
+schema_version: 1
+evidence_id: m6c4-object-visual-presentation-synthetic-20260814
+status: synthetic
+scope: "M6-C4 object families, anchor/bounds separation, explicit elevation, deterministic depth tuple, and Unity draw commands"
+contracts:
+  descriptors: "stable VisualAssetId, family/pass/layer, logical ground anchor, separate bounds, parent/attachment provenance"
+  depth: "camera-independent checked tuple with explicit tie fields"
+  duplicates: "preserve-and-diagnose or reject policy; no silent winner"
+  unity_adapter: "ordered draw commands only; no GameObject, texture, material, or palette creation"
+tests:
+  behavior_methods: 20
+  defined_nunit_executions: 20
+  current_head_full_edit_mode_total: 1548
+  current_head_full_edit_mode_passed: 1548
+  current_head_full_edit_mode_failed: 0
+  current_head_full_edit_mode_skipped: 0
+  current_head_full_edit_mode_inconclusive: 0
+  current_head_full_edit_mode_xml: "TestResults/20260814T151556470Z-85003237408746329ad8665fc4747d61/EditMode/results.xml"
+provenance:
+  synthetic_fixture: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+architecture:
+  presentation_no_engine_references: true
+  simulation_mutation: false
+  camera_dependent_depth: false
+  automatic_foundation_or_occupancy_inference: false
+  new_lzo_algorithm: false
+limitations:
+  - "Original RA2/YR render-pass order, depth comparator, foundation semantics, palette parity, and renderer behavior remain unresolved."
+  - "No ProjectBaseline packed visual data or payload was read, copied, or published."

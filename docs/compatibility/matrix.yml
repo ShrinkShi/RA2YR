@@ -1681,6 +1681,21 @@ entries:
       - id: visual.terrain-presentation-unresolved
         status: "已知限制"
         description: "TMP/theater binding, palette parity, camera/depth sorting, complete renderer behavior, and original-runtime draw order remain unresolved; ProjectBaseline packed terrain data was not read."
+  - id: visual.object-presentation-foundation
+    domain: visual
+    feature: "Object visual families, anchor and bounds separation, explicit elevation layers, deterministic depth tuples, and Unity draw commands"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.PresentationObjectTests.DescriptorKeepsAnchorAndBoundsAsSeparateContracts"
+      - "RA2YR.Tests.EditMode.PresentationObjectTests.DepthSortIsDeterministicAcrossInputOrder"
+      - "RA2YR.Tests.EditMode.PresentationObjectTests.DuplicateRejectPolicyFailsClosed"
+      - "RA2YR.Tests.EditMode.PresentationObjectTests.DrawAdapterEmitsOrderedCommandsWithoutGameObjects"
+    evidence:
+      - "docs/compatibility/evidence/m6c4-object-visual-presentation-synthetic-20260814.yml#contracts"
+    limitations:
+      - id: visual.object-presentation-runtime-unresolved
+        status: "已知限制"
+        description: "Original render-pass/depth comparator, foundation semantics, palette parity, and renderer behavior remain unresolved; ProjectBaseline packed visual data was not read."
   - id: visual.vxl-hva
     domain: visual
     feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"
