@@ -241,6 +241,13 @@ visibility annotation。Fogged、shrouded 或 unresolved entity 保留在逻辑
 weather/audio、原版 fog grid 和 renderer parity 仍未确认，未读取
 ProjectBaseline packed visual data。
 
+M6-C6 首次在 UnityIntegration 中消费这些 provider-neutral descriptor，加入
+集中式 UnityPresentationWorld、bounded VisualAssetCache、indexed texture 与
+显式 palette lookup、terrain chunk mesh lifecycle、synthetic exposed-face VXL
+mesh，以及 presentation-only camera pan/zoom。Presentation 和 Simulation 仍
+不引用 Unity；没有读取 ProjectBaseline packed visual data，也未声称原版
+renderer/pixel parity。
+
 ## 本地验证
 
 运行 Unity 测试前必须关闭 Unity Editor：

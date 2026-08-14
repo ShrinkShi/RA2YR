@@ -1711,6 +1711,22 @@ entries:
       - id: visual.effects-depth-fog-runtime-unresolved
         status: "已知限制"
         description: "Per-pixel depth, occlusion, shadow projection, fog/shroud grid behavior, palette parity, weather/audio, and original draw order remain unresolved; ProjectBaseline packed visual data was not read."
+  - id: visual.unity-renderer-integration
+    domain: visual
+    feature: "Central Unity presentation world, bounded visual asset cache, indexed palette lookup, terrain chunk meshes, camera adapter, and synthetic exposed-face VXL mesh"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.UnityRendererIntegrationTests.CacheHitReusesResource"
+      - "RA2YR.Tests.EditMode.UnityRendererIntegrationTests.PaletteLookupUsesExplicitDisplayProfile"
+      - "RA2YR.Tests.EditMode.UnityRendererIntegrationTests.TerrainChunkUsesOneMeshObject"
+      - "RA2YR.Tests.EditMode.UnityRendererIntegrationTests.ExposedVoxelBuilderUsesBoundedSurfaceMesh"
+      - "RA2YR.Tests.PlayMode.M6C6RendererSmokeTests.SyntheticPresentationWorldHasCentralLifecycle"
+    evidence:
+      - "docs/compatibility/evidence/m6c6-unity-renderer-synthetic-20260815.yml#contracts"
+    limitations:
+      - id: visual.unity-renderer-runtime-unresolved
+        status: "已知限制"
+        description: "Renderer shader/pixel parity, TMP/theater binding, unsupported SHP flags, original camera/depth comparator, and clean YR runtime comparison remain unresolved; ProjectBaseline packed visual data was not read."
   - id: visual.vxl-hva
     domain: visual
     feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"

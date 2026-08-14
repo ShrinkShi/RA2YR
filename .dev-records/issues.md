@@ -622,3 +622,11 @@ terrain/visual data was read.
   original-runtime draw order remain unresolved.
 - No ProjectBaseline packed visual payload was read or published; no renderer,
   writer, or new LZO algorithm was added.
+
+## M6-C6 limits
+
+- C6 renderer integration is synthetic/configured only. Shader parity, palette
+  parity, TMP/theater binding, unsupported SHP flags, original camera/depth
+  ordering, and clean YR runtime comparison remain unresolved.
+- No ProjectBaseline packed visual payload was read; generated textures,
+  materials, meshes, and camera state are repository-safe test resources.

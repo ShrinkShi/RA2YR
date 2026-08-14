@@ -919,3 +919,12 @@ effect/depth/alpha, shadow separation, and fog/shroud visibility contracts.
 The current synthetic EditMode run is 1572/1572 passed, including 24 C5
 behavior methods; ProjectBaseline packed
 visual data was not read.
+
+## 2026-08-15 - M6-C6
+
+Created `feature/m6-c6-unity-renderer-integration-foundation` from exact
+post-M6-C5 main `7df9055d71226a1cb49b64fcca04d738017a11a6`. Added the central
+Unity presentation world, bounded cache, indexed/palette resources, terrain
+chunk lifecycle, camera adapter, and synthetic VXL exposed-face mesh. Current
+EditMode is 1603/1603 passed and PlayMode is 2/2 passed; ProjectBaseline packed
+visual data was not read.

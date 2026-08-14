@@ -1,0 +1,45 @@
+schema_version: 1
+evidence_id: m6c6-unity-renderer-synthetic-20260815
+status: synthetic
+scope: "M6-C6 Unity renderer integration foundation"
+contracts:
+  world: "central UnityPresentationWorld owns bounded object/effect/chunk lifecycle"
+  cache: "composite deterministic key, explicit capacity and eviction"
+  indexed: "indexed source texture plus optional 256x1 palette lookup with explicit display profile"
+  terrain: "one mesh object per terrain chunk"
+  voxel: "bounded exposed-face mesh with no voxel GameObjects"
+  camera: "presentation-only orthographic pan/zoom adapter"
+tests:
+  renderer_edit_mode_behavior_methods: 31
+  current_head_focused_edit_mode_total: 31
+  current_head_focused_edit_mode_passed: 31
+  current_head_focused_edit_mode_failed: 0
+  current_head_focused_edit_mode_skipped: 0
+  current_head_focused_edit_mode_inconclusive: 0
+  current_head_focused_edit_mode_xml: "TestResults/20260814T175735523Z-5145a62b60d148738a4ebb75ee6aa3d4/EditMode/results.xml"
+  current_head_focused_edit_mode_forced_post_result_shutdown: true
+  current_head_full_edit_mode_total: 1603
+  current_head_full_edit_mode_passed: 1603
+  current_head_full_edit_mode_failed: 0
+  current_head_full_edit_mode_skipped: 0
+  current_head_full_edit_mode_inconclusive: 0
+  current_head_full_edit_mode_xml: "TestResults/20260814T175735523Z-5145a62b60d148738a4ebb75ee6aa3d4/EditMode/results.xml"
+  current_head_play_mode_total: 2
+  current_head_play_mode_passed: 2
+  current_head_play_mode_failed: 0
+  current_head_play_mode_skipped: 0
+  current_head_play_mode_inconclusive: 0
+  current_head_play_mode_xml: "TestResults/20260814T175837440Z-d36bab2e9810432d8fc628e3466479f8/PlayMode/results.xml"
+provenance:
+  synthetic_fixture: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+architecture:
+  presentation_assembly_unity_free: true
+  simulation_mutation: false
+  one_gameobject_per_tile: false
+  one_gameobject_per_voxel: false
+  cache_in_simulation_hash: false
+limitations:
+  - "No ProjectBaseline packed visual payload was read or published."
+  - "Full shader, camera, palette, TMP/theater, SHP compatibility, and original renderer parity remain unresolved."

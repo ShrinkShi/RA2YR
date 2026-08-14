@@ -21,3 +21,4 @@ promoted only by the tests and local comparisons required for that entry.
 - [Terrain palette and isometric presentation foundation](terrain-presentation.md)
 - [Object visual presentation foundation](object-visual-presentation.md)
 - [Effects, depth, shadow, and fog presentation foundation](effects-depth-fog-presentation.md)
+- [Unity renderer integration foundation](unity-renderer-integration.md)
