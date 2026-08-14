@@ -567,6 +567,15 @@ Current Unity EditMode on the repaired tree is 1210/1210 passed. The original
 1198/1205 XML remains historical pre-fix evidence. PlayMode and final pushed
 HEAD delivery gates are still pending until their own current-head artifacts
 exist; no historical XML is reused.
+
+## 2026-08-14 - M6-C1 verification state
+
+- M6-C1 provider-neutral snapshot code compiled and current EditMode completed
+  1487/1487 with 22 presentation behavior methods.
+- The evidence is synthetic/project-enhancement only. No ProjectBaseline packed
+  data was read, and no original-runtime presentation or renderer claim is made.
+- Full M6 delivery gates, PlayMode, and exact-head Repository safety remain
+  pending until the M6-C1 branch is pushed and its Draft PR is created.
 # 2026-08-12 - M3-C6 delivery notes
 
 - The configured patched ProjectBaseline TMP/theater audit completed with

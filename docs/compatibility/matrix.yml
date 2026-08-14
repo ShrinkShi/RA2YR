@@ -1626,6 +1626,24 @@ entries:
     tests: []
     evidence: []
     limitations: []
+  - id: visual.presentation-snapshot-foundation
+    domain: visual
+    feature: "Provider-neutral immutable presentation snapshots, logical asset identity, semantic render passes, and deterministic entity changes"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.PresentationSnapshotTests.VisualAssetIdIsStableLogicalIdentity"
+      - "RA2YR.Tests.EditMode.PresentationSnapshotTests.SnapshotSortIsDeterministicAcrossInputOrder"
+      - "RA2YR.Tests.EditMode.PresentationSnapshotTests.SnapshotReportsCreatedEntity"
+      - "RA2YR.Tests.EditMode.PresentationSnapshotTests.SnapshotReportsPersistedAndDespawnedEntities"
+      - "RA2YR.Tests.EditMode.PresentationSnapshotTests.MissingVisualAssetFailsClosedWithoutFallback"
+      - "RA2YR.Tests.EditMode.PresentationSnapshotTests.AmbiguousProvidersFailClosed"
+      - "RA2YR.Tests.EditMode.PresentationSnapshotTests.InterpolationIsRepeatableWithIntegerFraction"
+    evidence:
+      - "docs/compatibility/evidence/m6c1-presentation-snapshot-synthetic-20260814.yml#contracts"
+    limitations:
+      - id: visual.presentation-snapshot-renderer-deferred
+        status: "已知限制"
+        description: "This is a provider-neutral Unity-free contract; palette, SHP/VXL/HVA conversion, TMP/theater binding, camera, fog, UI, renderer, and original-runtime draw order remain unresolved."
   - id: visual.shp-remap-animation
     domain: visual
     feature: "SHP palette rendering, player remap, animation, and shadows"

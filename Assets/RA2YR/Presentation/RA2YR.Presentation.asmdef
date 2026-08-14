@@ -1,0 +1,17 @@
+{
+    "name": "RA2YR.Presentation",
+    "rootNamespace": "RA2YR.Presentation",
+    "references": [
+        "RA2YR.Core",
+        "RA2YR.Simulation"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

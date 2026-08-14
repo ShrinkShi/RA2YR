@@ -131,6 +131,19 @@ networking, trained Neural AI, campaign/trigger runtime, writer/roundtrip,
 clean YR 1.001 equivalence, or original-runtime confirmation. M6 is now the
 Presentation/Renderer/Interactive Client target.
 
+## M6-C1 presentation snapshot foundation
+
+M6-C1 adds the Unity-free `RA2YR.Presentation` boundary. It consumes immutable
+Simulation snapshots and produces immutable provider-neutral presentation
+descriptors with stable logical `VisualAssetId` values, semantic render-pass
+labels, deterministic ordering, created/persisted/despawned changes, bounded
+diagnostics, explicit missing/ambiguous provider behavior, and checked integer
+interpolation. Presentation never becomes Simulation authority and emits no
+gameplay mutation. Palette binding, SHP/VXL/HVA conversion, TMP/theater
+binding, camera, fog, UI, Unity Texture2D/Sprite/Material/GameObject objects,
+renderer lifecycle, and original-runtime draw-order confirmation remain
+deferred. No ProjectBaseline packed data is read.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

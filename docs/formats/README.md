@@ -16,3 +16,4 @@ promoted only by the tests and local comparisons required for that entry.
 - [TMP and theater registry foundation](tmp-theater.md)
 - [Read-only map terrain composition](map-terrain.md)
 - [M3-C8 real-map integration](m3-c8-real-map-integration.md)
+- [M6-C1 provider-neutral presentation snapshots](presentation-snapshot.md)
