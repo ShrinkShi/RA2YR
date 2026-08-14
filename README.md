@@ -218,6 +218,15 @@ WP-02A 建立目录型来源、显式优先级、来源链和仓库外 manifest�
 
 本轮的 XCC `往返通过` 是明确的语义结果：条目集合、要求保留的顺序和提取负载 SHA-256 一致。XCC 生成归档与本项目重建归档的文件字节并不相同，因此不宣称字节级复原。
 
+### M6-C3 terrain presentation foundation
+
+M6-C3 增加显式的 terrain tile descriptor、checked 等距投影、稳定 chunk
+identity，以及 Unity 侧每 chunk 一个 Mesh 的有界适配器。Core 继续保持
+UnityEngine-free；TMP/theater、palette、相机深度、完整 renderer 和 gameplay
+authority 不在本轮实现。投影轴序、舍入、palette binding 和原始 SubTile/Level
+候选均须显式提供，不根据视觉 plausibility 自动 fallback。该工作包不读取
+ProjectBaseline packed terrain/visual payload，原版 runtime 兼容性仍未确认。
+
 ## 本地验证
 
 运行 Unity 测试前必须关闭 Unity Editor：

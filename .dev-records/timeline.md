@@ -894,3 +894,11 @@ Created `feature/m6-c2-legacy-visual-import-readiness` from exact post-M6-C1
 main `72a9dbc1cfd17bb49d67d7a7077920e5fd093663`. Added raw PAL/SHP reuse and
 VXL/HVA readiness contracts with synthetic tests. Full EditMode current-head
 XML is 1510/1510 passed; ProjectBaseline packed visual data was not read.
+
+## 2026-08-14 — M6-C3
+
+Created `feature/m6-c3-terrain-palette-isometric-presentation` from exact
+post-M6-C2 main `5def9de6164594f95e32febcc299b9abe28f181b`. Added checked
+isometric terrain presentation contracts, deterministic chunking, and the
+UnityIntegration one-mesh-per-chunk adapter. Current EditMode is 1528/1528
+passed; ProjectBaseline packed terrain/visual data was not read.

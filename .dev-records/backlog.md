@@ -319,3 +319,16 @@ turn Unity presentation state into simulation authority.
   behavior methods; no ProjectBaseline packed visual data was read.
 - [ ] Palette parity, normal tables, VXL/HVA semantic composition, Unity visual
   resources, renderer, and original-runtime confirmation remain deferred.
+
+## M6-C3 terrain palette and isometric presentation foundation
+
+- [x] Add Unity-free terrain descriptors preserving raw SubTile/Level/TMP
+  candidates, explicit palette binding metadata, checked projection, and
+  deterministic bounded chunk composition.
+- [x] Add a UnityIntegration one-mesh-per-chunk adapter with no per-tile
+  GameObjects, palette fallback, writer, or simulation mutation.
+- [x] Synthetic current code-head EditMode evidence is 1528/1528 passed,
+  including 17 C3 behavior methods; no ProjectBaseline packed terrain or
+  visual data was read.
+- [ ] TMP/theater semantic binding, palette parity, camera/depth sorting,
+  complete renderer behavior, and original-runtime confirmation remain deferred.

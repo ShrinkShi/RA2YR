@@ -1,0 +1,32 @@
+schema_version: 1
+evidence_id: m6c3-terrain-presentation-synthetic-20260814
+status: synthetic
+scope: "M6-C3 terrain descriptors, checked isometric projection, deterministic chunking, and one-mesh Unity adapter"
+contracts:
+  core: "raw tile/TMP candidates, explicit palette binding, checked projection, stable chunk identity"
+  projection: "explicit axis order and rounding; inverse is a candidate check, not an authority claim"
+  chunking: "bounded cell and diagnostic budgets; source-ordinal ordering"
+  unity_adapter: "one Mesh per chunk; no per-tile GameObject or palette conversion"
+tests:
+  behavior_methods: 17
+  defined_nunit_executions: 17
+  current_head_full_edit_mode_total: 1528
+  current_head_full_edit_mode_passed: 1528
+  current_head_full_edit_mode_failed: 0
+  current_head_full_edit_mode_skipped: 0
+  current_head_full_edit_mode_inconclusive: 0
+  current_head_full_edit_mode_xml: "TestResults/20260814T142455746Z-867704a8ec1447e2905e45e7da157698/EditMode/results.xml"
+provenance:
+  synthetic_fixture: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+architecture:
+  core_no_engine_references: true
+  per_tile_gameobjects: false
+  writer_or_recompressor: false
+  new_lzo_algorithm: false
+  automatic_palette_fallback: false
+limitations:
+  - "TMP/theater semantics, palette parity, camera/depth sorting, and original-runtime draw order remain unresolved."
+  - "The Unity adapter is a bounded geometry foundation, not a complete map renderer."
+  - "No ProjectBaseline packed terrain or visual payload was read, copied, or published."

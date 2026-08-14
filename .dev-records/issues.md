@@ -599,3 +599,11 @@ evidence and does not claim a fully bound real map.
   conflict remain strict decoder boundaries.
 - ProjectBaseline packed visual data was not read; no original-runtime or pixel
   parity claim is made.
+
+## M6-C3 limits
+
+- C3 synthetic projection and chunking do not establish original YR camera,
+  depth-sort, TMP/theater, palette, or renderer parity.
+- The Unity adapter is geometry-only and intentionally creates one bounded
+  Mesh per chunk rather than tile GameObjects. No ProjectBaseline packed
+  terrain/visual data was read.

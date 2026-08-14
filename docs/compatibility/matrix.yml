@@ -1666,6 +1666,21 @@ entries:
       - id: visual.legacy-import-rendering-deferred
         status: "已知限制"
         description: "Raw import readiness does not select palette conversion, normal tables, axis/matrix semantics, renderer resources, SHP unresolved flags, or original-runtime parity."
+  - id: visual.terrain-presentation-foundation
+    domain: visual
+    feature: "Explicit terrain tile descriptors, checked isometric projection, deterministic chunking, and one-mesh Unity adapter"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.MapTerrain.TerrainPresentationTests.ProjectionUsesExplicitXMinusYProfile"
+      - "RA2YR.Tests.EditMode.Formats.MapTerrain.TerrainPresentationTests.ProjectionAxisOrderRemainsExplicit"
+      - "RA2YR.Tests.EditMode.Formats.MapTerrain.TerrainPresentationTests.ComposerUsesStableChunkIdentityAndOrdering"
+      - "RA2YR.Tests.EditMode.Formats.MapTerrain.TerrainPresentationTests.MeshBuilderCreatesOneMeshForManyCells"
+    evidence:
+      - "docs/compatibility/evidence/m6c3-terrain-presentation-synthetic-20260814.yml#contracts"
+    limitations:
+      - id: visual.terrain-presentation-unresolved
+        status: "已知限制"
+        description: "TMP/theater binding, palette parity, camera/depth sorting, complete renderer behavior, and original-runtime draw order remain unresolved; ProjectBaseline packed terrain data was not read."
   - id: visual.vxl-hva
     domain: visual
     feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"
