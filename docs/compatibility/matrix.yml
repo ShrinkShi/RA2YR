@@ -1696,6 +1696,21 @@ entries:
       - id: visual.object-presentation-runtime-unresolved
         status: "已知限制"
         description: "Original render-pass/depth comparator, foundation semantics, palette parity, and renderer behavior remain unresolved; ProjectBaseline packed visual data was not read."
+  - id: visual.effects-depth-fog-presentation
+    domain: visual
+    feature: "Explicit effect alpha/depth policies, shadow receiver separation, deterministic depth tuples, and fog/shroud logical visibility"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.EffectsDepthFogTests.VisibleEffectIsSubmitted"
+      - "RA2YR.Tests.EditMode.EffectsDepthFogTests.FoggedEffectRemainsLogicalButIsNotSubmitted"
+      - "RA2YR.Tests.EditMode.EffectsDepthFogTests.UnknownVisibilityCanBeRejectedExplicitly"
+      - "RA2YR.Tests.EditMode.EffectsDepthFogTests.ShadowIsSeparateAndCannotAffectOccupancy"
+    evidence:
+      - "docs/compatibility/evidence/m6c5-effects-depth-fog-synthetic-20260815.yml#contracts"
+    limitations:
+      - id: visual.effects-depth-fog-runtime-unresolved
+        status: "已知限制"
+        description: "Per-pixel depth, occlusion, shadow projection, fog/shroud grid behavior, palette parity, weather/audio, and original draw order remain unresolved; ProjectBaseline packed visual data was not read."
   - id: visual.vxl-hva
     domain: visual
     feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"

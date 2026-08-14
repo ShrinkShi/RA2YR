@@ -907,3 +907,13 @@ payload or path is published.
   or palette/material creation.
 - Current code-head EditMode evidence is 1548/1548 passed; ProjectBaseline
   packed visual data was not read.
+
+## 2026-08-15 - M6-C5 effects, depth, shadow, and fog presentation
+
+- Added provider-neutral effect and shadow descriptors with explicit alpha,
+  depth-test, receiver-layer, visibility, and source-candidate fields.
+- Added deterministic checked depth composition with bounded effect, shadow,
+  and diagnostic budgets. Logical fogged/shrouded/unresolved entries are
+  retained and marked non-submittable; shadows never affect occupancy.
+- Current synthetic EditMode evidence is 1572/1572 passed, including 24 C5
+  behavior methods. No ProjectBaseline packed visual data was read.

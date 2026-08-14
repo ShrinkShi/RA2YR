@@ -614,3 +614,11 @@ terrain/visual data was read.
   foundation/depth semantics, or palette parity; C4 remains synthetic/configured.
 - Draw commands are an adapter seam, not a complete renderer, and no
   ProjectBaseline packed visual payload was read.
+
+## M6-C5 limits
+
+- M6-C5 is synthetic/configured only. Per-pixel depth, occlusion, projected
+  shadow behavior, fog-grid semantics, palette parity, weather/audio, and
+  original-runtime draw order remain unresolved.
+- No ProjectBaseline packed visual payload was read or published; no renderer,
+  writer, or new LZO algorithm was added.
