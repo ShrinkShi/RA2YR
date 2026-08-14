@@ -611,3 +611,11 @@ selection remains unresolved and produces `CompleteWithFailures`.
 - Combat resolves simultaneous structure damage and explicit terminal state;
   stock YR victory rules, map semantics, rendering, replay serialization, and
   ProjectBaseline packed reads remain excluded.
+## 2026-08-14 - M5-C7 remains bounded synthetic performance evidence
+
+- Keep the single-authority economy and explicit read-only proposal / ordered
+  commit boundary for stress validation.
+- Treat descriptor-cache and linear counter assertions as correctness guards,
+  not as wall-clock or stock YR performance measurements.
+- Do not read ProjectBaseline packed data or promote M5 evidence to original
+  runtime compatibility.

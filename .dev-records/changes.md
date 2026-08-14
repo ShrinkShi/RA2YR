@@ -841,3 +841,16 @@ payload or path is published.
 - Current EditMode tree: 1438/1438 passed, including 12 C6 methods; no
   ProjectBaseline packed data, renderer, map loader, or stock victory claim was
   added.
+
+## 2026-08-14 - M5-C7 performance and correctness closeout
+
+- Added `M5PerformanceCloseoutHarness`, a bounded Unity-free stress contract
+  covering 500, 1000, and 2000 entities across harvesting, production, combat,
+  occupancy, targeting, autonomy, and mixed workloads.
+- The harness preserves one `EconomyAuthority`, separates read-only proposal
+  collection from deterministic commit, caches descriptor parsing, and records
+  bounded operation counters plus a canonical aggregate hash containing
+  credits, cargo, resources, queues, ownership, power, and structure health.
+- Current exact-head Unity result: EditMode 1465/1465, including 27 C7
+  parameterized executions, and PlayMode 1/1. No ProjectBaseline packed data
+  was read; this is not a stock YR performance claim.

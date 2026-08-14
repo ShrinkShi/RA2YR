@@ -264,3 +264,16 @@ comparison, and original-runtime black-box validation.
   was read.
 - [ ] Map loading, stock YR victory rules, replay serialization, renderer,
   networking, and full gameplay remain deferred.
+
+## M5-C7 performance and correctness closeout
+
+- [x] Add bounded 500/1000/2000-entity synthetic stress tiers for harvesting,
+  production, combat, occupancy, targeting, autonomy, and mixed workloads.
+- [x] Keep a single economy authority and deterministic read-only proposal /
+  ordered commit boundary; include checked operation budgets and canonical state
+  hashes covering credits, cargo, resources, queues, ownership, power, and
+  structure health.
+- [x] Current exact-head Unity evidence: C7 suite 27/27 executions inside
+  EditMode 1465/1465; PlayMode 1/1; no ProjectBaseline packed data read.
+- [ ] Wall-clock stock YR benchmarking, map loading, renderer, replay/networking,
+  and M6 remain deferred.

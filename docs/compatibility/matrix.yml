@@ -1548,6 +1548,26 @@ entries:
       - id: simulation.headless-skirmish-synthetic-only
         status: "已知限制"
         description: "The loop is a synthetic bounded reference; map loading, stock YR victory rules, replay serialization, renderer, networking, and original-runtime behavior remain unimplemented."
+  - id: simulation.m5-performance-closeout
+    domain: gameplay
+    feature: "Bounded 500/1000/2000-entity harvesting, production, combat, occupancy, targeting, autonomy, and mixed stress contracts"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.M5PerformanceCloseoutTests.HarvestingStressUsesBoundedAuthoritativeEconomy"
+      - "RA2YR.Tests.EditMode.Simulation.M5PerformanceCloseoutTests.ProductionStressParsesDescriptorsOnceAndUsesDirectFactoryLookups"
+      - "RA2YR.Tests.EditMode.Simulation.M5PerformanceCloseoutTests.CombatStressUsesDeterministicTargetPairs"
+      - "RA2YR.Tests.EditMode.Simulation.M5PerformanceCloseoutTests.OccupancyStressUsesBoundedSpatialQueries"
+      - "RA2YR.Tests.EditMode.Simulation.M5PerformanceCloseoutTests.TargetingStressScalesLinearlyByCandidateCount"
+      - "RA2YR.Tests.EditMode.Simulation.M5PerformanceCloseoutTests.AutonomyStressCommitsReadOnlyProposalsDeterministically"
+      - "RA2YR.Tests.EditMode.Simulation.M5PerformanceCloseoutTests.MixedStressComposesAllBoundedPhases"
+      - "RA2YR.Tests.EditMode.Simulation.M5PerformanceCloseoutTests.RepeatedRunsHaveIdenticalHashesAtStressTier"
+      - "RA2YR.Tests.EditMode.Simulation.M5PerformanceCloseoutTests.OperationBudgetFailsClosedBeforeUnboundedWork"
+    evidence:
+      - "docs/compatibility/evidence/m5c7-performance-closeout-synthetic-20260814.yml#contracts"
+    limitations:
+      - id: simulation.m5-performance-synthetic-only
+        status: "已知限制"
+        description: "Stress results are bounded synthetic correctness evidence, not wall-clock stock YR performance or original-runtime compatibility; map loading, renderer, replay, networking, and M6 remain deferred."
   - id: ai.trigger-types
     domain: ai
     feature: "AITriggerTypes, conditions, weights, cooldowns, and difficulty"
