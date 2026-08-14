@@ -15,7 +15,11 @@ tests:
   current_head_full_edit_mode_failed: 0
   current_head_full_edit_mode_skipped: 0
   current_head_full_edit_mode_inconclusive: 0
-  current_head_full_edit_mode_xml: "TestResults/20260814T151556470Z-85003237408746329ad8665fc4747d61/EditMode/results.xml"
+  current_head_full_edit_mode_xml: "TestResults/20260814T152118372Z-5018663cc4ab4ebc8814feb73e304b9d/EditMode/results.xml"
+  current_head_play_mode_total: 1
+  current_head_play_mode_passed: 1
+  current_head_play_mode_failed: 0
+  current_head_play_mode_xml: "TestResults/20260814T152211627Z-4f7bd1f0a0524e4e979b570075cf258d/PlayMode/results.xml"
 provenance:
   synthetic_fixture: true
   project_baseline_read: false
