@@ -277,3 +277,25 @@ comparison, and original-runtime black-box validation.
   EditMode 1465/1465; PlayMode 1/1; no ProjectBaseline packed data read.
 - [ ] Wall-clock stock YR benchmarking, map loading, renderer, replay/networking,
   and M6 remain deferred.
+
+# M5 COMPLETE
+
+Final M5 main: `2b08c02f22a18d56a07c5746f62219100d325403`.
+
+- [x] C1-C7 deterministic gameplay foundations are merged: economy authority,
+  resources/cargo/refinery, production/technology, structures/placement,
+  economic agent contracts, headless skirmish, and stress correctness.
+- [x] Final Unity evidence remains EditMode 1465/1465 and PlayMode 1/1;
+  post-main Repository safety `31772105206` is `completed / success`.
+- [x] M5 final documentation closeout is recorded on this docs-only branch.
+- [ ] Full YR parity, stock economy parity, map loading, terrain runtime,
+  renderer, player UI, replay/networking, trained Neural AI, campaign runtime,
+  writer/roundtrip, clean YR 1.001 equivalence, and original-runtime
+  confirmation remain deferred.
+
+## M6 current target
+
+M6 is the Presentation / Renderer / Interactive Client campaign. Its
+provider-neutral presentation architecture must consume authoritative
+Simulation snapshots and emit only legal `CommandRequest` values; it must not
+turn Unity presentation state into simulation authority.
