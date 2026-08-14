@@ -49,4 +49,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0042 | M5-C3 production and technology foundation | Accepted for project-enhancement implementation |
 | 0043 | M5-C4 structures and placement foundation | Accepted for project-enhancement implementation |
 | 0044 | M5-C5 economic computer-agent foundation | Accepted for project-enhancement implementation |
+| 0045 | M5-C6 integrated headless skirmish foundation | Accepted for project-enhancement implementation |
 | 0043 | M5-C4 structures and placement foundation | Accepted for project-enhancement implementation |

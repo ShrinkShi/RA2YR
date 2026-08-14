@@ -98,6 +98,14 @@ occupancy, or actors. Neural/ONNX execution, rendering, gameplay, and
 original-runtime AI compatibility remain unimplemented and unconfirmed. No
 ProjectBaseline packed data is read.
 
+M5-C6 adds a bounded two-player headless synthetic loop that composes harvest,
+income, power/factory construction, production, rally, command-stream attack,
+simultaneous combat, structure destruction, defeat, and winner state. It also
+accepts pre-authored human/script `CommandRequest` values without requiring
+ComputerAI. This is not a playable map, stock YR victory-rule implementation,
+renderer, replay serializer, or original-runtime compatibility claim; no
+ProjectBaseline packed data is read.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

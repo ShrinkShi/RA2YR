@@ -603,3 +603,11 @@ selection remains unresolved and produces `CompleteWithFailures`.
   candidates only; proposal evaluation never mutates authoritative state.
 - Strategy profiles alter deterministic priority, not stock YR AI semantics;
   neural/ONNX execution and ProjectBaseline packed reads remain excluded.
+
+## 2026-08-14 - M5-C6 headless skirmish boundary
+
+- The integrated loop is a synthetic bounded reference and reuses
+  `EconomyAuthority` plus the existing `CommandRequest` stream.
+- Combat resolves simultaneous structure damage and explicit terminal state;
+  stock YR victory rules, map semantics, rendering, replay serialization, and
+  ProjectBaseline packed reads remain excluded.
