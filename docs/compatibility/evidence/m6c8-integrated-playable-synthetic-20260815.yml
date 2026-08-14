@@ -14,14 +14,14 @@ tests:
   current_head_edit_mode_failed: 0
   current_head_edit_mode_skipped: 0
   current_head_edit_mode_inconclusive: 0
-  current_head_edit_mode_xml: "TestResults/20260814T185516145Z-d8d5026c468b41de9599f7979ccc01a6/EditMode/results.xml"
+  current_head_edit_mode_xml: "TestResults/20260814T190421388Z-b98e7ff8009a4caf9641ffbc7084c718/EditMode/results.xml"
   current_head_edit_mode_forced_post_result_shutdown: false
   current_head_play_mode_total: 3
   current_head_play_mode_passed: 3
   current_head_play_mode_failed: 0
   current_head_play_mode_skipped: 0
   current_head_play_mode_inconclusive: 0
-  current_head_play_mode_xml: "TestResults/20260814T185542359Z-3f813e7817b743a0bf09632994aa5c54/PlayMode/results.xml"
+  current_head_play_mode_xml: "TestResults/20260814T190647613Z-b0338a3c5eac43f7b950fed1a9ca4a2a/PlayMode/results.xml"
   current_head_play_mode_forced_post_result_shutdown: false
 provenance:
   synthetic_fixture: true
