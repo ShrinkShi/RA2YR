@@ -875,3 +875,12 @@ payload or path is published.
 - Added 22 M6-C1 behavior methods; current EditMode completed 1487/1487.
 - No Simulation mutation, Unity object, renderer, palette conversion, or
   ProjectBaseline packed read was added.
+## M6-C2 legacy visual import readiness
+
+- Added provider-neutral `IndexedImageDescriptor` and explicit palette/remap
+  descriptors while retaining the existing PAL parser and SHP(TS) strict path.
+- Added bounded raw VXL/HVA readers with immutable raw fields, sparse span
+  preservation, explicit HVA order candidates, deterministic exact-name binding,
+  diagnostics, budgets, and canonical input hashes.
+- Current code-head EditMode evidence is 1510/1510 passed; no ProjectBaseline
+  packed visual data was read. No Unity objects or renderer code were added.

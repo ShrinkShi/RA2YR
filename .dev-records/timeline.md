@@ -888,3 +888,9 @@ promotion was introduced.
   `8d95291badddc9df748b1a8e212010fcc3ac3420`.
 - Added the Unity-free presentation snapshot boundary and synthetic tests;
   current EditMode is 1487/1487 passed, with no ProjectBaseline read.
+## 2026-08-14 — M6-C2
+
+Created `feature/m6-c2-legacy-visual-import-readiness` from exact post-M6-C1
+main `72a9dbc1cfd17bb49d67d7a7077920e5fd093663`. Added raw PAL/SHP reuse and
+VXL/HVA readiness contracts with synthetic tests. Full EditMode current-head
+XML is 1510/1510 passed; ProjectBaseline packed visual data was not read.

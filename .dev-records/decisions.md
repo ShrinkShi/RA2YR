@@ -628,3 +628,9 @@ selection remains unresolved and produces `CompleteWithFailures`.
   not as wall-clock or stock YR performance measurements.
 - Do not read ProjectBaseline packed data or promote M5 evidence to original
   runtime compatibility.
+## M6-C2 decision
+
+Keep PAL/SHP reuse and VXL/HVA import provider-neutral. Preserve raw bytes and
+Float32 bit patterns; require explicit palette conversion and HVA record-order
+profiles; reject duplicate binding ambiguity. Rendering, matrix composition,
+normal lookup, and compatibility claims remain outside the raw readers.

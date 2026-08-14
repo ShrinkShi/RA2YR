@@ -1,0 +1,35 @@
+schema_version: 1
+evidence_id: m6c2-legacy-visual-import-synthetic-20260814
+status: synthetic
+scope: "M6-C2 PAL/SHP/VXL/HVA raw import readiness"
+contracts:
+  palette_binding: "explicit logical palette identity and conversion profile"
+  indexed_image: "immutable indexed bytes with separate palette/transparency/remap metadata"
+  shp: "reuses existing strict SHP(TS) reader and decoder"
+  vxl: "802-byte header, 28-byte section headers, bounded sparse spans, 92-byte tailers, raw color/normal indices"
+  hva: "24-byte header, 16-byte names, raw 3x4 Float32 bits, explicit FrameMajor/SectionMajor candidates"
+  binding: "unique exact-name VXL/HVA binding; duplicate names fail closed"
+tests:
+  behavior_methods: 20
+  defined_nunit_executions: 20
+  current_head_full_edit_mode_total: 1510
+  current_head_full_edit_mode_passed: 1510
+  current_head_full_edit_mode_failed: 0
+  current_head_full_edit_mode_skipped: 0
+  current_head_full_edit_mode_inconclusive: 0
+  current_head_full_edit_mode_xml: "TestResults/20260814T085055600Z-cb7adcf5c4c74ac0a47fcfce9fa01ab6/EditMode/results.xml"
+provenance:
+  parser_paths: ["Memory", "bounded Stream", "ReadOnlyDataWindow"]
+  synthetic_fixture: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+architecture:
+  core_no_engine_references: true
+  unity_objects: false
+  writer_or_recompressor: false
+  automatic_palette_fallback: false
+  automatic_hva_order_selection: false
+limitations:
+  - "SHP flags 2 and ProjectBaseline flags-3 row-width conflict remain unresolved."
+  - "VXL normal-table, axis, scale, transform composition and HVA order remain evidence-gated."
+  - "No ProjectBaseline packed visual data, images, palettes, voxel payloads, filenames or paths were read or published."
