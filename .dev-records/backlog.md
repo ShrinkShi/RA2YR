@@ -249,7 +249,7 @@ comparison, and original-runtime black-box validation.
   proposal contracts composing M5-C1 through M5-C4.
 - [x] Add explicit strategy profiles, child execution fail-closed behavior,
   diagnostic budgets, and canonical proposal hashes.
-- [x] Current EditMode tree: 1422/1422 passed; no ProjectBaseline packed data
+- [x] Current EditMode tree: 1426/1426 passed; no ProjectBaseline packed data
   was read.
 - [ ] Neural/ONNX execution, payment/queue mutation, gameplay loop, renderer,
   and original-runtime AI compatibility remain deferred to later scope.

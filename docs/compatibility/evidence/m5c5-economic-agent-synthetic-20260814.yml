@@ -4,9 +4,9 @@ status: SyntheticProjectEnhancement
 source_role: synthetic-test-fixtures
 implementation:
   assembly: RA2YR.Simulation
-  behavior_methods: 12
-  edit_mode_total: 1422
-  edit_mode_passed: 1422
+  behavior_methods: 16
+  edit_mode_total: 1426
+  edit_mode_passed: 1426
   edit_mode_failed: 0
   no_engine_references: true
 contracts:
