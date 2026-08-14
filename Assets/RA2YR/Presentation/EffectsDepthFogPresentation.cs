@@ -177,7 +177,13 @@ namespace RA2YR.Presentation
                 bool submitted = descriptor.Visibility == PresentationVisibilityState.Visible;
                 if (descriptor.Visibility == PresentationVisibilityState.Unknown || descriptor.Visibility == PresentationVisibilityState.Fogged || descriptor.Visibility == PresentationVisibilityState.Shrouded) submitted = false;
                 EffectDepthKey key;
-                try { key = new EffectDepthKey((int)descriptor.ElevationLayer, descriptor.Anchor.Y, descriptor.ExplicitSortAdjust, descriptor.ParentStableId, descriptor.SourceOrdinal, descriptor.StableIdentity, descriptor.DuplicateOrdinal); }
+                try
+                {
+                    // Validate the host-composed depth candidate while keeping
+                    // primary and explicit adjustment as separate sort fields.
+                    long checkedDepth = checked(descriptor.Anchor.Y + descriptor.ExplicitSortAdjust);
+                    key = new EffectDepthKey((int)descriptor.ElevationLayer, descriptor.Anchor.Y, descriptor.ExplicitSortAdjust, descriptor.ParentStableId, descriptor.SourceOrdinal, descriptor.StableIdentity, descriptor.DuplicateOrdinal);
+                }
                 catch (OverflowException) { Fail(diagnostics, execution, policy, EffectPresentationDiagnosticCode.DepthComponentOverflow, "depth", "Effect depth arithmetic exceeded the checked contract.", descriptor.SourceOrdinal); break; }
                 entries.Add(new EffectPresentationEntry(descriptor, key, submitted));
             }
