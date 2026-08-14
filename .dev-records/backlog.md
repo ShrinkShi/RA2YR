@@ -310,3 +310,12 @@ turn Unity presentation state into simulation authority.
   M6-C1 behavior methods; no ProjectBaseline packed data was read.
 - [ ] Palette/SHP/VXL/HVA conversion, TMP/theater binding, camera, fog, UI,
   renderer objects, and original-runtime draw-order confirmation remain deferred.
+
+## M6-C2 legacy visual import readiness
+
+- [x] Reuse the existing strict PAL and SHP(TS) readers; add explicit palette
+  binding, indexed-image, raw VXL/HVA, and exact-name binding contracts.
+- [x] Current exact-head EditMode: 1510/1510 passed, including 20 M6-C2
+  behavior methods; no ProjectBaseline packed visual data was read.
+- [ ] Palette parity, normal tables, VXL/HVA semantic composition, Unity visual
+  resources, renderer, and original-runtime confirmation remain deferred.

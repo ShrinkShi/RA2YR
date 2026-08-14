@@ -1651,6 +1651,21 @@ entries:
     tests: []
     evidence: []
     limitations: []
+  - id: visual.legacy-import-readiness
+    domain: visual
+    feature: "Provider-neutral indexed images, explicit PAL binding, and raw VXL/HVA import/binding"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Formats.VxlHva.LegacyVisualImportTests.IndexedImagePreservesIndicesAndDefensiveCopy"
+      - "RA2YR.Tests.EditMode.Formats.VxlHva.LegacyVisualImportTests.VxlSingleSparseColumnParsesRawVoxel"
+      - "RA2YR.Tests.EditMode.Formats.VxlHva.LegacyVisualImportTests.HvaFrameMajorAndSectionMajorRemainExplicit"
+      - "RA2YR.Tests.EditMode.Formats.VxlHva.LegacyVisualImportTests.BinderRejectsDuplicateHvaNamesAsAmbiguous"
+    evidence:
+      - "docs/compatibility/evidence/m6c2-legacy-visual-import-synthetic-20260814.yml#contracts"
+    limitations:
+      - id: visual.legacy-import-rendering-deferred
+        status: "已知限制"
+        description: "Raw import readiness does not select palette conversion, normal tables, axis/matrix semantics, renderer resources, SHP unresolved flags, or original-runtime parity."
   - id: visual.vxl-hva
     domain: visual
     feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"

@@ -591,3 +591,11 @@ The configured patched ProjectBaseline exposes packed IsoMap/Preview candidates
 but no named TMP candidates and no map-driven terrain candidates. The C8
 aggregate therefore remains `CompleteWithFailures`; this is not original-runtime
 evidence and does not claim a fully bound real map.
+## M6-C2 limits
+
+- VXL normal tables, axis conversion, scale/transform composition, and HVA
+  frame-major versus section-major semantics remain unresolved.
+- SHP flags 2 and the previously documented ProjectBaseline flags-3 row-width
+  conflict remain strict decoder boundaries.
+- ProjectBaseline packed visual data was not read; no original-runtime or pixel
+  parity claim is made.

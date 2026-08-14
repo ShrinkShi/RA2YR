@@ -144,6 +144,18 @@ binding, camera, fog, UI, Unity Texture2D/Sprite/Material/GameObject objects,
 renderer lifecycle, and original-runtime draw-order confirmation remain
 deferred. No ProjectBaseline packed data is read.
 
+## M6-C2 legacy visual import readiness
+
+M6-C2 reuses the strict PAL and SHP(TS) readers and adds Unity-free indexed
+image and palette-binding descriptors plus bounded raw VXL/HVA readers. Raw
+palette bytes, sparse spans, color/normal indices, transforms, names,
+provenance, and canonical hashes remain separate from palette conversion,
+normal tables, axis/matrix semantics, and rendering. HVA frame-major versus
+section-major ordering is explicit and unresolved by default; duplicate
+bindings fail closed. This is synthetic/configured import readiness only. No
+ProjectBaseline packed visual data was read, and no Unity Texture2D, Sprite,
+mesh, palette fallback, or renderer was added.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。
