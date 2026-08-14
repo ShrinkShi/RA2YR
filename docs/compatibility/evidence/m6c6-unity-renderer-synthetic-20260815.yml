@@ -11,6 +11,13 @@ contracts:
   camera: "presentation-only orthographic pan/zoom adapter"
 tests:
   renderer_edit_mode_behavior_methods: 29
+  current_head_focused_edit_mode_total: 29
+  current_head_focused_edit_mode_passed: 29
+  current_head_focused_edit_mode_failed: 0
+  current_head_focused_edit_mode_skipped: 0
+  current_head_focused_edit_mode_inconclusive: 0
+  current_head_focused_edit_mode_xml: "TestResults/M6C6-focused-20260815/results.xml"
+  current_head_focused_edit_mode_forced_post_result_shutdown: true
   current_head_full_edit_mode_total: 1601
   current_head_full_edit_mode_passed: 1601
   current_head_full_edit_mode_failed: 0
