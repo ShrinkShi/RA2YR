@@ -3,7 +3,8 @@
     "rootNamespace": "RA2YR.Tests.EditMode",
     "references": [
         "RA2YR.Core",
-        "RA2YR.Simulation"
+        "RA2YR.Simulation",
+        "RA2YR.Presentation"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
