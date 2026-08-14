@@ -915,5 +915,5 @@ payload or path is published.
 - Added deterministic checked depth composition with bounded effect, shadow,
   and diagnostic budgets. Logical fogged/shrouded/unresolved entries are
   retained and marked non-submittable; shadows never affect occupancy.
-- Current synthetic EditMode evidence is 1570/1570 passed, including 20 C5
+- Current synthetic EditMode evidence is 1570/1570 passed, including 22 C5
   behavior methods. No ProjectBaseline packed visual data was read.

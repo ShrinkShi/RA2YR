@@ -351,7 +351,7 @@ turn Unity presentation state into simulation authority.
   deterministic depth tuples, bounded diagnostics, and duplicate handling.
 - [x] Preserve fogged, shrouded, and unresolved entries logically while
   annotating visual submission; keep shadows separate from occupancy.
-- [x] Current synthetic EditMode evidence is 1570/1570 passed, including 20
+- [x] Current synthetic EditMode evidence is 1570/1570 passed, including 22
   C5 behavior methods; no ProjectBaseline packed visual data was read.
 - [ ] Per-pixel depth/occlusion, projected shadows, fog-grid semantics,
   weather/audio, renderer integration, and original-runtime confirmation remain

@@ -8,14 +8,20 @@ contracts:
   visibility: "fogged/shrouded/unresolved entries preserved logically with submission annotation"
   budgets: "bounded effect, shadow, and diagnostic collection with independent execution failure"
 tests:
-  behavior_methods: 20
-  defined_nunit_executions: 20
+  behavior_methods: 22
+  defined_nunit_executions: 22
+  current_head_focused_edit_mode_total: 22
+  current_head_focused_edit_mode_passed: 22
+  current_head_focused_edit_mode_failed: 0
+  current_head_focused_edit_mode_skipped: 0
+  current_head_focused_edit_mode_inconclusive: 0
+  current_head_focused_edit_mode_xml: "TestResults/M6C5-final-focused-20260815/results.xml"
   current_head_full_edit_mode_total: 1570
   current_head_full_edit_mode_passed: 1570
   current_head_full_edit_mode_failed: 0
   current_head_full_edit_mode_skipped: 0
   current_head_full_edit_mode_inconclusive: 0
-  current_head_full_edit_mode_xml: "TestResults/20260814T160747091Z-29dbab53e4be4d20b24535d736c390f5/EditMode/results.xml"
+  current_head_full_edit_mode_xml: "TestResults/20260814T163607673Z-aa22e23aa432485fa5ac6b01539a46fd/EditMode/results.xml"
 provenance:
   synthetic_fixture: true
   project_baseline_read: false
