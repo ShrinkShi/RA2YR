@@ -854,3 +854,14 @@ payload or path is published.
 - Current exact-head Unity result: EditMode 1465/1465, including 27 C7
   parameterized executions, and PlayMode 1/1. No ProjectBaseline packed data
   was read; this is not a stock YR performance claim.
+
+## 2026-08-14 - M5 final documentation closeout
+
+- Recorded `M5 COMPLETE` against final main
+  `2b08c02f22a18d56a07c5746f62219100d325403`.
+- Preserved the final Unity evidence (EditMode 1465/1465, PlayMode 1/1) and
+  post-main Repository safety run `31772105206` as historical code-HEAD
+  evidence; this documentation change does not rerun Unity.
+- Updated the three-phase requirements status to M4 COMPLETE, M5 COMPLETE, and
+  M6 current target = Presentation/Renderer/Interactive Client. Deferred
+  compatibility and original-runtime claims remain unchanged.

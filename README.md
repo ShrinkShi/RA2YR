@@ -114,6 +114,23 @@ parsing, and records aggregate state hashes covering credits, cargo, resources,
 queues, ownership, power, and structure health. This is not a wall-clock stock
 YR performance claim and does not read ProjectBaseline packed data or begin M6.
 
+## M5 COMPLETE
+
+M5 is complete as a deterministic gameplay-foundation milestone. The merged
+scope includes checked House/player economy authority, resource and cargo /
+refinery foundations, production and technology queues, structure placement and
+power candidates, economic computer-agent contracts, a synthetic two-player
+headless skirmish, and bounded 500/1000/2000-entity stress correctness. Final
+main is `2b08c02f22a18d56a07c5746f62219100d325403`; final Unity evidence is
+EditMode 1465/1465 and PlayMode 1/1, with post-main Repository safety
+`31772105206` successful.
+
+M5 COMPLETE does not claim full YR gameplay or stock economy parity, map
+loading, terrain runtime compatibility, rendering, player UI, replay or
+networking, trained Neural AI, campaign/trigger runtime, writer/roundtrip,
+clean YR 1.001 equivalence, or original-runtime confirmation. M6 is now the
+Presentation/Renderer/Interactive Client target.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。

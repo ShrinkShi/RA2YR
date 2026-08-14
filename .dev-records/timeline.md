@@ -870,3 +870,14 @@ promotion was introduced.
   budgets, and canonical aggregate hashes.
 - Current exact-head Unity result: EditMode 1465/1465 (27 C7 executions) and
   PlayMode 1/1; no ProjectBaseline packed data was read.
+
+## 2026-08-14 - M5 final documentation closeout
+
+- Created docs-only branch `docs/m5-final-closeout` from exact main
+  `2b08c02f22a18d56a07c5746f62219100d325403`.
+- Recorded M5 COMPLETE without changing production semantics or compatibility
+  evidence. Final Unity and post-main safety facts remain tied to the merged
+  M5 code HEAD.
+- Set M6 current target to Presentation/Renderer/Interactive Client and kept
+  full YR parity, renderer parity, networking, replay/save, Neural training,
+  and original-runtime confirmation deferred.
