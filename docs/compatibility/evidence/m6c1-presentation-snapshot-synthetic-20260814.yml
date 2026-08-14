@@ -1,0 +1,29 @@
+schema_version: 1
+evidence_id: m6c1-presentation-snapshot-synthetic-20260814
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+implementation:
+  assembly: RA2YR.Presentation
+  behavior_methods: 22
+  defined_nunit_executions: 22
+  edit_mode_total: 1487
+  edit_mode_passed: 1487
+  edit_mode_failed: 0
+  no_engine_references: true
+contracts:
+  immutable_presentation_snapshot: true
+  simulation_snapshot_is_read_only_input: true
+  stable_visual_asset_id: true
+  semantic_render_passes: 12
+  deterministic_entity_ordering: true
+  created_persisted_despawned_changes: true
+  integer_fixed_point_interpolation: true
+  missing_asset_default: Fail
+  ambiguous_provider_default: Fail
+  bounded_diagnostics: true
+  diagnostic_budget_independent_execution_state: true
+  project_baseline_read: false
+limitations:
+  - This is synthetic project-enhancement evidence, not original-runtime renderer or draw-order confirmation.
+  - Palette, SHP/VXL/HVA visual conversion, TMP/theater binding, camera, fog, UI, renderer, gameplay, and Unity object creation remain deferred.
+  - No ProjectBaseline packed data or original payload was read.

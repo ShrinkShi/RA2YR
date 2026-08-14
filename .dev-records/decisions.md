@@ -611,6 +611,15 @@ selection remains unresolved and produces `CompleteWithFailures`.
 - Combat resolves simultaneous structure damage and explicit terminal state;
   stock YR victory rules, map semantics, rendering, replay serialization, and
   ProjectBaseline packed reads remain excluded.
+
+## 2026-08-14 - M6-C1 presentation boundary
+
+- Presentation consumes immutable Simulation snapshots and never becomes
+  simulation authority; render-pass labels and VisualAssetId are provider-
+  neutral project contracts rather than original-runtime claims.
+- Missing or ambiguous visual providers fail closed unless an explicit policy
+  preserves an unresolved descriptor. Ordering and interpolation are checked
+  and deterministic; Unity objects remain downstream adapters.
 ## 2026-08-14 - M5-C7 remains bounded synthetic performance evidence
 
 - Keep the single-authority economy and explicit read-only proposal / ordered

@@ -299,3 +299,14 @@ M6 is the Presentation / Renderer / Interactive Client campaign. Its
 provider-neutral presentation architecture must consume authoritative
 Simulation snapshots and emit only legal `CommandRequest` values; it must not
 turn Unity presentation state into simulation authority.
+
+## M6-C1 provider-neutral presentation snapshots
+
+- [x] Add Unity-free `RA2YR.Presentation` snapshots, stable logical
+  `VisualAssetId`, semantic render-pass descriptors, deterministic ordering,
+  lifecycle changes, bounded diagnostics, explicit provider ambiguity, and
+  checked integer interpolation.
+- [x] Current code-head EditMode evidence: 1487/1487 passed, including 22
+  M6-C1 behavior methods; no ProjectBaseline packed data was read.
+- [ ] Palette/SHP/VXL/HVA conversion, TMP/theater binding, camera, fog, UI,
+  renderer objects, and original-runtime draw-order confirmation remain deferred.

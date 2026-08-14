@@ -865,3 +865,13 @@ payload or path is published.
 - Updated the three-phase requirements status to M4 COMPLETE, M5 COMPLETE, and
   M6 current target = Presentation/Renderer/Interactive Client. Deferred
   compatibility and original-runtime claims remain unchanged.
+
+## 2026-08-14 - M6-C1 presentation snapshot foundation
+
+- Added `RA2YR.Presentation` with immutable provider-neutral presentation
+  snapshots, stable logical visual identities, semantic render passes,
+  deterministic ordering, lifecycle deltas, bounded execution diagnostics,
+  provider resolution contracts, and checked integer interpolation.
+- Added 22 M6-C1 behavior methods; current EditMode completed 1487/1487.
+- No Simulation mutation, Unity object, renderer, palette conversion, or
+  ProjectBaseline packed read was added.

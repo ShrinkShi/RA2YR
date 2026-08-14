@@ -881,3 +881,10 @@ promotion was introduced.
 - Set M6 current target to Presentation/Renderer/Interactive Client and kept
   full YR parity, renderer parity, networking, replay/save, Neural training,
   and original-runtime confirmation deferred.
+
+## 2026-08-14 - M6-C1 presentation snapshot foundation
+
+- Created `feature/m6-c1-presentation-snapshot-foundation` from post-M5 main
+  `8d95291badddc9df748b1a8e212010fcc3ac3420`.
+- Added the Unity-free presentation snapshot boundary and synthetic tests;
+  current EditMode is 1487/1487 passed, with no ProjectBaseline read.
