@@ -366,3 +366,13 @@ turn Unity presentation state into simulation authority.
   renderer behavior methods; PlayMode is 2/2 passed.
 - [ ] Full shader/pixel parity, TMP/theater binding, unsupported SHP semantics,
   original camera/depth comparison, and production art remain deferred.
+
+## M6-C7 interactive client foundation
+
+- [x] Add bounded visibility, selection, pointer projection, Human command
+  gateway, HUD, production, placement, and environment contracts.
+- [x] Current code-head EditMode 1640/1640 and PlayMode 2/2 passed.
+- [ ] Draft PR exact-head Repository safety and maintainer closeout remain.
+- [ ] Original UI, network input, palette/TMP/theater binding, weather
+  rendering, gameplay authority, and original-runtime interaction parity remain
+  deferred.

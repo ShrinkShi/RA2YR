@@ -248,6 +248,13 @@ mesh，以及 presentation-only camera pan/zoom。Presentation 和 Simulation �
 不引用 Unity；没有读取 ProjectBaseline packed visual data，也未声称原版
 renderer/pixel parity。
 
+M6-C7 增加 Unity-free 的 interactive client seam：visibility、selection、显式
+等距 pointer projection、Human `CommandRequest` gateway、HUD snapshot、生产
+可用性面板、placement preview 以及 lighting/weather profile。Unity adapter
+只桥接输入和有界 pick targets，不推进 Simulation；生产阻塞保持可见，不做
+静默 winner 或自动 fallback。没有读取 ProjectBaseline packed data，也未实现
+原版 UI、网络输入、palette/TMP/theater 绑定、weather rendering 或 gameplay。
+
 ## 本地验证
 
 运行 Unity 测试前必须关闭 Unity Editor：

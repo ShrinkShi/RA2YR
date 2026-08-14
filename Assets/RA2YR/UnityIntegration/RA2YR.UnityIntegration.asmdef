@@ -3,7 +3,8 @@
     "rootNamespace": "RA2YR.UnityIntegration",
     "references": [
         "RA2YR.Core",
-        "RA2YR.Presentation"
+        "RA2YR.Presentation",
+        "RA2YR.Simulation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

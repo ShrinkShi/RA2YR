@@ -1727,6 +1727,19 @@ entries:
       - id: visual.unity-renderer-runtime-unresolved
         status: "已知限制"
         description: "Renderer shader/pixel parity, TMP/theater binding, unsupported SHP flags, original camera/depth comparator, and clean YR runtime comparison remain unresolved; ProjectBaseline packed visual data was not read."
+  - id: visual.interactive-client-foundation
+    domain: visual
+    feature: "Bounded visibility, selection, isometric pointer, Human CommandRequest gateway, HUD, production panel, placement preview, and lighting/weather profiles"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.M6C7InteractiveClientTests"
+      - "RA2YR.Tests.PlayMode.UnityIntegrationAssemblySmokeTests.UnityIntegrationAssemblyLoadsInPlayMode"
+    evidence:
+      - "docs/compatibility/evidence/m6c7-interactive-client-synthetic-20260815.yml#contracts"
+    limitations:
+      - id: visual.interactive-client-runtime-unresolved
+        status: "已知限制"
+        description: "Original UI layout, camera raycast behavior, network input, palette/TMP/theater binding, weather rendering, gameplay authority, and original-runtime interaction parity remain unresolved; ProjectBaseline packed data was not read."
   - id: visual.vxl-hva
     domain: visual
     feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"

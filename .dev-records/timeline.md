@@ -928,3 +928,29 @@ Unity presentation world, bounded cache, indexed/palette resources, terrain
 chunk lifecycle, camera adapter, and synthetic VXL exposed-face mesh. Current
 EditMode is 1603/1603 passed and PlayMode is 2/2 passed; ProjectBaseline packed
 visual data was not read.
+
+## 2026-08-15 - M6-C7 interactive client foundation
+
+### 用户目标
+- Establish a bounded interactive client seam without starting M7.
+
+### 本轮处理
+- Created the C7 branch from exact post-C6 main.
+- Added visibility, selection, pointer, command, HUD, production, placement,
+  environment models and the Unity adapter.
+- Added synthetic evidence, ADR, compatibility matrix entry, README, and dev
+  records.
+
+### 关键结论
+- Presentation remains Unity-free and commands enter the authoritative queue
+  as Human `CommandRequest` values only.
+- Current-head EditMode 1640/1640 and PlayMode 2/2 passed.
+
+### 影响文件
+- `Assets/RA2YR/Presentation/InteractiveClientModels.cs`
+- `Assets/RA2YR/UnityIntegration/UnityInteractiveClientAdapter.cs`
+- `Assets/RA2YR/Tests/EditMode/M6C7InteractiveClientTests.cs`
+- `docs/compatibility/evidence/m6c7-interactive-client-synthetic-20260815.yml`
+
+### 后续事项
+- Run full static gates, push Draft PR, and wait for exact-head Repository safety.
