@@ -253,3 +253,14 @@ comparison, and original-runtime black-box validation.
   was read.
 - [ ] Neural/ONNX execution, payment/queue mutation, gameplay loop, renderer,
   and original-runtime AI compatibility remain deferred to later scope.
+
+## M5-C6 integrated headless skirmish foundation
+
+- [x] Add a bounded two-player harvest/income/construct/produce/rally/combat
+  chain with explicit defeat and winner state.
+- [x] Reuse the authoritative `CommandRequest` stream for computer and manual
+  script paths; verify repeated-run canonical hashes.
+- [x] Current EditMode tree: 1438/1438 passed; no ProjectBaseline packed data
+  was read.
+- [ ] Map loading, stock YR victory rules, replay serialization, renderer,
+  networking, and full gameplay remain deferred.

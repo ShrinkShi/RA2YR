@@ -1,0 +1,24 @@
+schema_version: 1
+evidence_id: m5c6-headless-skirmish-synthetic-20260814
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+implementation:
+  assembly: RA2YR.Simulation
+  behavior_methods: 12
+  edit_mode_total: 1438
+  edit_mode_passed: 1438
+  edit_mode_failed: 0
+  no_engine_references: true
+contracts:
+  two_player_headless_loop: true
+  harvest_income_construct_produce_combat_chain: true
+  command_request_reuse: true
+  manual_script_without_computer_ai: true
+  deterministic_state_hash: true
+  explicit_winner_and_defeat_state: true
+  project_baseline_read: false
+  stock_yr_victory_compatibility: false
+limitations:
+  - The scenario is synthetic and bounded; it does not load maps, infer stock
+    victory rules, render, serialize replay files, or claim original-runtime
+    compatibility.

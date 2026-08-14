@@ -829,3 +829,15 @@ payload or path is published.
 - Current EditMode tree: 1426/1426 passed, including 16 C5 methods; no
   ProjectBaseline packed data, neural model, renderer, or gameplay loop was
   added.
+
+## 2026-08-14 - M5-C6 integrated headless skirmish foundation
+
+- Added a bounded synthetic two-player loop composing harvest/income,
+  power/factory construction, production, rally, existing CommandRequest
+  command streams, simultaneous combat, structure destruction, defeat, and
+  winner state.
+- Added deterministic repeated-run hashes and manual command scripts that do
+  not require ComputerAI.
+- Current EditMode tree: 1438/1438 passed, including 12 C6 methods; no
+  ProjectBaseline packed data, renderer, map loader, or stock victory claim was
+  added.

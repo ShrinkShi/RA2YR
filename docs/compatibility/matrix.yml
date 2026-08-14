@@ -1531,6 +1531,23 @@ entries:
       - id: simulation.economic-agent-mutation-deferred
         status: "已知限制"
         description: "Proposals do not mutate credits, cargo, queues, power, occupancy, actors, or gameplay state; neural/ONNX execution and stock YR AI compatibility remain unimplemented."
+  - id: simulation.headless-economic-skirmish
+    domain: gameplay
+    feature: "Bounded two-player headless economy, production, command, combat, and terminal-state loop"
+    status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
+    tests:
+      - "RA2YR.Tests.EditMode.Simulation.HeadlessEconomicSkirmishTests.HarvestProducesIncomeAndResourceEvidence"
+      - "RA2YR.Tests.EditMode.Simulation.HeadlessEconomicSkirmishTests.ConstructPowerAndFactoryUseEconomyAuthority"
+      - "RA2YR.Tests.EditMode.Simulation.HeadlessEconomicSkirmishTests.ProductionRallyAndAttackEnterCommandStream"
+      - "RA2YR.Tests.EditMode.Simulation.HeadlessEconomicSkirmishTests.AiVsAiReachesTerminalWinnerAndStructureDestruction"
+      - "RA2YR.Tests.EditMode.Simulation.HeadlessEconomicSkirmishTests.ManualCommandStreamWorksWithoutComputerAgents"
+      - "RA2YR.Tests.EditMode.Simulation.HeadlessEconomicSkirmishTests.RepeatedRunsHaveIdenticalFinalHash"
+    evidence:
+      - "docs/compatibility/evidence/m5c6-headless-skirmish-synthetic-20260814.yml#contracts"
+    limitations:
+      - id: simulation.headless-skirmish-synthetic-only
+        status: "已知限制"
+        description: "The loop is a synthetic bounded reference; map loading, stock YR victory rules, replay serialization, renderer, networking, and original-runtime behavior remain unimplemented."
   - id: ai.trigger-types
     domain: ai
     feature: "AITriggerTypes, conditions, weights, cooldowns, and difficulty"

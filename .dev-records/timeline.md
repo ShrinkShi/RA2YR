@@ -850,6 +850,12 @@ promotion was introduced.
 - Created the C5 branch from exact main `b2f3b6082f61e01ab4b65821bbde97e909ebea5e`.
 - Added deterministic legal economic observations and bounded action proposals;
   EditMode passed 1422/1422. No ProjectBaseline packed data was read.
+
+## 2026-08-14 - M5-C6 integrated headless skirmish
+
+- Created C6 from post-C5 squash main `2ad850a236055a3ab45e08844261360472c95317`.
+- Added the synthetic two-player economy/production/combat chain and manual
+  command-stream path; EditMode passed 1438/1438 with no ProjectBaseline reads.
 ## 2026-08-13 - M4-C4 commands missions targeting autonomy
 
 - Created C4 from exact main `230ad313257b73e62b7ef48ec8afadc9c8b83e43`.
