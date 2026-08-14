@@ -255,6 +255,13 @@ M6-C7 增加 Unity-free 的 interactive client seam：visibility、selection、�
 静默 winner 或自动 fallback。没有读取 ProjectBaseline packed data，也未实现
 原版 UI、网络输入、palette/TMP/theater 绑定、weather rendering 或 gameplay。
 
+M6-C8 将 Simulation、Presentation、UnityPresentationWorld 和 interactive
+client 组合为有界 synthetic closeout。`PresentationCadenceProfile` 显式覆盖
+30/60/144 调度 profile；harness 在 snapshot 组装前后以及最终 tick 比较
+Simulation hash，并覆盖 500/1000/2000 entity tiers。该 cadence 不是 GPU
+wall-clock FPS 承诺，也没有读取 ProjectBaseline、实现 map loader、network
+play、writer 或 M7。
+
 ## 本地验证
 
 运行 Unity 测试前必须关闭 Unity Editor：

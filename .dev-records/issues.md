@@ -652,3 +652,26 @@ Added the explicit Simulation assembly reference and disambiguated Unity's
 Current-head EditMode 1640/1640 and PlayMode 2/2 passed. The failed compile and
 one corrected synthetic test remain historical local attempts, not success
 evidence.
+
+## 2026-08-15 - M6-C8 cadence versus wall-clock performance
+
+### 现象
+
+The closeout requires 30/60/144 presentation rates while the repository has no
+authorized GPU benchmark environment.
+
+### 根因
+
+Wall-clock renderer performance is not reproducible from the synthetic test
+host and would conflate scheduling with GPU parity.
+
+### 解决方案
+
+Record explicit rational cadence scheduling and bounded entity tiers, and prove
+Simulation state-hash equivalence around presentation assembly. Do not report
+these profiles as measured FPS.
+
+### 验证方式
+
+Current-head EditMode 1657/1657 and PlayMode 3/3 passed; evidence records the
+cadence/profile boundary.

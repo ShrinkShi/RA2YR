@@ -954,3 +954,29 @@ visual data was not read.
 
 ### 后续事项
 - Run full static gates, push Draft PR, and wait for exact-head Repository safety.
+
+## 2026-08-15 - M6-C8 integrated playable presentation closeout
+
+### 用户目标
+- Complete the M6 integrated presentation/performance closeout without M7.
+
+### 本轮处理
+- Created the C8 branch from exact post-C7 main.
+- Added cadence scheduling, state-hash equivalence, bounded stress tiers, and
+  the Unity controller composition seam.
+- Added ADR, format docs, matrix/evidence, README, and development records.
+
+### 关键结论
+- Presentation does not mutate Simulation authority; 30/60/144 are explicit
+  deterministic scheduling profiles, not GPU FPS claims.
+- Current-head EditMode 1657/1657 and PlayMode 3/3 passed.
+
+### 影响文件
+- `Assets/RA2YR/Presentation/PlayablePresentationCloseout.cs`
+- `Assets/RA2YR/UnityIntegration/UnityPlayablePresentationController.cs`
+- `Assets/RA2YR/Tests/EditMode/M6C8PlayablePresentationTests.cs`
+- `Assets/RA2YR/Tests/PlayMode/M6C8PlayableSmokeTests.cs`
+- `docs/compatibility/evidence/m6c8-integrated-playable-synthetic-20260815.yml`
+
+### 后续事项
+- Run final static gates, push Draft PR, and wait for exact-head Repository safety.

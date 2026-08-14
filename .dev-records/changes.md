@@ -939,3 +939,13 @@ payload or path is published.
 - Current code-head EditMode is 1640/1640 passed, including 37 C7 behavior
   methods (29 Core and 8 Unity adapter); PlayMode is 2/2 passed. No
   ProjectBaseline packed data was read.
+
+## 2026-08-15 - M6-C8 integrated playable presentation closeout
+
+- Added explicit 30/60/144 presentation cadence profiles and a bounded
+  Simulation-to-Presentation equivalence harness.
+- Added 500/1000/2000 entity synthetic tiers, descriptor budgets, aggregate
+  hashes, and a Unity controller that composes the existing world/client
+  adapters without a simulation loop.
+- Current code-head EditMode is 1657/1657 passed, including 17 C8 behavior
+  methods; PlayMode is 3/3 passed. No ProjectBaseline packed data was read.

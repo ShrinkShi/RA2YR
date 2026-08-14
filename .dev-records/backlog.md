@@ -376,3 +376,12 @@ turn Unity presentation state into simulation authority.
 - [ ] Original UI, network input, palette/TMP/theater binding, weather
   rendering, gameplay authority, and original-runtime interaction parity remain
   deferred.
+
+## M6-C8 integrated playable presentation closeout
+
+- [x] Add explicit cadence scheduling and Simulation state-hash equivalence.
+- [x] Cover bounded 500/1000/2000 entity tiers and Unity controller smoke.
+- [x] Current code-head EditMode 1657/1657 and PlayMode 3/3 passed.
+- [ ] Draft PR exact-head Repository safety and final M6 closeout remain.
+- [ ] Wall-clock GPU FPS, original UI/network/map loading, writer, and M7 remain
+  out of scope.

@@ -1,0 +1,38 @@
+schema_version: 1
+evidence_id: m6c8-integrated-playable-synthetic-20260815
+status: synthetic
+scope: "M6-C8 integrated playable presentation and performance closeout"
+contracts:
+  integration: "Simulation ticks, immutable Presentation snapshots, Unity world, and interactive client remain separate"
+  cadence: "explicit 30/60/144 scheduling profiles"
+  equivalence: "state hashes match with and without presentation assembly"
+  stress: "bounded 500/1000/2000 entity synthetic tiers"
+tests:
+  core_behavior_methods: 17
+  current_head_edit_mode_total: 1657
+  current_head_edit_mode_passed: 1657
+  current_head_edit_mode_failed: 0
+  current_head_edit_mode_skipped: 0
+  current_head_edit_mode_inconclusive: 0
+  current_head_edit_mode_xml: "TestResults/20260814T185516145Z-d8d5026c468b41de9599f7979ccc01a6/EditMode/results.xml"
+  current_head_edit_mode_forced_post_result_shutdown: false
+  current_head_play_mode_total: 3
+  current_head_play_mode_passed: 3
+  current_head_play_mode_failed: 0
+  current_head_play_mode_skipped: 0
+  current_head_play_mode_inconclusive: 0
+  current_head_play_mode_xml: "TestResults/20260814T185542359Z-3f813e7817b743a0bf09632994aa5c54/PlayMode/results.xml"
+  current_head_play_mode_forced_post_result_shutdown: false
+provenance:
+  synthetic_fixture: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+architecture:
+  simulation_state_hash_equivalence: true
+  presentation_mutates_simulation: false
+  central_unity_world: true
+  per_entity_update_loop: false
+  wall_clock_gpu_benchmark: false
+limitations:
+  - "The 30/60/144 profiles are deterministic scheduling contracts, not measured GPU FPS."
+  - "No ProjectBaseline packed data, original UI, network play, map loader, writer, or M7 work was included."
