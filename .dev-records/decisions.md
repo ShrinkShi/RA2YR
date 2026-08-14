@@ -642,3 +642,11 @@ geometry adapter in UnityIntegration. Grid axis order, projection rounding,
 palette binding, and raw TMP candidates are explicit inputs. A chunk has a
 stable identity and one mesh; no per-tile GameObject, automatic palette
 fallback, simulation mutation, or ProjectBaseline packed read is allowed.
+
+## M6-C4 decision
+
+Keep object visual identity, family/pass/layer, anchors, and all bounds types
+in the Unity-free Presentation assembly. Depth is a checked serializable tuple
+with explicit source and attachment tie-breakers; camera zoom and Unity object
+identity are excluded. UnityIntegration may emit ordered draw commands only.
+Foundation and occupancy are never inferred from image bounds.

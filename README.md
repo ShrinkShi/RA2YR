@@ -227,6 +227,13 @@ authority 不在本轮实现。投影轴序、舍入、palette binding 和原始
 候选均须显式提供，不根据视觉 plausibility 自动 fallback。该工作包不读取
 ProjectBaseline packed terrain/visual payload，原版 runtime 兼容性仍未确认。
 
+M6-C4 增加对象族、logical ground anchor、多类 bounds、bridge/air elevation
+候选和 camera-independent 的稳定 depth tuple。Foundation、occupancy、visual、
+selection 与 shadow bounds 保持分离；Unity 侧只生成有序 draw commands，不
+创建 GameObject、Texture、Material 或 palette fallback。原版 pass/depth、
+foundation 语义和 renderer 行为仍未确认，也未读取 ProjectBaseline packed
+visual data。
+
 ## 本地验证
 
 运行 Unity 测试前必须关闭 Unity Editor：

@@ -902,3 +902,11 @@ post-M6-C2 main `5def9de6164594f95e32febcc299b9abe28f181b`. Added checked
 isometric terrain presentation contracts, deterministic chunking, and the
 UnityIntegration one-mesh-per-chunk adapter. Current EditMode is 1528/1528
 passed; ProjectBaseline packed terrain/visual data was not read.
+
+## 2026-08-14 — M6-C4
+
+Created `feature/m6-c4-object-visual-presentation-foundation` from exact
+post-M6-C3 main `5b42f9c3de5befd0673b37a1eb269370a56c30ae`. Added explicit
+object anchors/bounds/families, deterministic depth tuples, attachment checks,
+and Unity draw commands. Current EditMode is 1548/1548 passed; no
+ProjectBaseline packed visual data was read.
