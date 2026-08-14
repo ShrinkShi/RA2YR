@@ -17,11 +17,12 @@ candidate, shadow anchor, bounds, and color profile separate. A shadow is never
 an occupancy or pathfinding input, and missing geometry is diagnosed rather
 than synthesized.
 
-The composer uses a checked, deterministic effect depth tuple with explicit
-duplicate policy and bounded effects/shadow/diagnostic budgets. Fogged,
-shrouded, and unresolved entries remain in the logical result. An explicit
-policy controls only visual submission annotation; visibility filtering never
-deletes the logical entity or changes its depth identity.
+The composer uses the same checked, deterministic depth vocabulary as the
+object presentation foundation: primary depth and explicit adjustment remain
+separate tuple components. Duplicate and unknown-visibility policies are
+explicit, and effects/shadow/diagnostic budgets are bounded. Fogged, shrouded,
+and unresolved entries remain in the logical result; rejected entries are not
+returned as consumable draw candidates.
 
 ## Compatibility boundary
 

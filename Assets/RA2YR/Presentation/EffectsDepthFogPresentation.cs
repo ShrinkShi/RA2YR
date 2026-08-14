@@ -9,7 +9,6 @@ namespace RA2YR.Presentation
     public enum PresentationAlphaMode { Opaque, Cutout, Translucent }
     public enum PresentationDepthTestMode { Disabled, TestOnly, TestAndWrite }
     public enum PresentationVisibilityState { Visible, Fogged, Shrouded, Unknown }
-    public enum PresentationFogPolicyMode { PreserveLogicalAndAnnotate, HideVisualOnly }
     public enum PresentationUnknownVisibilityPolicy { PreserveUnresolved, Reject }
     public enum PresentationShadowSourceKind { None, TmpCandidate, ShpFrameCandidate, VxlCandidate, ProceduralCandidate }
     public enum PresentationShadowColorProfile { Unresolved, PaletteMask, AlphaMultiply, IndexedMask }
@@ -107,17 +106,16 @@ namespace RA2YR.Presentation
 
     public sealed class EffectPresentationPolicy
     {
-        public EffectPresentationPolicy(int maxEffects = 65536, int maxShadows = 65536, int maxDiagnostics = 256, PresentationDuplicateObjectPolicy duplicates = PresentationDuplicateObjectPolicy.PreserveAndDiagnose, PresentationFogPolicyMode fogMode = PresentationFogPolicyMode.PreserveLogicalAndAnnotate, PresentationUnknownVisibilityPolicy unknownVisibility = PresentationUnknownVisibilityPolicy.PreserveUnresolved)
+        public EffectPresentationPolicy(int maxEffects = 65536, int maxShadows = 65536, int maxDiagnostics = 256, PresentationDuplicateObjectPolicy duplicates = PresentationDuplicateObjectPolicy.PreserveAndDiagnose, PresentationUnknownVisibilityPolicy unknownVisibility = PresentationUnknownVisibilityPolicy.PreserveUnresolved)
         {
             if (maxEffects < 0 || maxShadows < 0 || maxDiagnostics < 0) throw new ArgumentOutOfRangeException();
-            if (!Enum.IsDefined(typeof(PresentationDuplicateObjectPolicy), duplicates) || !Enum.IsDefined(typeof(PresentationFogPolicyMode), fogMode) || !Enum.IsDefined(typeof(PresentationUnknownVisibilityPolicy), unknownVisibility)) throw new ArgumentOutOfRangeException();
-            MaxEffects = maxEffects; MaxShadows = maxShadows; MaxDiagnostics = maxDiagnostics; Duplicates = duplicates; FogMode = fogMode; UnknownVisibility = unknownVisibility;
+            if (!Enum.IsDefined(typeof(PresentationDuplicateObjectPolicy), duplicates) || !Enum.IsDefined(typeof(PresentationUnknownVisibilityPolicy), unknownVisibility)) throw new ArgumentOutOfRangeException();
+            MaxEffects = maxEffects; MaxShadows = maxShadows; MaxDiagnostics = maxDiagnostics; Duplicates = duplicates; UnknownVisibility = unknownVisibility;
         }
         public int MaxEffects { get; }
         public int MaxShadows { get; }
         public int MaxDiagnostics { get; }
         public PresentationDuplicateObjectPolicy Duplicates { get; }
-        public PresentationFogPolicyMode FogMode { get; }
         public PresentationUnknownVisibilityPolicy UnknownVisibility { get; }
     }
 
@@ -164,14 +162,22 @@ namespace RA2YR.Presentation
                 if (entries.Count >= policy.MaxEffects) { Fail(diagnostics, execution, policy, EffectPresentationDiagnosticCode.EffectBudgetExceeded, "effects", "Effect budget exceeded.", descriptor.SourceOrdinal); break; }
                 if (!seen.Add(descriptor.StableIdentity))
                 {
-                    if (policy.Duplicates == PresentationDuplicateObjectPolicy.RejectAnyDuplicate) Fail(diagnostics, execution, policy, EffectPresentationDiagnosticCode.DuplicateStableIdentity, "effects", "Duplicate effect identity rejected.", descriptor.SourceOrdinal);
+                    if (policy.Duplicates == PresentationDuplicateObjectPolicy.RejectAnyDuplicate)
+                    {
+                        Fail(diagnostics, execution, policy, EffectPresentationDiagnosticCode.DuplicateStableIdentity, "effects", "Duplicate effect identity rejected.", descriptor.SourceOrdinal);
+                        continue;
+                    }
                     else Warn(diagnostics, execution, policy, EffectPresentationDiagnosticCode.DuplicateStableIdentity, "effects", "Duplicate effect identity preserved.", descriptor.SourceOrdinal);
                 }
-                if (descriptor.Visibility == PresentationVisibilityState.Unknown && policy.UnknownVisibility == PresentationUnknownVisibilityPolicy.Reject) Fail(diagnostics, execution, policy, EffectPresentationDiagnosticCode.UnknownVisibility, "visibility", "Unknown visibility rejected by policy.", descriptor.SourceOrdinal);
+                if (descriptor.Visibility == PresentationVisibilityState.Unknown && policy.UnknownVisibility == PresentationUnknownVisibilityPolicy.Reject)
+                {
+                    Fail(diagnostics, execution, policy, EffectPresentationDiagnosticCode.UnknownVisibility, "visibility", "Unknown visibility rejected by policy.", descriptor.SourceOrdinal);
+                    continue;
+                }
                 bool submitted = descriptor.Visibility == PresentationVisibilityState.Visible;
                 if (descriptor.Visibility == PresentationVisibilityState.Unknown || descriptor.Visibility == PresentationVisibilityState.Fogged || descriptor.Visibility == PresentationVisibilityState.Shrouded) submitted = false;
                 EffectDepthKey key;
-                try { key = new EffectDepthKey((int)descriptor.ElevationLayer, checked(descriptor.Anchor.Y + descriptor.ExplicitSortAdjust), descriptor.ExplicitSortAdjust, descriptor.ParentStableId, descriptor.SourceOrdinal, descriptor.StableIdentity, descriptor.DuplicateOrdinal); }
+                try { key = new EffectDepthKey((int)descriptor.ElevationLayer, descriptor.Anchor.Y, descriptor.ExplicitSortAdjust, descriptor.ParentStableId, descriptor.SourceOrdinal, descriptor.StableIdentity, descriptor.DuplicateOrdinal); }
                 catch (OverflowException) { Fail(diagnostics, execution, policy, EffectPresentationDiagnosticCode.DepthComponentOverflow, "depth", "Effect depth arithmetic exceeded the checked contract.", descriptor.SourceOrdinal); break; }
                 entries.Add(new EffectPresentationEntry(descriptor, key, submitted));
             }

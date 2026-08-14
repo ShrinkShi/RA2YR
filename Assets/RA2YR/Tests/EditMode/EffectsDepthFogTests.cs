@@ -29,10 +29,10 @@ namespace RA2YR.Tests.EditMode
         { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("unknown", 0, PresentationVisibilityState.Unknown) }, null, new EffectPresentationPolicy(unknownVisibility: PresentationUnknownVisibilityPolicy.PreserveUnresolved)); Assert.IsTrue(result.IsSuccess); Assert.IsFalse(result.Entries[0].IsVisuallySubmitted); }
 
         [Test] public void UnknownVisibilityCanBeRejectedExplicitly()
-        { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("unknown", 0, PresentationVisibilityState.Unknown) }, null, new EffectPresentationPolicy(unknownVisibility: PresentationUnknownVisibilityPolicy.Reject)); Assert.IsFalse(result.IsSuccess); Assert.IsTrue(Has(result, EffectPresentationDiagnosticCode.UnknownVisibility)); }
+        { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("unknown", 0, PresentationVisibilityState.Unknown) }, null, new EffectPresentationPolicy(unknownVisibility: PresentationUnknownVisibilityPolicy.Reject)); Assert.IsFalse(result.IsSuccess); Assert.AreEqual(0, result.Entries.Count); Assert.IsTrue(Has(result, EffectPresentationDiagnosticCode.UnknownVisibility)); }
 
         [Test] public void ZeroDiagnosticBudgetCannotFailOpenUnknownVisibility()
-        { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("unknown", 0, PresentationVisibilityState.Unknown) }, null, new EffectPresentationPolicy(maxDiagnostics: 0, unknownVisibility: PresentationUnknownVisibilityPolicy.Reject)); Assert.IsFalse(result.IsSuccess); Assert.Greater(result.Execution.SuppressedDiagnosticCount, 0); }
+        { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("unknown", 0, PresentationVisibilityState.Unknown) }, null, new EffectPresentationPolicy(maxDiagnostics: 0, unknownVisibility: PresentationUnknownVisibilityPolicy.Reject)); Assert.IsFalse(result.IsSuccess); Assert.AreEqual(0, result.Entries.Count); Assert.Greater(result.Execution.SuppressedDiagnosticCount, 0); }
 
         [Test] public void EffectDepthUsesExplicitLayerAndCheckedTuple()
         { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("air", 0, layer: PresentationElevationLayer.Air, anchorY: 1), Effect("ground", 1, anchorY: 100) }, null); Assert.AreEqual("ground", result.Entries[0].Descriptor.StableIdentity); Assert.AreEqual((int)PresentationElevationLayer.Air, result.Entries[1].DepthKey.Elevation); }
@@ -47,7 +47,13 @@ namespace RA2YR.Tests.EditMode
         { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("same", 0, duplicate: 0), Effect("same", 1, duplicate: 1) }, null); Assert.IsTrue(result.IsSuccess); Assert.AreEqual(2, result.Entries.Count); Assert.IsTrue(Has(result, EffectPresentationDiagnosticCode.DuplicateStableIdentity)); }
 
         [Test] public void DuplicateEffectsCanBeRejected()
-        { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("same", 0), Effect("same", 1) }, null, new EffectPresentationPolicy(duplicates: PresentationDuplicateObjectPolicy.RejectAnyDuplicate)); Assert.IsFalse(result.IsSuccess); }
+        { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("same", 0), Effect("same", 1) }, null, new EffectPresentationPolicy(duplicates: PresentationDuplicateObjectPolicy.RejectAnyDuplicate)); Assert.IsFalse(result.IsSuccess); Assert.AreEqual(1, result.Entries.Count); }
+
+        [Test] public void EffectDepthKeepsPrimaryAndAdjustIndependent()
+        { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("adjusted", 0, anchorY: 10, adjust: 5) }, null); Assert.AreEqual(10, result.Entries[0].DepthKey.Primary); Assert.AreEqual(5, result.Entries[0].DepthKey.Adjust); }
+
+        [Test] public void EffectDepthKeyEqualityHasEqualHash()
+        { EffectDepthKey left = new EffectDepthKey(1, 2, 3, 4, 5, "same", 6); EffectDepthKey right = new EffectDepthKey(1, 2, 3, 4, 5, "same", 6); Assert.IsTrue(left.Equals(right)); Assert.AreEqual(left.GetHashCode(), right.GetHashCode()); }
 
         [Test] public void EffectBudgetStopsInput()
         { EffectPresentationResult result = EffectPresentationComposer.Compose(new[] { Effect("one", 0), Effect("two", 1) }, null, new EffectPresentationPolicy(maxEffects: 1)); Assert.IsFalse(result.IsSuccess); Assert.AreEqual(1, result.Entries.Count); }
