@@ -634,3 +634,11 @@ Keep PAL/SHP reuse and VXL/HVA import provider-neutral. Preserve raw bytes and
 Float32 bit patterns; require explicit palette conversion and HVA record-order
 profiles; reject duplicate binding ambiguity. Rendering, matrix composition,
 normal lookup, and compatibility claims remain outside the raw readers.
+
+## M6-C3 decision
+
+Keep terrain presentation provider-neutral in Core and put only the bounded
+geometry adapter in UnityIntegration. Grid axis order, projection rounding,
+palette binding, and raw TMP candidates are explicit inputs. A chunk has a
+stable identity and one mesh; no per-tile GameObject, automatic palette
+fallback, simulation mutation, or ProjectBaseline packed read is allowed.

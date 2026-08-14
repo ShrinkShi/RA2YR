@@ -884,3 +884,15 @@ payload or path is published.
   diagnostics, budgets, and canonical input hashes.
 - Current code-head EditMode evidence is 1510/1510 passed; no ProjectBaseline
   packed visual data was read. No Unity objects or renderer code were added.
+
+## 2026-08-14 - M6-C3 terrain palette and isometric presentation
+
+- Added explicit terrain tile descriptors, raw TMP candidates, palette binding
+  metadata, checked isometric projection/inverse candidates, and deterministic
+  bounded chunk composition in Core.
+- Added the UnityIntegration one-mesh-per-chunk geometry adapter and synthetic
+  coverage for axis/rounding profiles, budgets, ordering, and no per-tile
+  GameObject creation.
+- Current code-head EditMode evidence is 1528/1528 passed. ProjectBaseline
+  packed terrain/visual data was not read and no new LZO algorithm or writer was
+  added.
