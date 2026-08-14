@@ -234,6 +234,13 @@ selection 与 shadow bounds 保持分离；Unity 侧只生成有序 draw command
 foundation 语义和 renderer 行为仍未确认，也未读取 ProjectBaseline packed
 visual data。
 
+M6-C5 增加显式 effect、alpha/depth、shadow receiver layer 与 fog/shroud
+visibility annotation。Fogged、shrouded 或 unresolved entity 保留在逻辑
+结果中，只改变显式 submission 标记；shadow 不影响 occupancy，TMP depth
+也不被解释为 Level 或 simulation elevation。per-pixel depth、occlusion、
+weather/audio、原版 fog grid 和 renderer parity 仍未确认，未读取
+ProjectBaseline packed visual data。
+
 ## 本地验证
 
 运行 Unity 测试前必须关闭 Unity Editor：

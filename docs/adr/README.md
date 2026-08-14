@@ -55,4 +55,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0048 | M6-C2 legacy visual import readiness remains raw and explicit | Accepted for synthetic/configured implementation |
 | 0049 | M6-C3 terrain palette and isometric presentation foundation | Accepted for synthetic/configured implementation |
 | 0050 | M6-C4 object visual presentation foundation | Accepted for synthetic/configured implementation |
+| 0051 | M6-C5 effects, depth, shadow, and fog presentation foundation | Accepted for synthetic/configured implementation |
 | 0043 | M5-C4 structures and placement foundation | Accepted for project-enhancement implementation |

@@ -910,3 +910,11 @@ post-M6-C3 main `5b42f9c3de5befd0673b37a1eb269370a56c30ae`. Added explicit
 object anchors/bounds/families, deterministic depth tuples, attachment checks,
 and Unity draw commands. Current EditMode is 1548/1548 passed; no
 ProjectBaseline packed visual data was read.
+
+## 2026-08-15 - M6-C5
+
+Created `feature/m6-c5-effects-depth-fog-presentation-foundation` from exact
+post-M6-C4 main `3316d30f99dfe38e15a1ffaeb888619392b4194e`. Added explicit
+effect/depth/alpha, shadow separation, and fog/shroud visibility contracts.
+The current synthetic EditMode run is 1570/1570 passed; ProjectBaseline packed
+visual data was not read.

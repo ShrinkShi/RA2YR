@@ -650,3 +650,11 @@ in the Unity-free Presentation assembly. Depth is a checked serializable tuple
 with explicit source and attachment tie-breakers; camera zoom and Unity object
 identity are excluded. UnityIntegration may emit ordered draw commands only.
 Foundation and occupancy are never inferred from image bounds.
+
+## M6-C5 decision
+
+Keep effect alpha/depth, shadow receiver/source, and fog/shroud visibility as
+separate explicit contracts in the Unity-free Presentation assembly. Preserve
+logical entries when visual submission is hidden or unresolved, and never use
+shadow descriptors as occupancy or pathfinding authority. M6-C5 reuses the
+managed RawLzo1X backend and adds no codec or writer.

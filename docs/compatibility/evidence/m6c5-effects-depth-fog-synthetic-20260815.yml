@@ -1,0 +1,30 @@
+schema_version: 1
+evidence_id: m6c5-effects-depth-fog-synthetic-20260815
+status: synthetic
+scope: "M6-C5 effect descriptors, deterministic depth, shadow relationship, and fog/shroud logical visibility"
+contracts:
+  effects: "explicit kind, anchor, bounds, alpha, depth-test, visibility, parent, and source ordinal"
+  shadows: "explicit caster, receiver layer, source candidate, bounds, and color profile; never occupancy"
+  visibility: "fogged/shrouded/unresolved entries preserved logically with submission annotation"
+  budgets: "bounded effect, shadow, and diagnostic collection with independent execution failure"
+tests:
+  behavior_methods: 20
+  defined_nunit_executions: 20
+  current_head_full_edit_mode_total: 1570
+  current_head_full_edit_mode_passed: 1570
+  current_head_full_edit_mode_failed: 0
+  current_head_full_edit_mode_skipped: 0
+  current_head_full_edit_mode_inconclusive: 0
+  current_head_full_edit_mode_xml: "TestResults/20260814T160747091Z-29dbab53e4be4d20b24535d736c390f5/EditMode/results.xml"
+provenance:
+  synthetic_fixture: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+architecture:
+  presentation_no_engine_references: true
+  shadow_affects_occupancy: false
+  logical_entries_deleted_by_visibility: false
+  automatic_depth_or_alpha_fallback: false
+limitations:
+  - "Per-pixel depth, occlusion, shadow projection, fog/shroud grid semantics, palette parity, and original draw order remain unresolved."
+  - "No ProjectBaseline packed visual data or payload was read, copied, or published."
