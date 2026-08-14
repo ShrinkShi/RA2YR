@@ -50,4 +50,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0043 | M5-C4 structures and placement foundation | Accepted for project-enhancement implementation |
 | 0044 | M5-C5 economic computer-agent foundation | Accepted for project-enhancement implementation |
 | 0045 | M5-C6 integrated headless skirmish foundation | Accepted for project-enhancement implementation |
+| 0046 | M5-C7 bounded performance and correctness closeout | Accepted for synthetic project-enhancement evidence |
 | 0043 | M5-C4 structures and placement foundation | Accepted for project-enhancement implementation |

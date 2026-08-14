@@ -1,0 +1,31 @@
+schema_version: 1
+evidence_id: m5c7-performance-closeout-synthetic-20260814
+status: SyntheticProjectEnhancement
+source_role: synthetic-test-fixtures
+implementation:
+  assembly: RA2YR.Simulation
+  behavior_methods: 13
+  defined_nunit_executions: 27
+  edit_mode_total: 1465
+  edit_mode_passed: 1465
+  edit_mode_failed: 0
+  play_mode_total: 1
+  play_mode_passed: 1
+  no_engine_references: true
+stress_tiers:
+  entity_counts: [500, 1000, 2000]
+  workloads: [Harvesting, Production, Combat, Occupancy, Targeting, Autonomy, Mixed]
+  ticks: 3
+contracts:
+  single_economy_authority: true
+  read_only_proposal_then_deterministic_commit: true
+  descriptor_parse_cache: true
+  direct_factory_and_prerequisite_counters: true
+  bounded_spatial_queries: true
+  deterministic_target_pairing: true
+  canonical_hash_includes_credits_cargo_resources_queues_ownership_power_structure: true
+  operation_budget_fails_closed: true
+  project_baseline_read: false
+limitations:
+  - This is synthetic bounded stress evidence, not a wall-clock benchmark or stock YR performance claim.
+  - Map loading, renderer, replay/networking, ProjectBaseline packed reads, and M6 behavior remain out of scope.

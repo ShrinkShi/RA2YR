@@ -862,3 +862,11 @@ promotion was introduced.
 - Added declarative command queues, mission snapshots, perception/targeting,
   action arbitration, and explicit autonomy/hold policies.
 - Focused EditMode passed 1331/1331; combat/economy remain out of scope.
+## 2026-08-14 - M5-C7 performance and correctness closeout
+
+- Created the M5-C7 branch from post-merge main `1ea94fe31d07c3f7eb4e708db6dce6b3fefbea3d`.
+- Added bounded stress workloads at 500/1000/2000 entities with a single
+  authoritative economy, deterministic proposal/commit phases, operation
+  budgets, and canonical aggregate hashes.
+- Current exact-head Unity result: EditMode 1465/1465 (27 C7 executions) and
+  PlayMode 1/1; no ProjectBaseline packed data was read.
