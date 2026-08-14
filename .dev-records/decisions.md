@@ -596,3 +596,10 @@ selection remains unresolved and produces `CompleteWithFailures`.
   clamps, rewrites occupancy, or creates actors.
 - Repair, sell, capture, deploy, power, and ownership remain explicit
   candidates with no default stock runtime behavior.
+
+## 2026-08-14 - M5-C5 economic agent boundary
+
+- Economic agents receive legal immutable C1-C4 snapshots and emit ordered
+  candidates only; proposal evaluation never mutates authoritative state.
+- Strategy profiles alter deterministic priority, not stock YR AI semantics;
+  neural/ONNX execution and ProjectBaseline packed reads remain excluded.

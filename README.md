@@ -90,6 +90,14 @@ Payment, refunds, factory runtime, placement/exits, completion actors,
 sidebar/UI, campaign triggers, and original-runtime production compatibility
 remain unimplemented and unconfirmed. No ProjectBaseline packed data is read.
 
+M5-C5 adds a Unity-free economic computer-agent observation/proposal layer
+that composes the M5-C1 through M5-C4 snapshots. It provides bounded,
+deterministic harvest, production, and structure-interaction candidates with
+explicit strategy labels, but never mutates credits, cargo, queues, power,
+occupancy, or actors. Neural/ONNX execution, rendering, gameplay, and
+original-runtime AI compatibility remain unimplemented and unconfirmed. No
+ProjectBaseline packed data is read.
+
 ## 项目定位
 
 RA2YR 的目标是读取用户在仓库外提供的本地游戏内容，逐项实现并验证 YR 1.001 的格式、配置、地图、确定性逻辑、行为和视觉兼容性。它不是“类似红警”的通用 RTS，也不是 Electronic Arts 或其关联方的官方产品。
