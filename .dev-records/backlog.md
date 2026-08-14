@@ -383,6 +383,7 @@ turn Unity presentation state into simulation authority.
 - [x] Cover bounded 500/1000/2000 entity tiers and Unity controller smoke.
 - [x] Current code-head EditMode 1657/1657 and PlayMode 3/3 passed, covering
   15 behavior methods and 17 defined NUnit executions.
-- [ ] Draft PR exact-head Repository safety and final M6 closeout remain.
+- [x] Draft PR #74 passed exact-head Repository safety run 31832327388 and
+  was squash-merged; post-main safety run 31832713652 also succeeded.
 - [ ] Wall-clock GPU FPS, original UI/network/map loading, writer, and M7 remain
   out of scope.

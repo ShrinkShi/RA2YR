@@ -978,5 +978,10 @@ visual data was not read.
 - `Assets/RA2YR/Tests/PlayMode/M6C8PlayableSmokeTests.cs`
 - `docs/compatibility/evidence/m6c8-integrated-playable-synthetic-20260815.yml`
 
-### 后续事项
-- Run final static gates, push Draft PR, and wait for exact-head Repository safety.
+### 收口结果
+- Final static gates and current-head Unity evidence completed; PR #74 was
+  opened as Draft, marked Ready only after all gates passed, and squash-merged
+  as `0a8b834f496509bb34f6ebbfaf673f58c4c98367`.
+- Exact-head Repository safety was run `31832327388`; post-main safety was
+  run `31832713652`. M6 remains a foundation/project-enhancement milestone;
+  M7 was not started.

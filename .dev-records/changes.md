@@ -950,3 +950,12 @@ payload or path is published.
 - Current code-head EditMode is 1657/1657 passed, covering 15 C8 behavior
   methods and 17 defined NUnit executions; PlayMode is 3/3 passed. No
   ProjectBaseline packed data was read.
+
+## 2026-08-15 - M6 completion documentation closeout
+
+- M6 C1-C8 foundations are merged on main at
+  `0a8b834f496509bb34f6ebbfaf673f58c4c98367`.
+- C8 exact-head Repository safety `31832327388` and post-main safety
+  `31832713652` completed successfully. No M7 work was started and no
+  compatibility claim was promoted beyond the recorded synthetic/configured
+  evidence.

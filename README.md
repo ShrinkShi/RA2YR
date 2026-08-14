@@ -128,8 +128,9 @@ EditMode 1465/1465 and PlayMode 1/1, with post-main Repository safety
 M5 COMPLETE does not claim full YR gameplay or stock economy parity, map
 loading, terrain runtime compatibility, rendering, player UI, replay or
 networking, trained Neural AI, campaign/trigger runtime, writer/roundtrip,
-clean YR 1.001 equivalence, or original-runtime confirmation. M6 is now the
-Presentation/Renderer/Interactive Client target.
+clean YR 1.001 equivalence, or original-runtime confirmation. M6 的
+Presentation/Renderer/Interactive Client foundations 已完成；这不提升
+original-runtime、完整 gameplay 或 clean YR 1.001 兼容性声明。
 
 ## M6-C1 presentation snapshot foundation
 
