@@ -362,7 +362,7 @@ turn Unity presentation state into simulation authority.
 - [x] Add central `UnityPresentationWorld`, bounded visual asset cache, indexed
   source/palette lookup resources, terrain chunk lifecycle, camera adapter, and
   synthetic exposed-face VXL mesh.
-- [x] Current code-head EditMode evidence is 1601/1601 passed, including 29 C6
+- [x] Current code-head EditMode evidence is 1603/1603 passed, including 31 C6
   renderer behavior methods; PlayMode is 2/2 passed.
 - [ ] Full shader/pixel parity, TMP/theater binding, unsupported SHP semantics,
   original camera/depth comparison, and production art remain deferred.

@@ -926,5 +926,5 @@ payload or path is published.
 - Added synthetic EditMode coverage for cache, palette, world lifecycle,
   terrain chunk mesh reuse, depth mapping, and voxel geometry; PlayMode smoke
   confirms the central world lifecycle.
-- Current code-head EditMode evidence is 1601/1601 passed and PlayMode is 2/2
+- Current code-head EditMode evidence is 1603/1603 passed and PlayMode is 2/2
   passed. No ProjectBaseline packed visual data was read.

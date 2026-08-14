@@ -926,5 +926,5 @@ Created `feature/m6-c6-unity-renderer-integration-foundation` from exact
 post-M6-C5 main `7df9055d71226a1cb49b64fcca04d738017a11a6`. Added the central
 Unity presentation world, bounded cache, indexed/palette resources, terrain
 chunk lifecycle, camera adapter, and synthetic VXL exposed-face mesh. Current
-EditMode is 1601/1601 passed and PlayMode is 2/2 passed; ProjectBaseline packed
+EditMode is 1603/1603 passed and PlayMode is 2/2 passed; ProjectBaseline packed
 visual data was not read.
