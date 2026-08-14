@@ -675,3 +675,10 @@ these profiles as measured FPS.
 
 Current-head EditMode 1657/1657 and PlayMode 3/3 passed; evidence records the
 cadence/profile boundary.
+
+## 2026-08-15 - M6 completion closeout
+
+M6 C1-C8 are merged on main. The final C8 exact-head and post-main Repository
+safety runs succeeded. Remaining work is outside the M6 closeout boundary:
+original-runtime confirmation, clean YR 1.001 equivalence, full gameplay
+parity, and M7.
