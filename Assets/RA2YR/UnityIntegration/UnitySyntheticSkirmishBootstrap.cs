@@ -101,7 +101,7 @@ namespace RA2YR.UnityIntegration
             string configurationPath = Path.Combine(projectRoot, "Config", "ExternalContent.local.xml");
             if (!File.Exists(configurationPath))
             {
-                externalVisualStatus = new ExternalLegacyVisualStatus(false, false, false, 0, 0, 0, 0, 0, 0, 0, "SyntheticFallback", "Local external content configuration is not present.");
+                externalVisualStatus = new ExternalLegacyVisualStatus(false, false, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, HumanPlaytestRemapProfile.SourcePaletteOnly, "SyntheticFallback", "Local external content configuration is not present.");
                 return;
             }
 
@@ -302,10 +302,11 @@ namespace RA2YR.UnityIntegration
         {
             if (target == null || externalVisualProvider == null || !externalVisualProvider.IsAvailable) return false;
             bool enemy = entity.Owner.Value != Runtime.HumanPlayer.Value;
+            HumanPlaytestVisualRole role = RoleFor(entity.Kind, enemy);
             if (entity.Kind != HumanPlaytestEntityKind.Unit && entity.Kind != HumanPlaytestEntityKind.Harvester)
             {
                 Mesh mesh;
-                if (externalVisualProvider.TryGetVoxelMesh(out mesh) && mesh != null)
+                if (externalVisualProvider.TryGetVoxelMesh(role, out mesh) && mesh != null)
                 {
                     Material material = GetVoxelMaterial(enemy);
                     if (material == null) return false;
@@ -318,7 +319,7 @@ namespace RA2YR.UnityIntegration
             }
 
             Sprite sprite;
-            if (externalVisualProvider.TryGetSprite(entity.Kind, enemy, out sprite) && sprite != null)
+            if (externalVisualProvider.TryGetSprite(role, out sprite) && sprite != null)
             {
                 SpriteRenderer renderer = target.AddComponent<SpriteRenderer>();
                 renderer.sprite = sprite;
@@ -326,6 +327,19 @@ namespace RA2YR.UnityIntegration
                 return true;
             }
             return false;
+        }
+
+        private static HumanPlaytestVisualRole RoleFor(HumanPlaytestEntityKind kind, bool enemy)
+        {
+            switch (kind)
+            {
+                case HumanPlaytestEntityKind.Harvester: return HumanPlaytestVisualRole.HumanHarvester;
+                case HumanPlaytestEntityKind.MainBase: return enemy ? HumanPlaytestVisualRole.EnemyBase : HumanPlaytestVisualRole.HumanBase;
+                case HumanPlaytestEntityKind.Refinery: return HumanPlaytestVisualRole.HumanRefinery;
+                case HumanPlaytestEntityKind.Factory: return enemy ? HumanPlaytestVisualRole.EnemyFactory : HumanPlaytestVisualRole.HumanFactory;
+                case HumanPlaytestEntityKind.Power: return HumanPlaytestVisualRole.HumanPower;
+                default: return enemy ? HumanPlaytestVisualRole.EnemyBasicUnit : HumanPlaytestVisualRole.HumanBasicUnit;
+            }
         }
 
         private Material GetVoxelMaterial(bool enemy)
@@ -389,8 +403,16 @@ namespace RA2YR.UnityIntegration
                 tile.Value.GetComponent<SpriteRenderer>().color = visible ? tile.Value.GetComponent<SpriteRenderer>().color.WithAlpha(1f) : tile.Value.GetComponent<SpriteRenderer>().color.WithAlpha(0.35f);
             }
             bool useExternal = externalVisualProvider != null && externalVisualProvider.IsAvailable;
-            string visualPrefix = useExternal ? "external-legacy/playtest/" : "synthetic/playtest/";
-            var descriptors = snapshot.Entities.Select(x => new PresentationEntityDescriptor(x.Entity, new VisualAssetId(visualPrefix + x.Kind), x.Kind == HumanPlaytestEntityKind.Unit ? PresentationRenderPass.Vehicle : PresentationRenderPass.Structure, new PresentationPosition(x.X, x.Y), x.Entity.Index));
+            var descriptors = snapshot.Entities.Select(x =>
+            {
+                bool enemy = x.Owner.Value != Runtime.HumanPlayer.Value;
+                HumanPlaytestVisualRole role = RoleFor(x.Kind, enemy);
+                ResolvedLegacyVisual resolved;
+                string visualId = useExternal && externalVisualProvider.TryGetResolvedVisual(role, out resolved)
+                    ? resolved.VisualAssetId
+                    : (useExternal ? "external-legacy/playtest/unresolved-" + role : "synthetic/playtest/" + role);
+                return new PresentationEntityDescriptor(x.Entity, new VisualAssetId(visualId), x.Kind == HumanPlaytestEntityKind.Unit ? PresentationRenderPass.Vehicle : PresentationRenderPass.Structure, new PresentationPosition(x.X, x.Y), x.Entity.Index);
+            });
             IVisualAssetProvider[] providers = useExternal
                 ? new IVisualAssetProvider[] { externalVisualProvider }
                 : new IVisualAssetProvider[] { new SyntheticProvider() };
