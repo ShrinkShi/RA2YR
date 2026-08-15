@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using RA2YR.Core.Formats.MapTerrain;
 using RA2YR.Presentation;
 using RA2YR.Simulation;
 using UnityEngine;
@@ -11,10 +13,9 @@ namespace RA2YR.UnityIntegration
     {
         private readonly Dictionary<EntityId, GameObject> entityObjects = new Dictionary<EntityId, GameObject>();
         private readonly Dictionary<CellCoordinate, GameObject> terrainObjects = new Dictionary<CellCoordinate, GameObject>();
+        private readonly Dictionary<bool, Material> voxelMaterials = new Dictionary<bool, Material>();
         private Sprite unitSprite;
-        private Sprite terrainSprite;
         private Texture2D unitTexture;
-        private Texture2D terrainTexture;
         private Camera playCamera;
         private Vector3 dragStart;
         private bool dragging;
@@ -22,6 +23,12 @@ namespace RA2YR.UnityIntegration
         private bool paused;
         private float simulationAccumulator;
         private PresentationSnapshot previousPresentation;
+        private ExternalLegacyVisualProvider externalVisualProvider;
+        private ExternalLegacyVisualStatus externalVisualStatus;
+        private Material terrainMaterial;
+        private int terrainCellCount;
+        private int externalObjectCount;
+        private int syntheticObjectFallbackCount;
 
         public HumanPlaytestRuntime Runtime { get; private set; }
         public UnityPresentationWorld PresentationWorld { get; private set; }
@@ -29,7 +36,10 @@ namespace RA2YR.UnityIntegration
         public Camera PlayCamera => playCamera;
         public bool IsInitialized { get; private set; }
         public bool IsPaused => paused;
-        public int TerrainCellCount => terrainObjects.Count;
+        public int TerrainCellCount => terrainCellCount;
+        public ExternalLegacyVisualStatus ExternalVisualStatus => externalVisualStatus;
+        public int ExternalObjectCount => externalObjectCount;
+        public int SyntheticObjectFallbackCount => syntheticObjectFallbackCount;
         public PresentationSnapshot LastPresentation { get; private set; }
 
         public static UnitySyntheticSkirmishBootstrap CreateSynthetic(string name = "RA2YRSyntheticSkirmish")
@@ -70,14 +80,36 @@ namespace RA2YR.UnityIntegration
         {
             if (IsInitialized) return;
             Runtime = new HumanPlaytestRuntime(HumanPlaytestRuntimeConfig.Default);
+            // Headless scene loading can spend several frames integrating assets; keep
+            // the deterministic smoke-test world at tick zero until the test drives it.
+            paused = Application.isBatchMode;
             PresentationWorld = gameObject.GetComponent<UnityPresentationWorld>() ?? gameObject.AddComponent<UnityPresentationWorld>();
             PresentationWorld.Configure(new UnityPresentationWorldPolicy(4096, 1024));
             Client = gameObject.GetComponent<UnityInteractiveClient>() ?? gameObject.AddComponent<UnityInteractiveClient>();
             Client.Configure(new UnityInteractiveClientPolicy(512, 256), new IsometricPointerProfile(64, 32, 1920, 1080), Runtime.CommandQueue);
             BuildCamera();
-            BuildProceduralArt();
+            ConfigureExternalVisuals();
+            if (externalVisualProvider == null || !externalVisualProvider.IsAvailable)
+                BuildProceduralArt();
             BuildTerrain();
             IsInitialized = true;
+        }
+
+        private void ConfigureExternalVisuals()
+        {
+            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            string configurationPath = Path.Combine(projectRoot, "Config", "ExternalContent.local.xml");
+            if (!File.Exists(configurationPath))
+            {
+                externalVisualStatus = new ExternalLegacyVisualStatus(false, false, false, 0, 0, 0, 0, 0, 0, 0, "SyntheticFallback", "Local external content configuration is not present.");
+                return;
+            }
+
+            HumanPlaytestVisualProfile profile = new HumanPlaytestVisualProfile(
+                HumanPlaytestVisualMode.ExternalLegacyPreferred,
+                configurationPath);
+            externalVisualProvider = ExternalLegacyVisualProvider.Create(profile, projectRoot);
+            externalVisualStatus = externalVisualProvider.Status;
         }
 
         public void RestartMatch()
@@ -88,7 +120,9 @@ namespace RA2YR.UnityIntegration
             Runtime.Reset();
             Client.ClearTargets();
             previousPresentation = null;
-            paused = false;
+            externalObjectCount = 0;
+            syntheticObjectFallbackCount = 0;
+            paused = Application.isBatchMode;
             simulationAccumulator = 0f;
             RenderState();
         }
@@ -146,9 +180,7 @@ namespace RA2YR.UnityIntegration
         private void BuildProceduralArt()
         {
             unitTexture = MakeTexture(new Color(0.25f, 0.75f, 1f, 1f));
-            terrainTexture = MakeTexture(new Color(0.16f, 0.25f, 0.16f, 1f));
             unitSprite = Sprite.Create(unitTexture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
-            terrainSprite = Sprite.Create(terrainTexture, new Rect(0f, 0f, 1f, 1f), new Vector2(0.5f, 0.5f), 1f);
         }
 
         private Texture2D MakeTexture(Color color)
@@ -162,28 +194,38 @@ namespace RA2YR.UnityIntegration
 
         private void BuildTerrain()
         {
+            // The external source is not yet proven to provide a complete TMP/theater
+            // binding. Keep the map visible with one bounded isometric chunk instead
+            // of a square checkerboard or one GameObject per terrain tile.
+            var cells = new List<TerrainTilePresentationDescriptor>();
             for (int y = 0; y < Runtime.Config.Height; y++)
                 for (int x = 0; x < Runtime.Config.Width; x++)
+                    cells.Add(new TerrainTilePresentationDescriptor(
+                        x, y, checked((long)y * Runtime.Config.Width + x), 0, 0,
+                        null, null, null, 0, 0, null, checked((long)y * Runtime.Config.Width + x)));
+
+            TerrainPresentationBuildResult composed = TerrainPresentationComposer.Build(
+                cells,
+                new TerrainPresentationPolicy(16, 16, checked(Runtime.Config.Width * Runtime.Config.Height), 64));
+            IsometricProjectionProfile projection = new IsometricProjectionProfile(
+                Runtime.Config.Width / 2, Runtime.Config.Height / 2, 2, 1, 0);
+            Shader shader = Shader.Find("Unlit/Color") ?? Shader.Find("Standard");
+            if (shader != null)
+            {
+                terrainMaterial = new Material(shader) { name = "SyntheticIsometricFallbackMaterial", color = new Color(0.20f, 0.34f, 0.22f, 1f) };
+            }
+            foreach (TerrainChunkDescriptor chunk in composed.Chunks)
+            {
+                TerrainChunkMeshBuildResult result = PresentationWorld.ApplyTerrainChunk(
+                    chunk, projection, new TerrainMeshBuildPolicy(4096, 16384, 24576));
+                if (result.IsSuccess)
                 {
-                    var coordinate = new CellCoordinate(x, y);
-                    GameObject tile = new GameObject("Terrain_" + x + "_" + y);
-                    tile.transform.SetParent(transform, false);
-                    tile.transform.position = new Vector3(x, y, 4f);
-                    SpriteRenderer renderer = tile.AddComponent<SpriteRenderer>();
-                    renderer.sprite = terrainSprite;
-                    renderer.sortingOrder = -1000;
-                    renderer.color = ((x + y) % 2 == 0) ? new Color(0.14f, 0.24f, 0.16f, 1f) : new Color(0.18f, 0.29f, 0.18f, 1f);
-                    tile.transform.localScale = new Vector3(0.98f, 0.98f, 1f);
-                    terrainObjects.Add(coordinate, tile);
+                    GameObject chunkObject = PresentationWorld.transform.Find("TerrainChunk_" + chunk.StableIdentity)?.gameObject;
+                    if (chunkObject != null && terrainMaterial != null)
+                        chunkObject.GetComponent<MeshRenderer>().sharedMaterial = terrainMaterial;
                 }
-            GameObject resource = new GameObject("Resource_Ore_Field");
-            resource.transform.SetParent(transform, false);
-            resource.transform.position = new Vector3(9f, 3f, 2f);
-            SpriteRenderer resourceRenderer = resource.AddComponent<SpriteRenderer>();
-            resourceRenderer.sprite = terrainSprite;
-            resourceRenderer.color = new Color(0.92f, 0.78f, 0.18f, 1f);
-            resourceRenderer.sortingOrder = -900;
-            resource.transform.localScale = new Vector3(2.6f, 1.8f, 1f);
+            }
+            terrainCellCount = cells.Count;
         }
 
         private void HandleCameraInput()
@@ -256,6 +298,51 @@ namespace RA2YR.UnityIntegration
             if (result.IsSuccess) Client.SetSelection(result.Selection);
         }
 
+        private bool TryApplyExternalVisual(GameObject target, HumanPlaytestEntitySnapshot entity)
+        {
+            if (target == null || externalVisualProvider == null || !externalVisualProvider.IsAvailable) return false;
+            bool enemy = entity.Owner.Value != Runtime.HumanPlayer.Value;
+            if (entity.Kind != HumanPlaytestEntityKind.Unit && entity.Kind != HumanPlaytestEntityKind.Harvester)
+            {
+                Mesh mesh;
+                if (externalVisualProvider.TryGetVoxelMesh(out mesh) && mesh != null)
+                {
+                    Material material = GetVoxelMaterial(enemy);
+                    if (material == null) return false;
+                    MeshFilter filter = target.AddComponent<MeshFilter>();
+                    filter.sharedMesh = mesh;
+                    MeshRenderer renderer = target.AddComponent<MeshRenderer>();
+                    renderer.sharedMaterial = material;
+                    return true;
+                }
+            }
+
+            Sprite sprite;
+            if (externalVisualProvider.TryGetSprite(entity.Kind, enemy, out sprite) && sprite != null)
+            {
+                SpriteRenderer renderer = target.AddComponent<SpriteRenderer>();
+                renderer.sprite = sprite;
+                renderer.color = Color.white;
+                return true;
+            }
+            return false;
+        }
+
+        private Material GetVoxelMaterial(bool enemy)
+        {
+            Material material;
+            if (voxelMaterials.TryGetValue(enemy, out material) && material != null) return material;
+            Shader shader = Shader.Find("Unlit/Color") ?? Shader.Find("Standard");
+            if (shader == null) return null;
+            material = new Material(shader)
+            {
+                name = enemy ? "ExternalLegacyEnemyMaterial" : "ExternalLegacyHumanMaterial",
+                color = enemy ? new Color(0.85f, 0.18f, 0.16f, 1f) : new Color(0.18f, 0.55f, 0.95f, 1f)
+            };
+            voxelMaterials[enemy] = material;
+            return material;
+        }
+
         private void RenderState()
         {
             if (!IsInitialized) return;
@@ -269,8 +356,14 @@ namespace RA2YR.UnityIntegration
                 {
                     target = new GameObject("Entity_" + entity.Entity.Index + "_" + entity.Entity.Generation);
                     target.transform.SetParent(transform, false);
-                    SpriteRenderer renderer = target.AddComponent<SpriteRenderer>();
-                    renderer.sprite = unitSprite;
+                    bool external = TryApplyExternalVisual(target, entity);
+                    if (!external)
+                    {
+                        SpriteRenderer renderer = target.AddComponent<SpriteRenderer>();
+                        renderer.sprite = unitSprite;
+                        syntheticObjectFallbackCount = checked(syntheticObjectFallbackCount + 1);
+                    }
+                    else externalObjectCount = checked(externalObjectCount + 1);
                     entityObjects[entity.Entity] = target;
                     Client.RegisterPickTarget(new UnityPickTarget(entity.Entity, new CellCoordinate(entity.X, entity.Y), target.name, entity.Entity.Index));
                 }
@@ -280,8 +373,14 @@ namespace RA2YR.UnityIntegration
                 Color baseColor = entity.Owner.Value == Runtime.HumanPlayer.Value ? new Color(0.2f, 0.65f, 1f, 1f) : new Color(1f, 0.28f, 0.25f, 1f);
                 if (entity.Kind == HumanPlaytestEntityKind.Harvester) baseColor = new Color(1f, 0.78f, 0.15f, 1f);
                 if (entity.Kind == HumanPlaytestEntityKind.MainBase) baseColor = entity.Owner.Value == Runtime.HumanPlayer.Value ? new Color(0.3f, 0.9f, 0.9f, 1f) : new Color(0.95f, 0.15f, 0.2f, 1f);
-                sprite.color = Client.Selection.Contains(entity.Entity) ? Color.white : baseColor;
-                sprite.sortingOrder = 1000 - entity.Y;
+                if (sprite != null)
+                {
+                    bool isExternalSprite = externalVisualProvider != null && externalVisualProvider.IsAvailable && sprite.sprite != unitSprite;
+                    sprite.color = isExternalSprite ? Color.white : (Client.Selection.Contains(entity.Entity) ? Color.white : baseColor);
+                    sprite.sortingOrder = 1000 - entity.Y;
+                }
+                MeshRenderer meshRenderer = target.GetComponent<MeshRenderer>();
+                if (meshRenderer != null) meshRenderer.sortingOrder = 1000 - entity.Y;
             }
             foreach (EntityId entity in entityObjects.Keys.Where(x => !live.Contains(x)).ToList()) { DestroyObject(entityObjects[entity]); entityObjects.Remove(entity); }
             foreach (KeyValuePair<CellCoordinate, GameObject> tile in terrainObjects)
@@ -289,8 +388,13 @@ namespace RA2YR.UnityIntegration
                 bool visible = snapshot.Entities.Any(x => x.Owner.Value == Runtime.HumanPlayer.Value && Math.Abs(x.X - tile.Key.X) + Math.Abs(x.Y - tile.Key.Y) <= 9);
                 tile.Value.GetComponent<SpriteRenderer>().color = visible ? tile.Value.GetComponent<SpriteRenderer>().color.WithAlpha(1f) : tile.Value.GetComponent<SpriteRenderer>().color.WithAlpha(0.35f);
             }
-            var descriptors = snapshot.Entities.Select(x => new PresentationEntityDescriptor(x.Entity, new VisualAssetId("synthetic/playtest/" + x.Kind), x.Kind == HumanPlaytestEntityKind.Unit ? PresentationRenderPass.Vehicle : PresentationRenderPass.Structure, new PresentationPosition(x.X, x.Y), x.Entity.Index));
-            LastPresentation = PresentationSnapshotAssembler.Assemble(Runtime.World.CaptureSnapshot(), descriptors, previousPresentation, new[] { new SyntheticProvider() }, new PresentationAssemblyPolicy(4096));
+            bool useExternal = externalVisualProvider != null && externalVisualProvider.IsAvailable;
+            string visualPrefix = useExternal ? "external-legacy/playtest/" : "synthetic/playtest/";
+            var descriptors = snapshot.Entities.Select(x => new PresentationEntityDescriptor(x.Entity, new VisualAssetId(visualPrefix + x.Kind), x.Kind == HumanPlaytestEntityKind.Unit ? PresentationRenderPass.Vehicle : PresentationRenderPass.Structure, new PresentationPosition(x.X, x.Y), x.Entity.Index));
+            IVisualAssetProvider[] providers = useExternal
+                ? new IVisualAssetProvider[] { externalVisualProvider }
+                : new IVisualAssetProvider[] { new SyntheticProvider() };
+            LastPresentation = PresentationSnapshotAssembler.Assemble(Runtime.World.CaptureSnapshot(), descriptors, previousPresentation, providers, new PresentationAssemblyPolicy(4096));
             previousPresentation = LastPresentation;
             Client.SetVisibility(BuildVisibility(snapshot));
             Client.RefreshHud(Runtime.World.CaptureSnapshot(), checked((int)Math.Min(Runtime.Economy.Get(Runtime.HumanPlayer).Balance, int.MaxValue)), false, Client.Selection.Entities.Count == 0 ? "Manual" : snapshot.Entities.Where(x => Client.Selection.Contains(x.Entity)).Select(x => x.Autonomy.ToString()).FirstOrDefault() ?? "Manual");
@@ -343,9 +447,12 @@ namespace RA2YR.UnityIntegration
             foreach (GameObject target in entityObjects.Values) DestroyObject(target);
             foreach (GameObject tile in terrainObjects.Values) DestroyObject(tile);
             if (unitSprite != null) DestroyObject(unitSprite);
-            if (terrainSprite != null) DestroyObject(terrainSprite);
             if (unitTexture != null) DestroyObject(unitTexture);
-            if (terrainTexture != null) DestroyObject(terrainTexture);
+            if (terrainMaterial != null) DestroyObject(terrainMaterial);
+            foreach (Material material in voxelMaterials.Values) DestroyObject(material);
+            voxelMaterials.Clear();
+            if (externalVisualProvider != null) externalVisualProvider.Dispose();
+            externalVisualProvider = null;
         }
 
         private static void DestroyObject(UnityEngine.Object target)
