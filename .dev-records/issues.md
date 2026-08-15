@@ -722,3 +722,31 @@ observed evidence; no incomplete run is promoted to a pass claim.
   resolved=0, fallback=9`; the local source path has no available visual
   candidates in this checkout. This is an environment/content availability
   result, not a compatibility claim or a reason to fabricate payload evidence.
+
+## 2026-08-15 - M6 external route false-positive and strict VXL boundary
+
+### Phenomenon
+
+The configured source mounted successfully but the original local gate passed
+with zero external roles, and the scene showed only procedural rectangles.
+
+### Root cause
+
+The provider did not expose stage status, required an explicit Art `Image`,
+omitted legal nested archive topology, and the VXL reader treated an inclusive
+range with exactly three remaining bytes as truncated. After decode recovery,
+the bootstrap also excluded Unit/Harvester roles from VXL mesh application.
+
+### Resolution
+
+Add stage counters and a final external-role gate, explicit Art identity policy,
+Core-owned archive topology, exact HVA parse/bind, the strict inclusive-end
+off-by-one correction, and per-role mixed-provider scene routing. Keep strict
+SHP flags-3 failures as explicit fallback.
+
+### Verification
+
+The current compiled code tree passes EditMode 1683/1683 and PlayMode 7/7. The
+reproducible sanitized local result resolves two distinct VXL/HVA roles, retains
+six strict SHP fallbacks plus one strict VXL/HVA fallback, and publishes no
+names, paths, payload, pixels, or per-asset hashes.

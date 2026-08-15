@@ -16,30 +16,73 @@ visual_provider:
   bounded_vfs_probe: true
   managed_raw_lzo1x_reused: true
   new_codec_or_writer: false
-  configured_status: "Configured source traversal completed; no local visual candidates were available in this checkout"
+  configured_status: "ExternalVisualsResolved for two distinct VXL/HVA battlefield roles; six strict SHP roles and one strict VXL/HVA role remain explicit fallback"
   terrain_status: "SyntheticFallback"
   remap_profile: "SourcePaletteOnly"
   role_aggregate:
     roles_total: 9
-    roles_resolved_external: 0
-    roles_fallback: 9
+    roles_resolved_external: 2
+    roles_fallback: 7
     shp_roles_resolved: 0
-    vxl_roles_resolved: 0
-    hva_bindings_resolved: 0
-    palette_bindings_resolved: 0
-    human_units_external: 0
+    vxl_roles_resolved: 2
+    hva_bindings_resolved: 2
+    palette_bindings_resolved: 2
+    human_units_external: 1
     human_structures_external: 0
-    enemy_units_external: 0
+    enemy_units_external: 1
     enemy_structures_external: 0
-    unresolved_roles: 9
+    unresolved_roles: 7
     source_fingerprint_stable: true
     aggregate_is_sanitized: true
   typed_route_contract:
-    rules_registry_to_art_record: "Configured role profile; synthetic contract tested"
-    art_to_logical_image_or_voxel: "Explicit Art Image/Voxel fields"
+    rules_registry_to_art_record: "Configured role intent; typed Rules registry membership and active Art section are both required"
+    art_to_logical_image_or_voxel: "Explicit Art Image or named section-identity policy; Voxel=yes remains explicit"
+    section_identity_evidence: "ConfirmedCommunityConvention plus ConfiguredProjectPolicy; not original-runtime source proof"
     content_vfs_to_provider: "Bounded MIX/VFS lookup by logical identity"
     unresolved_vxl_no_shp_fallback: true
     per_role_cache_identity: true
+  sanitized_route_aggregate:
+    gate: "ExternalVisualsResolved"
+    root_mix_count: 8
+    mounted_archive_count: 12
+    mounted_entry_count: 3790
+    rules_candidate_count: 2
+    rules_parse_success_count: 2
+    rules_resolution_complete: true
+    typed_rules_registry_count: 5
+    typed_rules_entry_count: 1171
+    art_candidate_count: 2
+    art_parse_success_count: 2
+    art_resolution_complete: true
+    typed_art_record_count: 1572
+    art_records_with_explicit_image: 524
+    art_records_without_explicit_image: 1048
+    target_art_records_with_explicit_image: 0
+    target_art_records_without_explicit_image: 9
+    role_bindings_requested: 9
+    role_rule_matches: 9
+    role_art_matches: 9
+    role_descriptors_created: 9
+    image_logical_requests: 6
+    image_vfs_matches: 6
+    vxl_logical_requests: 3
+    vxl_vfs_matches: 3
+    hva_logical_requests: 3
+    hva_vfs_matches: 3
+    palette_logical_requests: 9
+    palette_vfs_matches: 9
+    shp_decode_success: 0
+    shp_decode_failed: 6
+    vxl_decode_success: 2
+    vxl_decode_failed: 1
+    hva_bind_success: 2
+    hva_bind_failed: 1
+    final_external_roles: 2
+    terrain: "SyntheticFallback"
+  strict_decoder_boundary:
+    shp_flags3_project_baseline: "NotCompatible; no clamp, padding, widening, or fallback was added"
+    vxl_change: "Corrected inclusive-end available-byte arithmetic for an exact three-byte span command"
+    vxl_contract_relaxed: false
 preview_pack_audit_aggregate:
   status: "CompleteWithFailures"
   candidate_entries: 184

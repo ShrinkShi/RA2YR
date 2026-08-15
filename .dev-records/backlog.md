@@ -403,7 +403,7 @@ turn Unity presentation state into simulation authority.
 
 ## M6 Human Playtest real-content visual integration (current delivery)
 
-- [x] Add bounded, read-only external legacy SHP/PAL preference for the
+- [x] Add bounded, read-only external legacy SHP/VXL/HVA/PAL preference for the
   configured `YR1001_ProjectBaseline` source, with status separate from
   Simulation.
 - [x] Preserve an explicit synthetic fallback and synthetic terrain chunk;
@@ -417,11 +417,15 @@ turn Unity presentation state into simulation authority.
 - [x] M6 real-content visual finding closure: typed Rules-to-Art routing,
   bounded logical Content/MIX lookup, per-role SHP/VXL/HVA/palette caches, and
   explicit `SourcePaletteOnly` remap profile.
-- [x] Current compiled code-tree EditMode evidence is 1679/1679 passed. Sanitized local
-   aggregate is 9 configured roles, 0 external roles resolved, and 9 fallback;
-   no payload or per-role record is published.
-- [x] Current compiled code-tree PlayMode evidence is 7/7 passed. Final PR #77
-   HEAD `d90714e4df96741d170941b74f4805dc86c01ef8` has exact-head Repository
-   safety run `31885043290` completed successfully.
-- [ ] Manual user visual inspection remains required; no Ready, merge, or M7
-  action is implied by the automated result.
+- [x] Close the false-positive local gate with bounded stage counters. Current
+  compiled code-tree EditMode evidence is 1683/1683 passed; the sanitized local
+  aggregate is 9 configured roles, 2 distinct external VXL/HVA roles, and 7
+  fallbacks (6 strict SHP plus 1 strict VXL/HVA). No payload or per-role record
+  is published.
+- [x] Correct the strict VXL inclusive-end command byte check, parse and bind HVA
+  before reporting success, and route resolved VXL roles into actual scene Mesh
+  objects. Current compiled code-tree PlayMode evidence is 7/7 passed.
+- [ ] Push the additive closeout commits and obtain Repository safety success
+  for the new exact PR #77 HEAD.
+- [ ] Repeat the human visual inspection against the updated scene; PR #77
+  remains Draft and no Ready, merge, or M7 action is implied.

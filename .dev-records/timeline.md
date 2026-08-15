@@ -1013,3 +1013,15 @@ configured-source traversal produced the sanitized aggregate `9 roles,
 0 resolved, 9 fallback`; the configured source has no available visual
 candidates in this checkout. Current EditMode evidence is 1678/1678 passed;
 the external aggregate test does not publish payload or per-role records.
+
+## 2026-08-15 - M6 external visual route recovery
+
+Recovered the actual configured visual path without changing PR #77 scope.
+The first zero stages were fixed in order: child MIX topology, typed Art
+identity, logical asset lookup, strict VXL inclusive-end parsing, HVA binding,
+and Unit/Harvester scene mesh application. Synthetic nested MIX fixtures cover
+explicit/missing Image policy, VXL/HVA, SHP, child palette, distinct identities,
+and unsupported-role fallback. The reproducible configured-source aggregate is
+two distinct external VXL/HVA roles and seven fallbacks (six strict SHP plus one
+strict VXL/HVA); terrain stays synthetic, PR #77 stays Draft, and M7 was not
+started.

@@ -16,6 +16,13 @@ has an independent asset/cache identity, and SHP buildings are never rendered
 through a shared VXL mesh. Source status remains separate from Simulation state,
 and no payload, decoded bytes, pixels, filenames, or absolute paths are exposed.
 
+Archive topology belongs to a bounded Core Content profile rather than the
+Unity provider. Art visual identity is an explicit policy: `ExplicitOnly`
+requires `Image=`, while `ExplicitOrSectionIdentifier` permits the resolved Art
+section identity when `Image=` is absent. The latter is a configured project
+policy based on a community convention, not original-runtime source proof.
+`Voxel=yes` remains mandatory before the section identity can route to VXL.
+
 If the source is absent, unavailable, or does not yield a safe indexed-frame /
 palette pair, the bootstrap uses an explicit synthetic Sprite fallback. Terrain
 continues to use the existing synthetic isometric chunk because TMP/theater
@@ -31,3 +38,10 @@ start paused so asynchronous scene integration cannot advance the bounded
 synthetic simulation before assertions drive it. M6-C5 reuses the M3-C4 managed
 RawLzo1X backend and introduces no additional codec or writer, no map packed
 section is loaded, and no original-runtime or visual-parity claim is made.
+
+The configured patched-development corpus currently resolves a sanitized
+aggregate of two VXL/HVA battlefield roles. Six SHP structure roles and one
+VXL/HVA role remain explicit fallback at existing strict reader boundaries.
+The VXL reader correction in this delivery only fixes inclusive-end
+available-byte arithmetic for an exact three-byte command; it does not relax
+span bounds, exact logical-Z consumption, or duplicate-count validation.

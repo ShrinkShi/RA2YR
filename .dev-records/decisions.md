@@ -707,3 +707,14 @@ and retain synthetic terrain/fallback behavior. Do not publish external
 payload, decoded bytes, pixels, or per-asset identities. This is configured
 project-enhancement evidence only and does not confirm original runtime
 palette semantics, TMP/theater terrain binding, map loading, or visual parity.
+
+## M6 external visual route recovery decision
+
+Keep legal child-archive topology in a bounded Core Content profile and keep
+the Unity provider free of a concrete SHP/VXL/HVA catalog. Require both typed
+Rules membership and an active typed Art record. `ExplicitOnly` and
+`ExplicitOrSectionIdentifier` are distinct policies; the latter is configured
+community-convention evidence and still requires explicit `Voxel=yes` for VXL.
+Do not relax SHP flags-3 or VXL span contracts to make a corpus pass. A partial
+external result composes with the synthetic provider per role and never changes
+Simulation authority.

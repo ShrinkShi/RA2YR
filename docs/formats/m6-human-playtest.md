@@ -15,6 +15,15 @@ filename catalog. Each resolved role owns its own SHP frame or VXL cell set;
 VXL/HVA bindings are not used for SHP buildings, and an unavailable VXL role
 does not fall back to an unrelated SHP asset.
 
+The local real-content gate is stage-based and fail-closed. It distinguishes
+configuration/source availability, typed Rules, typed Art, role descriptors,
+VFS lookup, strict decode, and final external role resolution. The current
+sanitized configured-source result reaches `ExternalVisualsResolved`: two
+distinct VXL/HVA battlefield roles (one human and one enemy) are used by the
+scene, while six strict SHP failures and one strict VXL/HVA failure retain
+per-role synthetic fallback. The scene composes both providers so a
+partial external result never produces a null or misleading visual entry.
+
 ## Scene and entry point
 
 Open `Assets/Scenes/RA2YRSyntheticSkirmish.unity` with Unity
@@ -50,6 +59,9 @@ binding is not part of this work package.
 The configured visual probe is read-only and does not publish payload bytes,
 decoded pixels, filenames, paths, or per-asset records. It reuses the existing
 managed RawLzo1X/presentation readers; this package adds no codec or writer.
+The Art section-identity fallback is enabled only by the named
+`ExplicitOrSectionIdentifier` configured policy and still requires an active
+typed Art record; it is not inferred from a physical file lookup.
 Palette remapping defaults to the explicit `SourcePaletteOnly` profile. Any
 implementation-specific remap offsets must be supplied as a separate
 configured profile and are not YR-authenticity claims.

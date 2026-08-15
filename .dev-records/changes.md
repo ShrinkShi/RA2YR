@@ -999,3 +999,18 @@ payload or path is published.
   traversal currently has no available visual candidates in this checkout, so
   all nine configured roles remain fallback; no payload or per-role record is
   published.
+
+## 2026-08-15 - M6 real-content visual route recovery
+
+- Added fail-closed stage status and sanitized aggregate counters from source
+  mount through typed Rules/Art, logical VFS lookup, strict decode, and final
+  external role resolution.
+- Moved child archive topology knowledge into Core Content and kept concrete
+  visual filenames out of the Unity provider.
+- Corrected the strict VXL inclusive-end three-byte command check and added an
+  independent synthetic regression; all other span validation remains strict.
+- Added real HVA parse/bind verification, explicit Art identity policy, nested
+  MIX full-pipeline tests, and mixed external/synthetic scene routing.
+- The reproducible sanitized configured-source result is 2 distinct external
+  VXL/HVA roles and 7 fallbacks (6 strict SHP plus 1 strict VXL/HVA); terrain
+  remains synthetic and compatibility status is not promoted.

@@ -276,9 +276,10 @@ Assisted/Automatic autonomy、harvester/refinery settlement、生产、规则型
 SHP/VXL/HVA indexed assets 与 PAL。角色通过 typed Rules registry→Art→
 logical Content/VFS 路由，每个角色拥有独立 asset/cache identity；不存在
 物理 visual filename catalog，缺失 VXL 不回退到无关 SHP，默认使用显式
-`SourcePaletteOnly` remap profile。当前本机配置源没有可用 visual candidates
-时回退到显式程序化 Sprite。地形仍是 synthetic 等距 chunk，TMP/theater
-绑定不在本轮范围。
+`SourcePaletteOnly` remap profile。当前脱敏本机 aggregate 已解析 2 个
+VXL/HVA battlefield roles；6 个 SHP roles 和 1 个 VXL/HVA role 因既有
+strict reader 边界明确回退到程序化视觉；reader 没有 clamp、padding 或宽松 fallback。
+地形仍是 synthetic 等距 chunk，TMP/theater 绑定不在本轮范围。
 
 试玩说明、控制和边界见 [M6 Human Playtest Delivery](docs/formats/m6-human-playtest.md)。
 该场景不读取 ProjectBaseline 地图 packed section，不加载真实 `.map`，不
