@@ -417,8 +417,11 @@ turn Unity presentation state into simulation authority.
 - [x] M6 real-content visual finding closure: typed Rules-to-Art routing,
   bounded logical Content/MIX lookup, per-role SHP/VXL/HVA/palette caches, and
   explicit `SourcePaletteOnly` remap profile.
-- [x] Current-head EditMode evidence is 1678/1678 passed. Sanitized local
-  aggregate is 9 configured roles, 0 external roles resolved, and 9 fallback;
-  no payload or per-role record is published.
+- [x] Current compiled code-tree EditMode evidence is 1679/1679 passed. Sanitized local
+   aggregate is 9 configured roles, 0 external roles resolved, and 9 fallback;
+   no payload or per-role record is published.
+- [x] Current compiled code-tree PlayMode evidence is 7/7 passed. Final PR #77
+   HEAD `d90714e4df96741d170941b74f4805dc86c01ef8` has exact-head Repository
+   safety run `31885043290` completed successfully.
 - [ ] Manual user visual inspection remains required; no Ready, merge, or M7
   action is implied by the automated result.
