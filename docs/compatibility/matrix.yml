@@ -1755,17 +1755,19 @@ entries:
         description: "Cadence is a deterministic scheduling profile rather than a wall-clock GPU benchmark; original UI/network/map loading, runtime parity, and M7 content remain unresolved. ProjectBaseline packed data was not read."
   - id: visual.human-playtest-delivery
     domain: visual
-    feature: "Centralized M6 synthetic human-playtest scene with Simulation, Presentation, Unity client input, HUD, economy, production, autonomy, and combat"
+    feature: "Centralized M6 human-playtest scene with bounded external legacy visual preference, explicit fallback, Simulation, Presentation, Unity client input, HUD, economy, production, autonomy, and combat"
     status: { implementation: "可执行", original_comparison: "未实现", roundtrip: "未实现" }
     tests:
       - "RA2YR.Tests.EditMode.M6HumanPlaytestRuntimeTests"
+      - "RA2YR.Tests.EditMode.M6HumanPlaytestVisualIntegrationTests"
       - "RA2YR.Tests.PlayMode.M6HumanPlaytestSceneSmokeTests"
     evidence:
       - "docs/compatibility/evidence/m6-human-playtest-synthetic-20260815.yml#scene"
+      - "docs/compatibility/evidence/m6-human-playtest-external-20260815.yml#visual_provider"
     limitations:
-      - id: visual.human-playtest-synthetic-only
+      - id: visual.human-playtest-external-configured
         status: "已知限制"
-        description: "The scene uses bounded synthetic entities, a local rule-based opponent, procedural placeholder sprites, and no ProjectBaseline packed content; original UI/network/map loading, palette/TMP/theater binding, writer, replay, pathfinding, gameplay parity, and original-runtime confirmation remain unresolved."
+        description: "The Unity adapter may read a configured patched-development source in bounded read-only mode for indexed SHP/PAL object visuals; terrain remains synthetic and the adapter publishes no payload. Original UI/network/map loading, TMP/theater binding, writer, replay, pathfinding, gameplay parity, and original-runtime confirmation remain unresolved."
   - id: visual.vxl-hva
     domain: visual
     feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"

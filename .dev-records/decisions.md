@@ -697,3 +697,13 @@ central Unity presentation world, and the Human command gateway. Procedural
 placeholder sprites are permitted for this seam only; no packed ProjectBaseline
 content, map loader, stock YR UI, original-runtime claim, writer, replay,
 pathfinding, or M7 behavior is implied.
+
+## M6 external visual source boundary decision
+
+Prefer the explicitly configured patched-development source for bounded,
+read-only indexed SHP/PAL object visuals in interactive Unity launches. Keep
+the provider Unity-only, reuse managed RawLzo1X and existing bounded readers,
+and retain synthetic terrain/fallback behavior. Do not publish external
+payload, decoded bytes, pixels, or per-asset identities. This is configured
+project-enhancement evidence only and does not confirm original runtime
+palette semantics, TMP/theater terrain binding, map loading, or visual parity.

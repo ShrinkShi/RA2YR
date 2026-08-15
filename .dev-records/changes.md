@@ -971,3 +971,17 @@ payload or path is published.
   local results are recorded in the synthetic evidence file; the PlayMode
   wrapper reported a forced post-result shutdown after complete 7/7 XML.
 - No ProjectBaseline packed content was read. No M7 work was started.
+
+## 2026-08-15 - M6 real-content visual integration
+
+- Added the Unity-only `ExternalLegacyVisualProvider`, reusing bounded MIX,
+  SHP(TS), PAL, VXL/HVA, and the existing managed RawLzo1X contracts.
+- The provider probes a fixed candidate-name set from the explicitly configured
+  `YR1001_ProjectBaseline` source and keeps raw external content outside the
+  repository. Local preflight resolved an indexed visual/palette pair; terrain
+  remains an explicit synthetic fallback because TMP/theater binding is not in
+  scope.
+- Headless PlayMode starts paused to avoid asynchronous scene-load advancement;
+  direct simulation-driving tests remain deterministic. The sanitized
+  PreviewPack audit remains aggregate-only and `NotConfirmed` for original
+  runtime behavior.

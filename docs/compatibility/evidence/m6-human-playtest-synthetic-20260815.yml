@@ -1,42 +1,56 @@
 schema_version: 1
 evidence_id: m6-human-playtest-synthetic-20260815
-status: synthetic
+status: configured-external-preferred-with-synthetic-fallback
 scope: "M6 Human Playtest Delivery scene and runtime foundation"
 scene:
   path: "Assets/Scenes/RA2YRSyntheticSkirmish.unity"
   bootstrap: "RA2YR.UnityIntegration.UnitySyntheticSkirmishBootstrap"
   runtime: "RA2YR.Simulation.HumanPlaytestRuntime"
-  dimensions: "28x22 synthetic bounded battlefield"
+  dimensions: "28x22 bounded human-playtest battlefield"
   simulation_cadence_hz: 15
 contracts:
   input: "Unity input is translated to Human CommandRequest values through UnityInteractiveClient"
   authority: "Simulation remains authoritative for movement, economy, production, autonomy, combat, and terminal state"
   presentation: "PresentationSnapshot and UnityPresentationWorld consume immutable Simulation snapshots"
   ai: "local rule-based opponent controller with bounded synthetic behavior"
-  art: "procedural placeholder sprites only"
+  art: "bounded external legacy SHP/PAL preference with explicit procedural fallback; terrain remains synthetic isometric chunks"
+external_visual_preflight:
+  source_id: "YR1001_ProjectBaseline"
+  mode: "ExternalLegacyPreferred"
+  read_only: true
+  configured_source_available: true
+  indexed_visuals_available: true
+  payload_published: false
+  pixel_payload_published: false
+  map_packed_sections_read: false
+  original_runtime_confirmation: false
+project_baseline:
+  visual_probe_read: true
+  map_packed_read: false
+  source_role: "patched-development-content-source"
 tests:
   runtime_behavior_methods: 8
   scene_smoke_methods: 4
-  defined_nunit_executions: 12
-  current_head_edit_mode_total: 1666
-  current_head_edit_mode_passed: 1666
+  defined_nunit_executions: 16
+  current_head_edit_mode_total: 1670
+  current_head_edit_mode_passed: 1670
   current_head_edit_mode_failed: 0
   current_head_edit_mode_skipped: 0
   current_head_edit_mode_inconclusive: 0
-  current_head_edit_mode_xml: "TestResults/20260815T071640308Z-74e0dd6d8985411c8091c39c37974dca/EditMode/results.xml"
+  current_head_edit_mode_xml: "TestResults/20260815T103107709Z-47f7a3be2b0e4b80b8035019662d599f/EditMode/results.xml"
   current_head_play_mode_total: 7
   current_head_play_mode_passed: 7
   current_head_play_mode_failed: 0
   current_head_play_mode_skipped: 0
   current_head_play_mode_inconclusive: 0
-  current_head_play_mode_xml: "TestResults/20260815T071708615Z-e8b350b498434625bb93938e1aea686c/PlayMode/results.xml"
-  play_mode_forced_post_result_shutdown: true
+  current_head_play_mode_xml: "TestResults/20260815T103318099Z-618c179284b04c3085b655004020cb93/PlayMode/results.xml"
+  play_mode_forced_post_result_shutdown: false
 provenance:
   synthetic_fixture: true
-  project_baseline_read: false
+  project_baseline_read: true
   original_runtime_confirmation: false
   manual_user_playtest: false
 limitations:
-  - "No ProjectBaseline packed content, map loader, stock YR UI, network input, replay, writer, pathfinding, or M7 work was included."
-  - "Procedural sprites are placeholders; palette, theater, TMP, SHP, VXL/HVA binding and visual parity remain unresolved."
+  - "No ProjectBaseline map packed section, map loader, stock YR UI, network input, replay, writer, pathfinding, or M7 work was included."
+  - "External SHP/PAL probing is configured and read-only; terrain remains synthetic and TMP/theater binding, visual parity, and original-runtime behavior remain unresolved."
   - "The rule-based opponent is a local synthetic controller and is not the original YR AI."

@@ -994,3 +994,11 @@ skirmish bootstrap, enabled scene, deterministic runtime harness, controls
 documentation, and current-head runtime/scene smoke tests. This is the M6
 manual delivery seam only; no ProjectBaseline packed data or M7 work was
 started.
+
+## 2026-08-15 - M6 real-content visual integration
+
+Created `feature/m6-human-playtest-real-visuals` from exact main
+`06c579ec0204899b69b86d9c8ba8859d5f3b0732`. Added the configured external
+legacy visual adapter, explicit synthetic fallback, status counters, and
+sanitized aggregate evidence. Local external preflight resolved indexed legacy
+visuals; map packed sections remain unread. No M7 work was started.

@@ -1,0 +1,41 @@
+schema_version: 1
+evidence_id: m6-human-playtest-external-20260815
+status: configured-read-only-aggregate
+scope: "M6 configured external legacy visual preflight and human-playtest adapter"
+source:
+  id: "YR1001_ProjectBaseline"
+  role: "patched-development-content-source"
+  read_only: true
+  payload_committed: false
+  original_runtime_confirmation: false
+visual_provider:
+  provider_id: "external-legacy"
+  mode: "ExternalLegacyPreferred"
+  bounded_candidate_name_probe: true
+  managed_raw_lzo1x_reused: true
+  new_codec_or_writer: false
+  configured_status: "External legacy indexed visuals available"
+  terrain_status: "SyntheticFallback"
+preview_pack_audit_aggregate:
+  status: "CompleteWithFailures"
+  candidate_entries: 184
+  preview_present: 184
+  preview_pack_present: 184
+  both_present: 184
+  valid_metadata: 184
+  exact_decoded: 184
+  failed: 0
+  mount_failures: 1
+  fragments_min: 54
+  fragments_max: 1138
+  chunks_min: 2
+  chunks_max: 15
+  aggregate_sha256: "6d8cf0cb667abea491cdaf1a6554e3bb809eaebe5c01d7db6c3e9f33346e31ec"
+  original_runtime_compatibility: "NotConfirmed"
+sanitization:
+  filenames_published: false
+  paths_published: false
+  compressed_bytes_published: false
+  decoded_bytes_published: false
+  pixels_published: false
+  per_asset_records_published: false

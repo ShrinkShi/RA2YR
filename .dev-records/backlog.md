@@ -396,7 +396,19 @@ turn Unity presentation state into simulation authority.
   autonomy, production, economy, rule-based opponent, combat, fog visibility,
   and HUD behavior through the existing Simulation/Presentation/client seams.
 - [x] Add headless runtime and actual scene-load PlayMode smoke coverage.
-- [x] Keep procedural art synthetic and preserve the no-ProjectBaseline,
-  no-map-loader, no-writer, no-replay, no-pathfinding, and no-M7 boundary.
+- [x] Keep an explicit synthetic fallback and preserve the no-map-packed-loader,
+  no-writer, no-replay, no-pathfinding, and no-M7 boundary.
 - [ ] Manual user playtest remains the next human-facing check after the Draft
   delivery; it is not represented as an automated or original-runtime claim.
+
+## M6 Human Playtest real-content visual integration (current delivery)
+
+- [x] Add bounded, read-only external legacy SHP/PAL preference for the
+  configured `YR1001_ProjectBaseline` source, with status separate from
+  Simulation.
+- [x] Preserve an explicit synthetic fallback and synthetic terrain chunk;
+  no map packed section, writer, or M7 work was added.
+- [x] Execute the sanitized PreviewPack aggregate audit: 184 candidates,
+  184 exact decoded streams, one mount-level failure, no published payload.
+- [ ] Manual user playtest and hosted exact-head Repository safety remain
+  delivery checks after the Draft PR is created.

@@ -696,3 +696,14 @@ between project-enhancement playability and original YR compatibility.
 The current local PlayMode wrapper produced a complete 7/7 result XML but needed
 forced post-result shutdown. The complete XML and wrapper state are recorded as
 observed evidence; no incomplete run is promoted to a pass claim.
+
+## 2026-08-15 - M6 visual integration findings
+
+- The initial external probe traversed too many unnamed MIX entries and could
+  fault a shared bounded window; the provider now uses a fixed candidate-name
+  and extension budget and skips isolated read failures fail-closed.
+- Headless scene loading can advance the live simulation while Unity integrates
+  assets; batch mode now starts paused, while interactive Editor/Player mode
+  remains unpaused.
+- These are implementation/environment findings, not compatibility evidence;
+  the configured source remains a patched-development corpus.
