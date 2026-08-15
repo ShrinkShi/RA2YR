@@ -48,20 +48,20 @@ project_baseline:
 tests:
   runtime_behavior_methods: 8
   scene_smoke_methods: 4
-  visual_integration_behavior_methods: 12
-  defined_nunit_executions: 24
-  current_head_edit_mode_total: 1678
-  current_head_edit_mode_passed: 1678
+  visual_integration_behavior_methods: 13
+  defined_nunit_executions: 25
+  current_head_edit_mode_total: 1679
+  current_head_edit_mode_passed: 1679
   current_head_edit_mode_failed: 0
   current_head_edit_mode_skipped: 0
   current_head_edit_mode_inconclusive: 0
-  current_head_edit_mode_xml: "TestResults/20260815T122117399Z-ec8a10e1977c4b30abf20bd1c78f040a/EditMode/results.xml"
+  current_head_edit_mode_xml: "TestResults/20260815T123140505Z-8accea3130d448a59c92674ee771c460/EditMode/results.xml"
   current_head_play_mode_total: 7
   current_head_play_mode_passed: 7
   current_head_play_mode_failed: 0
   current_head_play_mode_skipped: 0
   current_head_play_mode_inconclusive: 0
-  current_head_play_mode_xml: "TestResults/20260815T122216289Z-77b3bb299ce34e86a28db19f09807b57/PlayMode/results.xml"
+  current_head_play_mode_xml: "TestResults/20260815T123245341Z-c58224035f7241499724d932697cd178/PlayMode/results.xml"
   play_mode_forced_post_result_shutdown: false
 provenance:
   synthetic_fixture: true
