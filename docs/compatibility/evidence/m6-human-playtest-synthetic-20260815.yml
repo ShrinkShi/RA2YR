@@ -1,0 +1,42 @@
+schema_version: 1
+evidence_id: m6-human-playtest-synthetic-20260815
+status: synthetic
+scope: "M6 Human Playtest Delivery scene and runtime foundation"
+scene:
+  path: "Assets/Scenes/RA2YRSyntheticSkirmish.unity"
+  bootstrap: "RA2YR.UnityIntegration.UnitySyntheticSkirmishBootstrap"
+  runtime: "RA2YR.Simulation.HumanPlaytestRuntime"
+  dimensions: "28x22 synthetic bounded battlefield"
+  simulation_cadence_hz: 15
+contracts:
+  input: "Unity input is translated to Human CommandRequest values through UnityInteractiveClient"
+  authority: "Simulation remains authoritative for movement, economy, production, autonomy, combat, and terminal state"
+  presentation: "PresentationSnapshot and UnityPresentationWorld consume immutable Simulation snapshots"
+  ai: "local rule-based opponent controller with bounded synthetic behavior"
+  art: "procedural placeholder sprites only"
+tests:
+  runtime_behavior_methods: 8
+  scene_smoke_methods: 4
+  defined_nunit_executions: 12
+  current_head_edit_mode_total: 1666
+  current_head_edit_mode_passed: 1666
+  current_head_edit_mode_failed: 0
+  current_head_edit_mode_skipped: 0
+  current_head_edit_mode_inconclusive: 0
+  current_head_edit_mode_xml: "TestResults/20260815T071640308Z-74e0dd6d8985411c8091c39c37974dca/EditMode/results.xml"
+  current_head_play_mode_total: 7
+  current_head_play_mode_passed: 7
+  current_head_play_mode_failed: 0
+  current_head_play_mode_skipped: 0
+  current_head_play_mode_inconclusive: 0
+  current_head_play_mode_xml: "TestResults/20260815T071708615Z-e8b350b498434625bb93938e1aea686c/PlayMode/results.xml"
+  play_mode_forced_post_result_shutdown: true
+provenance:
+  synthetic_fixture: true
+  project_baseline_read: false
+  original_runtime_confirmation: false
+  manual_user_playtest: false
+limitations:
+  - "No ProjectBaseline packed content, map loader, stock YR UI, network input, replay, writer, pathfinding, or M7 work was included."
+  - "Procedural sprites are placeholders; palette, theater, TMP, SHP, VXL/HVA binding and visual parity remain unresolved."
+  - "The rule-based opponent is a local synthetic controller and is not the original YR AI."

@@ -387,3 +387,16 @@ turn Unity presentation state into simulation authority.
   was squash-merged; post-main safety run 31832713652 also succeeded.
 - [ ] Wall-clock GPU FPS, original UI/network/map loading, writer, and M7 remain
   out of scope.
+
+## M6 Human Playtest Delivery
+
+- [x] Add the explicit `RA2YRSyntheticSkirmish` build scene and centralized
+  `UnitySyntheticSkirmishBootstrap`.
+- [x] Expose bounded human selection, Move/Attack/AttackMove, Stop/Hold,
+  autonomy, production, economy, rule-based opponent, combat, fog visibility,
+  and HUD behavior through the existing Simulation/Presentation/client seams.
+- [x] Add headless runtime and actual scene-load PlayMode smoke coverage.
+- [x] Keep procedural art synthetic and preserve the no-ProjectBaseline,
+  no-map-loader, no-writer, no-replay, no-pathfinding, and no-M7 boundary.
+- [ ] Manual user playtest remains the next human-facing check after the Draft
+  delivery; it is not represented as an automated or original-runtime claim.

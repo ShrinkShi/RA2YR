@@ -682,3 +682,17 @@ M6 C1-C8 are merged on main. The final C8 exact-head and post-main Repository
 safety runs succeeded. Remaining work is outside the M6 closeout boundary:
 original-runtime confirmation, clean YR 1.001 equivalence, full gameplay
 parity, and M7.
+
+## 2026-08-15 - M6 Human Playtest Delivery
+
+### Boundary
+
+The M6 foundation had no actual manually launchable scene. This delivery adds
+only a bounded synthetic scene/bootstrap and preserves the explicit distinction
+between project-enhancement playability and original YR compatibility.
+
+### Environment note
+
+The current local PlayMode wrapper produced a complete 7/7 result XML but needed
+forced post-result shutdown. The complete XML and wrapper state are recorded as
+observed evidence; no incomplete run is promoted to a pass claim.

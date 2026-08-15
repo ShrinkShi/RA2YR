@@ -959,3 +959,15 @@ payload or path is published.
   `31832713652` completed successfully. No M7 work was started and no
   compatibility claim was promoted beyond the recorded synthetic/configured
   evidence.
+
+## 2026-08-15 - M6 Human Playtest Delivery
+
+- Added `HumanPlaytestRuntime` as a bounded deterministic synthetic skirmish
+  harness over the existing Simulation contracts.
+- Added `UnitySyntheticSkirmishBootstrap` and the enabled
+  `RA2YRSyntheticSkirmish` scene. Human input enters through the existing Human
+  command gateway; the bootstrap never writes Simulation transforms directly.
+- Added runtime EditMode and actual scene-load PlayMode smoke tests. Current
+  local results are recorded in the synthetic evidence file; the PlayMode
+  wrapper reported a forced post-result shutdown after complete 7/7 XML.
+- No ProjectBaseline packed content was read. No M7 work was started.

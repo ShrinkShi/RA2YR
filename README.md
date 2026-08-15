@@ -263,6 +263,21 @@ Simulation hash，并覆盖 500/1000/2000 entity tiers。该 cadence 不是 GPU
 wall-clock FPS 承诺，也没有读取 ProjectBaseline、实现 map loader、network
 play、writer 或 M7。
 
+## M6 Human Playtest Delivery
+
+`Assets/Scenes/RA2YRSyntheticSkirmish.unity` 是 M6 的集中式人工试玩入口。
+`UnitySyntheticSkirmishBootstrap` 组合现有 Simulation、Presentation、
+`UnityPresentationWorld` 和 interactive client seam，在一个有界的 28x22
+synthetic skirmish 中提供选中、移动/攻击、AttackMove、Stop/Hold、Manual/
+Assisted/Automatic autonomy、harvester/refinery settlement、生产、规则型
+对手、战斗、雾化可见性和 HUD。输入只提交 Human `CommandRequest`，不直接
+修改 Simulation transform；程序化 Sprite 仅是占位显示资源。
+
+试玩说明、控制和边界见 [M6 Human Playtest Delivery](docs/formats/m6-human-playtest.md)。
+该场景不读取 ProjectBaseline packed content，不加载真实 `.map`，不提供
+原版 UI/network/map semantics、palette/TMP/theater binding、writer、replay、
+pathfinding 或 M7；人工可玩性不提升 compatibility matrix 的原版确认状态。
+
 ## 本地验证
 
 运行 Unity 测试前必须关闭 Unity Editor：

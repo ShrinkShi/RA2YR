@@ -985,3 +985,12 @@ visual data was not read.
 - Exact-head Repository safety was run `31832327388`; post-main safety was
   run `31832713652`. M6 remains a foundation/project-enhancement milestone;
   M7 was not started.
+
+## 2026-08-15 - M6 Human Playtest Delivery
+
+Created `feature/m6-human-playtest-delivery` from exact post-M6 main
+`8129777ff889509a4822980664473b7077f048ed`. Added the centralized synthetic
+skirmish bootstrap, enabled scene, deterministic runtime harness, controls
+documentation, and current-head runtime/scene smoke tests. This is the M6
+manual delivery seam only; no ProjectBaseline packed data or M7 work was
+started.
