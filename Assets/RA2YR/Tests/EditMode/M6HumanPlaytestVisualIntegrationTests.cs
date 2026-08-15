@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using RA2YR.Presentation;
+using RA2YR.Simulation;
 using RA2YR.UnityIntegration;
 using UnityEngine;
 
@@ -214,6 +215,24 @@ namespace RA2YR.Tests.EditMode
                 ExternalLegacyVisualStatus status = provider.Status;
                 UnityEngine.Debug.Log("M6_ROLE_AGGREGATE roles=" + status.VisualRolesTotal + ";resolved=" + status.VisualRolesResolvedExternal + ";fallback=" + status.VisualRolesFallback + ";shp=" + status.ShpRolesResolved + ";vxl=" + status.VxlRolesResolved + ";hva=" + status.HvaBindingsResolved + ";palette=" + status.PaletteBindingsResolved + ";humanUnits=" + status.HumanUnitsExternal + ";humanStructures=" + status.HumanStructuresExternal + ";enemyUnits=" + status.EnemyUnitsExternal + ";enemyStructures=" + status.EnemyStructuresExternal + ";unresolved=" + status.UnresolvedRoles + ";fingerprintStable=" + status.SourceFingerprintStable + ";terrain=" + status.TerrainSource);
                 Assert.That(status.VisualRolesTotal, Is.GreaterThan(0));
+            }
+            finally
+            {
+                provider.Dispose();
+            }
+        }
+
+        [Test]
+        public void VisualProviderResolutionDoesNotMutateSimulationHash()
+        {
+            HumanPlaytestRuntime runtime = new HumanPlaytestRuntime(HumanPlaytestRuntimeConfig.Default);
+            string before = runtime.ComputeStateHash();
+            ExternalLegacyVisualProvider provider = ExternalLegacyVisualProvider.Create(
+                new HumanPlaytestVisualProfile(HumanPlaytestVisualMode.SyntheticOnly, "Config/ExternalContent.local.xml"), ".");
+            try
+            {
+                Assert.That(runtime.ComputeStateHash(), Is.EqualTo(before));
+                Assert.That(provider.Status.RemapProfile, Is.EqualTo(HumanPlaytestRemapProfile.SourcePaletteOnly));
             }
             finally
             {
