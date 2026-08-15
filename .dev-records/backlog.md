@@ -410,5 +410,7 @@ turn Unity presentation state into simulation authority.
   no map packed section, writer, or M7 work was added.
 - [x] Execute the sanitized PreviewPack aggregate audit: 184 candidates,
   184 exact decoded streams, one mount-level failure, no published payload.
-- [ ] Manual user playtest and hosted exact-head Repository safety remain
-  delivery checks after the Draft PR is created.
+- [ ] Manual user playtest remains the next human-facing check after the Draft
+  delivery; it is not represented as an automated or original-runtime claim.
+- [x] Draft PR #77 exact-head Repository safety run 31881276900 completed
+  successfully for `acf48969773f0b5a397e26f6583aa2a6a6adab17`.
