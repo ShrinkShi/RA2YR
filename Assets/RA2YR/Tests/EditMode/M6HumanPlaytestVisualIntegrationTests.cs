@@ -264,10 +264,24 @@ namespace RA2YR.Tests.EditMode
                     ";vxlFailed=" + route.VxlDecodeFailed +
                     ";hvaBound=" + route.HvaBindSuccess +
                     ";hvaFailed=" + route.HvaBindFailed +
-                    ";externalRoles=" + route.FinalExternalRoles);
+                    ";externalRoles=" + route.FinalExternalRoles +
+                    ";humanUnits=" + status.HumanUnitsExternal +
+                    ";humanStructures=" + status.HumanStructuresExternal +
+                    ";enemyUnits=" + status.EnemyUnitsExternal +
+                    ";enemyStructures=" + status.EnemyStructuresExternal);
                 Assert.That(status.RouteGateStatus, Is.EqualTo(ExternalVisualRouteGateStatus.ExternalVisualsResolved));
                 Assert.That(status.IsLocalExternalVisualReady, Is.True);
-                Assert.That(status.VisualRolesResolvedExternal, Is.GreaterThan(0));
+                Assert.That(status.VisualRolesResolvedExternal, Is.GreaterThanOrEqualTo(2));
+                Assert.That(status.HumanUnitsExternal, Is.GreaterThan(0));
+                Assert.That(status.EnemyUnitsExternal, Is.GreaterThan(0));
+
+                ResolvedLegacyVisual human;
+                bool hasHuman = provider.TryGetResolvedVisual(HumanPlaytestVisualRole.HumanBasicUnit, out human) ||
+                                provider.TryGetResolvedVisual(HumanPlaytestVisualRole.HumanHarvester, out human);
+                ResolvedLegacyVisual enemy;
+                Assert.That(hasHuman, Is.True);
+                Assert.That(provider.TryGetResolvedVisual(HumanPlaytestVisualRole.EnemyBasicUnit, out enemy), Is.True);
+                Assert.That(human.VisualAssetId, Is.Not.EqualTo(enemy.VisualAssetId));
             }
             finally
             {
