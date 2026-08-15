@@ -688,3 +688,12 @@ Mark M6 complete at the foundation milestone after C1-C8 merged on main. Keep
 the distinction between project-enhancement evidence and original-runtime
 compatibility: no M7 work, clean YR 1.001 equivalence, or gameplay parity is
 implied by the M6 completion marker.
+
+## M6 Human Playtest Delivery decision
+
+Use one centralized synthetic scene/bootstrap as the manual entry point. It
+composes immutable Simulation snapshots, provider-neutral Presentation, the
+central Unity presentation world, and the Human command gateway. Procedural
+placeholder sprites are permitted for this seam only; no packed ProjectBaseline
+content, map loader, stock YR UI, original-runtime claim, writer, replay,
+pathfinding, or M7 behavior is implied.
