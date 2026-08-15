@@ -1002,3 +1002,14 @@ Created `feature/m6-human-playtest-real-visuals` from exact main
 legacy visual adapter, explicit synthetic fallback, status counters, and
 sanitized aggregate evidence. Local external preflight resolved indexed legacy
 visuals; map packed sections remain unread. No M7 work was started.
+
+## 2026-08-15 - M6 real-content visual finding closure
+
+The provider was revised to use typed Rules registry to Art routing and bounded
+logical Content/MIX lookup rather than a physical visual filename catalog.
+SHP/VXL/HVA/palette assets and Unity caches are separated by stable role
+identity, and `SourcePaletteOnly` is the explicit remap default. Current local
+configured-source traversal produced the sanitized aggregate `9 roles,
+0 resolved, 9 fallback`; the configured source has no available visual
+candidates in this checkout. Current EditMode evidence is 1678/1678 passed;
+the external aggregate test does not publish payload or per-role records.

@@ -11,11 +11,35 @@ source:
 visual_provider:
   provider_id: "external-legacy"
   mode: "ExternalLegacyPreferred"
-  bounded_candidate_name_probe: true
+  typed_rules_to_art_routing: true
+  physical_visual_filename_catalog: false
+  bounded_vfs_probe: true
   managed_raw_lzo1x_reused: true
   new_codec_or_writer: false
-  configured_status: "External legacy indexed visuals available"
+  configured_status: "Configured source traversal completed; no local visual candidates were available in this checkout"
   terrain_status: "SyntheticFallback"
+  remap_profile: "SourcePaletteOnly"
+  role_aggregate:
+    roles_total: 9
+    roles_resolved_external: 0
+    roles_fallback: 9
+    shp_roles_resolved: 0
+    vxl_roles_resolved: 0
+    hva_bindings_resolved: 0
+    palette_bindings_resolved: 0
+    human_units_external: 0
+    human_structures_external: 0
+    enemy_units_external: 0
+    enemy_structures_external: 0
+    unresolved_roles: 9
+    source_fingerprint_stable: true
+    aggregate_is_sanitized: true
+  typed_route_contract:
+    rules_registry_to_art_record: "Configured role profile; synthetic contract tested"
+    art_to_logical_image_or_voxel: "Explicit Art Image/Voxel fields"
+    content_vfs_to_provider: "Bounded MIX/VFS lookup by logical identity"
+    unresolved_vxl_no_shp_fallback: true
+    per_role_cache_identity: true
 preview_pack_audit_aggregate:
   status: "CompleteWithFailures"
   candidate_entries: 184
@@ -32,6 +56,7 @@ preview_pack_audit_aggregate:
   chunks_max: 15
   aggregate_sha256: "6d8cf0cb667abea491cdaf1a6554e3bb809eaebe5c01d7db6c3e9f33346e31ec"
   original_runtime_compatibility: "NotConfirmed"
+  provenance: "historical M3-C5 aggregate; not evidence for current M6 visual role resolution"
 sanitization:
   filenames_published: false
   paths_published: false

@@ -8,6 +8,13 @@ and prefers indexed SHP frames plus palette data for object visuals. Without
 that local source it uses the explicit synthetic fallback. This is not a stock
 Yuri's Revenge map loader and it does not assert original-runtime compatibility.
 
+External object selection is typed and explicit: configured Rules registry type
+ids are joined to Art records, then to logical image/voxel and palette assets
+through the bounded Content/MIX VFS. The provider does not contain a physical
+filename catalog. Each resolved role owns its own SHP frame or VXL cell set;
+VXL/HVA bindings are not used for SHP buildings, and an unavailable VXL role
+does not fall back to an unrelated SHP asset.
+
 ## Scene and entry point
 
 Open `Assets/Scenes/RA2YRSyntheticSkirmish.unity` with Unity
@@ -43,6 +50,9 @@ binding is not part of this work package.
 The configured visual probe is read-only and does not publish payload bytes,
 decoded pixels, filenames, paths, or per-asset records. It reuses the existing
 managed RawLzo1X/presentation readers; this package adds no codec or writer.
+Palette remapping defaults to the explicit `SourcePaletteOnly` profile. Any
+implementation-specific remap offsets must be supplied as a separate
+configured profile and are not YR-authenticity claims.
 The scene does not load ProjectBaseline maps, Overlay/Preview map semantics,
 TMP/theater data, or a full scenario. It does not implement a writer, LZO
 writer, original UI/network input, minimap, replay, pathfinding, or gameplay

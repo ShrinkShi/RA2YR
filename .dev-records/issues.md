@@ -707,3 +707,18 @@ observed evidence; no incomplete run is promoted to a pass claim.
   remains unpaused.
 - These are implementation/environment findings, not compatibility evidence;
   the configured source remains a patched-development corpus.
+
+## 2026-08-15 - M6 real-content visual finding closure
+
+- Closed the provider architecture findings: role selection now consumes typed
+  Rules registry and Art records, and physical SHP/VXL names are not embedded
+  in the renderer/provider.
+- Closed global-cache and implicit-fallback findings by keying decoded SHP,
+  VXL, HVA, palette, Sprite, and Mesh state by stable role asset identity.
+- Closed remap ambiguity by making `SourcePaletteOnly` the default explicit
+  profile; configured offsets remain implementation-specific and are not
+  presented as original YR behavior.
+- Current configured local source traversal is truthful `roles=9,
+  resolved=0, fallback=9`; the local source path has no available visual
+  candidates in this checkout. This is an environment/content availability
+  result, not a compatibility claim or a reason to fabricate payload evidence.

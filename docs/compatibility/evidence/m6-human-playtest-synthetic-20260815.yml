@@ -13,13 +13,30 @@ contracts:
   authority: "Simulation remains authoritative for movement, economy, production, autonomy, combat, and terminal state"
   presentation: "PresentationSnapshot and UnityPresentationWorld consume immutable Simulation snapshots"
   ai: "local rule-based opponent controller with bounded synthetic behavior"
-  art: "bounded external legacy SHP/PAL preference with explicit procedural fallback; terrain remains synthetic isometric chunks"
+art: "bounded external legacy SHP/PAL preference with explicit procedural fallback; terrain remains synthetic isometric chunks"
 external_visual_preflight:
   source_id: "YR1001_ProjectBaseline"
   mode: "ExternalLegacyPreferred"
   read_only: true
-  configured_source_available: true
-  indexed_visuals_available: true
+  configured_source_available: false
+  indexed_visuals_available: false
+  typed_rules_to_art_routing: true
+  physical_visual_filename_catalog: false
+  remap_profile: "SourcePaletteOnly"
+  role_aggregate:
+    roles_total: 9
+    roles_resolved_external: 0
+    roles_fallback: 9
+    shp_roles_resolved: 0
+    vxl_roles_resolved: 0
+    hva_bindings_resolved: 0
+    palette_bindings_resolved: 0
+    human_units_external: 0
+    human_structures_external: 0
+    enemy_units_external: 0
+    enemy_structures_external: 0
+    unresolved_roles: 9
+    source_fingerprint_stable: true
   payload_published: false
   pixel_payload_published: false
   map_packed_sections_read: false
@@ -31,19 +48,20 @@ project_baseline:
 tests:
   runtime_behavior_methods: 8
   scene_smoke_methods: 4
-  defined_nunit_executions: 16
-  current_head_edit_mode_total: 1670
-  current_head_edit_mode_passed: 1670
+  visual_integration_behavior_methods: 12
+  defined_nunit_executions: 24
+  current_head_edit_mode_total: 1678
+  current_head_edit_mode_passed: 1678
   current_head_edit_mode_failed: 0
   current_head_edit_mode_skipped: 0
   current_head_edit_mode_inconclusive: 0
-  current_head_edit_mode_xml: "TestResults/20260815T103107709Z-47f7a3be2b0e4b80b8035019662d599f/EditMode/results.xml"
+  current_head_edit_mode_xml: "TestResults/20260815T122117399Z-ec8a10e1977c4b30abf20bd1c78f040a/EditMode/results.xml"
   current_head_play_mode_total: 7
   current_head_play_mode_passed: 7
   current_head_play_mode_failed: 0
   current_head_play_mode_skipped: 0
   current_head_play_mode_inconclusive: 0
-  current_head_play_mode_xml: "TestResults/20260815T103318099Z-618c179284b04c3085b655004020cb93/PlayMode/results.xml"
+  current_head_play_mode_xml: "TestResults/20260815T122216289Z-77b3bb299ce34e86a28db19f09807b57/PlayMode/results.xml"
   play_mode_forced_post_result_shutdown: false
 provenance:
   synthetic_fixture: true

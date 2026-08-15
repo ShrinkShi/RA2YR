@@ -985,3 +985,17 @@ payload or path is published.
   direct simulation-driving tests remain deterministic. The sanitized
   PreviewPack audit remains aggregate-only and `NotConfirmed` for original
   runtime behavior.
+
+## 2026-08-15 - M6 real-content visual finding closure
+
+- Replaced the physical visual filename probe with typed Rules registry to Art
+  record routing and bounded logical Content/MIX lookup.
+- Separated SHP frames, VXL cell sets, HVA binding state, palettes, and Unity
+  caches by stable visual role identity. A missing VXL role cannot fall back to
+  an unrelated SHP asset; SHP buildings are not rendered through VXL meshes.
+- Made `SourcePaletteOnly` the explicit default remap profile and retained any
+  implementation-specific offsets as opt-in configuration only.
+- Added sanitized role aggregate logging/evidence. The configured local source
+  traversal currently has no available visual candidates in this checkout, so
+  all nine configured roles remain fallback; no payload or per-role record is
+  published.

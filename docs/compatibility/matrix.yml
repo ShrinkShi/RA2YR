@@ -1767,7 +1767,7 @@ entries:
     limitations:
       - id: visual.human-playtest-external-configured
         status: "已知限制"
-        description: "The Unity adapter may read a configured patched-development source in bounded read-only mode for indexed SHP/PAL object visuals; terrain remains synthetic and the adapter publishes no payload. Original UI/network/map loading, TMP/theater binding, writer, replay, pathfinding, gameplay parity, and original-runtime confirmation remain unresolved."
+        description: "The Unity adapter routes typed Rules registry ids through Art records and bounded logical Content/MIX lookup for indexed SHP/VXL/HVA/PAL object visuals; per-role identities are separated, the default remap is SourcePaletteOnly, and the adapter publishes no payload. The current local configured source has no available visual candidates, so synthetic fallback remains active. Terrain remains synthetic; original UI/network/map loading, TMP/theater binding, writer, replay, pathfinding, gameplay parity, and original-runtime confirmation remain unresolved."
   - id: visual.vxl-hva
     domain: visual
     feature: "VXL normal lighting, HVA parts, slope attitude, and independent turrets"

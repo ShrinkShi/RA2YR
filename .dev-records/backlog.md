@@ -414,3 +414,11 @@ turn Unity presentation state into simulation authority.
   delivery; it is not represented as an automated or original-runtime claim.
 - [x] Draft PR #77 exact-head Repository safety run 31881276900 completed
   successfully for `acf48969773f0b5a397e26f6583aa2a6a6adab17`.
+- [x] M6 real-content visual finding closure: typed Rules-to-Art routing,
+  bounded logical Content/MIX lookup, per-role SHP/VXL/HVA/palette caches, and
+  explicit `SourcePaletteOnly` remap profile.
+- [x] Current-head EditMode evidence is 1678/1678 passed. Sanitized local
+  aggregate is 9 configured roles, 0 external roles resolved, and 9 fallback;
+  no payload or per-role record is published.
+- [ ] Manual user visual inspection remains required; no Ready, merge, or M7
+  action is implied by the automated result.
