@@ -30,6 +30,7 @@ namespace RA2YR.UnityIntegration
         private VisibilitySnapshot visibility;
         private SelectionState selection = new SelectionState(Array.Empty<EntityId>());
         private CommandQueue commandQueue;
+        private ClientCommandPolicy commandPolicy;
         private HudSnapshot hud;
         public EnvironmentPresentationProfile Environment { get; private set; }
         public PlacementPreview CurrentPlacement { get; private set; }
@@ -42,7 +43,7 @@ namespace RA2YR.UnityIntegration
         { GameObject root = new GameObject(name); var client = root.AddComponent<UnityInteractiveClient>(); client.Configure(new UnityInteractiveClientPolicy(), new IsometricPointerProfile()); return client; }
 
         public void Configure(UnityInteractiveClientPolicy clientPolicy, IsometricPointerProfile profile, CommandQueue queue = null)
-        { policy = clientPolicy ?? throw new ArgumentNullException(nameof(clientPolicy)); pointerProfile = profile ?? throw new ArgumentNullException(nameof(profile)); commandQueue = queue; }
+        { policy = clientPolicy ?? throw new ArgumentNullException(nameof(clientPolicy)); pointerProfile = profile ?? throw new ArgumentNullException(nameof(profile)); commandQueue = queue; commandPolicy = new ClientCommandPolicy(); }
 
         public void SetVisibility(VisibilitySnapshot snapshot) { visibility = snapshot; }
 
@@ -64,8 +65,9 @@ namespace RA2YR.UnityIntegration
 
         public ClientCommandResult SubmitCommand(CommandKind kind, CellCoordinate? cell, EntityId? target, long tick, SimulationQueueMode queueMode = SimulationQueueMode.Replace)
         {
-            if (commandQueue == null) { return ClientCommandGateway.Submit(null, selection, kind, new CommandTarget(cell, target), tick, queueMode); }
-            return ClientCommandGateway.Submit(commandQueue, selection, kind, new CommandTarget(cell, target), tick, queueMode);
+            if (commandPolicy == null) commandPolicy = new ClientCommandPolicy();
+            if (commandQueue == null) { return ClientCommandGateway.Submit(null, selection, kind, new CommandTarget(cell, target), tick, queueMode, commandPolicy); }
+            return ClientCommandGateway.Submit(commandQueue, selection, kind, new CommandTarget(cell, target), tick, queueMode, commandPolicy);
         }
 
         public void RefreshHud(SimulationReadSnapshot snapshot, int credits = 0, bool lowPower = false, string autonomyLabel = "Manual")

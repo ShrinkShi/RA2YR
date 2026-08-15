@@ -3,7 +3,8 @@
     "rootNamespace": "RA2YR.Tests.PlayMode",
     "references": [
         "RA2YR.UnityIntegration",
-        "RA2YR.Presentation"
+        "RA2YR.Presentation",
+        "RA2YR.Simulation"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"

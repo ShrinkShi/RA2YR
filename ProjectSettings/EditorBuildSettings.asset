@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/RA2YRSyntheticSkirmish.unity
+    guid: f02e6af77a2e4b8ab8c9b7cb0a7f9f2b
   m_configObjects: {}
