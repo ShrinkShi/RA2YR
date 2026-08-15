@@ -1,9 +1,14 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using NUnit.Framework;
+using RA2YR.Core.Formats.Mix;
+using RA2YR.Core.Formats.Mix.Writing;
 using RA2YR.Presentation;
 using RA2YR.Simulation;
+using RA2YR.Tests.EditMode.Content;
+using RA2YR.Tests.EditMode.Formats.ShpTs;
 using RA2YR.UnityIntegration;
 using UnityEngine;
 
@@ -23,6 +28,7 @@ namespace RA2YR.Tests.EditMode
             {
                 Assert.That(provider.IsAvailable, Is.False);
                 Assert.That(provider.Status.IsConfigured, Is.False);
+                Assert.That(provider.Status.RouteGateStatus, Is.EqualTo(ExternalVisualRouteGateStatus.SourceNotConfigured));
                 VisualAssetProviderResult result = provider.Resolve(new VisualAssetId("external-legacy/playtest/Unit"));
                 Assert.That(result.Status, Is.EqualTo(VisualAssetProviderResolutionStatus.Missing));
             }
@@ -43,7 +49,8 @@ namespace RA2YR.Tests.EditMode
             try
             {
                 Assert.That(provider.IsAvailable, Is.False);
-                Assert.That(provider.Status.IsConfigured, Is.True);
+                Assert.That(provider.Status.IsConfigured, Is.False);
+                Assert.That(provider.Status.RouteGateStatus, Is.EqualTo(ExternalVisualRouteGateStatus.SourceNotConfigured));
                 Assert.That(provider.Status.Message, Does.Not.Contain("missing-external-content.xml"));
                 Assert.That(provider.Status.Message, Does.Not.Contain("\\"));
             }
@@ -209,12 +216,58 @@ namespace RA2YR.Tests.EditMode
             string configurationPath = Path.Combine(projectRoot, "Config", "ExternalContent.local.xml");
             if (!File.Exists(configurationPath)) Assert.Ignore("Configured external source is not present on this host.");
             ExternalLegacyVisualProvider provider = ExternalLegacyVisualProvider.Create(
-                new HumanPlaytestVisualProfile(HumanPlaytestVisualMode.ExternalLegacyPreferred, configurationPath), projectRoot);
+                new HumanPlaytestVisualProfile(
+                    HumanPlaytestVisualMode.ExternalLegacyPreferred,
+                    configurationPath,
+                    artImagePolicy: HumanPlaytestArtImagePolicy.ExplicitOrSectionIdentifier),
+                projectRoot);
             try
             {
                 ExternalLegacyVisualStatus status = provider.Status;
-                UnityEngine.Debug.Log("M6_ROLE_AGGREGATE roles=" + status.VisualRolesTotal + ";resolved=" + status.VisualRolesResolvedExternal + ";fallback=" + status.VisualRolesFallback + ";shp=" + status.ShpRolesResolved + ";vxl=" + status.VxlRolesResolved + ";hva=" + status.HvaBindingsResolved + ";palette=" + status.PaletteBindingsResolved + ";humanUnits=" + status.HumanUnitsExternal + ";humanStructures=" + status.HumanStructuresExternal + ";enemyUnits=" + status.EnemyUnitsExternal + ";enemyStructures=" + status.EnemyStructuresExternal + ";unresolved=" + status.UnresolvedRoles + ";fingerprintStable=" + status.SourceFingerprintStable + ";terrain=" + status.TerrainSource);
-                Assert.That(status.VisualRolesTotal, Is.GreaterThan(0));
+                ExternalVisualRouteDiagnostics route = status.RouteDiagnostics;
+                UnityEngine.Debug.Log(
+                    "M6_EXTERNAL_VISUAL_ROUTE_DIAGNOSTIC" +
+                    ";gate=" + route.GateStatus +
+                    ";rootMix=" + route.RootMixCount +
+                    ";archives=" + route.MountedArchiveCount +
+                    ";entries=" + route.MountedEntryCount +
+                    ";rulesCandidates=" + route.RulesCandidateCount +
+                    ";rulesParsed=" + route.RulesParseSuccessCount +
+                    ";rulesComplete=" + route.RulesResolutionComplete +
+                    ";artCandidates=" + route.ArtCandidateCount +
+                    ";artParsed=" + route.ArtParseSuccessCount +
+                    ";artComplete=" + route.ArtResolutionComplete +
+                    ";rulesRegistries=" + route.TypedRulesRegistryCount +
+                    ";rulesEntries=" + route.TypedRulesEntryCount +
+                    ";artRecords=" + route.TypedArtRecordCount +
+                    ";artImage=" + route.ArtRecordsWithExplicitImage +
+                    ";artNoImage=" + route.ArtRecordsWithoutExplicitImage +
+                    ";targetArtImage=" + route.TargetArtRecordsWithExplicitImage +
+                    ";targetArtNoImage=" + route.TargetArtRecordsWithoutExplicitImage +
+                    ";roleRequests=" + route.RoleBindingsRequested +
+                    ";rulesTypeSections=" + route.RulesTypeSectionMatches +
+                    ";rulesImageOverrides=" + route.RulesImageOverrides +
+                    ";ruleMatches=" + route.RoleRuleMatches +
+                    ";artMatches=" + route.RoleArtMatches +
+                    ";roleDescriptors=" + route.RoleDescriptorsCreated +
+                    ";imageRequests=" + route.ImageLogicalRequests +
+                    ";imageMatches=" + route.ImageVfsMatches +
+                    ";vxlRequests=" + route.VxlLogicalRequests +
+                    ";vxlMatches=" + route.VxlVfsMatches +
+                    ";hvaRequests=" + route.HvaLogicalRequests +
+                    ";hvaMatches=" + route.HvaVfsMatches +
+                    ";paletteRequests=" + route.PaletteLogicalRequests +
+                    ";paletteMatches=" + route.PaletteVfsMatches +
+                    ";shpDecoded=" + route.ShpDecodeSuccess +
+                    ";shpFailed=" + route.ShpDecodeFailed +
+                    ";vxlDecoded=" + route.VxlDecodeSuccess +
+                    ";vxlFailed=" + route.VxlDecodeFailed +
+                    ";hvaBound=" + route.HvaBindSuccess +
+                    ";hvaFailed=" + route.HvaBindFailed +
+                    ";externalRoles=" + route.FinalExternalRoles);
+                Assert.That(status.RouteGateStatus, Is.EqualTo(ExternalVisualRouteGateStatus.ExternalVisualsResolved));
+                Assert.That(status.IsLocalExternalVisualReady, Is.True);
+                Assert.That(status.VisualRolesResolvedExternal, Is.GreaterThan(0));
             }
             finally
             {
@@ -238,6 +291,253 @@ namespace RA2YR.Tests.EditMode
             {
                 provider.Dispose();
             }
+        }
+
+        [Test]
+        public void SyntheticNestedMixPipelineResolvesExplicitAndSectionIdentityVoxels()
+        {
+            using (var temporary = new TemporaryContentTestDirectory())
+            {
+                HumanPlaytestVisualRoleProfile roles = new HumanPlaytestVisualRoleProfile(new[]
+                {
+                    new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanBasicUnit, HumanPlaytestRulesRegistry.VehicleTypes, "ALPHA"),
+                    new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.EnemyBasicUnit, HumanPlaytestRulesRegistry.VehicleTypes, "BRAVO"),
+                    new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanHarvester, HumanPlaytestRulesRegistry.VehicleTypes, "UNSUPPORTED")
+                });
+                string rules = "[VehicleTypes]\r\n0=ALPHA\r\n1=BRAVO\r\n2=UNSUPPORTED\r\n[ALPHA]\r\n[BRAVO]\r\n[UNSUPPORTED]\r\n";
+                string art = "[ALPHA]\r\nImage=alpha-body\r\nVoxel=yes\r\n[BRAVO]\r\nVoxel=yes\r\n";
+                ExternalLegacyVisualProvider provider = CreateSyntheticProvider(
+                    temporary,
+                    rules,
+                    art,
+                    roles,
+                    HumanPlaytestArtImagePolicy.ExplicitOrSectionIdentifier,
+                    new[]
+                    {
+                        Entry("alpha-body.vxl", BuildVxl("BODY", 7)),
+                        Entry("alpha-body.hva", BuildHva("BODY")),
+                        Entry("BRAVO.vxl", BuildVxl("BODY", 11)),
+                        Entry("BRAVO.hva", BuildHva("BODY"))
+                    });
+                try
+                {
+                    Assert.That(provider.Status.RouteGateStatus, Is.EqualTo(ExternalVisualRouteGateStatus.ExternalVisualsResolved));
+                    Assert.That(provider.Status.RouteDiagnostics.MountedArchiveCount, Is.EqualTo(2));
+                    Assert.That(provider.Status.RouteDiagnostics.VxlDecodeSuccess, Is.EqualTo(2));
+                    Assert.That(provider.Status.RouteDiagnostics.HvaBindSuccess, Is.EqualTo(2));
+                    Assert.That(provider.Status.RouteDiagnostics.PaletteVfsMatches, Is.EqualTo(2));
+                    Assert.That(provider.Status.VisualRolesResolvedExternal, Is.EqualTo(2));
+                    Assert.That(provider.Status.VisualRolesFallback, Is.EqualTo(1));
+                    ResolvedLegacyVisual human;
+                    ResolvedLegacyVisual enemy;
+                    Assert.That(provider.TryGetResolvedVisual(HumanPlaytestVisualRole.HumanBasicUnit, out human), Is.True);
+                    Assert.That(provider.TryGetResolvedVisual(HumanPlaytestVisualRole.EnemyBasicUnit, out enemy), Is.True);
+                    Assert.That(human.VisualAssetId, Is.Not.EqualTo(enemy.VisualAssetId));
+                    Assert.That(provider.TryGetResolvedVisual(HumanPlaytestVisualRole.HumanHarvester, out _), Is.False);
+                    Assert.That(provider.TryGetVoxelMesh(HumanPlaytestVisualRole.HumanBasicUnit, out Mesh humanMesh), Is.True);
+                    Assert.That(provider.TryGetVoxelMesh(HumanPlaytestVisualRole.EnemyBasicUnit, out Mesh enemyMesh), Is.True);
+                    Assert.That(humanMesh, Is.Not.SameAs(enemyMesh));
+                }
+                finally
+                {
+                    provider.Dispose();
+                }
+            }
+        }
+
+        [Test]
+        public void ExplicitImagePolicyDoesNotInventMissingArtImageIdentity()
+        {
+            using (var temporary = new TemporaryContentTestDirectory())
+            {
+                HumanPlaytestVisualRoleProfile roles = new HumanPlaytestVisualRoleProfile(new[]
+                {
+                    new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanBasicUnit, HumanPlaytestRulesRegistry.VehicleTypes, "ALPHA")
+                });
+                ExternalLegacyVisualProvider provider = CreateSyntheticProvider(
+                    temporary,
+                    "[VehicleTypes]\r\n0=ALPHA\r\n[ALPHA]\r\n",
+                    "[ALPHA]\r\nVoxel=yes\r\n",
+                    roles,
+                    HumanPlaytestArtImagePolicy.ExplicitOnly,
+                    new[]
+                    {
+                        Entry("ALPHA.vxl", BuildVxl("BODY", 5)),
+                        Entry("ALPHA.hva", BuildHva("BODY"))
+                    });
+                try
+                {
+                    Assert.That(provider.Status.RouteGateStatus, Is.EqualTo(ExternalVisualRouteGateStatus.TypedArtAvailableButNoRoleDescriptors));
+                    Assert.That(provider.Status.VisualRolesResolvedExternal, Is.Zero);
+                    Assert.That(provider.IsAvailable, Is.False);
+                }
+                finally
+                {
+                    provider.Dispose();
+                }
+            }
+        }
+
+        [Test]
+        public void SyntheticNestedMixPipelineResolvesStrictRawShpAndChildPalette()
+        {
+            using (var temporary = new TemporaryContentTestDirectory())
+            {
+                HumanPlaytestVisualRoleProfile roles = new HumanPlaytestVisualRoleProfile(new[]
+                {
+                    new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanBase, HumanPlaytestRulesRegistry.BuildingTypes, "STRUCT")
+                });
+                byte[] shp = ShpTsSyntheticFixtureFactory.Build(
+                    1,
+                    1,
+                    ShpTsSyntheticFixtureFactory.Raw(1, 1, 0, 9));
+                ExternalLegacyVisualProvider provider = CreateSyntheticProvider(
+                    temporary,
+                    "[BuildingTypes]\r\n0=STRUCT\r\n[STRUCT]\r\n",
+                    "[STRUCT]\r\nImage=structure-image\r\nVoxel=no\r\n",
+                    roles,
+                    HumanPlaytestArtImagePolicy.ExplicitOnly,
+                    new[] { Entry("structure-image.shp", shp) });
+                try
+                {
+                    Assert.That(provider.Status.RouteGateStatus, Is.EqualTo(ExternalVisualRouteGateStatus.ExternalVisualsResolved));
+                    Assert.That(provider.Status.RouteDiagnostics.ShpDecodeSuccess, Is.EqualTo(1));
+                    Assert.That(provider.Status.RouteDiagnostics.PaletteVfsMatches, Is.EqualTo(1));
+                    Assert.That(provider.TryGetSprite(HumanPlaytestVisualRole.HumanBase, out Sprite sprite), Is.True);
+                    Assert.That(sprite, Is.Not.Null);
+                }
+                finally
+                {
+                    provider.Dispose();
+                }
+            }
+        }
+
+        private static ExternalLegacyVisualProvider CreateSyntheticProvider(
+            TemporaryContentTestDirectory temporary,
+            string rules,
+            string art,
+            HumanPlaytestVisualRoleProfile roles,
+            HumanPlaytestArtImagePolicy imagePolicy,
+            MixWriteEntry[] visualEntries)
+        {
+            byte[] visuals = BuildMix(visualEntries);
+            byte[] palettes = BuildMix(Entry("unittem.pal", BuildPalette()));
+            byte[] root = BuildMix(
+                Entry("rules.ini", Encoding.ASCII.GetBytes(rules)),
+                Entry("art.ini", Encoding.ASCII.GetBytes(art)),
+                Entry("conquer.mix", visuals),
+                Entry("cache.mix", palettes));
+            temporary.WriteBytes("External/ra2.mix", root);
+            string configuration = temporary.WriteText(
+                "Repository/Config/ExternalContent.xml",
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                "<ExternalContent schemaVersion=\"1\" cachePath=\"../../Cache\"><Sources>" +
+                "<Source id=\"synthetic-source\" kind=\"Unpacked\" path=\"../../External\" priority=\"100\" version=\"synthetic\" enabled=\"true\" />" +
+                "</Sources></ExternalContent>");
+            ExternalLegacyVisualProvider provider = ExternalLegacyVisualProvider.Create(
+                new HumanPlaytestVisualProfile(
+                    HumanPlaytestVisualMode.ExternalLegacyPreferred,
+                    configuration,
+                    sourceId: "synthetic-source",
+                    roleProfile: roles,
+                    artImagePolicy: imagePolicy),
+                temporary.GetPath("Repository"));
+            ExternalVisualRouteDiagnostics route = provider.Status.RouteDiagnostics;
+            TestContext.WriteLine(
+                "M6_SYNTHETIC_VISUAL_ROUTE" +
+                ";gate=" + route.GateStatus +
+                ";roots=" + route.RootMixCount +
+                ";archives=" + route.MountedArchiveCount +
+                ";entries=" + route.MountedEntryCount +
+                ";rulesCandidates=" + route.RulesCandidateCount +
+                ";rulesParsed=" + route.RulesParseSuccessCount +
+                ";rulesComplete=" + route.RulesResolutionComplete +
+                ";rulesRegistries=" + route.TypedRulesRegistryCount +
+                ";rulesEntries=" + route.TypedRulesEntryCount +
+                ";artCandidates=" + route.ArtCandidateCount +
+                ";artParsed=" + route.ArtParseSuccessCount +
+                ";artComplete=" + route.ArtResolutionComplete +
+                ";artRecords=" + route.TypedArtRecordCount);
+            return provider;
+        }
+
+        private static MixWriteEntry Entry(string logicalName, byte[] payload)
+        {
+            return new MixWriteEntry(MixFileId.ComputeCandidateId(logicalName), payload);
+        }
+
+        private static byte[] BuildMix(params MixWriteEntry[] entries)
+        {
+            MixWriteResult result = MixArchiveWriter.Build(entries, MixWriteOptions.ClassicDeterministic);
+            if (!result.IsSuccess) throw new InvalidOperationException("Synthetic MIX construction failed.");
+            return result.GetArchiveBytes();
+        }
+
+        private static byte[] BuildPalette()
+        {
+            var bytes = new byte[768];
+            for (int index = 0; index < bytes.Length; index++) bytes[index] = checked((byte)(index % 64));
+            return bytes;
+        }
+
+        private static byte[] BuildVxl(string sectionName, byte colorIndex)
+        {
+            const int headerLength = 802;
+            const int sectionHeaderLength = 28;
+            const int bodyLength = 13;
+            const int tailerLength = 92;
+            var bytes = new byte[headerLength + sectionHeaderLength + bodyLength + tailerLength];
+            WriteAscii(bytes, 0, "Voxel Animation", 16);
+            Write32(bytes, 16, 1);
+            Write32(bytes, 20, 1);
+            Write32(bytes, 24, 1);
+            Write32(bytes, 28, bodyLength);
+            WriteAscii(bytes, headerLength, sectionName, 16);
+            int body = headerLength + sectionHeaderLength;
+            Write32(bytes, body, 0);
+            Write32(bytes, body + 4, 4);
+            bytes[body + 8] = 0;
+            bytes[body + 9] = 1;
+            bytes[body + 10] = colorIndex;
+            bytes[body + 11] = 2;
+            bytes[body + 12] = 1;
+            int tailer = body + bodyLength;
+            Write32(bytes, tailer, 0);
+            Write32(bytes, tailer + 4, 4);
+            Write32(bytes, tailer + 8, 8);
+            Write32(bytes, tailer + 12, 0x3f800000);
+            bytes[tailer + 88] = 1;
+            bytes[tailer + 89] = 1;
+            bytes[tailer + 90] = 1;
+            bytes[tailer + 91] = 2;
+            return bytes;
+        }
+
+        private static byte[] BuildHva(string sectionName)
+        {
+            var bytes = new byte[24 + 16 + 48];
+            Write32(bytes, 16, 1);
+            Write32(bytes, 20, 1);
+            WriteAscii(bytes, 24, sectionName, 16);
+            Write32(bytes, 40, 0x3f800000);
+            Write32(bytes, 60, 0x3f800000);
+            Write32(bytes, 80, 0x3f800000);
+            return bytes;
+        }
+
+        private static void WriteAscii(byte[] bytes, int offset, string value, int maxLength)
+        {
+            byte[] encoded = Encoding.ASCII.GetBytes(value);
+            Buffer.BlockCopy(encoded, 0, bytes, offset, Math.Min(encoded.Length, maxLength));
+        }
+
+        private static void Write32(byte[] bytes, int offset, int value)
+        {
+            bytes[offset] = (byte)value;
+            bytes[offset + 1] = (byte)(value >> 8);
+            bytes[offset + 2] = (byte)(value >> 16);
+            bytes[offset + 3] = (byte)(value >> 24);
         }
     }
 }

@@ -39,6 +39,18 @@ namespace RA2YR.Tests.PlayMode
             Assert.That(bootstrap.TerrainCellCount, Is.EqualTo(bootstrap.Runtime.Config.Width * bootstrap.Runtime.Config.Height));
             Assert.That(bootstrap.LastPresentation, Is.Not.Null);
             Assert.That(bootstrap.LastPresentation.Entities.Count, Is.GreaterThan(0));
+            if (bootstrap.ExternalVisualStatus != null &&
+                bootstrap.ExternalVisualStatus.IsConfigured &&
+                bootstrap.ExternalVisualStatus.SourceAvailable)
+            {
+                TestContext.WriteLine(
+                    "M6_SCENE_EXTERNAL_VISUAL_ROUTE" +
+                    ";gate=" + bootstrap.ExternalVisualStatus.RouteGateStatus +
+                    ";externalObjects=" + bootstrap.ExternalObjectCount +
+                    ";fallbackObjects=" + bootstrap.SyntheticObjectFallbackCount);
+                Assert.That(bootstrap.ExternalVisualStatus.IsLocalExternalVisualReady, Is.True);
+                Assert.That(bootstrap.ExternalObjectCount, Is.GreaterThan(0));
+            }
         }
 
         [UnityTest]

@@ -28,6 +28,9 @@ namespace RA2YR.Tests.EditMode.Formats.VxlHva
         [Test] public void VxlSingleSparseColumnParsesRawVoxel()
         { byte[] input = BuildVxl(1, 1, 1, null); int body = 830; int tailer = body + 13; Assert.AreEqual(0, input[body]); Assert.AreEqual(4, input[body + 4]); Assert.AreEqual(0, input[body + 8]); Assert.AreEqual(1, input[body + 9]); Assert.AreEqual(8, Read32(input, tailer + 8)); VxlReadResult result = WestwoodVxlReader.Read(input); Assert.IsTrue(result.IsSuccess, Describe(result.Diagnostics)); Assert.AreEqual(1, result.Document.Sections[0].Columns.Count); Assert.AreEqual(1, result.Document.Sections[0].Columns[0].Chunks[0].Voxels.Count); Assert.AreEqual(7, result.Document.Sections[0].Columns[0].Chunks[0].Voxels[0].ColorIndex); }
 
+        [Test] public void VxlAcceptsExactThreeByteTrailingEmptySpanCommand()
+        { byte[] input = BuildVxl(1, 1, 1, new byte[] { 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0 }); int tailer = 802 + 28 + 11; input[tailer + 90] = 2; VxlReadResult result = WestwoodVxlReader.Read(input); Assert.IsTrue(result.IsSuccess, Describe(result.Diagnostics)); Assert.AreEqual(1, result.Document.Sections[0].Columns[0].Chunks.Count); Assert.AreEqual(2, result.Document.Sections[0].Columns[0].Chunks[0].Skip); Assert.AreEqual(0, result.Document.Sections[0].Columns[0].Chunks[0].Voxels.Count); }
+
         [Test] public void VxlEmptyColumnRetainsMinusOneSentinels()
         { VxlReadResult result = WestwoodVxlReader.Read(BuildVxl(1, 1, 1, new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0 })); Assert.IsTrue(result.IsSuccess); Assert.IsTrue(result.Document.Sections[0].Columns[0].IsEmpty); }
 
@@ -89,7 +92,7 @@ namespace RA2YR.Tests.EditMode.Formats.VxlHva
             byte[] body = bodyOverride ?? new byte[0]; if (sections == 1 && bodyOverride == null) body = new byte[13];
             if (bodyOverride == null && tailerCount > 0) { body = new byte[] { 0, 0, 0, 0, 4, 0, 0, 0, 0, 1, 7, 2, 1 }; }
             int bodySize = body.Length; byte[] bytes = new byte[802 + headerCount * 28 + bodySize + tailerCount * 92]; WriteAscii(bytes, 0, "Voxel Animation"); Write32(bytes, 16, 1); Write32(bytes, 20, (uint)headerCount); Write32(bytes, 24, (uint)tailerCount); Write32(bytes, 28, (uint)bodySize); if (headerCount > 0) WriteAscii(bytes, 802, "BODY"); if (tailerCount > 0) { int t = 802 + headerCount * 28 + bodySize; Write32(bytes, t, 0); Write32(bytes, t + 4, 4); Write32(bytes, t + 8, 8); Write32(bytes, t + 12, 0x3f800000); bytes[t + 88] = 1; bytes[t + 89] = 1; bytes[t + 90] = 1; bytes[t + 91] = 2; }
-            if (sections == 1 && bodyOverride != null && bodyOverride.Length == 13) { int bodyStart = 802 + headerCount * 28; Buffer.BlockCopy(bodyOverride, 0, bytes, bodyStart, 13); }
+            if (sections == 1 && bodyOverride != null) { int bodyStart = 802 + headerCount * 28; Buffer.BlockCopy(bodyOverride, 0, bytes, bodyStart, bodyOverride.Length); }
             if (sections == 1 && bodyOverride == null && tailerCount > 0) { int bodyStart = 802 + headerCount * 28; bytes[bodyStart] = 0; bytes[bodyStart + 4] = 4; bytes[bodyStart + 8] = 0; bytes[bodyStart + 9] = 1; bytes[bodyStart + 10] = 7; bytes[bodyStart + 11] = 2; bytes[bodyStart + 12] = 1; }
             return bytes;
         }

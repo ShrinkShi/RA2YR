@@ -89,8 +89,7 @@ namespace RA2YR.UnityIntegration
             Client.Configure(new UnityInteractiveClientPolicy(512, 256), new IsometricPointerProfile(64, 32, 1920, 1080), Runtime.CommandQueue);
             BuildCamera();
             ConfigureExternalVisuals();
-            if (externalVisualProvider == null || !externalVisualProvider.IsAvailable)
-                BuildProceduralArt();
+            BuildProceduralArt();
             BuildTerrain();
             IsInitialized = true;
         }
@@ -101,13 +100,20 @@ namespace RA2YR.UnityIntegration
             string configurationPath = Path.Combine(projectRoot, "Config", "ExternalContent.local.xml");
             if (!File.Exists(configurationPath))
             {
-                externalVisualStatus = new ExternalLegacyVisualStatus(false, false, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, HumanPlaytestRemapProfile.SourcePaletteOnly, "SyntheticFallback", "Local external content configuration is not present.");
+                externalVisualStatus = new ExternalLegacyVisualStatus(
+                    false, false, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    false,
+                    HumanPlaytestRemapProfile.SourcePaletteOnly,
+                    "SyntheticFallback",
+                    "Local external content configuration is not present.",
+                    new ExternalVisualRouteDiagnostics(ExternalVisualRouteGateStatus.SourceNotConfigured));
                 return;
             }
 
             HumanPlaytestVisualProfile profile = new HumanPlaytestVisualProfile(
                 HumanPlaytestVisualMode.ExternalLegacyPreferred,
-                configurationPath);
+                configurationPath,
+                artImagePolicy: HumanPlaytestArtImagePolicy.ExplicitOrSectionIdentifier);
             externalVisualProvider = ExternalLegacyVisualProvider.Create(profile, projectRoot);
             externalVisualStatus = externalVisualProvider.Status;
         }
@@ -303,19 +309,16 @@ namespace RA2YR.UnityIntegration
             if (target == null || externalVisualProvider == null || !externalVisualProvider.IsAvailable) return false;
             bool enemy = entity.Owner.Value != Runtime.HumanPlayer.Value;
             HumanPlaytestVisualRole role = RoleFor(entity.Kind, enemy);
-            if (entity.Kind != HumanPlaytestEntityKind.Unit && entity.Kind != HumanPlaytestEntityKind.Harvester)
+            Mesh mesh;
+            if (externalVisualProvider.TryGetVoxelMesh(role, out mesh) && mesh != null)
             {
-                Mesh mesh;
-                if (externalVisualProvider.TryGetVoxelMesh(role, out mesh) && mesh != null)
-                {
-                    Material material = GetVoxelMaterial(enemy);
-                    if (material == null) return false;
-                    MeshFilter filter = target.AddComponent<MeshFilter>();
-                    filter.sharedMesh = mesh;
-                    MeshRenderer renderer = target.AddComponent<MeshRenderer>();
-                    renderer.sharedMaterial = material;
-                    return true;
-                }
+                Material material = GetVoxelMaterial(enemy);
+                if (material == null) return false;
+                MeshFilter filter = target.AddComponent<MeshFilter>();
+                filter.sharedMesh = mesh;
+                MeshRenderer renderer = target.AddComponent<MeshRenderer>();
+                renderer.sharedMaterial = material;
+                return true;
             }
 
             Sprite sprite;
@@ -410,11 +413,11 @@ namespace RA2YR.UnityIntegration
                 ResolvedLegacyVisual resolved;
                 string visualId = useExternal && externalVisualProvider.TryGetResolvedVisual(role, out resolved)
                     ? resolved.VisualAssetId
-                    : (useExternal ? "external-legacy/playtest/unresolved-" + role : "synthetic/playtest/" + role);
+                    : "synthetic/playtest/" + role;
                 return new PresentationEntityDescriptor(x.Entity, new VisualAssetId(visualId), x.Kind == HumanPlaytestEntityKind.Unit ? PresentationRenderPass.Vehicle : PresentationRenderPass.Structure, new PresentationPosition(x.X, x.Y), x.Entity.Index);
             });
             IVisualAssetProvider[] providers = useExternal
-                ? new IVisualAssetProvider[] { externalVisualProvider }
+                ? new IVisualAssetProvider[] { externalVisualProvider, new SyntheticProvider() }
                 : new IVisualAssetProvider[] { new SyntheticProvider() };
             LastPresentation = PresentationSnapshotAssembler.Assemble(Runtime.World.CaptureSnapshot(), descriptors, previousPresentation, providers, new PresentationAssemblyPolicy(4096));
             previousPresentation = LastPresentation;

@@ -7,6 +7,7 @@ using RA2YR.Core.Binary.Seekable;
 using RA2YR.Core.Configuration.Ini.Resolution;
 using RA2YR.Core.Configuration.Ini.Typed;
 using RA2YR.Core.Content;
+using RA2YR.Core.Content.Ini.Audit;
 using RA2YR.Core.Formats.Ini;
 using RA2YR.Core.Content.Mix;
 using RA2YR.Core.Formats.Mix;
@@ -26,6 +27,73 @@ namespace RA2YR.UnityIntegration
         ExternalLegacyPreferred
     }
 
+    public enum ExternalVisualRouteGateStatus
+    {
+        SourceNotConfigured,
+        SourceConfiguredButUnavailable,
+        SourceAvailableButNoTypedRules,
+        SourceAvailableButNoTypedArt,
+        TypedArtAvailableButNoRoleDescriptors,
+        RoleDescriptorsAvailableButAssetsNotFound,
+        AssetsFoundButDecodeFailed,
+        ExternalVisualsResolved
+    }
+
+    public enum HumanPlaytestArtImagePolicy
+    {
+        ExplicitOnly,
+        ExplicitOrSectionIdentifier
+    }
+
+    public sealed class ExternalVisualRouteDiagnostics
+    {
+        internal ExternalVisualRouteDiagnostics(ExternalVisualRouteGateStatus gateStatus)
+        {
+            if (!Enum.IsDefined(typeof(ExternalVisualRouteGateStatus), gateStatus))
+                throw new ArgumentOutOfRangeException(nameof(gateStatus));
+            GateStatus = gateStatus;
+        }
+
+        public ExternalVisualRouteGateStatus GateStatus { get; internal set; }
+        public int RootMixCount { get; internal set; }
+        public int MountedArchiveCount { get; internal set; }
+        public int MountedEntryCount { get; internal set; }
+        public int RulesCandidateCount { get; internal set; }
+        public int RulesParseSuccessCount { get; internal set; }
+        public bool RulesResolutionComplete { get; internal set; }
+        public int ArtCandidateCount { get; internal set; }
+        public int ArtParseSuccessCount { get; internal set; }
+        public bool ArtResolutionComplete { get; internal set; }
+        public int TypedRulesRegistryCount { get; internal set; }
+        public int TypedRulesEntryCount { get; internal set; }
+        public int TypedArtRecordCount { get; internal set; }
+        public int ArtRecordsWithExplicitImage { get; internal set; }
+        public int ArtRecordsWithoutExplicitImage { get; internal set; }
+        public int TargetArtRecordsWithExplicitImage { get; internal set; }
+        public int TargetArtRecordsWithoutExplicitImage { get; internal set; }
+        public int RoleBindingsRequested { get; internal set; }
+        public int RulesTypeSectionMatches { get; internal set; }
+        public int RulesImageOverrides { get; internal set; }
+        public int RoleRuleMatches { get; internal set; }
+        public int RoleArtMatches { get; internal set; }
+        public int RoleDescriptorsCreated { get; internal set; }
+        public int ImageLogicalRequests { get; internal set; }
+        public int PaletteLogicalRequests { get; internal set; }
+        public int VxlLogicalRequests { get; internal set; }
+        public int HvaLogicalRequests { get; internal set; }
+        public int ImageVfsMatches { get; internal set; }
+        public int PaletteVfsMatches { get; internal set; }
+        public int VxlVfsMatches { get; internal set; }
+        public int HvaVfsMatches { get; internal set; }
+        public int ShpDecodeSuccess { get; internal set; }
+        public int ShpDecodeFailed { get; internal set; }
+        public int VxlDecodeSuccess { get; internal set; }
+        public int VxlDecodeFailed { get; internal set; }
+        public int HvaBindSuccess { get; internal set; }
+        public int HvaBindFailed { get; internal set; }
+        public int FinalExternalRoles { get; internal set; }
+    }
+
     public sealed class HumanPlaytestVisualProfile
     {
         public HumanPlaytestVisualProfile(
@@ -39,13 +107,16 @@ namespace RA2YR.UnityIntegration
             byte teamRangeEnd = 31,
             int humanTeamOffset = 0,
             int enemyTeamOffset = 16,
-            HumanPlaytestVisualRoleProfile roleProfile = null)
+            HumanPlaytestVisualRoleProfile roleProfile = null,
+            HumanPlaytestArtImagePolicy artImagePolicy = HumanPlaytestArtImagePolicy.ExplicitOnly)
         {
             if (!Enum.IsDefined(typeof(HumanPlaytestVisualMode), mode)) throw new ArgumentOutOfRangeException(nameof(mode));
             if (string.IsNullOrWhiteSpace(configurationPath)) throw new ArgumentException("A configuration path is required.", nameof(configurationPath));
             if (string.IsNullOrWhiteSpace(sourceId)) throw new ArgumentException("A source id is required.", nameof(sourceId));
             if (maxProbeEntries < 0 || maxAssetBytes < 0) throw new ArgumentOutOfRangeException();
             if (teamRangeStart > teamRangeEnd) throw new ArgumentOutOfRangeException(nameof(teamRangeStart));
+            if (!Enum.IsDefined(typeof(HumanPlaytestArtImagePolicy), artImagePolicy))
+                throw new ArgumentOutOfRangeException(nameof(artImagePolicy));
             Mode = mode;
             ConfigurationPath = configurationPath;
             SourceId = sourceId;
@@ -57,6 +128,7 @@ namespace RA2YR.UnityIntegration
             HumanTeamOffset = humanTeamOffset;
             EnemyTeamOffset = enemyTeamOffset;
             RoleProfile = roleProfile ?? HumanPlaytestVisualRoleProfile.CreateDefault();
+            ArtImagePolicy = artImagePolicy;
         }
 
         public HumanPlaytestVisualMode Mode { get; }
@@ -70,6 +142,7 @@ namespace RA2YR.UnityIntegration
         public int HumanTeamOffset { get; }
         public int EnemyTeamOffset { get; }
         public HumanPlaytestVisualRoleProfile RoleProfile { get; }
+        public HumanPlaytestArtImagePolicy ArtImagePolicy { get; }
     }
 
     public sealed class ExternalLegacyVisualStatus
@@ -100,7 +173,8 @@ namespace RA2YR.UnityIntegration
             bool sourceFingerprintStable,
             HumanPlaytestRemapProfile remapProfile,
             string terrainSource,
-            string message)
+            string message,
+            ExternalVisualRouteDiagnostics routeDiagnostics)
         {
             IsConfigured = configured;
             SourceAvailable = sourceAvailable;
@@ -128,6 +202,7 @@ namespace RA2YR.UnityIntegration
             RemapProfile = remapProfile;
             TerrainSource = terrainSource ?? "SyntheticFallback";
             Message = message ?? string.Empty;
+            RouteDiagnostics = routeDiagnostics ?? throw new ArgumentNullException(nameof(routeDiagnostics));
         }
 
         public bool IsConfigured { get; }
@@ -156,6 +231,11 @@ namespace RA2YR.UnityIntegration
         public HumanPlaytestRemapProfile RemapProfile { get; }
         public string TerrainSource { get; }
         public string Message { get; }
+        public ExternalVisualRouteDiagnostics RouteDiagnostics { get; }
+        public ExternalVisualRouteGateStatus RouteGateStatus => RouteDiagnostics.GateStatus;
+        public bool IsLocalExternalVisualReady =>
+            RouteGateStatus == ExternalVisualRouteGateStatus.ExternalVisualsResolved &&
+            VisualRolesResolvedExternal > 0;
     }
 
     /// <summary>
@@ -208,8 +288,16 @@ namespace RA2YR.UnityIntegration
             if (profile == null) throw new ArgumentNullException(nameof(profile));
             if (repositoryRoot == null) throw new ArgumentNullException(nameof(repositoryRoot));
             if (profile.Mode == HumanPlaytestVisualMode.SyntheticOnly)
-                return new ExternalLegacyVisualProvider(profile, Unavailable(profile, false, "SyntheticOnly"), null);
+                return new ExternalLegacyVisualProvider(
+                    profile,
+                    Unavailable(profile, false, ExternalVisualRouteGateStatus.SourceNotConfigured, "SyntheticOnly"),
+                    null);
 
+            bool configurationPresent = IsConfigurationPresent(profile.ConfigurationPath, repositoryRoot);
+            var route = new ExternalVisualRouteDiagnostics(
+                configurationPresent
+                    ? ExternalVisualRouteGateStatus.SourceConfiguredButUnavailable
+                    : ExternalVisualRouteGateStatus.SourceNotConfigured);
             try
             {
                 ExternalContentConfigurationLoadResult loaded =
@@ -218,21 +306,30 @@ namespace RA2YR.UnityIntegration
                 ExternalContentSourceDescriptor source = configuration.Sources.FirstOrDefault(
                     value => value.Enabled && string.Equals(value.Id, profile.SourceId, StringComparison.Ordinal));
                 if (source == null)
-                    return new ExternalLegacyVisualProvider(profile, Unavailable(profile, true, "Configured external source is unavailable."), null);
+                    return new ExternalLegacyVisualProvider(
+                        profile,
+                        Unavailable(profile, false, ExternalVisualRouteGateStatus.SourceNotConfigured, "Configured external source is unavailable."),
+                        null);
 
                 ContentIndexResult index = new ContentIndexer().Build(configuration);
                 ContentSourceIndex sourceIndex = index.Sources.FirstOrDefault(value => string.Equals(value.Source.Id, source.Id, StringComparison.Ordinal));
                 if (!index.IsComplete || sourceIndex == null || !sourceIndex.IsComplete)
-                    return new ExternalLegacyVisualProvider(profile, Unavailable(profile, true, "External source indexing failed closed."), null);
+                    return new ExternalLegacyVisualProvider(
+                        profile,
+                        Unavailable(profile, true, ExternalVisualRouteGateStatus.SourceConfiguredButUnavailable, "External source indexing failed closed."),
+                        null);
 
                 LogicalContentPath[] roots = sourceIndex.Files
                     .Where(value => value.LogicalPath.Value.EndsWith(".mix", StringComparison.OrdinalIgnoreCase))
                     .Select(value => value.LogicalPath)
                     .OrderBy(value => value, LogicalContentPathReportComparer.Instance)
                     .ToArray();
+                route.RootMixCount = roots.Length;
                 MixNameCatalog names = new MixNameCatalog(
                     new[] { "rulesmd.ini", "artmd.ini", "rules.ini", "art.ini" }
                         .Select(LogicalContentPath.Parse)
+                        .Concat(IniProjectBaselineAuditProfile.ProjectBaseline.NestedArchiveNames)
+                        .Concat(MixLegacyVisualArchiveProfile.VisualChildren)
                         .Concat(sourceIndex.Files.Select(value => value.LogicalPath))
                         .Concat(roots)
                         .Distinct());
@@ -252,6 +349,15 @@ namespace RA2YR.UnityIntegration
                         mounts.Add(mount);
                     }
 
+                    route.MountedArchiveCount = mounts
+                        .Where(value => value.IsComplete)
+                        .SelectMany(value => value.Entries)
+                        .Count(value => value.IsMountedArchive);
+                    route.MountedEntryCount = mounts
+                        .Where(value => value.IsComplete)
+                        .SelectMany(value => value.Entries)
+                        .Count();
+
                     IEnumerable<MixVirtualEntry> entries = mounts
                         .Where(value => value.IsComplete)
                         .SelectMany(value => value.Entries)
@@ -261,22 +367,44 @@ namespace RA2YR.UnityIntegration
 
                     MixVirtualEntry[] entryArray = entries.Take(profile.MaxProbeEntries).ToArray();
                     probed = entryArray.Length;
-                    IniResolutionResult rules = ResolveTypedIni(entryArray, source.Id, "rulesmd.ini", profile.MaxAssetBytes);
-                    IniResolutionResult art = ResolveTypedIni(entryArray, source.Id, "artmd.ini", profile.MaxAssetBytes);
-                    if (rules == null) rules = ResolveTypedIni(entryArray, source.Id, "rules.ini", profile.MaxAssetBytes);
-                    if (art == null) art = ResolveTypedIni(entryArray, source.Id, "art.ini", profile.MaxAssetBytes);
+                    IniResolutionResult rules = ResolveTypedIni(entryArray, source.Id, "rulesmd.ini", profile.MaxAssetBytes, route, true);
+                    IniResolutionResult artMd = ResolveTypedIni(entryArray, source.Id, "artmd.ini", profile.MaxAssetBytes, route, false);
+                    IniResolutionResult artBase = ResolveTypedIni(entryArray, source.Id, "art.ini", profile.MaxAssetBytes, route, false);
+                    if (rules == null) rules = ResolveTypedIni(entryArray, source.Id, "rules.ini", profile.MaxAssetBytes, route, true);
                     IniRulesResourceDocument typedRules = rules != null && rules.IsComplete
                         ? IniMinimalResourceViewBuilder.BuildRules(rules, IniTypedNameComparisonPolicy.OrdinalIgnoreCaseAscii, IniTypedViewLimits.Default).Document
                         : null;
-                    IniArtResourceDocument typedArt = art != null && art.IsComplete
-                        ? IniMinimalResourceViewBuilder.BuildArt(art, IniTypedNameComparisonPolicy.OrdinalIgnoreCaseAscii, IniBooleanCasePolicy.OrdinalIgnoreCaseAscii, IniTypedViewLimits.Default).Document
-                        : null;
-                    HumanPlaytestRoleDescriptor[] descriptors = BuildRoleDescriptors(profile.RoleProfile, typedRules, typedArt);
-                    HumanPlaytestAssetAvailability[] availability = BuildAvailability(descriptors, profile, entryArray);
+                    IniArtResourceDocument[] typedArtLayers = new[] { artBase, artMd }
+                        .Where(value => value != null && value.IsComplete)
+                        .Select(value => IniMinimalResourceViewBuilder.BuildArt(
+                            value,
+                            IniTypedNameComparisonPolicy.OrdinalIgnoreCaseAscii,
+                            IniBooleanCasePolicy.OrdinalIgnoreCaseAscii,
+                            IniTypedViewLimits.Default).Document)
+                        .Where(value => value != null)
+                        .ToArray();
+                    IniResolutionResult[] resolvedArtLayers = new[] { artBase, artMd }
+                        .Where(value => value != null && value.IsComplete)
+                        .ToArray();
+                    route.TypedRulesRegistryCount = typedRules == null ? 0 : typedRules.Registries.Count;
+                    route.TypedRulesEntryCount = typedRules == null ? 0 : typedRules.EntryCount;
+                    route.TypedArtRecordCount = typedArtLayers.Sum(value => value.Records.Count);
+                    foreach (IniArtResourceDocument typedArt in typedArtLayers) CountArtImageFields(typedArt, route);
+                    HumanPlaytestRoleDescriptor[] descriptors = BuildRoleDescriptors(
+                        profile.RoleProfile,
+                        typedRules,
+                        rules,
+                        typedArtLayers,
+                        resolvedArtLayers,
+                        profile.ArtImagePolicy,
+                        route);
+                    HumanPlaytestAssetAvailability[] availability = BuildAvailability(descriptors, profile, entryArray, route);
                     HumanPlaytestRoleResolutionResult resolution = HumanPlaytestVisualRoleResolver.Resolve(profile.RoleProfile, descriptors, availability);
-                    Dictionary<HumanPlaytestVisualRole, DecodedVisualAsset> decoded = DecodeResolvedAssets(resolution, entryArray, source.Id, profile);
+                    Dictionary<HumanPlaytestVisualRole, DecodedVisualAsset> decoded = DecodeResolvedAssets(resolution, entryArray, source.Id, profile, route);
+                    route.FinalExternalRoles = decoded.Count;
+                    route.GateStatus = DetermineGateStatus(route);
                     bool fingerprintStable = IsSourceFingerprintStable(configuration, source.Id, sourceIndex.Fingerprint);
-                    ExternalLegacyVisualStatus status = CreateStatus(profile, resolution, decoded, probed, fingerprintStable);
+                    ExternalLegacyVisualStatus status = CreateStatus(profile, resolution, decoded, probed, fingerprintStable, route);
                     return new ExternalLegacyVisualProvider(profile, status, decoded);
                 }
                 finally
@@ -290,7 +418,10 @@ namespace RA2YR.UnityIntegration
             }
             catch (Exception exception) when (exception is ContentConfigurationException || exception is IOException || exception is UnauthorizedAccessException || exception is InvalidOperationException || exception is ArgumentException || exception is OverflowException)
             {
-                return new ExternalLegacyVisualProvider(profile, Unavailable(profile, true, "External legacy content preflight failed closed."), null);
+                return new ExternalLegacyVisualProvider(
+                    profile,
+                    Unavailable(profile, configurationPresent, route.GateStatus, "External legacy content preflight failed closed.", route),
+                    null);
             }
         }
 
@@ -418,6 +549,53 @@ namespace RA2YR.UnityIntegration
             }
         }
 
+        private static bool IsConfigurationPresent(string configurationPath, string repositoryRoot)
+        {
+            try
+            {
+                string path = Path.IsPathRooted(configurationPath)
+                    ? configurationPath
+                    : Path.Combine(repositoryRoot, configurationPath);
+                return File.Exists(path);
+            }
+            catch (Exception exception) when (exception is ArgumentException || exception is IOException || exception is UnauthorizedAccessException)
+            {
+                return false;
+            }
+        }
+
+        private static void CountArtImageFields(
+            IniArtResourceDocument art,
+            ExternalVisualRouteDiagnostics route)
+        {
+            if (art == null) return;
+            foreach (IniArtResourceRecord record in art.Records)
+            {
+                IniArtResourceField image = record.Fields.FirstOrDefault(value => value.Kind == IniArtFieldKind.Image);
+                bool present = image != null && image.Status == IniTypedValueStatus.Present &&
+                               image.Parsed != null && image.Parsed.Value != null;
+                if (present) route.ArtRecordsWithExplicitImage = checked(route.ArtRecordsWithExplicitImage + 1);
+                else route.ArtRecordsWithoutExplicitImage = checked(route.ArtRecordsWithoutExplicitImage + 1);
+            }
+        }
+
+        private static ExternalVisualRouteGateStatus DetermineGateStatus(ExternalVisualRouteDiagnostics route)
+        {
+            if (route.RootMixCount <= 0 || route.MountedEntryCount <= 0)
+                return ExternalVisualRouteGateStatus.SourceConfiguredButUnavailable;
+            if (!route.RulesResolutionComplete || route.TypedRulesEntryCount <= 0)
+                return ExternalVisualRouteGateStatus.SourceAvailableButNoTypedRules;
+            if (!route.ArtResolutionComplete || route.TypedArtRecordCount <= 0)
+                return ExternalVisualRouteGateStatus.SourceAvailableButNoTypedArt;
+            if (route.RoleDescriptorsCreated <= 0)
+                return ExternalVisualRouteGateStatus.TypedArtAvailableButNoRoleDescriptors;
+            if (route.ImageVfsMatches + route.VxlVfsMatches <= 0 || route.PaletteVfsMatches <= 0)
+                return ExternalVisualRouteGateStatus.RoleDescriptorsAvailableButAssetsNotFound;
+            if (route.FinalExternalRoles <= 0)
+                return ExternalVisualRouteGateStatus.AssetsFoundButDecodeFailed;
+            return ExternalVisualRouteGateStatus.ExternalVisualsResolved;
+        }
+
         private byte Scale(byte raw)
         {
             if (raw > 63) return raw;
@@ -434,7 +612,9 @@ namespace RA2YR.UnityIntegration
             IReadOnlyList<MixVirtualEntry> entries,
             string sourceId,
             string logicalName,
-            long maxBytes)
+            long maxBytes,
+            ExternalVisualRouteDiagnostics route,
+            bool rulesStage)
         {
             LogicalContentPath target = LogicalContentPath.Parse(logicalName);
             MixFileId id = MixFileId.ComputeCandidateId(logicalName);
@@ -444,6 +624,8 @@ namespace RA2YR.UnityIntegration
                 .ThenBy(value => value.Id.Value)
                 .Take(8)
                 .ToArray();
+            if (rulesStage) route.RulesCandidateCount = checked(route.RulesCandidateCount + matches.Length);
+            else route.ArtCandidateCount = checked(route.ArtCandidateCount + matches.Length);
             var inputs = new List<IniProjectBaselineDocumentInput>();
             int ordinal = 0;
             foreach (MixVirtualEntry entry in matches)
@@ -463,6 +645,8 @@ namespace RA2YR.UnityIntegration
                         new IniSourceProvenance(sourceId, chain),
                         IniReadLimits.Default);
                     if (!parsed.IsSuccess || parsed.Document == null) continue;
+                    if (rulesStage) route.RulesParseSuccessCount = checked(route.RulesParseSuccessCount + 1);
+                    else route.ArtParseSuccessCount = checked(route.ArtParseSuccessCount + 1);
                     inputs.Add(new IniProjectBaselineDocumentInput(
                         "m6-typed-" + logicalName + "-" + ordinal.ToString("D4"),
                         target,
@@ -496,15 +680,25 @@ namespace RA2YR.UnityIntegration
                 configured,
                 IniEmptyValuePolicy.OverridesEarlierValue,
                 configured);
-            return new IniRuntimeResolver().Resolve(built.Plan, built.Candidates, policy);
+            IniResolutionResult result = new IniRuntimeResolver().Resolve(built.Plan, built.Candidates, policy);
+            if (rulesStage) route.RulesResolutionComplete = route.RulesResolutionComplete || result != null && result.IsComplete;
+            else route.ArtResolutionComplete = route.ArtResolutionComplete || result != null && result.IsComplete;
+            return result;
         }
 
         private static HumanPlaytestRoleDescriptor[] BuildRoleDescriptors(
             HumanPlaytestVisualRoleProfile profile,
             IniRulesResourceDocument rules,
-            IniArtResourceDocument art)
+            IniResolutionResult resolvedRules,
+            IReadOnlyList<IniArtResourceDocument> artLayers,
+            IReadOnlyList<IniResolutionResult> resolvedArtLayers,
+            HumanPlaytestArtImagePolicy imagePolicy,
+            ExternalVisualRouteDiagnostics route)
         {
-            if (rules == null || art == null) return Array.Empty<HumanPlaytestRoleDescriptor>();
+            route.RoleBindingsRequested = profile.Bindings.Count;
+            if (rules == null || artLayers == null || artLayers.Count == 0 ||
+                resolvedArtLayers == null || resolvedArtLayers.Count == 0)
+                return Array.Empty<HumanPlaytestRoleDescriptor>();
             var values = new List<HumanPlaytestRoleDescriptor>();
             foreach (HumanPlaytestVisualRoleBinding binding in profile.Bindings.OrderBy(value => value.Role))
             {
@@ -513,19 +707,96 @@ namespace RA2YR.UnityIntegration
                 IniRulesRegistryEntry rule = typedRegistry == null ? null : typedRegistry.Entries.FirstOrDefault(value =>
                     value.Identifier.Status == IniTypedValueStatus.Present &&
                     string.Equals(value.Identifier.Value.Identifier, binding.TypeId, StringComparison.OrdinalIgnoreCase));
-                IniArtResourceRecord artRecord = art.Records.FirstOrDefault(value => string.Equals(value.SectionIdentifier, binding.TypeId, StringComparison.OrdinalIgnoreCase));
-                if (rule == null || artRecord == null) continue;
-                IniArtResourceField image = artRecord.Fields.FirstOrDefault(value => value.Kind == IniArtFieldKind.Image);
-                IniArtResourceField voxel = artRecord.Fields.FirstOrDefault(value => value.Kind == IniArtFieldKind.Voxel);
-                IniArtResourceField palette = artRecord.Fields.FirstOrDefault(value => value.Kind == IniArtFieldKind.Palette);
-                if (image == null || image.Status != IniTypedValueStatus.Present || image.Parsed == null || image.Parsed.Value == null) continue;
-                bool isVoxel = voxel != null && voxel.Status == IniTypedValueStatus.Present && voxel.Parsed.Value.BooleanValue == true;
-                string paletteName = palette != null && palette.Status == IniTypedValueStatus.Present && palette.Parsed.Value != null
-                    ? palette.Parsed.Value.Identifier
+                IniTypedParseResult rulesImage = FindRulesImageCandidate(resolvedRules, binding.TypeId);
+                if (HasRulesTypeSection(resolvedRules, binding.TypeId))
+                    route.RulesTypeSectionMatches = checked(route.RulesTypeSectionMatches + 1);
+                if (rulesImage != null && rulesImage.Status == IniTypedValueStatus.Present)
+                    route.RulesImageOverrides = checked(route.RulesImageOverrides + 1);
+                if (rulesImage != null && rulesImage.Status != IniTypedValueStatus.Present) continue;
+                string artSectionId = rulesImage == null
+                    ? binding.TypeId
+                    : rulesImage.Value.Identifier;
+                bool artSectionPresent = resolvedArtLayers.Any(layer => layer.Sections.Any(section =>
+                    string.Equals(section.Name, artSectionId, StringComparison.OrdinalIgnoreCase)));
+                if (rule != null) route.RoleRuleMatches = checked(route.RoleRuleMatches + 1);
+                if (artSectionPresent) route.RoleArtMatches = checked(route.RoleArtMatches + 1);
+                if (rule == null || !artSectionPresent) continue;
+                IniResolvedValue imageValue = SelectResolvedArtValue(resolvedArtLayers, artSectionId, "Image");
+                IniResolvedValue voxelValue = SelectResolvedArtValue(resolvedArtLayers, artSectionId, "Voxel");
+                IniResolvedValue paletteValue = SelectResolvedArtValue(resolvedArtLayers, artSectionId, "Palette");
+                IniTypedParseResult image = imageValue == null
+                    ? null
+                    : IniTypedScalarParser.ParseAsciiIdentifier(imageValue, IniTypedViewLimits.Default);
+                IniTypedParseResult voxel = voxelValue == null
+                    ? null
+                    : IniTypedScalarParser.ParseBoolean(
+                        voxelValue,
+                        IniBooleanCasePolicy.OrdinalIgnoreCaseAscii,
+                        IniTypedViewLimits.Default);
+                IniTypedParseResult palette = paletteValue == null
+                    ? null
+                    : IniTypedScalarParser.ParseAsciiIdentifier(paletteValue, IniTypedViewLimits.Default);
+                string imageLogicalName;
+                if (image != null && image.Status == IniTypedValueStatus.Present && image.Value != null)
+                {
+                    route.TargetArtRecordsWithExplicitImage = checked(route.TargetArtRecordsWithExplicitImage + 1);
+                    imageLogicalName = image.Value.Identifier;
+                }
+                else if (image == null && imagePolicy == HumanPlaytestArtImagePolicy.ExplicitOrSectionIdentifier)
+                {
+                    route.TargetArtRecordsWithoutExplicitImage = checked(route.TargetArtRecordsWithoutExplicitImage + 1);
+                    imageLogicalName = artSectionId;
+                }
+                else
+                {
+                    continue;
+                }
+                if (voxel != null && voxel.Status != IniTypedValueStatus.Present) continue;
+                if (palette != null && palette.Status != IniTypedValueStatus.Present) continue;
+                bool isVoxel = voxel != null && voxel.Value.BooleanValue == true;
+                string paletteName = palette != null
+                    ? palette.Value.Identifier
                     : null;
-                values.Add(new HumanPlaytestRoleDescriptor(binding.Role, binding.TypeId, image.Parsed.Value.Identifier, isVoxel, paletteName));
+                values.Add(new HumanPlaytestRoleDescriptor(binding.Role, binding.TypeId, imageLogicalName, isVoxel, paletteName));
             }
+            route.RoleDescriptorsCreated = values.Count;
             return values.ToArray();
+        }
+
+        private static IniTypedParseResult FindRulesImageCandidate(
+            IniResolutionResult rules,
+            string typeId)
+        {
+            if (rules == null || !rules.IsComplete) return null;
+            IniResolvedSection section = rules.Sections.FirstOrDefault(value =>
+                string.Equals(value.Name, typeId, StringComparison.OrdinalIgnoreCase));
+            if (section == null) return null;
+            IniResolvedValue image = section.Values.FirstOrDefault(value =>
+                string.Equals(value.KeyName, "Image", StringComparison.OrdinalIgnoreCase));
+            return image == null
+                ? null
+                : IniTypedScalarParser.ParseAsciiIdentifier(image, IniTypedViewLimits.Default);
+        }
+
+        private static bool HasRulesTypeSection(IniResolutionResult rules, string typeId)
+        {
+            return rules != null && rules.IsComplete && rules.Sections.Any(value =>
+                string.Equals(value.Name, typeId, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static IniResolvedValue SelectResolvedArtValue(
+            IEnumerable<IniResolutionResult> layersLowToHigh,
+            string sectionName,
+            string keyName)
+        {
+            return layersLowToHigh
+                .Select(layer => layer.Sections.FirstOrDefault(section =>
+                    string.Equals(section.Name, sectionName, StringComparison.OrdinalIgnoreCase)))
+                .Where(section => section != null)
+                .Select(section => section.Values.FirstOrDefault(value =>
+                    string.Equals(value.KeyName, keyName, StringComparison.OrdinalIgnoreCase)))
+                .Where(value => value != null)
+                .LastOrDefault();
         }
 
         private static IniRulesRegistryKind ToRulesRegistry(HumanPlaytestRulesRegistry registry)
@@ -542,7 +813,8 @@ namespace RA2YR.UnityIntegration
         private static HumanPlaytestAssetAvailability[] BuildAvailability(
             IEnumerable<HumanPlaytestRoleDescriptor> descriptors,
             HumanPlaytestVisualProfile profile,
-            IReadOnlyList<MixVirtualEntry> entries)
+            IReadOnlyList<MixVirtualEntry> entries,
+            ExternalVisualRouteDiagnostics route)
         {
             var values = new List<HumanPlaytestAssetAvailability>();
             foreach (HumanPlaytestRoleDescriptor descriptor in descriptors)
@@ -550,13 +822,31 @@ namespace RA2YR.UnityIntegration
                 string extension = descriptor.Voxel ? ".vxl" : ".shp";
                 string image = EnsureExtension(descriptor.ImageLogicalName, extension);
                 MixVirtualEntry imageEntry = FindEntry(entries, image);
+                if (descriptor.Voxel)
+                {
+                    route.VxlLogicalRequests = checked(route.VxlLogicalRequests + 1);
+                    if (imageEntry != null) route.VxlVfsMatches = checked(route.VxlVfsMatches + 1);
+                }
+                else
+                {
+                    route.ImageLogicalRequests = checked(route.ImageLogicalRequests + 1);
+                    if (imageEntry != null) route.ImageVfsMatches = checked(route.ImageVfsMatches + 1);
+                }
                 string baseName = image.EndsWith(extension, StringComparison.OrdinalIgnoreCase)
                     ? image.Substring(0, image.Length - extension.Length)
                     : image;
                 bool hasHva = descriptor.Voxel && FindEntry(entries, baseName + ".hva") != null;
+                if (descriptor.Voxel)
+                {
+                    route.HvaLogicalRequests = checked(route.HvaLogicalRequests + 1);
+                    if (hasHva) route.HvaVfsMatches = checked(route.HvaVfsMatches + 1);
+                }
                 string palette = descriptor.PaletteLogicalName ?? profile.RoleProfile.DefaultPaletteLogicalName;
+                route.PaletteLogicalRequests = checked(route.PaletteLogicalRequests + 1);
+                bool hasPalette = FindEntry(entries, palette) != null;
+                if (hasPalette) route.PaletteVfsMatches = checked(route.PaletteVfsMatches + 1);
                 values.Add(new HumanPlaytestAssetAvailability(image, !descriptor.Voxel && imageEntry != null, descriptor.Voxel && imageEntry != null, hasHva, false));
-                values.Add(new HumanPlaytestAssetAvailability(palette, false, false, false, FindEntry(entries, palette) != null));
+                values.Add(new HumanPlaytestAssetAvailability(palette, false, false, false, hasPalette));
             }
             return values.GroupBy(value => value.LogicalName, StringComparer.OrdinalIgnoreCase).Select(group =>
             {
@@ -572,7 +862,8 @@ namespace RA2YR.UnityIntegration
             HumanPlaytestRoleResolutionResult resolution,
             IReadOnlyList<MixVirtualEntry> entries,
             string sourceId,
-            HumanPlaytestVisualProfile profile)
+            HumanPlaytestVisualProfile profile,
+            ExternalVisualRouteDiagnostics route)
         {
             var values = new Dictionary<HumanPlaytestVisualRole, DecodedVisualAsset>();
             foreach (ResolvedLegacyVisual binding in resolution.Resolved.OrderBy(value => value.Role))
@@ -596,23 +887,74 @@ namespace RA2YR.UnityIntegration
                             imageBytes,
                             new BinarySourceContext("m6-visual-shp", sourceId, LogicalContentPath.Parse(binding.ImageLogicalName)),
                             new ShpTsSourceProvenance(sourceId, new[] { LogicalContentPath.Parse(binding.ImageLogicalName) }));
-                        if (!parsed.IsSuccess || parsed.Document == null || parsed.Document.Frames.Count == 0) continue;
+                        if (!parsed.IsSuccess || parsed.Document == null || parsed.Document.Frames.Count == 0)
+                        {
+                            route.ShpDecodeFailed = checked(route.ShpDecodeFailed + 1);
+                            continue;
+                        }
                         ShpTsDecodeResult decoded = WestwoodShpTsDecoder.DecodeFrame(imageBytes, parsed.Document, parsed.Document.Frames[0].Index);
-                        if (!decoded.IsSuccess || decoded.Frame == null) continue;
+                        if (!decoded.IsSuccess || decoded.Frame == null)
+                        {
+                            route.ShpDecodeFailed = checked(route.ShpDecodeFailed + 1);
+                            continue;
+                        }
                         asset.Shp = new ShpFrame { Width = decoded.Frame.Width, Height = decoded.Frame.Height, Indices = decoded.Frame.GetIndicesCopy() };
+                        route.ShpDecodeSuccess = checked(route.ShpDecodeSuccess + 1);
                     }
                     else
                     {
                         VxlReadResult parsed = WestwoodVxlReader.Read(imageBytes);
-                        if (!parsed.IsSuccess || parsed.Document == null) continue;
+                        if (!parsed.IsSuccess || parsed.Document == null)
+                        {
+                            route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
+                            continue;
+                        }
                         asset.Voxels = new List<VoxelRenderCell>();
                         AppendVoxels(parsed.Document, asset.Voxels, 65536);
-                        if (asset.Voxels.Count == 0) continue;
+                        if (asset.Voxels.Count == 0)
+                        {
+                            route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
+                            continue;
+                        }
+                        if (binding.HvaBound)
+                        {
+                            string extension = ".vxl";
+                            string baseName = binding.ImageLogicalName.EndsWith(extension, StringComparison.OrdinalIgnoreCase)
+                                ? binding.ImageLogicalName.Substring(0, binding.ImageLogicalName.Length - extension.Length)
+                                : binding.ImageLogicalName;
+                            MixVirtualEntry hvaEntry = FindEntry(entries, baseName + ".hva");
+                            if (hvaEntry == null)
+                            {
+                                route.HvaBindFailed = checked(route.HvaBindFailed + 1);
+                                route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
+                                continue;
+                            }
+                            byte[] hvaBytes = PackedMapBoundedInput.ReadWindow(
+                                hvaEntry.PayloadWindow,
+                                "m6-visual-hva",
+                                profile.MaxAssetBytes);
+                            HvaReadResult parsedHva = WestwoodHvaReader.Read(hvaBytes);
+                            VxlHvaBindingResult bound = parsedHva.IsSuccess && parsedHva.Document != null
+                                ? VxlHvaBinder.Bind(parsed.Document, parsedHva.Document)
+                                : null;
+                            if (bound == null || !bound.IsSuccess)
+                            {
+                                route.HvaBindFailed = checked(route.HvaBindFailed + 1);
+                                route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
+                                continue;
+                            }
+                            route.HvaBindSuccess = checked(route.HvaBindSuccess + 1);
+                        }
+                        route.VxlDecodeSuccess = checked(route.VxlDecodeSuccess + 1);
                     }
                     values[binding.Role] = asset;
                 }
                 catch (Exception exception) when (exception is BinaryReadException || exception is IOException || exception is ArgumentException || exception is InvalidOperationException || exception is OverflowException)
                 {
+                    if (binding.Format == HumanPlaytestVisualFormat.Shp)
+                        route.ShpDecodeFailed = checked(route.ShpDecodeFailed + 1);
+                    else
+                        route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
                 }
             }
             return values;
@@ -623,7 +965,8 @@ namespace RA2YR.UnityIntegration
             HumanPlaytestRoleResolutionResult resolution,
             IReadOnlyDictionary<HumanPlaytestVisualRole, DecodedVisualAsset> decoded,
             int probed,
-            bool fingerprintStable)
+            bool fingerprintStable,
+            ExternalVisualRouteDiagnostics route)
         {
             int total = profile.RoleProfile.Bindings.Count;
             int resolved = decoded.Count;
@@ -637,7 +980,7 @@ namespace RA2YR.UnityIntegration
             return new ExternalLegacyVisualStatus(
                 true,
                 probed > 0,
-                resolved > 0,
+                route.GateStatus == ExternalVisualRouteGateStatus.ExternalVisualsResolved && resolved > 0,
                 shp,
                 shp,
                 resolution.Diagnostics.Count(value => value.Code == HumanPlaytestRoleDiagnosticCode.MissingVisualAsset),
@@ -660,7 +1003,8 @@ namespace RA2YR.UnityIntegration
                 fingerprintStable,
                 profile.RoleProfile.RemapProfile,
                 "SyntheticFallback",
-                resolved > 0 ? "Typed Rules to Art visual roles resolved." : "No safe typed external visual role was resolved.");
+                resolved > 0 ? "Typed Rules to Art visual roles resolved." : "No safe typed external visual role was resolved.",
+                route);
         }
 
         private static bool IsSourceFingerprintStable(ExternalContentConfiguration configuration, string sourceId, string expected)
@@ -724,8 +1068,15 @@ namespace RA2YR.UnityIntegration
             return bytes;
         }
 
-        private static ExternalLegacyVisualStatus Unavailable(HumanPlaytestVisualProfile profile, bool configured, string message)
+        private static ExternalLegacyVisualStatus Unavailable(
+            HumanPlaytestVisualProfile profile,
+            bool configured,
+            ExternalVisualRouteGateStatus gateStatus,
+            string message,
+            ExternalVisualRouteDiagnostics route = null)
         {
+            route = route ?? new ExternalVisualRouteDiagnostics(gateStatus);
+            route.GateStatus = gateStatus;
             return new ExternalLegacyVisualStatus(
                 configured, false, false, 0, 0, 0, 0, 0, 0, 0,
                 profile == null || profile.RoleProfile == null ? 0 : profile.RoleProfile.Bindings.Count,
@@ -736,7 +1087,8 @@ namespace RA2YR.UnityIntegration
                 false,
                 profile == null || profile.RoleProfile == null ? HumanPlaytestRemapProfile.SourcePaletteOnly : profile.RoleProfile.RemapProfile,
                 "SyntheticFallback",
-                message);
+                message,
+                route);
         }
     }
 }

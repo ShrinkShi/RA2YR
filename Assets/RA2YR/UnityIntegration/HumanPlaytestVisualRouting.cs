@@ -107,13 +107,13 @@ namespace RA2YR.UnityIntegration
         {
             return new HumanPlaytestVisualRoleProfile(new[]
             {
-                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanBasicUnit, HumanPlaytestRulesRegistry.InfantryTypes, "E1"),
-                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanHarvester, HumanPlaytestRulesRegistry.VehicleTypes, "HARV"),
+                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanBasicUnit, HumanPlaytestRulesRegistry.VehicleTypes, "JEEP"),
+                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanHarvester, HumanPlaytestRulesRegistry.VehicleTypes, "TRUCKA"),
                 new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanBase, HumanPlaytestRulesRegistry.BuildingTypes, "GACNST"),
-                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanRefinery, HumanPlaytestRulesRegistry.BuildingTypes, "PROC"),
-                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanFactory, HumanPlaytestRulesRegistry.BuildingTypes, "WEAP"),
+                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanRefinery, HumanPlaytestRulesRegistry.BuildingTypes, "GAREFN"),
+                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanFactory, HumanPlaytestRulesRegistry.BuildingTypes, "GAWEAP"),
                 new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanPower, HumanPlaytestRulesRegistry.BuildingTypes, "GAPOWR"),
-                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.EnemyBasicUnit, HumanPlaytestRulesRegistry.InfantryTypes, "E1"),
+                new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.EnemyBasicUnit, HumanPlaytestRulesRegistry.VehicleTypes, "FTRK"),
                 new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.EnemyBase, HumanPlaytestRulesRegistry.BuildingTypes, "NACNST"),
                 new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.EnemyFactory, HumanPlaytestRulesRegistry.BuildingTypes, "NAWEAP")
             });

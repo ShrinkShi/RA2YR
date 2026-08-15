@@ -149,7 +149,7 @@ namespace RA2YR.Core.Formats.VxlHva
                     var chunks = new List<VxlSpanChunkRaw>(); long position = dataStart; int z = 0;
                     while (position <= dataEnd)
                     {
-                        if (dataEnd - position < 3) { collector.Add(new LegacyVisualDiagnostic(LegacyVisualDiagnosticCode.SpanDataTruncated, LegacyVisualDiagnosticSeverity.Error, absoluteStart + position, "vxl-span", "A span command is truncated.", index)); break; }
+                        if (dataEnd - position < 2) { collector.Add(new LegacyVisualDiagnostic(LegacyVisualDiagnosticCode.SpanDataTruncated, LegacyVisualDiagnosticSeverity.Error, absoluteStart + position, "vxl-span", "A span command is truncated.", index)); break; }
                         byte skip = bytes[positionIndex(position, bytes.Length)]; byte count = bytes[positionIndex(position + 1, bytes.Length)]; position += 2;
                         if (skip == 0 && count == 0) { collector.Add(new LegacyVisualDiagnostic(LegacyVisualDiagnosticCode.NoProgress, LegacyVisualDiagnosticSeverity.Error, absoluteStart + position - 2, "vxl-span", "A zero-length span command makes no progress.", index)); break; }
                         long required = checked((long)count * 2 + 1);
