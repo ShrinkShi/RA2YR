@@ -33,7 +33,7 @@ aggregate:
     shp_vxl_color_equivalence: true
 verification_current_head:
   code_tree_commit: "8589706c5b30a5d16d8b5c00f815e579f47b0b2b"
-  final_documentation_head: "97d990a74d5dfb8b55e6754857489fc7c40daee0"
+  final_documentation_head: "13021b5c90298205964e735bd12b90fa5934c2e2"
   focused_vxl_renderer:
     xml: "TestResults/m6-palette-current-20260816T161500000Z/focused.xml"
     total: 40
