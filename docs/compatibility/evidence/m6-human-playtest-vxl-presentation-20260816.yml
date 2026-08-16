@@ -37,7 +37,7 @@ aggregate:
     raw_32_scale_to_full_range_rounded: 130
     shp_vxl_color_equivalence: true
 verification_current_head:
-  code_tree_commit: "9e1cfad35b12c2e3b71d8b9298f20235cfeab899"
+  code_tree_commit: "f5ce988f9db6a4f69dbf1bc11b84d45fa0e4a4df"
   human_visual_review:
     reviewed_commit: "1767cc708f79535c9fcd0ddd9f7fa757f7706f9d"
     result: "FAIL"
@@ -45,21 +45,21 @@ verification_current_head:
     deferred: "RA2 sidebar/HUD, audio/EVA, full SHP animation, TMP/theater terrain"
     automated_green_does_not_override_human_result: true
   focused_vxl_renderer:
-    xml: "TestResults/20260816T165938200Z-5953e7f0d72d476fb5f4f2497419ff86/EditMode/results.xml (UnityRendererIntegrationTests fixture)"
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml (UnityRendererIntegrationTests fixture)"
     total: 43
     passed: 43
     failed: 0
     skipped: 0
     inconclusive: 0
   focused_external_route:
-    xml: "TestResults/20260816T165938200Z-5953e7f0d72d476fb5f4f2497419ff86/EditMode/results.xml (M6HumanPlaytestVisualIntegrationTests fixture)"
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml (M6HumanPlaytestVisualIntegrationTests fixture)"
     total: 17
     passed: 17
     failed: 0
     skipped: 0
     inconclusive: 0
   focused_terrain_projection:
-    xml: "TestResults/20260816T165938200Z-5953e7f0d72d476fb5f4f2497419ff86/EditMode/results.xml (TerrainPresentationTests fixture)"
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml (TerrainPresentationTests fixture)"
     total: 22
     passed: 22
     failed: 0
@@ -69,14 +69,14 @@ verification_current_head:
     test: "ShpAndVxlUseTheSameConvertedRawPaletteColor"
     result: "passed"
   full_edit_mode:
-    xml: "TestResults/20260816T100004764Z-e631192eae0e408d96a5930d6876cf4c/EditMode/results.xml"
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml"
     total: 1700
     passed: 1700
     failed: 0
     skipped: 0
     inconclusive: 0
   full_play_mode:
-    xml: "TestResults/20260816T100004764Z-e631192eae0e408d96a5930d6876cf4c/PlayMode/results.xml"
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/PlayMode/results.xml"
     total: 7
     passed: 7
     failed: 0
@@ -84,8 +84,8 @@ verification_current_head:
     inconclusive: 0
   official_wrapper_ps51:
     summary: "TestResults/m6-palette-final-wrapper-ps51.txt"
-    edit_mode_xml: "TestResults/20260816T165938200Z-5953e7f0d72d476fb5f4f2497419ff86/EditMode/results.xml"
-    play_mode_xml: "TestResults/20260816T170021973Z-abddf19e9f504292a2ae7223e6827ed9/PlayMode/results.xml"
+    edit_mode_xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml"
+    play_mode_xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/PlayMode/results.xml"
     edit_mode_total: 1700
     edit_mode_passed: 1700
     play_mode_total: 7
@@ -93,8 +93,8 @@ verification_current_head:
     forced_post_result_shutdown: false
   official_wrapper_ps7:
     summary: "TestResults/m6-palette-final-wrapper-ps7.txt"
-    edit_mode_xml: "TestResults/20260816T165938200Z-5953e7f0d72d476fb5f4f2497419ff86/EditMode/results.xml"
-    play_mode_xml: "TestResults/20260816T170021973Z-abddf19e9f504292a2ae7223e6827ed9/PlayMode/results.xml"
+    edit_mode_xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml"
+    play_mode_xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/PlayMode/results.xml"
     edit_mode_total: 1700
     edit_mode_passed: 1700
     play_mode_total: 7
