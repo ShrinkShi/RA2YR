@@ -75,6 +75,143 @@ namespace RA2YR.Tests.EditMode
         [Test] public void ExposedVoxelBuilderStopsBeforeUnboundedAllocation()
         { VxlMeshBuildResult result = VxlExposedFaceMeshBuilder.Build(new[] { new VoxelRenderCell(0, 0, 0, 1), new VoxelRenderCell(1, 0, 0, 2) }, new VxlMeshBuildPolicy(1)); Assert.IsFalse(result.IsSuccess); Assert.IsNull(result.Mesh); }
 
+        [Test]
+        public void VxlPresentationNormalizesKnownTwoByThreeByFourModel()
+        {
+            var cells = new System.Collections.Generic.List<VoxelRenderCell>();
+            for (int x = 0; x < 2; x++)
+                for (int y = 0; y < 3; y++)
+                    for (int z = 0; z < 4; z++)
+                        cells.Add(new VoxelRenderCell(x, y, z, (byte)((x + y + z) % 2 + 1)));
+            VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
+                new[] { new VxlPresentationSectionInput("body", 0, cells, Matrix4x4.identity, true) },
+                VxlPresentationTransformProfile.Default,
+                TestPalette());
+            try
+            {
+                Assert.IsTrue(result.IsSuccess, result.Diagnostic);
+                Assert.AreEqual(1, result.Asset.Metrics.SectionCount);
+                Assert.That(result.Asset.Metrics.Bounds.WidthCells, Is.LessThanOrEqualTo(1.5f));
+                Assert.That(result.Asset.Metrics.Bounds.DepthCells, Is.LessThanOrEqualTo(1.5f));
+                Assert.That(result.Asset.Metrics.Bounds.HeightCells, Is.LessThanOrEqualTo(1.5f));
+                Assert.AreEqual(1, result.Asset.Metrics.HvaAppliedSectionCount);
+            }
+            finally { DestroyPresentation(result); }
+        }
+
+        [Test]
+        public void VxlPresentationKeepsBodyAndTurretSectionsIndependent()
+        {
+            VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
+                new[]
+                {
+                    new VxlPresentationSectionInput("body", 0, new[] { new VoxelRenderCell(0, 0, 0, 1) }, Matrix4x4.identity, true),
+                    new VxlPresentationSectionInput("turret", 1, new[] { new VoxelRenderCell(1, 0, 0, 2) }, Matrix4x4.Translate(new Vector3(0f, 0f, 1f)), true)
+                },
+                VxlPresentationTransformProfile.Default,
+                TestPalette());
+            try
+            {
+                Assert.IsTrue(result.IsSuccess, result.Diagnostic);
+                Assert.AreEqual(2, result.Asset.Sections.Count);
+                Assert.AreEqual("body", result.Asset.Sections[0].SectionIdentity);
+                Assert.AreEqual("turret", result.Asset.Sections[1].SectionIdentity);
+                Assert.AreEqual(2, result.Asset.Metrics.HvaAppliedSectionCount);
+            }
+            finally { DestroyPresentation(result); }
+        }
+
+        [Test]
+        public void VxlPresentationFrameZeroTransformChangesSectionLocation()
+        {
+            VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
+                new[]
+                {
+                    new VxlPresentationSectionInput("body", 0, new[] { new VoxelRenderCell(0, 0, 0, 1) }, Matrix4x4.identity, true),
+                    new VxlPresentationSectionInput("turret", 1, new[] { new VoxelRenderCell(0, 0, 0, 2) }, Matrix4x4.Translate(new Vector3(2f, 0f, 0f)), true)
+                },
+                VxlPresentationTransformProfile.Default,
+                TestPalette());
+            try
+            {
+                Assert.IsTrue(result.IsSuccess, result.Diagnostic);
+                Assert.That(result.Asset.Sections[0].Bounds.RawMin.x, Is.Not.EqualTo(result.Asset.Sections[1].Bounds.RawMin.x));
+            }
+            finally { DestroyPresentation(result); }
+        }
+
+        [Test]
+        public void VxlPresentationUsesExplicitRawAxisBasis()
+        {
+            Vector3 basis = VxlPresentationTransformProfile.Default.ToPresentationBasis(new Vector3(1f, 2f, 3f));
+            Assert.AreEqual(new Vector3(1f, 3f, 2f), basis);
+        }
+
+        [Test]
+        public void VxlPresentationPreservesPaletteColorVariation()
+        {
+            VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
+                new[] { new VxlPresentationSectionInput("body", 0, new[] { new VoxelRenderCell(0, 0, 0, 1), new VoxelRenderCell(1, 0, 0, 2) }, Matrix4x4.identity, true) },
+                VxlPresentationTransformProfile.Default,
+                TestPalette());
+            try
+            {
+                Assert.IsTrue(result.IsSuccess, result.Diagnostic);
+                Assert.That(result.Asset.Metrics.DistinctColorCount, Is.GreaterThanOrEqualTo(2));
+                Assert.That(result.Asset.Sections[0].Mesh.colors32, Has.Length.EqualTo(result.Asset.Sections[0].Mesh.vertexCount));
+            }
+            finally { DestroyPresentation(result); }
+        }
+
+        [Test]
+        public void VxlPresentationScaleKeepsFortyVoxelModelWithinOneCellFootprint()
+        {
+            var cells = new System.Collections.Generic.List<VoxelRenderCell>();
+            for (int x = 0; x < 40; x++) cells.Add(new VoxelRenderCell(x, 0, 0, (byte)(x % 2 + 1)));
+            VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
+                new[] { new VxlPresentationSectionInput("body", 0, cells, Matrix4x4.identity, true) },
+                VxlPresentationTransformProfile.Default,
+                TestPalette());
+            try
+            {
+                Assert.IsTrue(result.IsSuccess, result.Diagnostic);
+                Assert.That(result.Asset.Metrics.Bounds.WidthCells, Is.LessThanOrEqualTo(1.5f));
+                Assert.That(result.Asset.Metrics.Bounds.WidthCells, Is.Not.EqualTo(40f));
+            }
+            finally { DestroyPresentation(result); }
+        }
+
+        [Test]
+        public void VxlPresentationRejectsRawDimensionBudgetOverflow()
+        {
+            VxlPresentationTransformProfile profile = new VxlPresentationTransformProfile(maximumRawDimension: 64f);
+            VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
+                new[] { new VxlPresentationSectionInput("malformed", 0, new[] { new VoxelRenderCell(0, 0, 0, 1), new VoxelRenderCell(400, 0, 0, 2) }, Matrix4x4.identity, true) },
+                profile,
+                TestPalette());
+            Assert.IsFalse(result.IsSuccess);
+            Assert.IsNull(result.Asset);
+        }
+
+        private static byte[] TestPalette()
+        {
+            byte[] palette = new byte[768];
+            palette[3] = 255;
+            palette[4] = 32;
+            palette[5] = 16;
+            palette[6] = 16;
+            palette[7] = 220;
+            palette[8] = 40;
+            return palette;
+        }
+
+        private static void DestroyPresentation(VxlPresentationBuildResult result)
+        {
+            if (result == null || result.Asset == null) return;
+            foreach (VxlPresentationSectionMesh section in result.Asset.Sections)
+                if (section.Mesh != null) UnityEngine.Object.DestroyImmediate(section.Mesh);
+        }
+
         [Test] public void EffectMaterialPolicyIsAppliedToSubmission()
         { Shader shader = Shader.Find("Standard") ?? Shader.Find("Unlit/Color"); if (shader == null) Assert.Ignore("No test shader available."); Material material = new Material(shader); EffectPresentationDescriptor descriptor = new EffectPresentationDescriptor("effect", new VisualAssetId("effect"), PresentationEffectKind.Explosion, PresentationElevationLayer.Ground, new PresentationAnchor(PresentationAnchorKind.RenderPivot, 0, 0), new PresentationBounds(PresentationBoundsKind.Visual, 0, 0, 1, 1), new PresentationBounds(PresentationBoundsKind.ConservativeCulling, 0, 0, 1, 1), PresentationAlphaMode.Translucent, PresentationDepthTestMode.TestAndWrite, PresentationVisibilityState.Visible, 0); UnityPresentationWorld world = UnityPresentationWorld.CreateSynthetic(); try { world.Configure(new UnityPresentationWorldPolicy(), material); UnityPresentationApplyResult result = world.Apply(null, EffectPresentationComposer.Compose(new[] { descriptor }, null)); Assert.IsTrue(result.IsSuccess); Assert.AreEqual(1, result.SubmissionCount); Assert.IsNotNull(world.transform.GetChild(0).GetComponent<Renderer>().sharedMaterial); Assert.AreEqual(1f, world.transform.GetChild(0).GetComponent<Renderer>().sharedMaterial.GetFloat("_ZWrite")); } finally { UnityEngine.Object.DestroyImmediate(material); UnityEngine.Object.DestroyImmediate(world.gameObject); } }
 

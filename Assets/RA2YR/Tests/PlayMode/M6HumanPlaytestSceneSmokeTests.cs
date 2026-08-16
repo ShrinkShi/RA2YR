@@ -47,9 +47,22 @@ namespace RA2YR.Tests.PlayMode
                     "M6_SCENE_EXTERNAL_VISUAL_ROUTE" +
                     ";gate=" + bootstrap.ExternalVisualStatus.RouteGateStatus +
                     ";externalObjects=" + bootstrap.ExternalObjectCount +
-                    ";fallbackObjects=" + bootstrap.SyntheticObjectFallbackCount);
+                    ";fallbackObjects=" + bootstrap.SyntheticObjectFallbackCount +
+                    ";vehicleMeshRoles=" + bootstrap.ExternalVisualStatus.RouteDiagnostics.VehicleMeshRoles +
+                    ";sectionAwareRoles=" + bootstrap.ExternalVisualStatus.RouteDiagnostics.SectionAwareRoles +
+                    ";hvaAppliedRoles=" + bootstrap.ExternalVisualStatus.RouteDiagnostics.HvaAppliedRoles +
+                    ";paletteColoredRoles=" + bootstrap.ExternalVisualStatus.RouteDiagnostics.PaletteColoredRoles +
+                    ";maxWidth=" + bootstrap.ExternalVisualStatus.RouteDiagnostics.MaxPresentationWidthCells.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                    ";maxHeight=" + bootstrap.ExternalVisualStatus.RouteDiagnostics.MaxPresentationHeightCells.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture));
                 Assert.That(bootstrap.ExternalVisualStatus.IsLocalExternalVisualReady, Is.True);
                 Assert.That(bootstrap.ExternalObjectCount, Is.GreaterThan(0));
+                Assert.That(bootstrap.ExternalVisualStatus.RouteDiagnostics.VehicleMeshRoles, Is.GreaterThan(0));
+                Assert.That(bootstrap.ExternalVisualStatus.RouteDiagnostics.SectionAwareRoles,
+                    Is.EqualTo(bootstrap.ExternalVisualStatus.RouteDiagnostics.VehicleMeshRoles));
+                Assert.That(bootstrap.ExternalVisualStatus.RouteDiagnostics.HvaAppliedRoles,
+                    Is.EqualTo(bootstrap.ExternalVisualStatus.RouteDiagnostics.VehicleMeshRoles));
+                Assert.That(bootstrap.ExternalVisualStatus.RouteDiagnostics.PaletteColoredRoles,
+                    Is.EqualTo(bootstrap.ExternalVisualStatus.RouteDiagnostics.VehicleMeshRoles));
             }
         }
 

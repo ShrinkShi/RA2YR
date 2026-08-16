@@ -13,7 +13,8 @@ namespace RA2YR.UnityIntegration
     {
         private readonly Dictionary<EntityId, GameObject> entityObjects = new Dictionary<EntityId, GameObject>();
         private readonly Dictionary<CellCoordinate, GameObject> terrainObjects = new Dictionary<CellCoordinate, GameObject>();
-        private readonly Dictionary<bool, Material> voxelMaterials = new Dictionary<bool, Material>();
+        private readonly Dictionary<bool, Material> ownerMarkerMaterials = new Dictionary<bool, Material>();
+        private Material voxelMaterial;
         private Sprite unitSprite;
         private Texture2D unitTexture;
         private Camera playCamera;
@@ -179,8 +180,9 @@ namespace RA2YR.UnityIntegration
             }
             playCamera.orthographic = true;
             playCamera.orthographicSize = 13f;
-            playCamera.transform.position = new Vector3(14f, 11f, -20f);
-            playCamera.transform.rotation = Quaternion.identity;
+            Vector3 center = MapCellToPresentationPosition(Runtime.Config.Width / 2f, Runtime.Config.Height / 2f);
+            playCamera.transform.position = center + new Vector3(0f, 20f, -20f);
+            playCamera.transform.LookAt(center, Vector3.up);
         }
 
         private void BuildProceduralArt()
@@ -238,7 +240,12 @@ namespace RA2YR.UnityIntegration
         {
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
-            if (horizontal != 0f || vertical != 0f) playCamera.transform.position += new Vector3(horizontal, vertical, 0f) * (8f * Time.unscaledDeltaTime);
+            if (horizontal != 0f || vertical != 0f)
+            {
+                Vector3 right = playCamera.transform.right;
+                Vector3 forward = Vector3.ProjectOnPlane(playCamera.transform.forward, Vector3.up).normalized;
+                playCamera.transform.position += (right * horizontal + forward * vertical) * (8f * Time.unscaledDeltaTime);
+            }
             float wheel = Input.mouseScrollDelta.y;
             if (Math.Abs(wheel) > 0.01f) playCamera.orthographicSize = Mathf.Clamp(playCamera.orthographicSize - wheel, 5f, 24f);
         }
@@ -259,7 +266,7 @@ namespace RA2YR.UnityIntegration
             {
                 Vector3 end = MouseWorld();
                 dragging = false;
-                if (Vector2.Distance(new Vector2(dragStart.x, dragStart.y), new Vector2(end.x, end.y)) > 0.4f) SelectBox(dragStart, end, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+                if (Vector2.Distance(new Vector2(dragStart.x, dragStart.z), new Vector2(end.x, end.z)) > 0.4f) SelectBox(dragStart, end, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
                 else SelectAtCell(ToCell(end), Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
             }
             if (Input.GetMouseButtonDown(1))
@@ -274,11 +281,20 @@ namespace RA2YR.UnityIntegration
 
         private Vector3 MouseWorld()
         {
-            Vector3 point = playCamera.ScreenToWorldPoint(Input.mousePosition);
-            return new Vector3(point.x, point.y, 0f);
+            Ray ray = playCamera.ScreenPointToRay(Input.mousePosition);
+            Plane plane = new Plane(Vector3.up, Vector3.zero);
+            float distance;
+            return plane.Raycast(ray, out distance) ? ray.GetPoint(distance) : Vector3.zero;
         }
 
-        private CellCoordinate ToCell(Vector3 world) => new CellCoordinate(Mathf.Clamp(Mathf.RoundToInt(world.x), 0, Runtime.Config.Width - 1), Mathf.Clamp(Mathf.RoundToInt(world.y), 0, Runtime.Config.Height - 1));
+        private CellCoordinate ToCell(Vector3 world)
+        {
+            float first = world.x - Runtime.Config.Width / 2f;
+            float second = (world.z - Runtime.Config.Height / 2f) * 2f;
+            float x = (first + second) * 0.5f;
+            float y = (second - first) * 0.5f;
+            return new CellCoordinate(Mathf.Clamp(Mathf.RoundToInt(x), 0, Runtime.Config.Width - 1), Mathf.Clamp(Mathf.RoundToInt(y), 0, Runtime.Config.Height - 1));
+        }
 
         private EntityId FindEnemyAt(CellCoordinate cell)
         {
@@ -296,7 +312,9 @@ namespace RA2YR.UnityIntegration
 
         private void SelectBox(Vector3 start, Vector3 end, bool additive)
         {
-            float minX = Mathf.Min(start.x, end.x); float maxX = Mathf.Max(start.x, end.x); float minY = Mathf.Min(start.y, end.y); float maxY = Mathf.Max(start.y, end.y);
+            CellCoordinate startCell = ToCell(start);
+            CellCoordinate endCell = ToCell(end);
+            float minX = Mathf.Min(startCell.X, endCell.X); float maxX = Mathf.Max(startCell.X, endCell.X); float minY = Mathf.Min(startCell.Y, endCell.Y); float maxY = Mathf.Max(startCell.Y, endCell.Y);
             HumanPlaytestSnapshot snapshot = Runtime.CaptureSnapshot();
             IEnumerable<EntityId> hits = snapshot.Entities.Where(x => x.Owner.Value == Runtime.HumanPlayer.Value && x.Kind == HumanPlaytestEntityKind.Unit && x.X >= minX && x.X <= maxX && x.Y >= minY && x.Y <= maxY).Select(x => x.Entity);
             IEnumerable<EntityId> ids = additive ? Client.Selection.Entities.Concat(hits) : hits;
@@ -309,15 +327,29 @@ namespace RA2YR.UnityIntegration
             if (target == null || externalVisualProvider == null || !externalVisualProvider.IsAvailable) return false;
             bool enemy = entity.Owner.Value != Runtime.HumanPlayer.Value;
             HumanPlaytestVisualRole role = RoleFor(entity.Kind, enemy);
-            Mesh mesh;
-            if (externalVisualProvider.TryGetVoxelMesh(role, out mesh) && mesh != null)
+            VxlPresentationAsset presentation;
+            if (externalVisualProvider.TryGetVoxelPresentation(role, out presentation) && presentation != null && presentation.Sections.Count > 0)
             {
-                Material material = GetVoxelMaterial(enemy);
-                if (material == null) return false;
-                MeshFilter filter = target.AddComponent<MeshFilter>();
-                filter.sharedMesh = mesh;
-                MeshRenderer renderer = target.AddComponent<MeshRenderer>();
-                renderer.sharedMaterial = material;
+                Material material = GetVoxelMaterial();
+                if (material == null || !presentation.Metrics.IsFiniteAndBounded(VxlPresentationTransformProfile.Default)) return false;
+                foreach (VxlPresentationSectionMesh section in presentation.Sections)
+                {
+                    if (section.Mesh == null) return false;
+                    GameObject sectionObject = new GameObject("VxlSection_" + section.SectionOrdinal);
+                    sectionObject.transform.SetParent(target.transform, false);
+                    MeshFilter filter = sectionObject.AddComponent<MeshFilter>();
+                    filter.sharedMesh = section.Mesh;
+                    MeshRenderer renderer = sectionObject.AddComponent<MeshRenderer>();
+                    renderer.sharedMaterial = material;
+                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    renderer.receiveShadows = false;
+                    ExternalVxlPresentationSectionMarker sectionMarker = sectionObject.AddComponent<ExternalVxlPresentationSectionMarker>();
+                    sectionMarker.SectionIdentity = section.SectionIdentity;
+                    sectionMarker.SectionOrdinal = section.SectionOrdinal;
+                    sectionMarker.HvaApplied = section.HvaApplied;
+                }
+                target.AddComponent<ExternalVxlPresentationMarker>();
+                AddOwnerMarker(target, enemy, Mathf.Max(presentation.Metrics.Bounds.WidthCells, presentation.Metrics.Bounds.DepthCells) * 0.7f);
                 return true;
             }
 
@@ -345,18 +377,50 @@ namespace RA2YR.UnityIntegration
             }
         }
 
-        private Material GetVoxelMaterial(bool enemy)
+        private Material GetVoxelMaterial()
+        {
+            if (voxelMaterial != null) return voxelMaterial;
+            Shader shader = Shader.Find("Sprites/Default") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Standard");
+            if (shader == null) return null;
+            voxelMaterial = new Material(shader)
+            {
+                name = "ExternalLegacyPaletteMaterial",
+                color = Color.white
+            };
+            return voxelMaterial;
+        }
+
+        private void AddOwnerMarker(GameObject target, bool enemy, float radius)
+        {
+            GameObject markerObject = new GameObject("OwnerMarker");
+            markerObject.transform.SetParent(target.transform, false);
+            markerObject.transform.localPosition = new Vector3(0f, -0.03f, 0f);
+            LineRenderer line = markerObject.AddComponent<LineRenderer>();
+            line.useWorldSpace = false;
+            line.loop = true;
+            line.positionCount = 16;
+            line.startWidth = 0.035f;
+            line.endWidth = 0.035f;
+            line.material = GetOwnerMarkerMaterial(enemy);
+            for (int index = 0; index < line.positionCount; index++)
+            {
+                float angle = (Mathf.PI * 2f * index) / line.positionCount;
+                line.SetPosition(index, new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius));
+            }
+        }
+
+        private Material GetOwnerMarkerMaterial(bool enemy)
         {
             Material material;
-            if (voxelMaterials.TryGetValue(enemy, out material) && material != null) return material;
+            if (ownerMarkerMaterials.TryGetValue(enemy, out material) && material != null) return material;
             Shader shader = Shader.Find("Unlit/Color") ?? Shader.Find("Standard");
             if (shader == null) return null;
             material = new Material(shader)
             {
-                name = enemy ? "ExternalLegacyEnemyMaterial" : "ExternalLegacyHumanMaterial",
-                color = enemy ? new Color(0.85f, 0.18f, 0.16f, 1f) : new Color(0.18f, 0.55f, 0.95f, 1f)
+                name = enemy ? "ExternalLegacyEnemyOwnerMarker" : "ExternalLegacyHumanOwnerMarker",
+                color = enemy ? new Color(0.95f, 0.3f, 0.2f, 0.9f) : new Color(0.2f, 0.85f, 1f, 0.9f)
             };
-            voxelMaterials[enemy] = material;
+            ownerMarkerMaterials[enemy] = material;
             return material;
         }
 
@@ -384,8 +448,12 @@ namespace RA2YR.UnityIntegration
                     entityObjects[entity.Entity] = target;
                     Client.RegisterPickTarget(new UnityPickTarget(entity.Entity, new CellCoordinate(entity.X, entity.Y), target.name, entity.Entity.Index));
                 }
-                target.transform.position = new Vector3(entity.X, entity.Y, entity.Kind == HumanPlaytestEntityKind.Unit ? 0f : 0.5f);
-                target.transform.localScale = new Vector3(entity.Kind == HumanPlaytestEntityKind.Unit ? 0.72f : 1.15f, entity.Kind == HumanPlaytestEntityKind.Unit ? 0.72f : 1.15f, 1f);
+                target.transform.position = MapCellToPresentationPosition(entity.X, entity.Y);
+                ExternalVxlPresentationMarker externalMarker = target.GetComponent<ExternalVxlPresentationMarker>();
+                if (externalMarker == null)
+                    target.transform.localScale = new Vector3(entity.Kind == HumanPlaytestEntityKind.Unit ? 0.72f : 1.15f, entity.Kind == HumanPlaytestEntityKind.Unit ? 0.72f : 1.15f, 1f);
+                else
+                    target.transform.localScale = Vector3.one;
                 SpriteRenderer sprite = target.GetComponent<SpriteRenderer>();
                 Color baseColor = entity.Owner.Value == Runtime.HumanPlayer.Value ? new Color(0.2f, 0.65f, 1f, 1f) : new Color(1f, 0.28f, 0.25f, 1f);
                 if (entity.Kind == HumanPlaytestEntityKind.Harvester) baseColor = new Color(1f, 0.78f, 0.15f, 1f);
@@ -474,8 +542,10 @@ namespace RA2YR.UnityIntegration
             if (unitSprite != null) DestroyObject(unitSprite);
             if (unitTexture != null) DestroyObject(unitTexture);
             if (terrainMaterial != null) DestroyObject(terrainMaterial);
-            foreach (Material material in voxelMaterials.Values) DestroyObject(material);
-            voxelMaterials.Clear();
+            if (voxelMaterial != null) DestroyObject(voxelMaterial);
+            voxelMaterial = null;
+            foreach (Material material in ownerMarkerMaterials.Values) DestroyObject(material);
+            ownerMarkerMaterials.Clear();
             if (externalVisualProvider != null) externalVisualProvider.Dispose();
             externalVisualProvider = null;
         }
@@ -483,11 +553,30 @@ namespace RA2YR.UnityIntegration
         private static void DestroyObject(UnityEngine.Object target)
         { if (target == null) return; if (Application.isPlaying) UnityEngine.Object.Destroy(target); else UnityEngine.Object.DestroyImmediate(target); }
 
+        private Vector3 MapCellToPresentationPosition(float x, float y)
+        {
+            return new Vector3(
+                Runtime.Config.Width / 2f + x - y,
+                0f,
+                Runtime.Config.Height / 2f + (x + y) * 0.5f);
+        }
+
         private sealed class SyntheticProvider : IVisualAssetProvider
         {
             public string ProviderId => "synthetic-playtest";
             public VisualAssetProviderResult Resolve(VisualAssetId assetId) => new VisualAssetProviderResult(VisualAssetProviderResolutionStatus.Resolved, ProviderId, assetId);
         }
+    }
+
+    internal sealed class ExternalVxlPresentationMarker : MonoBehaviour
+    {
+    }
+
+    internal sealed class ExternalVxlPresentationSectionMarker : MonoBehaviour
+    {
+        public string SectionIdentity { get; internal set; }
+        public int SectionOrdinal { get; internal set; }
+        public bool HvaApplied { get; internal set; }
     }
 
     internal static class SyntheticColorExtensions

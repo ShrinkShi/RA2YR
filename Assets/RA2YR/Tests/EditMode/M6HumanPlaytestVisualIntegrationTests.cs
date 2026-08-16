@@ -264,6 +264,13 @@ namespace RA2YR.Tests.EditMode
                     ";vxlFailed=" + route.VxlDecodeFailed +
                     ";hvaBound=" + route.HvaBindSuccess +
                     ";hvaFailed=" + route.HvaBindFailed +
+                    ";vehicleMeshRoles=" + route.VehicleMeshRoles +
+                    ";sectionAwareRoles=" + route.SectionAwareRoles +
+                    ";hvaAppliedRoles=" + route.HvaAppliedRoles +
+                    ";paletteColoredRoles=" + route.PaletteColoredRoles +
+                    ";maxWidth=" + route.MaxPresentationWidthCells.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                    ";maxHeight=" + route.MaxPresentationHeightCells.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                    ";presentationSanity=" + route.PresentationSanityPassed +
                     ";externalRoles=" + route.FinalExternalRoles +
                     ";humanUnits=" + status.HumanUnitsExternal +
                     ";humanStructures=" + status.HumanStructuresExternal +
@@ -274,6 +281,13 @@ namespace RA2YR.Tests.EditMode
                 Assert.That(status.VisualRolesResolvedExternal, Is.GreaterThanOrEqualTo(2));
                 Assert.That(status.HumanUnitsExternal, Is.GreaterThan(0));
                 Assert.That(status.EnemyUnitsExternal, Is.GreaterThan(0));
+                Assert.That(route.VehicleMeshRoles, Is.GreaterThan(0));
+                Assert.That(route.SectionAwareRoles, Is.EqualTo(route.VehicleMeshRoles));
+                Assert.That(route.HvaAppliedRoles, Is.EqualTo(route.VehicleMeshRoles));
+                Assert.That(route.PaletteColoredRoles, Is.EqualTo(route.VehicleMeshRoles));
+                Assert.That(route.MaxPresentationWidthCells, Is.LessThanOrEqualTo(1.5f));
+                Assert.That(route.MaxPresentationHeightCells, Is.LessThanOrEqualTo(1.5f));
+                Assert.That(route.PresentationSanityPassed, Is.True);
 
                 ResolvedLegacyVisual human;
                 bool hasHuman = provider.TryGetResolvedVisual(HumanPlaytestVisualRole.HumanBasicUnit, out human) ||
@@ -340,6 +354,11 @@ namespace RA2YR.Tests.EditMode
                     Assert.That(provider.Status.RouteDiagnostics.VxlDecodeSuccess, Is.EqualTo(2));
                     Assert.That(provider.Status.RouteDiagnostics.HvaBindSuccess, Is.EqualTo(2));
                     Assert.That(provider.Status.RouteDiagnostics.PaletteVfsMatches, Is.EqualTo(2));
+                    Assert.That(provider.Status.RouteDiagnostics.VehicleMeshRoles, Is.EqualTo(2));
+                    Assert.That(provider.Status.RouteDiagnostics.SectionAwareRoles, Is.EqualTo(2));
+                    Assert.That(provider.Status.RouteDiagnostics.HvaAppliedRoles, Is.EqualTo(2));
+                    Assert.That(provider.Status.RouteDiagnostics.PaletteColoredRoles, Is.EqualTo(2));
+                    Assert.That(provider.Status.RouteDiagnostics.PresentationSanityPassed, Is.True);
                     Assert.That(provider.Status.VisualRolesResolvedExternal, Is.EqualTo(2));
                     Assert.That(provider.Status.VisualRolesFallback, Is.EqualTo(1));
                     ResolvedLegacyVisual human;
@@ -351,6 +370,12 @@ namespace RA2YR.Tests.EditMode
                     Assert.That(provider.TryGetVoxelMesh(HumanPlaytestVisualRole.HumanBasicUnit, out Mesh humanMesh), Is.True);
                     Assert.That(provider.TryGetVoxelMesh(HumanPlaytestVisualRole.EnemyBasicUnit, out Mesh enemyMesh), Is.True);
                     Assert.That(humanMesh, Is.Not.SameAs(enemyMesh));
+                    VxlPresentationAsset humanPresentation;
+                    Assert.That(provider.TryGetVoxelPresentation(HumanPlaytestVisualRole.HumanBasicUnit, out humanPresentation), Is.True);
+                    Assert.That(humanPresentation.Sections.Count, Is.GreaterThan(0));
+                    Assert.That(humanPresentation.Metrics.HvaAppliedSectionCount, Is.EqualTo(humanPresentation.Metrics.SectionCount));
+                    Assert.That(humanPresentation.Metrics.DistinctColorCount, Is.GreaterThanOrEqualTo(2));
+                    Assert.That(humanPresentation.Metrics.Bounds.WidthCells, Is.LessThanOrEqualTo(1.5f));
                 }
                 finally
                 {
@@ -472,7 +497,14 @@ namespace RA2YR.Tests.EditMode
                 ";artCandidates=" + route.ArtCandidateCount +
                 ";artParsed=" + route.ArtParseSuccessCount +
                 ";artComplete=" + route.ArtResolutionComplete +
-                ";artRecords=" + route.TypedArtRecordCount);
+                ";artRecords=" + route.TypedArtRecordCount +
+                ";vehicleMeshRoles=" + route.VehicleMeshRoles +
+                ";sectionAwareRoles=" + route.SectionAwareRoles +
+                ";hvaAppliedRoles=" + route.HvaAppliedRoles +
+                ";paletteColoredRoles=" + route.PaletteColoredRoles +
+                ";maxWidth=" + route.MaxPresentationWidthCells.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                ";maxHeight=" + route.MaxPresentationHeightCells.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) +
+                ";presentationSanity=" + route.PresentationSanityPassed);
             return provider;
         }
 
@@ -499,7 +531,7 @@ namespace RA2YR.Tests.EditMode
         {
             const int headerLength = 802;
             const int sectionHeaderLength = 28;
-            const int bodyLength = 13;
+            const int bodyLength = 26;
             const int tailerLength = 92;
             var bytes = new byte[headerLength + sectionHeaderLength + bodyLength + tailerLength];
             WriteAscii(bytes, 0, "Voxel Animation", 16);
@@ -510,18 +542,25 @@ namespace RA2YR.Tests.EditMode
             WriteAscii(bytes, headerLength, sectionName, 16);
             int body = headerLength + sectionHeaderLength;
             Write32(bytes, body, 0);
-            Write32(bytes, body + 4, 4);
-            bytes[body + 8] = 0;
-            bytes[body + 9] = 1;
-            bytes[body + 10] = colorIndex;
-            bytes[body + 11] = 2;
-            bytes[body + 12] = 1;
+            Write32(bytes, body + 4, 5);
+            Write32(bytes, body + 8, 4);
+            Write32(bytes, body + 12, 9);
+            bytes[body + 16] = 0;
+            bytes[body + 17] = 1;
+            bytes[body + 18] = colorIndex;
+            bytes[body + 19] = 2;
+            bytes[body + 20] = 1;
+            bytes[body + 21] = 0;
+            bytes[body + 22] = 1;
+            bytes[body + 23] = (byte)(colorIndex + 1);
+            bytes[body + 24] = 2;
+            bytes[body + 25] = 1;
             int tailer = body + bodyLength;
             Write32(bytes, tailer, 0);
-            Write32(bytes, tailer + 4, 4);
-            Write32(bytes, tailer + 8, 8);
+            Write32(bytes, tailer + 4, 8);
+            Write32(bytes, tailer + 8, 16);
             Write32(bytes, tailer + 12, 0x3f800000);
-            bytes[tailer + 88] = 1;
+            bytes[tailer + 88] = 2;
             bytes[tailer + 89] = 1;
             bytes[tailer + 90] = 1;
             bytes[tailer + 91] = 2;

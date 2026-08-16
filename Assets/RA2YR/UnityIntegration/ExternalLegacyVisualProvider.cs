@@ -36,6 +36,7 @@ namespace RA2YR.UnityIntegration
         TypedArtAvailableButNoRoleDescriptors,
         RoleDescriptorsAvailableButAssetsNotFound,
         AssetsFoundButDecodeFailed,
+        PresentationSanityFailed,
         ExternalVisualsResolved
     }
 
@@ -91,6 +92,13 @@ namespace RA2YR.UnityIntegration
         public int VxlDecodeFailed { get; internal set; }
         public int HvaBindSuccess { get; internal set; }
         public int HvaBindFailed { get; internal set; }
+        public int VehicleMeshRoles { get; internal set; }
+        public int SectionAwareRoles { get; internal set; }
+        public int HvaAppliedRoles { get; internal set; }
+        public int PaletteColoredRoles { get; internal set; }
+        public float MaxPresentationWidthCells { get; internal set; }
+        public float MaxPresentationHeightCells { get; internal set; }
+        public bool PresentationSanityPassed { get; internal set; }
         public int FinalExternalRoles { get; internal set; }
     }
 
@@ -235,7 +243,12 @@ namespace RA2YR.UnityIntegration
         public ExternalVisualRouteGateStatus RouteGateStatus => RouteDiagnostics.GateStatus;
         public bool IsLocalExternalVisualReady =>
             RouteGateStatus == ExternalVisualRouteGateStatus.ExternalVisualsResolved &&
-            VisualRolesResolvedExternal > 0;
+            VisualRolesResolvedExternal > 0 &&
+            (RouteDiagnostics.VxlLogicalRequests == 0 ||
+             (RouteDiagnostics.PresentationSanityPassed &&
+              RouteDiagnostics.VehicleMeshRoles > 0 &&
+              RouteDiagnostics.SectionAwareRoles >= RouteDiagnostics.VehicleMeshRoles &&
+              RouteDiagnostics.PaletteColoredRoles >= RouteDiagnostics.VehicleMeshRoles));
     }
 
     /// <summary>
@@ -256,7 +269,7 @@ namespace RA2YR.UnityIntegration
         {
             public ResolvedLegacyVisual Binding;
             public ShpFrame Shp;
-            public List<VoxelRenderCell> Voxels;
+            public VxlPresentationAsset VoxelPresentation;
             public byte[] Palette;
         }
 
@@ -402,6 +415,14 @@ namespace RA2YR.UnityIntegration
                     HumanPlaytestRoleResolutionResult resolution = HumanPlaytestVisualRoleResolver.Resolve(profile.RoleProfile, descriptors, availability);
                     Dictionary<HumanPlaytestVisualRole, DecodedVisualAsset> decoded = DecodeResolvedAssets(resolution, entryArray, source.Id, profile, route);
                     route.FinalExternalRoles = decoded.Count;
+                    route.PresentationSanityPassed = route.VxlLogicalRequests == 0 ||
+                        (route.FinalExternalRoles > 0 &&
+                         route.VehicleMeshRoles > 0 &&
+                         route.SectionAwareRoles == route.VehicleMeshRoles &&
+                         route.HvaAppliedRoles == route.VehicleMeshRoles &&
+                         route.PaletteColoredRoles == route.VehicleMeshRoles &&
+                         route.MaxPresentationWidthCells > 0f &&
+                         route.MaxPresentationHeightCells > 0f);
                     route.GateStatus = DetermineGateStatus(route);
                     bool fingerprintStable = IsSourceFingerprintStable(configuration, source.Id, sourceIndex.Fingerprint);
                     ExternalLegacyVisualStatus status = CreateStatus(profile, resolution, decoded, probed, fingerprintStable, route);
@@ -486,14 +507,21 @@ namespace RA2YR.UnityIntegration
         {
             mesh = null;
             DecodedVisualAsset asset;
-            if (!IsAvailable || !visualAssets.TryGetValue(role, out asset) || asset == null || asset.Voxels == null || asset.Voxels.Count == 0) return false;
+            if (!IsAvailable || !visualAssets.TryGetValue(role, out asset) || asset == null || asset.VoxelPresentation == null || asset.VoxelPresentation.Sections.Count == 0) return false;
             string key = asset.Binding.VisualAssetId + ":" + asset.Binding.Format;
             if (meshes.TryGetValue(key, out mesh) && mesh != null) return true;
-            VxlMeshBuildResult result = VxlExposedFaceMeshBuilder.Build(asset.Voxels, new VxlMeshBuildPolicy(65536));
-            if (!result.IsSuccess || result.Mesh == null) return false;
-            result.Mesh.name = "ExternalLegacyVxlExposedFaces_" + role;
-            meshes[key] = result.Mesh;
-            mesh = result.Mesh;
+            mesh = asset.VoxelPresentation.Sections[0].Mesh;
+            if (mesh == null) return false;
+            meshes[key] = mesh;
+            return true;
+        }
+
+        public bool TryGetVoxelPresentation(HumanPlaytestVisualRole role, out VxlPresentationAsset presentation)
+        {
+            presentation = null;
+            DecodedVisualAsset asset;
+            if (!IsAvailable || !visualAssets.TryGetValue(role, out asset) || asset == null || asset.VoxelPresentation == null) return false;
+            presentation = asset.VoxelPresentation;
             return true;
         }
 
@@ -524,6 +552,16 @@ namespace RA2YR.UnityIntegration
                 if (mesh != null) UnityEngine.Object.DestroyImmediate(mesh);
             }
             meshes.Clear();
+            var destroyedMeshes = new HashSet<Mesh>();
+            foreach (DecodedVisualAsset asset in visualAssets.Values)
+            {
+                if (asset == null || asset.VoxelPresentation == null) continue;
+                foreach (VxlPresentationSectionMesh section in asset.VoxelPresentation.Sections)
+                {
+                    if (section.Mesh == null || !destroyedMeshes.Add(section.Mesh)) continue;
+                    UnityEngine.Object.DestroyImmediate(section.Mesh);
+                }
+            }
         }
 
         private byte Remap(byte value, int offset)
@@ -593,6 +631,8 @@ namespace RA2YR.UnityIntegration
                 return ExternalVisualRouteGateStatus.RoleDescriptorsAvailableButAssetsNotFound;
             if (route.FinalExternalRoles <= 0)
                 return ExternalVisualRouteGateStatus.AssetsFoundButDecodeFailed;
+            if (route.VxlLogicalRequests > 0 && !route.PresentationSanityPassed)
+                return ExternalVisualRouteGateStatus.PresentationSanityFailed;
             return ExternalVisualRouteGateStatus.ExternalVisualsResolved;
         }
 
@@ -909,13 +949,8 @@ namespace RA2YR.UnityIntegration
                             route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
                             continue;
                         }
-                        asset.Voxels = new List<VoxelRenderCell>();
-                        AppendVoxels(parsed.Document, asset.Voxels, 65536);
-                        if (asset.Voxels.Count == 0)
-                        {
-                            route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
-                            continue;
-                        }
+                        HvaReadResult parsedHva = null;
+                        VxlHvaBindingResult bound = null;
                         if (binding.HvaBound)
                         {
                             string extension = ".vxl";
@@ -933,8 +968,8 @@ namespace RA2YR.UnityIntegration
                                 hvaEntry.PayloadWindow,
                                 "m6-visual-hva",
                                 profile.MaxAssetBytes);
-                            HvaReadResult parsedHva = WestwoodHvaReader.Read(hvaBytes);
-                            VxlHvaBindingResult bound = parsedHva.IsSuccess && parsedHva.Document != null
+                            parsedHva = WestwoodHvaReader.Read(hvaBytes);
+                            bound = parsedHva.IsSuccess && parsedHva.Document != null
                                 ? VxlHvaBinder.Bind(parsed.Document, parsedHva.Document)
                                 : null;
                             if (bound == null || !bound.IsSuccess)
@@ -945,6 +980,29 @@ namespace RA2YR.UnityIntegration
                             }
                             route.HvaBindSuccess = checked(route.HvaBindSuccess + 1);
                         }
+                        IReadOnlyList<VxlPresentationSectionInput> sections = VxlExposedFaceMeshBuilder.CreateSectionInputs(
+                            parsed.Document,
+                            parsedHva == null ? null : parsedHva.Document,
+                            bound,
+                            65536);
+                        VxlPresentationBuildResult presentation = VxlExposedFaceMeshBuilder.Build(
+                            sections,
+                            VxlPresentationTransformProfile.Default,
+                            asset.Palette,
+                            new VxlMeshBuildPolicy(65536, 262144, 131072));
+                        if (!presentation.IsSuccess || presentation.Asset == null ||
+                            !presentation.Asset.Metrics.IsFiniteAndBounded(VxlPresentationTransformProfile.Default))
+                        {
+                            route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
+                            continue;
+                        }
+                        asset.VoxelPresentation = presentation.Asset;
+                        route.VehicleMeshRoles = checked(route.VehicleMeshRoles + 1);
+                        route.SectionAwareRoles = checked(route.SectionAwareRoles + (presentation.Asset.Metrics.SectionCount > 0 ? 1 : 0));
+                        route.HvaAppliedRoles = checked(route.HvaAppliedRoles + (presentation.Asset.Metrics.HvaAppliedSectionCount > 0 ? 1 : 0));
+                        route.PaletteColoredRoles = checked(route.PaletteColoredRoles + (presentation.Asset.Metrics.DistinctColorCount >= 2 ? 1 : 0));
+                        route.MaxPresentationWidthCells = Math.Max(route.MaxPresentationWidthCells, presentation.Asset.Metrics.Bounds.WidthCells);
+                        route.MaxPresentationHeightCells = Math.Max(route.MaxPresentationHeightCells, presentation.Asset.Metrics.Bounds.HeightCells);
                         route.VxlDecodeSuccess = checked(route.VxlDecodeSuccess + 1);
                     }
                     values[binding.Role] = asset;
@@ -1034,25 +1092,6 @@ namespace RA2YR.UnityIntegration
         private static string EnsureExtension(string name, string extension)
         {
             return name.EndsWith(extension, StringComparison.OrdinalIgnoreCase) ? name : name + extension;
-        }
-
-        private static void AppendVoxels(VxlDocumentRaw document, List<VoxelRenderCell> cells, int max)
-        {
-            foreach (VxlSectionRaw section in document.Sections)
-                foreach (VxlColumnRaw column in section.Columns)
-                {
-                    int z = 0;
-                    foreach (VxlSpanChunkRaw chunk in column.Chunks)
-                    {
-                        z = checked(z + chunk.Skip);
-                        foreach (VxlVoxelRaw voxel in chunk.Voxels)
-                        {
-                            if (cells.Count >= max) return;
-                            cells.Add(new VoxelRenderCell(column.X, column.Y, z, voxel.ColorIndex));
-                            z = checked(z + 1);
-                        }
-                    }
-                }
         }
 
         private static byte[] ToPaletteBytes(WestwoodPalette palette)
