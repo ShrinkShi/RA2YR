@@ -750,3 +750,29 @@ The current compiled code tree passes EditMode 1683/1683 and PlayMode 7/7. The
 reproducible sanitized local result resolves two distinct VXL/HVA roles, retains
 six strict SHP fallbacks plus one strict VXL/HVA fallback, and publishes no
 names, paths, payload, pixels, or per-asset hashes.
+
+## 2026-08-16 - M6 VXL visual presentation finding repair
+
+### Finding
+
+The previous human screenshot showed raw VXL-derived geometry at an
+unbounded/mismatched scale, without section-aware presentation or source
+palette variation. Terrain and entity placement also used different implicit
+coordinate bases.
+
+### Resolution
+
+The Unity adapter now validates and normalizes VXL presentation bounds, keeps
+sections as separate meshes, applies bound HVA frame 0 transforms, carries PAL
+colors to mesh vertices, and uses owner marker rings. Camera, terrain, entity,
+and pointer conversion share the centered isometric basis. A malformed raw
+dimension or palette/section/HVA sanity failure is fail-closed; no fallback
+profile is guessed.
+
+### Verification boundary
+
+Current configured aggregate is `vehicleMeshRoles=2,
+sectionAwareRoles=2,hvaAppliedRoles=2,paletteColoredRoles=2,maxWidth=0.85,
+maxHeight=0.372`. Focused Unity tests pass on the current working tree. Human
+visual inspection is still a separate acceptance step; no original-runtime or
+visual-parity claim is made.

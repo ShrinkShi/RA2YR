@@ -718,3 +718,15 @@ community-convention evidence and still requires explicit `Voxel=yes` for VXL.
 Do not relax SHP flags-3 or VXL span contracts to make a corpus pass. A partial
 external result composes with the synthetic provider per role and never changes
 Simulation authority.
+
+## M6 VXL presentation-space decision
+
+Keep raw VXL coordinates separate from Unity world coordinates. The adapter
+uses the explicit `RawXToWorldX_RawYToWorldZ_RawZToWorldY` basis, a
+bounds-center pivot, and a bounded normalized footprint. HVA frame 0 is applied
+to each section before mesh emission; section identity and ordinal remain
+available in the hierarchy. Source palette indices become vertex colors through
+the configured PAL, while human/enemy identity is a separate marker ring.
+SHP-only external routes do not require the VXL presentation gate, but any
+requested VXL role must satisfy section, HVA, palette-color, finite-bounds, and
+footprint sanity checks. This remains project-enhancement evidence only.

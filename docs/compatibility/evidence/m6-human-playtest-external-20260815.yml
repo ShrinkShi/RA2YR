@@ -77,8 +77,20 @@ visual_provider:
     vxl_decode_failed: 1
     hva_bind_success: 2
     hva_bind_failed: 1
+    vehicle_mesh_roles: 2
+    section_aware_roles: 2
+    hva_applied_roles: 2
+    palette_colored_roles: 2
+    max_presentation_width_cells: 0.85
+    max_presentation_height_cells: 0.372
+    presentation_sanity_passed: true
     final_external_roles: 2
     terrain: "SyntheticFallback"
+    presentation_contract:
+      axis_basis: "RawXToWorldX_RawYToWorldZ_RawZToWorldY"
+      pivot_policy: "BoundsCenter"
+      owner_identity: "Separate marker ring; source palette colors are preserved"
+      camera_terrain_basis_shared: true
   strict_decoder_boundary:
     shp_flags3_project_baseline: "NotCompatible; no clamp, padding, widening, or fallback was added"
     vxl_change: "Corrected inclusive-end available-byte arithmetic for an exact three-byte span command"

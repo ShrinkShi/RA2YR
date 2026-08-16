@@ -278,7 +278,10 @@ logical Content/VFS 路由，每个角色拥有独立 asset/cache identity；不
 物理 visual filename catalog，缺失 VXL 不回退到无关 SHP，默认使用显式
 `SourcePaletteOnly` remap profile。当前脱敏本机 aggregate 已解析 2 个
 VXL/HVA battlefield roles；6 个 SHP roles 和 1 个 VXL/HVA role 因既有
-strict reader 边界明确回退到程序化视觉；reader 没有 clamp、padding 或宽松 fallback。
+strict reader 边界明确回退到程序化视觉。两个 VXL role 均通过显式
+raw-axis→presentation basis、bounds-center normalization、section-aware
+HVA frame-0 hierarchy 和 PAL vertex-color sanity gate；最大展示宽度为
+0.85 cells、高度为 0.372 cells。reader 没有 clamp、padding 或宽松 fallback。
 地形仍是 synthetic 等距 chunk，TMP/theater 绑定不在本轮范围。
 
 试玩说明、控制和边界见 [M6 Human Playtest Delivery](docs/formats/m6-human-playtest.md)。

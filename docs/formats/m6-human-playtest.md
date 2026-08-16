@@ -11,25 +11,34 @@ Yuri's Revenge map loader and it does not assert original-runtime compatibility.
 External object selection is typed and explicit: configured Rules registry type
 ids are joined to Art records, then to logical image/voxel and palette assets
 through the bounded Content/MIX VFS. The provider does not contain a physical
-filename catalog. Each resolved role owns its own SHP frame or VXL cell set;
-VXL/HVA bindings are not used for SHP buildings, and an unavailable VXL role
-does not fall back to an unrelated SHP asset.
+filename catalog. Each resolved role owns its own SHP frame or section-aware
+VXL presentation. VXL raw coordinates use the explicit
+`RawXToWorldX_RawYToWorldZ_RawZToWorldY` basis, a bounds-center pivot, and
+bounded normalization rather than a fixed scale constant. HVA frame 0 is
+applied to the actual section hierarchy. Voxel color indices become vertex
+colors through the source PAL; owner identity uses a separate marker ring and
+does not recolor the external mesh. VXL/HVA bindings are not used for SHP
+buildings, and an unavailable VXL role does not fall back to an unrelated SHP
+asset.
 
 The local real-content gate is stage-based and fail-closed. It distinguishes
 configuration/source availability, typed Rules, typed Art, role descriptors,
 VFS lookup, strict decode, and final external role resolution. The current
 sanitized configured-source result reaches `ExternalVisualsResolved`: two
 distinct VXL/HVA battlefield roles (one human and one enemy) are used by the
-scene, while six strict SHP failures and one strict VXL/HVA failure retain
-per-role synthetic fallback. The scene composes both providers so a
-partial external result never produces a null or misleading visual entry.
+scene. Both pass the presentation sanity gate (section-aware 2, HVA-applied 2,
+palette-colored 2, maximum width 0.85 cells, maximum height 0.372 cells),
+while six strict SHP failures and one strict VXL/HVA failure retain per-role
+synthetic fallback. The scene composes both providers so a partial external
+result never produces a null or misleading visual entry.
 
 ## Scene and entry point
 
 Open `Assets/Scenes/RA2YRSyntheticSkirmish.unity` with Unity
 2022.3.60f1c1, or run it from the Player build scene list. The scene contains
 one `UnitySyntheticSkirmishBootstrap` component. The bootstrap owns the
-presentation-only camera, prefers configured external indexed visuals, and
+presentation-only camera, uses the same centered isometric basis as the
+synthetic terrain chunk, prefers configured external indexed visuals, and
 falls back to procedural placeholders. It creates a bounded 28 by 22
 battlefield and advances the existing deterministic
 `HumanPlaytestRuntime` at a 15 Hz simulation cadence. Input is translated to

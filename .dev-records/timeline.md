@@ -1025,3 +1025,15 @@ and unsupported-role fallback. The reproducible configured-source aggregate is
 two distinct external VXL/HVA roles and seven fallbacks (six strict SHP plus one
 strict VXL/HVA); terrain stays synthetic, PR #77 stays Draft, and M7 was not
 started.
+
+## 2026-08-16 - M6 VXL visual presentation finding repair
+
+Repaired the visual presentation path without changing PR #77 scope. Raw VXL
+coordinates now use an explicit presentation basis and bounds-center
+normalization; HVA frame 0 is applied to actual section meshes, PAL indices are
+preserved as vertex colors, and owner rings are separate from source colors.
+Terrain, camera, entity positions, and pointer inverse conversion share one
+centered isometric basis. Current focused Unity coverage is green and the
+configured aggregate is two external VXL/HVA roles with section-aware,
+HVA-applied, palette-colored presentation. The updated scene is ready for a
+new human visual check; PR #77 remains Draft and M7 was not started.

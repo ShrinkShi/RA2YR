@@ -429,3 +429,19 @@ turn Unity presentation state into simulation authority.
   for the new exact PR #77 HEAD.
 - [ ] Repeat the human visual inspection against the updated scene; PR #77
   remains Draft and no Ready, merge, or M7 action is implied.
+
+## M6 VXL visual presentation finding repair (current delivery)
+
+- [x] Replace raw VXL world placement with an explicit axis basis,
+  bounds-center pivot, checked raw-dimension budget, and bounded presentation
+  normalization.
+- [x] Preserve VXL section identity and apply bound HVA frame 0 transforms to
+  each section mesh; carry source palette indices to mesh vertex colors.
+- [x] Keep owner distinction in a separate marker ring and use the same
+  centered isometric basis for terrain, camera, and logical cell input.
+- [x] Add automated presentation sanity checks and current-head focused
+  coverage for normalization, section/HVA state, palette variation, malformed
+  dimensions, and the configured two-role aggregate.
+- [ ] Push the additive repair commit and obtain exact-head Repository safety.
+- [ ] Human visual inspection of the updated scene remains required; no Ready,
+  merge, or M7 action is implied.

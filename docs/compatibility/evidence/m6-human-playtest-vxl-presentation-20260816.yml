@@ -1,0 +1,68 @@
+schema_version: 1
+evidence_id: m6-human-playtest-vxl-presentation-20260816
+status: configured-read-only-aggregate
+scope: "M6 VXL/HVA presentation-space finding repair"
+source:
+  id: "YR1001_ProjectBaseline"
+  role: "patched-development-content-source"
+  read_only: true
+  payload_committed: false
+  original_runtime_confirmation: false
+aggregate:
+  configured_roles: 9
+  external_vxl_hva_roles: 2
+  fallback_roles: 7
+  vehicle_mesh_roles: 2
+  section_aware_roles: 2
+  hva_frame0_applied_roles: 2
+  palette_colored_roles: 2
+  maximum_presentation_width_cells: 0.85
+  maximum_presentation_height_cells: 0.372
+  presentation_sanity_passed: true
+  terrain: "SyntheticFallback"
+  owner_identity: "Separate marker ring; source palette colors preserved"
+  axis_basis: "RawXToWorldX_RawYToWorldZ_RawZToWorldY"
+  pivot_policy: "BoundsCenter"
+verification_current_head:
+  commit: "f4d0b1f4ca78595549c8eff24b857db2b9ef582a"
+  focused_vxl_renderer:
+    xml: "TestResults/m6-vxl-current-20260816T153805663Z/focused.xml"
+    total: 38
+    passed: 38
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+  focused_external_route:
+    xml: "TestResults/m6-human-current-20260816T154202113Z/m6.xml"
+    total: 16
+    passed: 16
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+  full_edit_mode:
+    xml: "TestResults/m6-full-edit-current-20260816T155508725Z/editmode.xml"
+    total: 1690
+    passed: 1690
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+  full_play_mode:
+    xml: "TestResults/m6-full-play-current-20260816T155655667Z/playmode.xml"
+    total: 7
+    passed: 7
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+sanitization:
+  filenames_published: false
+  paths_published: false
+  payload_published: false
+  compressed_bytes_published: false
+  decoded_bytes_published: false
+  pixels_published: false
+  per_asset_records_published: false
+compatibility:
+  project_enhancement_only: true
+  original_runtime: "NotConfirmed"
+  visual_parity: "NotClaimed"
+  map_packed_sections_read: false

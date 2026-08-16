@@ -1014,3 +1014,18 @@ payload or path is published.
 - The reproducible sanitized configured-source result is 2 distinct external
   VXL/HVA roles and 7 fallbacks (6 strict SHP plus 1 strict VXL/HVA); terrain
   remains synthetic and compatibility status is not promoted.
+
+## 2026-08-16 - M6 VXL visual presentation finding repair
+
+- Added explicit VXL raw-axis to presentation-space conversion, bounds-center
+  pivoting, checked dimension/mesh budgets, and normalized bounded footprints.
+- Kept VXL sections independent, applied HVA frame 0 to the section hierarchy,
+  and preserved source palette indices as mesh vertex colors. Owner identity is
+  rendered by a separate marker ring instead of recoloring external meshes.
+- Aligned entity placement, terrain projection, camera centering, and pointer
+  inverse conversion to one centered isometric basis. Current configured
+  aggregate remains sanitized: 2 vehicle mesh roles, 2 section-aware, 2 HVA
+  applied, 2 palette-colored, maximum width 0.85 cells, maximum height 0.372
+  cells.
+- The updated automated result is a readiness signal for human inspection,
+  not a claim of original-runtime visual parity.
