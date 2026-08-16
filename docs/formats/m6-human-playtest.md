@@ -16,8 +16,11 @@ VXL presentation. VXL raw coordinates use the explicit
 `RawXToWorldX_RawYToWorldZ_RawZToWorldY` basis, a bounds-center pivot, and
 bounded normalization rather than a fixed scale constant. HVA frame 0 is
 applied to the actual section hierarchy. Voxel color indices become vertex
-colors through the source PAL; owner identity uses a separate marker ring and
-does not recolor the external mesh. VXL/HVA bindings are not used for SHP
+colors through the source PAL; the format-layer PAL remains raw 0..63 and the
+configured `PaletteDisplayProfile` is applied exactly once at the Unity display
+boundary by the shared PAL conversion adapter. SHP texture colors and VXL mesh
+colors therefore use the same raw-to-display semantics. Owner identity uses a
+separate marker ring and does not recolor the external mesh. VXL/HVA bindings are not used for SHP
 buildings, and an unavailable VXL role does not fall back to an unrelated SHP
 asset.
 

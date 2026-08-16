@@ -776,3 +776,28 @@ sectionAwareRoles=2,hvaAppliedRoles=2,paletteColoredRoles=2,maxWidth=0.85,
 maxHeight=0.372`. Focused Unity tests pass on the current working tree. Human
 visual inspection is still a separate acceptance step; no original-runtime or
 visual-parity claim is made.
+
+## 2026-08-16 - M6 VXL raw/display palette contract blocker
+
+### Finding
+
+The VXL presentation path passed PAL raw 0..63 channels directly into Unity
+`Color32`, while SHP applied the configured display profile. Distinct-color
+sanity therefore passed without proving correct display brightness or SHP/VXL
+equivalence.
+
+### Resolution
+
+`DecodedVisualAsset.PaletteRaw` remains raw. A shared adapter delegates to the
+existing PAL conversion strategies and is called exactly once by both SHP and
+VXL presentation paths. The VXL builder now names its input as a display-space
+palette table. Legal raw fixtures assert `63 -> 255`, `32 -> 130` under
+`ScaleToFullRangeRounded`, and a synthetic SHP/VXL test compares exact
+`Color32(130,65,255,255)` output. No fixed multiplier, clamping, decoder
+fallback, or compatibility claim was introduced.
+
+### Verification boundary
+
+Focused renderer coverage is 40/40 and external-route coverage is 17/17 on
+code commit `8589706c5b30a5d16d8b5c00f815e579f47b0b2b`. Full gates must be
+rerun for the final pushed HEAD; human visual inspection remains pending.

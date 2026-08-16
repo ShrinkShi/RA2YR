@@ -730,3 +730,13 @@ the configured PAL, while human/enemy identity is a separate marker ring.
 SHP-only external routes do not require the VXL presentation gate, but any
 requested VXL role must satisfy section, HVA, palette-color, finite-bounds, and
 footprint sanity checks. This remains project-enhancement evidence only.
+
+## M6 PAL display-conversion finding decision
+
+Keep PAL bytes raw and authoritative at the format boundary. The Unity adapter
+maps `PaletteDisplayProfile` to the existing PAL core conversion strategies in
+one shared `PaletteDisplayProfileConversion` boundary. SHP texture creation and
+VXL mesh creation both consume the same converted display values exactly once;
+the VXL builder accepts display-space bytes and never interprets raw 0..63 bytes
+as Unity `Color32` values. This is a project presentation contract, not proof of
+original-runtime palette behavior.

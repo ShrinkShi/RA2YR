@@ -1037,3 +1037,14 @@ centered isometric basis. Current focused Unity coverage is green and the
 configured aggregate is two external VXL/HVA roles with section-aware,
 HVA-applied, palette-colored presentation. The updated scene is ready for a
 new human visual check; PR #77 remains Draft and M7 was not started.
+
+## 2026-08-16 - M6 PAL display-conversion finding closure
+
+Closed the VXL palette correctness blocker without changing the visual scope.
+Raw PAL channels remain 0..63 in the asset model; one shared presentation
+adapter delegates to the existing PAL display profile and is applied exactly
+once for both SHP texture colors and VXL mesh vertex colors. Invalid 255/220
+raw test values were replaced with legal raw fixtures. Current focused evidence
+is 40/40 renderer and 17/17 external-route executions, including exact
+`Color32(130,65,255,255)` SHP/VXL equivalence. PR #77 remains Draft and the
+next step is maintainer human visual recheck, not M7.

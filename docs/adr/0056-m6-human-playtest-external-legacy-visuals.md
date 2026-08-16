@@ -25,8 +25,11 @@ section identity when `Image=` is absent. The latter is a configured project
 policy based on a community convention, not original-runtime source proof.
 `Voxel=yes` remains mandatory before the section identity can route to VXL.
 HVA frame 0 is applied to each bound section, and source palette indices are
-carried to mesh vertex colors. Human/enemy ownership is represented by a
-presentation marker ring, not by replacing source palette colors.
+carried to mesh vertex colors. The PAL format model remains raw 6-bit channels
+(0..63); `PaletteDisplayProfileConversion` delegates to the authoritative PAL
+display conversion and is applied exactly once for both SHP texture colors and
+VXL mesh colors. Human/enemy ownership is represented by a presentation marker
+ring, not by replacing source palette colors.
 
 If the source is absent, unavailable, or does not yield a safe indexed-frame /
 palette pair, the bootstrap uses an explicit synthetic Sprite fallback. Terrain

@@ -1029,3 +1029,17 @@ payload or path is published.
   cells.
 - The updated automated result is a readiness signal for human inspection,
   not a claim of original-runtime visual parity.
+
+## 2026-08-16 - M6 PAL display-conversion finding closure
+
+- Kept `DecodedVisualAsset.PaletteRaw` and the format-layer PAL representation
+  as validated Westwood 0..63 channels; added one Unity presentation adapter that
+  delegates to the existing PAL display-conversion strategies.
+- Routed both SHP texture colors and VXL mesh vertex colors through the same
+  configured `PaletteDisplayProfile` exactly once. VXL presentation now consumes
+  an explicitly named display-space table rather than raw PAL bytes.
+- Replaced the invalid 255/220 raw-palette test fixture with legal raw channels,
+  added exact 63->255 and 32->130 assertions for the rounded profile, and added
+  a synthetic SHP/VXL equivalence regression. Focused results are 40/40 renderer
+  and 17/17 external-route executions on code commit
+  `8589706c5b30a5d16d8b5c00f815e579f47b0b2b`.

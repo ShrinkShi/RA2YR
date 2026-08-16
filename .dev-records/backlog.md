@@ -442,6 +442,10 @@ turn Unity presentation state into simulation authority.
 - [x] Add automated presentation sanity checks and current-head focused
   coverage for normalization, section/HVA state, palette variation, malformed
   dimensions, and the configured two-role aggregate.
-- [ ] Push the additive repair commit and obtain exact-head Repository safety.
+- [x] Add a shared PAL display conversion boundary: raw 0..63 channels remain
+  authoritative, while the configured profile is applied exactly once for both
+  SHP display colors and VXL mesh vertex colors. Regression coverage uses legal
+  raw channels and asserts exact converted Color32 values.
+- [x] Push the additive repair commit and obtain exact-head Repository safety.
 - [ ] Human visual inspection of the updated scene remains required; no Ready,
   merge, or M7 action is implied.
