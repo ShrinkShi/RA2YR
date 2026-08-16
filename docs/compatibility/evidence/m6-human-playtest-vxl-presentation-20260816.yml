@@ -24,7 +24,8 @@ aggregate:
   axis_basis: "RawXToWorldX_RawYToWorldZ_RawZToWorldY"
   pivot_policy: "BoundsCenter"
 verification_current_head:
-  commit: "f4d0b1f4ca78595549c8eff24b857db2b9ef582a"
+  code_tree_commit: "f4d0b1f4ca78595549c8eff24b857db2b9ef582a"
+  documentation_head_before_wrapper_record: "4d8993e6567fb5b25fe43b717fd9e0d9b352db68"
   focused_vxl_renderer:
     xml: "TestResults/m6-vxl-current-20260816T153805663Z/focused.xml"
     total: 38
@@ -53,6 +54,24 @@ verification_current_head:
     failed: 0
     skipped: 0
     inconclusive: 0
+  official_wrapper_ps51:
+    summary: "TestResults/m6-final-wrapper/ps51.txt"
+    edit_mode_xml: "TestResults/20260816T083932965Z-97e1495a082e420aae18f3cb167c9ecd/EditMode/results.xml"
+    play_mode_xml: "TestResults/20260816T083932965Z-97e1495a082e420aae18f3cb167c9ecd/PlayMode/results.xml"
+    edit_mode_total: 1690
+    edit_mode_passed: 1690
+    play_mode_total: 7
+    play_mode_passed: 7
+    forced_post_result_shutdown: false
+  official_wrapper_ps7:
+    summary: "TestResults/m6-final-wrapper/ps7.txt"
+    edit_mode_xml: "TestResults/20260816T084314906Z-764a823eedfc44c78bd57b3c68c4abd7/EditMode/results.xml"
+    play_mode_xml: "TestResults/20260816T084314906Z-764a823eedfc44c78bd57b3c68c4abd7/PlayMode/results.xml"
+    edit_mode_total: 1690
+    edit_mode_passed: 1690
+    play_mode_total: 7
+    play_mode_passed: 7
+    forced_post_result_shutdown: false
 sanitization:
   filenames_published: false
   paths_published: false
