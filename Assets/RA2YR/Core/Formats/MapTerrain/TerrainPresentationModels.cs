@@ -57,6 +57,22 @@ namespace RA2YR.Core.Formats.MapTerrain
         public long HeightStep { get; }
         public TerrainProjectionAxisOrder AxisOrder { get; }
         public TerrainProjectionRounding Rounding { get; }
+
+        /// <summary>
+        /// Projects into an exact doubled-unit space. A tile with an odd
+        /// TileHeight therefore keeps its half-unit center instead of being
+        /// rounded before geometry is built.
+        /// </summary>
+        public IsometricFixedPoint ProjectFixed(long x, long y, long level, long heightRaw)
+        {
+            long first = AxisOrder == TerrainProjectionAxisOrder.XMinusY ? checked(x - y) : checked(y - x);
+            long second = checked(x + y);
+            long vertical = checked(second * TileHeight - checked((level + heightRaw) * HeightStep));
+            return new IsometricFixedPoint(
+                checked(OriginX * IsometricFixedPoint.UnitsPerLogicalUnit + checked(first * TileWidth)),
+                checked(OriginY * IsometricFixedPoint.UnitsPerLogicalUnit + vertical));
+        }
+
         public IsometricScreenPoint Project(long x, long y, long level, long heightRaw)
         {
             long first = AxisOrder == TerrainProjectionAxisOrder.XMinusY ? checked(x - y) : checked(y - x);
@@ -77,6 +93,38 @@ namespace RA2YR.Core.Formats.MapTerrain
             else candidate = new IsometricGridPoint(second, first);
             return Project(candidate.X, candidate.Y, level, heightRaw).Equals(point);
         }
+
+        /// <summary>
+        /// Returns the nearest grid coordinate for a presentation-space
+        /// position. This is intentionally separate from TryInverse, which
+        /// remains an exact integer-point inverse contract.
+        /// </summary>
+        public bool TryInverseNearest(double screenX, double screenY, long level, long heightRaw, out IsometricGridPoint candidate)
+        {
+            candidate = default(IsometricGridPoint);
+            if (double.IsNaN(screenX) || double.IsInfinity(screenX) || double.IsNaN(screenY) || double.IsInfinity(screenY))
+                return false;
+            double fixedX = screenX * IsometricFixedPoint.UnitsPerLogicalUnit;
+            double fixedY = screenY * IsometricFixedPoint.UnitsPerLogicalUnit;
+            if (fixedX < long.MinValue || fixedX > long.MaxValue || fixedY < long.MinValue || fixedY > long.MaxValue)
+                return false;
+            long centeredX = checked((long)Math.Round(fixedX, MidpointRounding.AwayFromZero)) - checked(OriginX * IsometricFixedPoint.UnitsPerLogicalUnit);
+            long centeredY = checked((long)Math.Round(fixedY, MidpointRounding.AwayFromZero)) - checked(OriginY * IsometricFixedPoint.UnitsPerLogicalUnit);
+            centeredY = checked(centeredY + checked((level + heightRaw) * HeightStep));
+            long first = NearestDivide(centeredX, TileWidth);
+            long second = NearestDivide(centeredY, TileHeight);
+            if (AxisOrder == TerrainProjectionAxisOrder.XMinusY)
+                candidate = new IsometricGridPoint(checked((first + second) / 2), checked((second - first) / 2));
+            else
+                candidate = new IsometricGridPoint(checked((second - first) / 2), checked((first + second) / 2));
+            return true;
+        }
+
+        private static long NearestDivide(long value, long divisor)
+        {
+            if (value % divisor == 0) return value / divisor;
+            return value >= 0 ? checked((value + divisor / 2) / divisor) : checked((value - divisor / 2) / divisor);
+        }
         private long Divide(long value, long divisor)
         {
             if (value % divisor == 0) return value / divisor;
@@ -95,6 +143,20 @@ namespace RA2YR.Core.Formats.MapTerrain
         public long X { get; } public long Y { get; }
         public bool Equals(IsometricScreenPoint other) => X == other.X && Y == other.Y;
         public override bool Equals(object obj) => obj is IsometricScreenPoint other && Equals(other);
+        public override int GetHashCode() => X.GetHashCode() ^ (Y.GetHashCode() * 397);
+    }
+
+    public readonly struct IsometricFixedPoint : IEquatable<IsometricFixedPoint>
+    {
+        public const long UnitsPerLogicalUnit = 2;
+
+        public IsometricFixedPoint(long x, long y) { X = x; Y = y; }
+        public long X { get; }
+        public long Y { get; }
+        public double LogicalX => (double)X / UnitsPerLogicalUnit;
+        public double LogicalY => (double)Y / UnitsPerLogicalUnit;
+        public bool Equals(IsometricFixedPoint other) => X == other.X && Y == other.Y;
+        public override bool Equals(object obj) => obj is IsometricFixedPoint other && Equals(other);
         public override int GetHashCode() => X.GetHashCode() ^ (Y.GetHashCode() * 397);
     }
 

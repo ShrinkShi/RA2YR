@@ -18,6 +18,7 @@ namespace RA2YR.UnityIntegration
         private Sprite unitSprite;
         private Texture2D unitTexture;
         private Camera playCamera;
+        private UnityHumanPlaytestCameraController cameraController;
         private Vector3 dragStart;
         private bool dragging;
         private bool attackMoveMode;
@@ -27,6 +28,7 @@ namespace RA2YR.UnityIntegration
         private ExternalLegacyVisualProvider externalVisualProvider;
         private ExternalLegacyVisualStatus externalVisualStatus;
         private Material terrainMaterial;
+        private IsometricProjectionProfile terrainProjection;
         private int terrainCellCount;
         private int externalObjectCount;
         private int syntheticObjectFallbackCount;
@@ -88,6 +90,7 @@ namespace RA2YR.UnityIntegration
             PresentationWorld.Configure(new UnityPresentationWorldPolicy(4096, 1024));
             Client = gameObject.GetComponent<UnityInteractiveClient>() ?? gameObject.AddComponent<UnityInteractiveClient>();
             Client.Configure(new UnityInteractiveClientPolicy(512, 256), new IsometricPointerProfile(64, 32, 1920, 1080), Runtime.CommandQueue);
+            terrainProjection = CreateTerrainProjection();
             BuildCamera();
             ConfigureExternalVisuals();
             BuildProceduralArt();
@@ -171,6 +174,7 @@ namespace RA2YR.UnityIntegration
 
         private void BuildCamera()
         {
+            cameraController = cameraController ?? new UnityHumanPlaytestCameraController();
             playCamera = Camera.main;
             if (playCamera == null)
             {
@@ -215,8 +219,7 @@ namespace RA2YR.UnityIntegration
             TerrainPresentationBuildResult composed = TerrainPresentationComposer.Build(
                 cells,
                 new TerrainPresentationPolicy(16, 16, checked(Runtime.Config.Width * Runtime.Config.Height), 64));
-            IsometricProjectionProfile projection = new IsometricProjectionProfile(
-                Runtime.Config.Width / 2, Runtime.Config.Height / 2, 2, 1, 0);
+            IsometricProjectionProfile projection = terrainProjection ?? CreateTerrainProjection();
             Shader shader = Shader.Find("Unlit/Color") ?? Shader.Find("Standard");
             if (shader != null)
             {
@@ -240,14 +243,13 @@ namespace RA2YR.UnityIntegration
         {
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
-            if (horizontal != 0f || vertical != 0f)
-            {
-                Vector3 right = playCamera.transform.right;
-                Vector3 forward = Vector3.ProjectOnPlane(playCamera.transform.forward, Vector3.up).normalized;
-                playCamera.transform.position += (right * horizontal + forward * vertical) * (8f * Time.unscaledDeltaTime);
-            }
-            float wheel = Input.mouseScrollDelta.y;
-            if (Math.Abs(wheel) > 0.01f) playCamera.orthographicSize = Mathf.Clamp(playCamera.orthographicSize - wheel, 5f, 24f);
+            if (horizontal == 0f)
+                horizontal = (Input.GetKey(KeyCode.LeftArrow) ? -1f : 0f) + (Input.GetKey(KeyCode.RightArrow) ? 1f : 0f);
+            if (vertical == 0f)
+                vertical = (Input.GetKey(KeyCode.DownArrow) ? -1f : 0f) + (Input.GetKey(KeyCode.UpArrow) ? 1f : 0f);
+            float wheel = Input.GetAxisRaw("Mouse ScrollWheel");
+            if (Mathf.Abs(wheel) <= 0.0001f) wheel = Input.mouseScrollDelta.y;
+            cameraController.Apply(playCamera, horizontal, vertical, wheel, Time.unscaledDeltaTime);
         }
 
         private void HandleHumanInput()
@@ -289,11 +291,11 @@ namespace RA2YR.UnityIntegration
 
         private CellCoordinate ToCell(Vector3 world)
         {
-            float first = world.x - Runtime.Config.Width / 2f;
-            float second = (world.z - Runtime.Config.Height / 2f) * 2f;
-            float x = (first + second) * 0.5f;
-            float y = (second - first) * 0.5f;
-            return new CellCoordinate(Mathf.Clamp(Mathf.RoundToInt(x), 0, Runtime.Config.Width - 1), Mathf.Clamp(Mathf.RoundToInt(y), 0, Runtime.Config.Height - 1));
+            IsometricGridPoint candidate;
+            IsometricProjectionProfile projection = terrainProjection ?? CreateTerrainProjection();
+            if (!projection.TryInverseNearest(world.x, world.z, 0, 0, out candidate))
+                return new CellCoordinate(0, 0);
+            return new CellCoordinate(Mathf.Clamp((int)candidate.X, 0, Runtime.Config.Width - 1), Mathf.Clamp((int)candidate.Y, 0, Runtime.Config.Height - 1));
         }
 
         private EntityId FindEnemyAt(CellCoordinate cell)
@@ -341,8 +343,8 @@ namespace RA2YR.UnityIntegration
                     filter.sharedMesh = section.Mesh;
                     MeshRenderer renderer = sectionObject.AddComponent<MeshRenderer>();
                     renderer.sharedMaterial = material;
-                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                    renderer.receiveShadows = false;
+                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+                    renderer.receiveShadows = true;
                     ExternalVxlPresentationSectionMarker sectionMarker = sectionObject.AddComponent<ExternalVxlPresentationSectionMarker>();
                     sectionMarker.SectionIdentity = section.SectionIdentity;
                     sectionMarker.SectionOrdinal = section.SectionOrdinal;
@@ -380,11 +382,11 @@ namespace RA2YR.UnityIntegration
         private Material GetVoxelMaterial()
         {
             if (voxelMaterial != null) return voxelMaterial;
-            Shader shader = Shader.Find("Sprites/Default") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Standard");
+            Shader shader = Shader.Find("RA2YR/ExternalLegacyVxlLit");
             if (shader == null) return null;
             voxelMaterial = new Material(shader)
             {
-                name = "ExternalLegacyPaletteMaterial",
+                name = "ExternalLegacyVxlLitMaterial",
                 color = Color.white
             };
             return voxelMaterial;
@@ -555,10 +557,26 @@ namespace RA2YR.UnityIntegration
 
         private Vector3 MapCellToPresentationPosition(float x, float y)
         {
+            IsometricProjectionProfile projection = terrainProjection ?? CreateTerrainProjection();
+            IsometricFixedPoint point = projection.ProjectFixed(
+                checked((long)Mathf.RoundToInt(x)),
+                checked((long)Mathf.RoundToInt(y)),
+                0,
+                0);
             return new Vector3(
-                Runtime.Config.Width / 2f + x - y,
+                (float)point.LogicalX,
                 0f,
-                Runtime.Config.Height / 2f + (x + y) * 0.5f);
+                (float)point.LogicalY);
+        }
+
+        private IsometricProjectionProfile CreateTerrainProjection()
+        {
+            return new IsometricProjectionProfile(
+                Runtime.Config.Width / 2,
+                Runtime.Config.Height / 2,
+                2,
+                1,
+                0);
         }
 
         private sealed class SyntheticProvider : IVisualAssetProvider

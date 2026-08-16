@@ -60,6 +60,28 @@ namespace RA2YR.Tests.EditMode
         [Test] public void CameraAdapterZoomDoesNotChangeLogicalPan()
         { UnityIsometricCameraAdapter adapter = new UnityIsometricCameraAdapter(); adapter.Pan(new Vector2(3, 4)); adapter.SetZoom(20f); Assert.AreEqual(new Vector2(3, 4), adapter.LogicalPan); Assert.AreEqual(20f, adapter.Zoom); }
 
+        [Test]
+        public void HumanPlaytestCameraControllerPansAndClampsZoom()
+        {
+            GameObject cameraObject = new GameObject("camera-contract");
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
+            camera.orthographic = true;
+            camera.orthographicSize = 10f;
+            try
+            {
+                Vector3 before = camera.transform.position;
+                var controller = new UnityHumanPlaytestCameraController();
+                controller.Apply(camera, 1f, 0f, 100f, 1f);
+                Assert.AreNotEqual(before, camera.transform.position);
+                Assert.AreEqual(5f, camera.orthographicSize);
+                controller.Apply(camera, 0f, 0f, -100f, 1f);
+                Assert.AreEqual(24f, camera.orthographicSize);
+                Assert.IsFalse(float.IsNaN(camera.transform.position.x) || float.IsInfinity(camera.transform.position.x));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(cameraObject); }
+        }
+
         [Test] public void CameraAdapterRejectsOutOfRangeZoom()
         { UnityIsometricCameraAdapter adapter = new UnityIsometricCameraAdapter(new UnityCameraAdapterPolicy(2f, 5f)); Assert.Throws<ArgumentOutOfRangeException>(() => adapter.SetZoom(1f)); Assert.Throws<ArgumentOutOfRangeException>(() => adapter.SetZoom(6f)); }
 
@@ -227,6 +249,47 @@ namespace RA2YR.Tests.EditMode
                 Assert.That(result.Asset.Sections[0].Mesh.colors32, Has.Some.EqualTo(new Color32(130, 65, 255, 255)));
             }
             finally { DestroyPresentation(result); }
+        }
+
+        [Test]
+        public void VxlNormalIndexAndNormalTypeSurvivePresentationWithFiniteNormals()
+        {
+            byte[] display = TestDisplayPalette();
+            var cells = new[] { new VoxelRenderCell(0, 0, 0, 1, 35), new VoxelRenderCell(1, 0, 0, 2, 36) };
+            var input = new VxlPresentationSectionInput("body", 0, cells, Matrix4x4.identity, true, 4);
+            VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(new[] { input }, VxlPresentationTransformProfile.Default, display);
+            try
+            {
+                Assert.IsTrue(result.IsSuccess, result.Diagnostic);
+                Assert.AreEqual(35, input.Cells[0].NormalIndex);
+                Assert.AreEqual(4, result.Asset.Sections[0].NormalTypeRaw);
+                Assert.AreEqual(VxlNormalPresentationMode.DerivedGeometryNormalPresentation, result.Asset.Sections[0].NormalPresentationMode);
+                Vector3[] normals = result.Asset.Sections[0].Mesh.normals;
+                Assert.AreEqual(result.Asset.Sections[0].Mesh.vertexCount, normals.Length);
+                foreach (Vector3 normal in normals)
+                {
+                    Assert.IsFalse(float.IsNaN(normal.x) || float.IsInfinity(normal.x));
+                    Assert.IsFalse(float.IsNaN(normal.y) || float.IsInfinity(normal.y));
+                    Assert.IsFalse(float.IsNaN(normal.z) || float.IsInfinity(normal.z));
+                    Assert.That(normal.magnitude, Is.GreaterThan(0.99f).And.LessThan(1.01f));
+                }
+            }
+            finally { DestroyPresentation(result); }
+        }
+
+        [Test]
+        public void VxlLitShaderUsesVertexColorAndStableLightingTerms()
+        {
+            Shader shader = Shader.Find("RA2YR/ExternalLegacyVxlLit");
+            Assert.IsNotNull(shader, "The explicit VXL lit presentation shader must be available.");
+            Material material = new Material(shader);
+            try
+            {
+                Assert.IsTrue(material.HasProperty("_AmbientColor"));
+                Assert.IsTrue(material.HasProperty("_DirectionalColor"));
+                Assert.IsTrue(material.HasProperty("_LightDirection"));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(material); }
         }
 
         private static byte[] TestDisplayPalette()

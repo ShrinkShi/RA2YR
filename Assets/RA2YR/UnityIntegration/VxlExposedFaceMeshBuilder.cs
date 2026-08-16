@@ -10,17 +10,24 @@ namespace RA2YR.UnityIntegration
     public readonly struct VoxelRenderCell
     {
         public VoxelRenderCell(int x, int y, int z, byte colorIndex)
+            : this(x, y, z, colorIndex, 0)
+        {
+        }
+
+        public VoxelRenderCell(int x, int y, int z, byte colorIndex, byte normalIndex)
         {
             X = x;
             Y = y;
             Z = z;
             ColorIndex = colorIndex;
+            NormalIndex = normalIndex;
         }
 
         public int X { get; }
         public int Y { get; }
         public int Z { get; }
         public byte ColorIndex { get; }
+        public byte NormalIndex { get; }
     }
 
     public enum VxlPresentationAxisBasis
@@ -31,6 +38,17 @@ namespace RA2YR.UnityIntegration
     public enum VxlPresentationPivotPolicy
     {
         BoundsCenter
+    }
+
+    public enum VxlNormalPresentationMode
+    {
+        /// <summary>
+        /// Uses the exposed voxel face geometry for lighting. The raw
+        /// NormalIndex and NormalType remain provenance, not a guessed
+        /// Westwood table lookup.
+        /// </summary>
+        DerivedGeometryNormalPresentation,
+        EvidenceBackedWestwoodNormalTable
     }
 
     public sealed class VxlPresentationTransformProfile
@@ -44,7 +62,8 @@ namespace RA2YR.UnityIntegration
             float maximumVerticalFootprintCells = 1.5f,
             VxlPresentationAxisBasis axisBasis = VxlPresentationAxisBasis.RawXToWorldX_RawYToWorldZ_RawZToWorldY,
             VxlPresentationPivotPolicy pivotPolicy = VxlPresentationPivotPolicy.BoundsCenter,
-            float maximumRawDimension = 256f)
+            float maximumRawDimension = 256f,
+            VxlNormalPresentationMode normalPresentationMode = VxlNormalPresentationMode.DerivedGeometryNormalPresentation)
         {
             if (targetHorizontalFootprintCells <= 0f || targetDepthFootprintCells <= 0f || targetVerticalFootprintCells <= 0f ||
                 maximumHorizontalFootprintCells <= 0f || maximumDepthFootprintCells <= 0f || maximumVerticalFootprintCells <= 0f ||
@@ -53,7 +72,8 @@ namespace RA2YR.UnityIntegration
                 targetVerticalFootprintCells > maximumVerticalFootprintCells ||
                 maximumRawDimension <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(targetHorizontalFootprintCells));
-            if (!Enum.IsDefined(typeof(VxlPresentationAxisBasis), axisBasis) || !Enum.IsDefined(typeof(VxlPresentationPivotPolicy), pivotPolicy))
+            if (!Enum.IsDefined(typeof(VxlPresentationAxisBasis), axisBasis) || !Enum.IsDefined(typeof(VxlPresentationPivotPolicy), pivotPolicy) ||
+                !Enum.IsDefined(typeof(VxlNormalPresentationMode), normalPresentationMode))
                 throw new ArgumentOutOfRangeException(nameof(axisBasis));
 
             TargetHorizontalFootprintCells = targetHorizontalFootprintCells;
@@ -65,6 +85,7 @@ namespace RA2YR.UnityIntegration
             AxisBasis = axisBasis;
             PivotPolicy = pivotPolicy;
             MaximumRawDimension = maximumRawDimension;
+            NormalPresentationMode = normalPresentationMode;
         }
 
         public static VxlPresentationTransformProfile Default { get; } = new VxlPresentationTransformProfile();
@@ -77,6 +98,7 @@ namespace RA2YR.UnityIntegration
         public VxlPresentationAxisBasis AxisBasis { get; }
         public VxlPresentationPivotPolicy PivotPolicy { get; }
         public float MaximumRawDimension { get; }
+        public VxlNormalPresentationMode NormalPresentationMode { get; }
 
         public Vector3 ToPresentationBasis(Vector3 raw)
         {
@@ -112,7 +134,8 @@ namespace RA2YR.UnityIntegration
             int sectionOrdinal,
             IEnumerable<VoxelRenderCell> cells,
             Matrix4x4 frameTransform,
-            bool hvaApplied)
+            bool hvaApplied,
+            byte normalTypeRaw = 0)
         {
             if (string.IsNullOrWhiteSpace(sectionIdentity)) throw new ArgumentException("A section identity is required.", nameof(sectionIdentity));
             if (sectionOrdinal < 0) throw new ArgumentOutOfRangeException(nameof(sectionOrdinal));
@@ -121,6 +144,7 @@ namespace RA2YR.UnityIntegration
             Cells = Array.AsReadOnly((cells ?? throw new ArgumentNullException(nameof(cells))).ToArray());
             FrameTransform = frameTransform;
             HvaApplied = hvaApplied;
+            NormalTypeRaw = normalTypeRaw;
         }
 
         public string SectionIdentity { get; }
@@ -128,6 +152,7 @@ namespace RA2YR.UnityIntegration
         public IReadOnlyList<VoxelRenderCell> Cells { get; }
         public Matrix4x4 FrameTransform { get; }
         public bool HvaApplied { get; }
+        public byte NormalTypeRaw { get; }
     }
 
     public sealed class VxlPresentationBounds
@@ -157,7 +182,7 @@ namespace RA2YR.UnityIntegration
 
     public sealed class VxlPresentationSectionMesh
     {
-        internal VxlPresentationSectionMesh(string sectionIdentity, int sectionOrdinal, Mesh mesh, VxlPresentationBounds bounds, bool hvaApplied, int distinctColorCount)
+        internal VxlPresentationSectionMesh(string sectionIdentity, int sectionOrdinal, Mesh mesh, VxlPresentationBounds bounds, bool hvaApplied, int distinctColorCount, byte normalTypeRaw, VxlNormalPresentationMode normalPresentationMode)
         {
             SectionIdentity = sectionIdentity;
             SectionOrdinal = sectionOrdinal;
@@ -165,6 +190,8 @@ namespace RA2YR.UnityIntegration
             Bounds = bounds;
             HvaApplied = hvaApplied;
             DistinctColorCount = distinctColorCount;
+            NormalTypeRaw = normalTypeRaw;
+            NormalPresentationMode = normalPresentationMode;
         }
 
         public string SectionIdentity { get; }
@@ -173,6 +200,8 @@ namespace RA2YR.UnityIntegration
         public VxlPresentationBounds Bounds { get; }
         public bool HvaApplied { get; }
         public int DistinctColorCount { get; }
+        public byte NormalTypeRaw { get; }
+        public VxlNormalPresentationMode NormalPresentationMode { get; }
     }
 
     public sealed class VxlPresentationMetrics
@@ -262,7 +291,10 @@ namespace RA2YR.UnityIntegration
             policy = policy ?? new VxlMeshBuildPolicy();
             if (cells == null) return new VxlMeshBuildResult(null, false, "Voxel cells are required.");
             if (cells.Count > policy.MaxVoxels) return new VxlMeshBuildResult(null, false, "Voxel budget exceeded.");
-            Mesh mesh = BuildRawMesh(cells, Vector3.zero, Matrix4x4.identity, 1f, null, policy, out string diagnostic);
+            Mesh mesh;
+            string diagnostic;
+            try { mesh = BuildRawMesh(cells, Vector3.zero, Matrix4x4.identity, 1f, null, policy, out diagnostic); }
+            catch (InvalidOperationException error) { return new VxlMeshBuildResult(null, false, error.Message); }
             return new VxlMeshBuildResult(mesh, mesh != null, diagnostic);
         }
 
@@ -276,6 +308,8 @@ namespace RA2YR.UnityIntegration
             policy = policy ?? new VxlMeshBuildPolicy();
             if (sections == null || sections.Count == 0) return Failure("At least one VXL section is required.");
             if (profile == null) return Failure("A VXL presentation transform profile is required.");
+            if (profile.NormalPresentationMode != VxlNormalPresentationMode.DerivedGeometryNormalPresentation)
+                return Failure("The requested Westwood normal table is not available in this presentation build.");
             if (displayPalette == null || displayPalette.Length < 256 * 3) return Failure("A complete VXL display palette is required.");
 
             int totalCells = 0;
@@ -331,7 +365,10 @@ namespace RA2YR.UnityIntegration
                     Include(ref localMin, ref localMax, local);
                 }
                 VxlPresentationBounds bounds = new VxlPresentationBounds(points.Min, points.Max, localMin, localMax, pivot, Vector3.zero);
-                Mesh mesh = BuildRawMesh(section.Cells, pivot, section.FrameTransform, scale, profile, policy, out string diagnostic, displayPalette, allColors);
+                Mesh mesh;
+                string diagnostic;
+                try { mesh = BuildRawMesh(section.Cells, pivot, section.FrameTransform, scale, profile, policy, out diagnostic, displayPalette, allColors); }
+                catch (InvalidOperationException error) { DestroyMeshes(builtSections); return Failure(error.Message); }
                 if (mesh == null)
                 {
                     DestroyMeshes(builtSections);
@@ -347,7 +384,7 @@ namespace RA2YR.UnityIntegration
                 }
                 if (section.HvaApplied) hvaCount++;
                 int distinctColors = CountDistinctColors(mesh.colors32);
-                builtSections.Add(new VxlPresentationSectionMesh(section.SectionIdentity, section.SectionOrdinal, mesh, bounds, section.HvaApplied, distinctColors));
+                builtSections.Add(new VxlPresentationSectionMesh(section.SectionIdentity, section.SectionOrdinal, mesh, bounds, section.HvaApplied, distinctColors, section.NormalTypeRaw, profile.NormalPresentationMode));
             }
 
             VxlPresentationBounds totalBounds = new VxlPresentationBounds(
@@ -385,7 +422,7 @@ namespace RA2YR.UnityIntegration
                         {
                             total = checked(total + 1);
                             if (total > maxVoxels) throw new InvalidOperationException("VXL voxel budget exceeded.");
-                            cells.Add(new VoxelRenderCell(column.X, column.Y, z, voxel.ColorIndex));
+                            cells.Add(new VoxelRenderCell(column.X, column.Y, z, voxel.ColorIndex, voxel.NormalIndex));
                             z = checked(z + 1);
                         }
                     }
@@ -407,7 +444,8 @@ namespace RA2YR.UnityIntegration
                     section.Header.Ordinal,
                     cells,
                     transform,
-                    hvaApplied));
+                    hvaApplied,
+                    section.Tailer.NormalTypeRaw));
             }
             return values.AsReadOnly();
         }
@@ -422,6 +460,7 @@ namespace RA2YR.UnityIntegration
             var vertices = new List<Vector3>();
             var triangles = new List<int>();
             var colors = new List<Color32>();
+            var normals = new List<Vector3>();
             for (int i = 0; i < cells.Count; i++)
             {
                 VoxelRenderCell cell = cells[i];
@@ -430,7 +469,7 @@ namespace RA2YR.UnityIntegration
                     Vector3Int neighbor = new Vector3Int(cell.X + Directions[face, 0], cell.Y + Directions[face, 1], cell.Z + Directions[face, 2]);
                     if (occupied.Contains(neighbor)) continue;
                     Color32 color = displayPalette == null ? new Color32(255, 255, 255, 255) : DisplayPaletteColor(displayPalette, cell.ColorIndex);
-                    AddFace(vertices, triangles, colors, cell.X, cell.Y, cell.Z, face, pivot, frameTransform, scale, profile, color);
+                    AddFace(vertices, triangles, colors, normals, cell.X, cell.Y, cell.Z, face, pivot, frameTransform, scale, profile, color);
                     aggregateColors?.Add(color);
                     if (vertices.Count > policy.MaxVertices || triangles.Count / 3 > policy.MaxTriangles)
                     {
@@ -449,11 +488,12 @@ namespace RA2YR.UnityIntegration
             mesh.SetVertices(vertices);
             mesh.SetTriangles(triangles, 0);
             mesh.SetColors(colors);
+            mesh.SetNormals(normals);
             mesh.RecalculateBounds();
             return mesh;
         }
 
-        private static void AddFace(List<Vector3> vertices, List<int> triangles, List<Color32> colors, int x, int y, int z, int face, Vector3 pivot, Matrix4x4 frameTransform, float scale, VxlPresentationTransformProfile profile, Color32 color)
+        private static void AddFace(List<Vector3> vertices, List<int> triangles, List<Color32> colors, List<Vector3> normals, int x, int y, int z, int face, Vector3 pivot, Matrix4x4 frameTransform, float scale, VxlPresentationTransformProfile profile, Color32 color)
         {
             float x0 = x, x1 = x + 1f, y0 = y, y1 = y + 1f, z0 = z, z1 = z + 1f;
             Vector3[] corners;
@@ -467,15 +507,35 @@ namespace RA2YR.UnityIntegration
                 default: corners = new[] { new Vector3(x1, y0, z0), new Vector3(x0, y0, z0), new Vector3(x0, y1, z0), new Vector3(x1, y1, z0) }; break;
             }
             int start = vertices.Count;
+            Vector3 rawNormal = new Vector3(Directions[face, 0], Directions[face, 1], Directions[face, 2]);
+            Vector3 transformedNormal = frameTransform.inverse.transpose.MultiplyVector(rawNormal);
+            if (profile != null) transformedNormal = profile.ToPresentationBasis(transformedNormal);
+            float normalLength = transformedNormal.magnitude;
+            if (float.IsNaN(normalLength) || float.IsInfinity(normalLength) || normalLength <= 0.000001f)
+                throw new InvalidOperationException("VXL normal presentation produced a non-finite or zero normal.");
+            transformedNormal /= normalLength;
             foreach (Vector3 corner in corners)
             {
                 Vector3 transformed = frameTransform.MultiplyPoint3x4(corner);
                 Vector3 local = profile == null ? (transformed - pivot) * scale : profile.ToPresentationBasis(transformed - pivot) * scale;
                 vertices.Add(local);
                 colors.Add(color);
+                normals.Add(transformedNormal);
             }
-            triangles.Add(start); triangles.Add(start + 1); triangles.Add(start + 2);
-            triangles.Add(start); triangles.Add(start + 2); triangles.Add(start + 3);
+            // The configured raw-to-world basis swaps two axes and therefore
+            // has negative handedness. Reverse winding so outward normals and
+            // back-face culling remain consistent after that explicit basis.
+            bool reverseWinding = profile != null && profile.AxisBasis == VxlPresentationAxisBasis.RawXToWorldX_RawYToWorldZ_RawZToWorldY;
+            if (reverseWinding)
+            {
+                triangles.Add(start); triangles.Add(start + 2); triangles.Add(start + 1);
+                triangles.Add(start); triangles.Add(start + 3); triangles.Add(start + 2);
+            }
+            else
+            {
+                triangles.Add(start); triangles.Add(start + 1); triangles.Add(start + 2);
+                triangles.Add(start); triangles.Add(start + 2); triangles.Add(start + 3);
+            }
         }
 
         private static Color32 DisplayPaletteColor(byte[] displayPalette, byte index)
