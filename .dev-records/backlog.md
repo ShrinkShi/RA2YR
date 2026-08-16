@@ -447,5 +447,7 @@ turn Unity presentation state into simulation authority.
   SHP display colors and VXL mesh vertex colors. Regression coverage uses legal
   raw channels and asserts exact converted Color32 values.
 - [x] Push the additive repair commit and obtain exact-head Repository safety.
+- [x] Final PS5.1 and PS7 wrappers pass on the corrected tree: EditMode
+  1693/1693 and PlayMode 7/7, with no forced post-result shutdown.
 - [ ] Human visual inspection of the updated scene remains required; no Ready,
   merge, or M7 action is implied.

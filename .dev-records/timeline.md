@@ -1048,3 +1048,8 @@ raw test values were replaced with legal raw fixtures. Current focused evidence
 is 40/40 renderer and 17/17 external-route executions, including exact
 `Color32(130,65,255,255)` SHP/VXL equivalence. PR #77 remains Draft and the
 next step is maintainer human visual recheck, not M7.
+
+The final wrapper runs on documentation head `97d990a74d5dfb8b55e6754857489fc7c40daee0`
+passed 1693/1693 EditMode and 7/7 PlayMode under both PS5.1 and PS7 without
+forced post-result shutdown. Automated status is ready for human visual
+recheck; PR #77 remains Open/Draft/Unmerged.

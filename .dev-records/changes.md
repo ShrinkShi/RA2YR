@@ -1043,3 +1043,6 @@ payload or path is published.
   a synthetic SHP/VXL equivalence regression. Focused results are 40/40 renderer
   and 17/17 external-route executions on code commit
   `8589706c5b30a5d16d8b5c00f815e579f47b0b2b`.
+- Final PS5.1 and PS7 wrappers on documentation head `97d990a74d5dfb8b55e6754857489fc7c40daee0`
+  passed with 1693/1693 EditMode and 7/7 PlayMode, both without forced
+  post-result shutdown.

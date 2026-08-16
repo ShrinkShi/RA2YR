@@ -800,4 +800,6 @@ fallback, or compatibility claim was introduced.
 
 Focused renderer coverage is 40/40 and external-route coverage is 17/17 on
 code commit `8589706c5b30a5d16d8b5c00f815e579f47b0b2b`. Full gates must be
-rerun for the final pushed HEAD; human visual inspection remains pending.
+rerun for the final pushed HEAD; the final PS5.1/PS7 wrappers now report
+1693/1693 EditMode and 7/7 PlayMode with no forced post-result shutdown.
+Human visual inspection remains pending.

@@ -33,6 +33,7 @@ aggregate:
     shp_vxl_color_equivalence: true
 verification_current_head:
   code_tree_commit: "8589706c5b30a5d16d8b5c00f815e579f47b0b2b"
+  final_documentation_head: "97d990a74d5dfb8b55e6754857489fc7c40daee0"
   focused_vxl_renderer:
     xml: "TestResults/m6-palette-current-20260816T161500000Z/focused.xml"
     total: 40
@@ -51,34 +52,34 @@ verification_current_head:
     test: "ShpAndVxlUseTheSameConvertedRawPaletteColor"
     result: "passed"
   full_edit_mode:
-    xml: "TestResults/m6-full-edit-current-20260816T155508725Z/editmode.xml"
-    total: 1690
-    passed: 1690
+    xml: "TestResults/20260816T100004764Z-e631192eae0e408d96a5930d6876cf4c/EditMode/results.xml"
+    total: 1693
+    passed: 1693
     failed: 0
     skipped: 0
     inconclusive: 0
   full_play_mode:
-    xml: "TestResults/m6-full-play-current-20260816T155655667Z/playmode.xml"
+    xml: "TestResults/20260816T100004764Z-e631192eae0e408d96a5930d6876cf4c/PlayMode/results.xml"
     total: 7
     passed: 7
     failed: 0
     skipped: 0
     inconclusive: 0
   official_wrapper_ps51:
-    summary: "TestResults/m6-final-wrapper/ps51.txt"
-    edit_mode_xml: "TestResults/20260816T083932965Z-97e1495a082e420aae18f3cb167c9ecd/EditMode/results.xml"
-    play_mode_xml: "TestResults/20260816T083932965Z-97e1495a082e420aae18f3cb167c9ecd/PlayMode/results.xml"
-    edit_mode_total: 1690
-    edit_mode_passed: 1690
+    summary: "TestResults/m6-palette-final-wrapper-ps51.txt"
+    edit_mode_xml: "TestResults/20260816T100004764Z-e631192eae0e408d96a5930d6876cf4c/EditMode/results.xml"
+    play_mode_xml: "TestResults/20260816T100004764Z-e631192eae0e408d96a5930d6876cf4c/PlayMode/results.xml"
+    edit_mode_total: 1693
+    edit_mode_passed: 1693
     play_mode_total: 7
     play_mode_passed: 7
     forced_post_result_shutdown: false
   official_wrapper_ps7:
-    summary: "TestResults/m6-final-wrapper/ps7.txt"
-    edit_mode_xml: "TestResults/20260816T084314906Z-764a823eedfc44c78bd57b3c68c4abd7/EditMode/results.xml"
-    play_mode_xml: "TestResults/20260816T084314906Z-764a823eedfc44c78bd57b3c68c4abd7/PlayMode/results.xml"
-    edit_mode_total: 1690
-    edit_mode_passed: 1690
+    summary: "TestResults/m6-palette-final-wrapper-ps7.txt"
+    edit_mode_xml: "TestResults/20260816T100232264Z-29849658ee9b403faebd05d25e517f1f/EditMode/results.xml"
+    play_mode_xml: "TestResults/20260816T100232264Z-29849658ee9b403faebd05d25e517f1f/PlayMode/results.xml"
+    edit_mode_total: 1693
+    edit_mode_passed: 1693
     play_mode_total: 7
     play_mode_passed: 7
     forced_post_result_shutdown: false
