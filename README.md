@@ -291,6 +291,15 @@ pathfinding 或 M7。外部视觉探测不会把 payload 或像素写入仓库�
 和外部视觉可用性都不提升 compatibility matrix 的原版确认状态。详见
 [M6 Human Playtest Delivery](docs/formats/m6-human-playtest.md)。
 
+2026-08-17 maintainer Game View review of the prior automated-green tree was
+recorded as HUMAN VISUAL FAIL: synthetic terrain had regular diamond gaps and
+VXL units lacked readable lighting. The closure uses a checked doubled-unit
+isometric contract shared by terrain, entities, pointer inverse, and camera;
+VXL preserves raw normal fields and uses the explicit
+`DerivedGeometryNormalPresentation` profile with the self-authored
+`RA2YR/ExternalLegacyVxlLit` vertex-color shader. Westwood normal/light parity
+remains unconfirmed, and a new human visual recheck is still required.
+
 ## 本地验证
 
 运行 Unity 测试前必须关闭 Unity Editor：

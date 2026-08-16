@@ -803,3 +803,19 @@ code commit `8589706c5b30a5d16d8b5c00f815e579f47b0b2b`. Full gates must be
 rerun for the final pushed HEAD; the final PS5.1/PS7 wrappers now report
 1693/1693 EditMode and 7/7 PlayMode with no forced post-result shutdown.
 Human visual inspection remains pending.
+
+## 2026-08-17 - M6 second human visual review failure and closure
+
+The maintainer's Game View inspection of `1767cc7` failed despite green
+automated gates. Regular blue gaps were visible between the synthetic
+isometric diamonds, and VXL vehicles still read as an unlit/debug voxel view.
+The issue was presentation geometry/lighting, not a TMP/theater implementation
+request. Sidebar/HUD fidelity and audio/EVA remain deferred.
+
+The closure adds a checked doubled-unit projection used by terrain, entities,
+pointer inverse, and camera centering. VXL retains raw `NormalIndex` and
+`NormalTypeRaw`; because no complete Westwood normal table is published in the
+repository, lighting uses the explicitly named
+`DerivedGeometryNormalPresentation` profile and a stable vertex-color lit
+shader. Original normal and lighting semantics remain unconfirmed. A new
+human visual inspection is still required after the final exact-head gates.

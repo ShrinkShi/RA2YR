@@ -1046,3 +1046,21 @@ payload or path is published.
 - Final PS5.1 and PS7 wrappers on documentation head `97d990a74d5dfb8b55e6754857489fc7c40daee0`
   passed with 1693/1693 EditMode and 7/7 PlayMode, both without forced
   post-result shutdown.
+
+## 2026-08-17 - M6 second human visual failure closure
+
+- Recorded the maintainer's human Game View result for `1767cc7` as FAIL.
+  Automated gates were green, but synthetic terrain had regular diamond gaps
+  and VXL remained visually close to an unlit/debug voxel viewer.
+- Replaced the odd-height terrain rounding path with a checked doubled-unit
+  projection shared by tile geometry, entity placement, pointer inverse, and
+  camera centering. Added adjacency, 4x4 finite-geometry, and inverse tests.
+- Carried VXL `NormalIndex` and section `NormalTypeRaw` into the presentation
+  model. Because the repository has no complete published Westwood normal
+  table, the only supported explicit mode is
+  `DerivedGeometryNormalPresentation`; emitted meshes now carry normalized
+  face normals and use a stable vertex-color ambient/directional shader.
+- Added a bounded human-playtest camera controller seam for WASD/arrows and
+  wheel zoom. UI/audio and real TMP/theater terrain remain deferred.
+- Recorded the future MIX-first logical content architecture requirement
+  without changing production content lookup or copyright policy.

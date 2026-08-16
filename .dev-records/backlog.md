@@ -451,3 +451,33 @@ turn Unity presentation state into simulation authority.
   1693/1693 and PlayMode 7/7, with no forced post-result shutdown.
 - [ ] Human visual inspection of the updated scene remains required; no Ready,
   merge, or M7 action is implied.
+
+### M6 human visual failure closure (2026-08-17)
+
+- [x] Record the maintainer HUMAN VISUAL REVIEW result for `1767cc7` as
+  **FAIL**: regular synthetic-terrain diamond gaps and insufficient VXL
+  lighting/intelligibility were observed even though automated gates passed.
+- [x] Repair the terrain with a checked doubled-unit projection shared by
+  terrain geometry, entity centers, pointer inverse, and camera centering;
+  no overlap epsilon, filler geometry, or fixture-specific correction was
+  introduced.
+- [x] Preserve VXL `NormalIndex` and `NormalTypeRaw`, and add the explicit
+  `DerivedGeometryNormalPresentation` mode plus finite normalized mesh normals
+  and `RA2YR/ExternalLegacyVxlLit` vertex-color lighting. Westwood normal-table
+  semantics remain unconfirmed.
+- [x] Add a small camera controller seam for WASD/arrows and wheel zoom with
+  finite position and bounded zoom behavior.
+- [ ] Repeat the maintainer visual inspection against the repaired exact HEAD;
+  this remains a human acceptance gate and is not represented by automated
+  green metrics.
+- [ ] Deferred observations remain outside this closure: RA2 sidebar/HUD,
+  audio/EVA, full SHP animation, and TMP/theater terrain.
+
+### Future content architecture requirement (record only)
+
+- [ ] M7-C0 must define MIX as a first-class runtime container and provide
+  logical lookup across project, external YR, MOD, and modern loose/native
+  sources. Legacy and modern providers must share logical asset identity,
+  with provenance-based copyright policy and strict-original mode. This is a
+  future requirement only; no production architecture or CopyrightPolicy MIX
+  behavior changes are part of PR #77.

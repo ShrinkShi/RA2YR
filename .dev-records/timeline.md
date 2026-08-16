@@ -1053,3 +1053,15 @@ The final wrapper runs on documentation head `97d990a74d5dfb8b55e6754857489fc7c4
 passed 1693/1693 EditMode and 7/7 PlayMode under both PS5.1 and PS7 without
 forced post-result shutdown. Automated status is ready for human visual
 recheck; PR #77 remains Open/Draft/Unmerged.
+
+## 2026-08-17 - M6 second human visual failure closure
+
+The maintainer's Game View review of `1767cc7` was recorded as HUMAN VISUAL
+FAIL: synthetic terrain showed regular diamond gaps and VXL units lacked
+readable lighting. Replaced odd-height projection rounding with a checked
+doubled-unit contract shared by terrain, entity centers, pointer inverse, and
+camera centering. Preserved VXL `NormalIndex`/`NormalTypeRaw` and added the
+explicit `DerivedGeometryNormalPresentation` fallback plus a self-authored
+vertex-color lit shader; Westwood normal semantics remain unresolved. Added a
+small finite camera input seam and regression tests. PR #77 remains Draft and
+the required next step is a maintainer visual recheck, not M7.

@@ -99,3 +99,31 @@ external preflight result, and separates defined NUnit executions from
 executed results. The sanitized ProjectBaseline PreviewPack audit is recorded
 separately; it is aggregate evidence only and remains `NotConfirmed` for the
 original runtime.
+
+## 2026-08-17 human visual failure closure
+
+The maintainer's Unity Game View inspection of commit
+`1767cc708f79535c9fcd0ddd9f7fa757f7706f9d` was **FAIL**, despite the
+automated gates being green. The observed blockers were regular blue holes
+between synthetic terrain diamonds and VXL units that read as an unlit/debug
+voxel viewer. Missing RA2 sidebar/HUD fidelity and audio/EVA remain deferred
+observations, not this PR's scope.
+
+The terrain repair uses one checked doubled-unit projection contract for tile
+centers, diamond extents, entity placement, pointer inverse, and camera
+centering. It does not overlap tiles, add filler quads, or special-case the
+28x22 fixture. VXL now preserves `NormalIndex` and `NormalTypeRaw` and uses the
+explicitly named `DerivedGeometryNormalPresentation` mode because the
+repository does not publish a complete evidence-backed Westwood normal table.
+The mesh emits finite normalized normals and uses the self-authored
+`RA2YR/ExternalLegacyVxlLit` vertex-color lit shader with stable ambient and
+directional terms. Original Westwood normal/light semantics remain
+unconfirmed.
+
+The repaired tree is only a signal for the next maintainer check. Automated
+results must be reported from the exact final HEAD; this document never
+converts them into a human visual pass or an original-runtime claim. A future
+content architecture requirement is recorded separately: MIX-first logical
+lookup across project, external, MOD, and modern sources, with legacy/modern
+providers and provenance-based policy. That architecture is not implemented
+by this PR.

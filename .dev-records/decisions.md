@@ -740,3 +740,24 @@ VXL mesh creation both consume the same converted display values exactly once;
 the VXL builder accepts display-space bytes and never interprets raw 0..63 bytes
 as Unity `Color32` values. This is a project presentation contract, not proof of
 original-runtime palette behavior.
+
+## M6 second human visual failure closure decision
+
+The maintainer's Game View review of `1767cc7` is recorded as a human visual
+FAIL. The repair uses a doubled-unit, checked isometric projection as the
+single presentation contract so odd tile heights cannot be rounded before
+diamond geometry is emitted. The same contract feeds entity centers, pointer
+inverse conversion, and camera centering.
+
+VXL raw `NormalIndex` and section `NormalTypeRaw` are preserved in presentation
+inputs. The repository evidence does not include a complete Westwood normal
+vector table, so the supported lighting profile is explicitly named
+`DerivedGeometryNormalPresentation`, not a compatibility claim. Face normals
+are finite and normalized, and the self-authored lit shader uses vertex color
+as albedo with stable ambient and directional terms. Original Westwood normal
+and lighting semantics remain unresolved.
+
+Future content architecture is recorded as a requirement only: MIX-first
+logical lookup across project, external YR, MOD, and modern sources, shared
+legacy/modern asset identity, provenance-based policy, and strict-original
+failure behavior. Production implementation is deferred to M7-C0.
