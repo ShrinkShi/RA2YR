@@ -270,7 +270,7 @@ namespace RA2YR.UnityIntegration
             public ResolvedLegacyVisual Binding;
             public ShpFrame Shp;
             public VxlPresentationAsset VoxelPresentation;
-            public byte[] Palette;
+            public byte[] PaletteRaw;
         }
 
         private readonly IReadOnlyDictionary<HumanPlaytestVisualRole, DecodedVisualAsset> visualAssets;
@@ -470,7 +470,7 @@ namespace RA2YR.UnityIntegration
         {
             sprite = null;
             DecodedVisualAsset asset;
-            if (!IsAvailable || !visualAssets.TryGetValue(role, out asset) || asset == null || asset.Shp == null || asset.Palette == null) return false;
+            if (!IsAvailable || !visualAssets.TryGetValue(role, out asset) || asset == null || asset.Shp == null || asset.PaletteRaw == null) return false;
             string key = asset.Binding.VisualAssetId + ":" + profile.RoleProfile.RemapProfile;
             if (sprites.TryGetValue(key, out sprite) && sprite != null) return true;
             ShpFrame frame = asset.Shp;
@@ -488,9 +488,9 @@ namespace RA2YR.UnityIntegration
                 int paletteOffset = paletteIndex * 3;
                 byte alpha = frame.Indices[index] == 0 ? (byte)0 : (byte)255;
                 colors[index] = new Color32(
-                    Scale(asset.Palette[paletteOffset]),
-                    Scale(asset.Palette[paletteOffset + 1]),
-                    Scale(asset.Palette[paletteOffset + 2]),
+                    PaletteDisplayProfileConversion.ConvertChannel(asset.PaletteRaw[paletteOffset], profile.PaletteProfile),
+                    PaletteDisplayProfileConversion.ConvertChannel(asset.PaletteRaw[paletteOffset + 1], profile.PaletteProfile),
+                    PaletteDisplayProfileConversion.ConvertChannel(asset.PaletteRaw[paletteOffset + 2], profile.PaletteProfile),
                     alpha);
             }
             Texture2D texture = new Texture2D(frame.Width, frame.Height, TextureFormat.RGBA32, false)
@@ -634,18 +634,6 @@ namespace RA2YR.UnityIntegration
             if (route.VxlLogicalRequests > 0 && !route.PresentationSanityPassed)
                 return ExternalVisualRouteGateStatus.PresentationSanityFailed;
             return ExternalVisualRouteGateStatus.ExternalVisualsResolved;
-        }
-
-        private byte Scale(byte raw)
-        {
-            if (raw > 63) return raw;
-            switch (profile.PaletteProfile)
-            {
-                case PaletteDisplayProfile.ShiftLeftTwo: return checked((byte)(raw << 2));
-                case PaletteDisplayProfile.ReplicateHighBits: return checked((byte)((raw << 2) | (raw >> 4)));
-                case PaletteDisplayProfile.XccScaleToFullRangeFloor: return checked((byte)(raw * 255 / 63));
-                default: return checked((byte)((raw * 255 + 31) / 63));
-            }
         }
 
         private static IniResolutionResult ResolveTypedIni(
@@ -920,7 +908,7 @@ namespace RA2YR.UnityIntegration
                         new BinarySourceContext("m6-visual-palette", sourceId, LogicalContentPath.Parse(binding.PaletteLogicalName)),
                         new PaletteSourceProvenance(sourceId, new[] { LogicalContentPath.Parse(binding.PaletteLogicalName) }));
                     if (!parsedPalette.IsSuccess || parsedPalette.Palette == null) continue;
-                    var asset = new DecodedVisualAsset { Binding = binding, Palette = ToPaletteBytes(parsedPalette.Palette) };
+                    var asset = new DecodedVisualAsset { Binding = binding, PaletteRaw = ToRawPaletteBytes(parsedPalette.Palette) };
                     if (binding.Format == HumanPlaytestVisualFormat.Shp)
                     {
                         ShpTsParseResult parsed = WestwoodShpTsReader.Read(
@@ -988,7 +976,7 @@ namespace RA2YR.UnityIntegration
                         VxlPresentationBuildResult presentation = VxlExposedFaceMeshBuilder.Build(
                             sections,
                             VxlPresentationTransformProfile.Default,
-                            asset.Palette,
+                            PaletteDisplayProfileConversion.ToDisplayBytes(asset.PaletteRaw, profile.PaletteProfile),
                             new VxlMeshBuildPolicy(65536, 262144, 131072));
                         if (!presentation.IsSuccess || presentation.Asset == null ||
                             !presentation.Asset.Metrics.IsFiniteAndBounded(VxlPresentationTransformProfile.Default))
@@ -1094,7 +1082,7 @@ namespace RA2YR.UnityIntegration
             return name.EndsWith(extension, StringComparison.OrdinalIgnoreCase) ? name : name + extension;
         }
 
-        private static byte[] ToPaletteBytes(WestwoodPalette palette)
+        private static byte[] ToRawPaletteBytes(WestwoodPalette palette)
         {
             var bytes = new byte[WestwoodPalette.FileLength];
             for (int index = 0; index < WestwoodPalette.ColorCount; index++)

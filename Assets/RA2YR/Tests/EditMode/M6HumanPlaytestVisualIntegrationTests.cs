@@ -385,6 +385,44 @@ namespace RA2YR.Tests.EditMode
         }
 
         [Test]
+        public void ShpAndVxlUseTheSameConvertedRawPaletteColor()
+        {
+            using (var temporary = new TemporaryContentTestDirectory())
+            {
+                HumanPlaytestVisualRoleProfile roles = new HumanPlaytestVisualRoleProfile(new[]
+                {
+                    new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanBasicUnit, HumanPlaytestRulesRegistry.VehicleTypes, "ALPHA"),
+                    new HumanPlaytestVisualRoleBinding(HumanPlaytestVisualRole.HumanBase, HumanPlaytestRulesRegistry.BuildingTypes, "STRUCT")
+                });
+                ExternalLegacyVisualProvider provider = CreateSyntheticProvider(
+                    temporary,
+                    "[VehicleTypes]\r\n0=ALPHA\r\n[BuildingTypes]\r\n0=STRUCT\r\n[ALPHA]\r\n[STRUCT]\r\n",
+                    "[ALPHA]\r\nImage=alpha-body\r\nVoxel=yes\r\n[STRUCT]\r\nImage=structure-image\r\nVoxel=no\r\n",
+                    roles,
+                    HumanPlaytestArtImagePolicy.ExplicitOnly,
+                    new[]
+                    {
+                        Entry("alpha-body.vxl", BuildVxl("BODY", 7)),
+                        Entry("alpha-body.hva", BuildHva("BODY")),
+                        Entry("structure-image.shp", ShpTsSyntheticFixtureFactory.Build(1, 1, ShpTsSyntheticFixtureFactory.Raw(1, 1, 0, 7)))
+                    });
+                try
+                {
+                    Assert.That(provider.Status.RouteGateStatus, Is.EqualTo(ExternalVisualRouteGateStatus.ExternalVisualsResolved));
+                    Assert.That(provider.TryGetSprite(HumanPlaytestVisualRole.HumanBase, out Sprite sprite), Is.True);
+                    Assert.That(provider.TryGetVoxelPresentation(HumanPlaytestVisualRole.HumanBasicUnit, out VxlPresentationAsset presentation), Is.True);
+                    Color32 expected = new Color32(130, 65, 255, 255);
+                    Assert.That(sprite.texture.GetPixels32()[0], Is.EqualTo(expected));
+                    Assert.That(presentation.Sections[0].Mesh.colors32, Has.Some.EqualTo(expected));
+                }
+                finally
+                {
+                    provider.Dispose();
+                }
+            }
+        }
+
+        [Test]
         public void ExplicitImagePolicyDoesNotInventMissingArtImageIdentity()
         {
             using (var temporary = new TemporaryContentTestDirectory())
@@ -524,6 +562,10 @@ namespace RA2YR.Tests.EditMode
         {
             var bytes = new byte[768];
             for (int index = 0; index < bytes.Length; index++) bytes[index] = checked((byte)(index % 64));
+            int expected = 7 * 3;
+            bytes[expected] = 32;
+            bytes[expected + 1] = 16;
+            bytes[expected + 2] = 63;
             return bytes;
         }
 

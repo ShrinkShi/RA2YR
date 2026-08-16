@@ -86,7 +86,7 @@ namespace RA2YR.Tests.EditMode
             VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
                 new[] { new VxlPresentationSectionInput("body", 0, cells, Matrix4x4.identity, true) },
                 VxlPresentationTransformProfile.Default,
-                TestPalette());
+                TestDisplayPalette());
             try
             {
                 Assert.IsTrue(result.IsSuccess, result.Diagnostic);
@@ -109,7 +109,7 @@ namespace RA2YR.Tests.EditMode
                     new VxlPresentationSectionInput("turret", 1, new[] { new VoxelRenderCell(1, 0, 0, 2) }, Matrix4x4.Translate(new Vector3(0f, 0f, 1f)), true)
                 },
                 VxlPresentationTransformProfile.Default,
-                TestPalette());
+                TestDisplayPalette());
             try
             {
                 Assert.IsTrue(result.IsSuccess, result.Diagnostic);
@@ -131,7 +131,7 @@ namespace RA2YR.Tests.EditMode
                     new VxlPresentationSectionInput("turret", 1, new[] { new VoxelRenderCell(0, 0, 0, 2) }, Matrix4x4.Translate(new Vector3(2f, 0f, 0f)), true)
                 },
                 VxlPresentationTransformProfile.Default,
-                TestPalette());
+                TestDisplayPalette());
             try
             {
                 Assert.IsTrue(result.IsSuccess, result.Diagnostic);
@@ -153,12 +153,13 @@ namespace RA2YR.Tests.EditMode
             VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
                 new[] { new VxlPresentationSectionInput("body", 0, new[] { new VoxelRenderCell(0, 0, 0, 1), new VoxelRenderCell(1, 0, 0, 2) }, Matrix4x4.identity, true) },
                 VxlPresentationTransformProfile.Default,
-                TestPalette());
+                TestDisplayPalette());
             try
             {
                 Assert.IsTrue(result.IsSuccess, result.Diagnostic);
                 Assert.That(result.Asset.Metrics.DistinctColorCount, Is.GreaterThanOrEqualTo(2));
                 Assert.That(result.Asset.Sections[0].Mesh.colors32, Has.Length.EqualTo(result.Asset.Sections[0].Mesh.vertexCount));
+                Assert.That(result.Asset.Sections[0].Mesh.colors32, Has.Some.EqualTo(new Color32(255, 130, 65, 255)));
             }
             finally { DestroyPresentation(result); }
         }
@@ -171,7 +172,7 @@ namespace RA2YR.Tests.EditMode
             VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
                 new[] { new VxlPresentationSectionInput("body", 0, cells, Matrix4x4.identity, true) },
                 VxlPresentationTransformProfile.Default,
-                TestPalette());
+                TestDisplayPalette());
             try
             {
                 Assert.IsTrue(result.IsSuccess, result.Diagnostic);
@@ -188,21 +189,56 @@ namespace RA2YR.Tests.EditMode
             VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
                 new[] { new VxlPresentationSectionInput("malformed", 0, new[] { new VoxelRenderCell(0, 0, 0, 1), new VoxelRenderCell(400, 0, 0, 2) }, Matrix4x4.identity, true) },
                 profile,
-                TestPalette());
+                TestDisplayPalette());
             Assert.IsFalse(result.IsSuccess);
             Assert.IsNull(result.Asset);
         }
 
-        private static byte[] TestPalette()
+        [Test]
+        public void RawPaletteDisplayProfileUsesExactSixBitConversion()
         {
-            byte[] palette = new byte[768];
-            palette[3] = 255;
-            palette[4] = 32;
-            palette[5] = 16;
-            palette[6] = 16;
-            palette[7] = 220;
-            palette[8] = 40;
-            return palette;
+            byte[] raw = new byte[256 * 3];
+            raw[0] = 32;
+            raw[1] = 16;
+            raw[2] = 63;
+            byte[] display = PaletteDisplayProfileConversion.ToDisplayBytes(raw, PaletteDisplayProfile.ScaleToFullRangeRounded);
+            Assert.AreEqual(130, display[0]);
+            Assert.AreEqual(65, display[1]);
+            Assert.AreEqual(255, display[2]);
+            Assert.AreEqual(255, PaletteDisplayProfileConversion.ConvertChannel(63, PaletteDisplayProfile.ScaleToFullRangeRounded));
+        }
+
+        [Test]
+        public void VxlPresentationUsesConvertedRawPaletteColor()
+        {
+            byte[] raw = new byte[256 * 3];
+            int offset = 7 * 3;
+            raw[offset] = 32;
+            raw[offset + 1] = 16;
+            raw[offset + 2] = 63;
+            byte[] display = PaletteDisplayProfileConversion.ToDisplayBytes(raw, PaletteDisplayProfile.ScaleToFullRangeRounded);
+            VxlPresentationBuildResult result = VxlExposedFaceMeshBuilder.Build(
+                new[] { new VxlPresentationSectionInput("body", 0, new[] { new VoxelRenderCell(0, 0, 0, 7), new VoxelRenderCell(1, 0, 0, 8) }, Matrix4x4.identity, true) },
+                VxlPresentationTransformProfile.Default,
+                display);
+            try
+            {
+                Assert.IsTrue(result.IsSuccess, result.Diagnostic);
+                Assert.That(result.Asset.Sections[0].Mesh.colors32, Has.Some.EqualTo(new Color32(130, 65, 255, 255)));
+            }
+            finally { DestroyPresentation(result); }
+        }
+
+        private static byte[] TestDisplayPalette()
+        {
+            byte[] raw = new byte[768];
+            raw[3] = 63;
+            raw[4] = 32;
+            raw[5] = 16;
+            raw[6] = 16;
+            raw[7] = 55;
+            raw[8] = 40;
+            return PaletteDisplayProfileConversion.ToDisplayBytes(raw, PaletteDisplayProfile.ScaleToFullRangeRounded);
         }
 
         private static void DestroyPresentation(VxlPresentationBuildResult result)

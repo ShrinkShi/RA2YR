@@ -266,12 +266,17 @@ namespace RA2YR.UnityIntegration
             return new VxlMeshBuildResult(mesh, mesh != null, diagnostic);
         }
 
-        public static VxlPresentationBuildResult Build(IReadOnlyList<VxlPresentationSectionInput> sections, VxlPresentationTransformProfile profile, byte[] palette, VxlMeshBuildPolicy policy = null)
+        /// <summary>
+        /// Builds presentation meshes from a display-space palette table. The
+        /// caller must convert the authoritative PAL raw 0..63 channels through
+        /// the configured display profile before entering this Unity boundary.
+        /// </summary>
+        public static VxlPresentationBuildResult Build(IReadOnlyList<VxlPresentationSectionInput> sections, VxlPresentationTransformProfile profile, byte[] displayPalette, VxlMeshBuildPolicy policy = null)
         {
             policy = policy ?? new VxlMeshBuildPolicy();
             if (sections == null || sections.Count == 0) return Failure("At least one VXL section is required.");
             if (profile == null) return Failure("A VXL presentation transform profile is required.");
-            if (palette == null || palette.Length < 256 * 3) return Failure("A complete VXL palette is required.");
+            if (displayPalette == null || displayPalette.Length < 256 * 3) return Failure("A complete VXL display palette is required.");
 
             int totalCells = 0;
             var transformedBounds = new PresentationPointBounds();
@@ -326,7 +331,7 @@ namespace RA2YR.UnityIntegration
                     Include(ref localMin, ref localMax, local);
                 }
                 VxlPresentationBounds bounds = new VxlPresentationBounds(points.Min, points.Max, localMin, localMax, pivot, Vector3.zero);
-                Mesh mesh = BuildRawMesh(section.Cells, pivot, section.FrameTransform, scale, profile, policy, out string diagnostic, palette, allColors);
+                Mesh mesh = BuildRawMesh(section.Cells, pivot, section.FrameTransform, scale, profile, policy, out string diagnostic, displayPalette, allColors);
                 if (mesh == null)
                 {
                     DestroyMeshes(builtSections);
@@ -409,7 +414,7 @@ namespace RA2YR.UnityIntegration
 
         private static VxlPresentationBuildResult Failure(string diagnostic) => new VxlPresentationBuildResult(null, false, diagnostic ?? "VXL presentation build failed.");
 
-        private static Mesh BuildRawMesh(IReadOnlyList<VoxelRenderCell> cells, Vector3 pivot, Matrix4x4 frameTransform, float scale, VxlPresentationTransformProfile profile, VxlMeshBuildPolicy policy, out string diagnostic, byte[] palette = null, HashSet<Color32> aggregateColors = null)
+        private static Mesh BuildRawMesh(IReadOnlyList<VoxelRenderCell> cells, Vector3 pivot, Matrix4x4 frameTransform, float scale, VxlPresentationTransformProfile profile, VxlMeshBuildPolicy policy, out string diagnostic, byte[] displayPalette = null, HashSet<Color32> aggregateColors = null)
         {
             diagnostic = null;
             var occupied = new HashSet<Vector3Int>();
@@ -424,7 +429,7 @@ namespace RA2YR.UnityIntegration
                 {
                     Vector3Int neighbor = new Vector3Int(cell.X + Directions[face, 0], cell.Y + Directions[face, 1], cell.Z + Directions[face, 2]);
                     if (occupied.Contains(neighbor)) continue;
-                    Color32 color = palette == null ? new Color32(255, 255, 255, 255) : PaletteColor(palette, cell.ColorIndex);
+                    Color32 color = displayPalette == null ? new Color32(255, 255, 255, 255) : DisplayPaletteColor(displayPalette, cell.ColorIndex);
                     AddFace(vertices, triangles, colors, cell.X, cell.Y, cell.Z, face, pivot, frameTransform, scale, profile, color);
                     aggregateColors?.Add(color);
                     if (vertices.Count > policy.MaxVertices || triangles.Count / 3 > policy.MaxTriangles)
@@ -473,10 +478,10 @@ namespace RA2YR.UnityIntegration
             triangles.Add(start); triangles.Add(start + 2); triangles.Add(start + 3);
         }
 
-        private static Color32 PaletteColor(byte[] palette, byte index)
+        private static Color32 DisplayPaletteColor(byte[] displayPalette, byte index)
         {
             int offset = index * 3;
-            return new Color32(palette[offset], palette[offset + 1], palette[offset + 2], 255);
+            return new Color32(displayPalette[offset], displayPalette[offset + 1], displayPalette[offset + 2], 255);
         }
 
         private static int CountDistinctColors(Color32[] colors) => colors == null ? 0 : new HashSet<Color32>(colors).Count;
