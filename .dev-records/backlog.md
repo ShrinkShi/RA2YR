@@ -502,7 +502,7 @@ turn Unity presentation state into simulation authority.
 
 ### M6 rescue final current-head rerun (2026-08-17)
 
-- [x] Reran EditMode on final commit `b865d1c`:
+- [x] Reran EditMode on the final code/test tree:
   1709/1709 passed, Unity exit 0, no forced post-result shutdown.
 - [x] Reran PlayMode on the same final commit: 7/7 passed, Unity exit 0, no
   forced post-result shutdown.

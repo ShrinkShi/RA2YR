@@ -159,8 +159,8 @@ changes are automated readiness evidence only; a maintainer must still launch
 Unity and perform the human visual check after the real terrain/resource route
 is completed.
 
-The final committed rescue tree was rerun after commit
-`b865d1c`: EditMode `1709/1709` passed
+The final code/test tree was rerun after the rescue implementation was
+committed: EditMode `1709/1709` passed
 (Unity exit 0, no forced post-result shutdown) and PlayMode `7/7` passed
 (Unity exit 0, no forced post-result shutdown). These are current-head
 automated results only; they do not close the real TMP/theater or ore/resource
