@@ -6,6 +6,7 @@ using RA2YR.Core.Formats.MapTerrain;
 using RA2YR.Presentation;
 using RA2YR.Simulation;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace RA2YR.UnityIntegration
 {
@@ -22,11 +23,16 @@ namespace RA2YR.UnityIntegration
         private Vector3 dragStart;
         private bool dragging;
         private bool attackMoveMode;
+        private UnityRtsInputController inputController;
+        [SerializeField] private bool syntheticMode;
+        [SerializeField] private bool strictRealContent = true;
+        private string strictRealContentFailure;
         private bool paused;
         private float simulationAccumulator;
         private PresentationSnapshot previousPresentation;
         private ExternalLegacyVisualProvider externalVisualProvider;
         private ExternalLegacyVisualStatus externalVisualStatus;
+        private StrictOriginalContentPreflightResult strictPreflight;
         private Material terrainMaterial;
         private IsometricProjectionProfile terrainProjection;
         private int terrainCellCount;
@@ -41,6 +47,7 @@ namespace RA2YR.UnityIntegration
         public bool IsPaused => paused;
         public int TerrainCellCount => terrainCellCount;
         public ExternalLegacyVisualStatus ExternalVisualStatus => externalVisualStatus;
+        public StrictOriginalContentPreflightResult StrictPreflight => strictPreflight;
         public int ExternalObjectCount => externalObjectCount;
         public int SyntheticObjectFallbackCount => syntheticObjectFallbackCount;
         public PresentationSnapshot LastPresentation { get; private set; }
@@ -48,7 +55,10 @@ namespace RA2YR.UnityIntegration
         public static UnitySyntheticSkirmishBootstrap CreateSynthetic(string name = "RA2YRSyntheticSkirmish")
         {
             GameObject root = new GameObject(name);
-            return root.AddComponent<UnitySyntheticSkirmishBootstrap>();
+            UnitySyntheticSkirmishBootstrap bootstrap = root.AddComponent<UnitySyntheticSkirmishBootstrap>();
+            bootstrap.syntheticMode = true;
+            bootstrap.strictRealContent = false;
+            return bootstrap;
         }
 
         private void Awake()
@@ -90,11 +100,22 @@ namespace RA2YR.UnityIntegration
             PresentationWorld.Configure(new UnityPresentationWorldPolicy(4096, 1024));
             Client = gameObject.GetComponent<UnityInteractiveClient>() ?? gameObject.AddComponent<UnityInteractiveClient>();
             Client.Configure(new UnityInteractiveClientPolicy(512, 256), new IsometricPointerProfile(64, 32, 1920, 1080), Runtime.CommandQueue);
+            inputController = gameObject.GetComponent<UnityRtsInputController>() ?? gameObject.AddComponent<UnityRtsInputController>();
             terrainProjection = CreateTerrainProjection();
             BuildCamera();
             ConfigureExternalVisuals();
-            BuildProceduralArt();
-            BuildTerrain();
+            if (syntheticMode)
+            {
+                BuildProceduralArt();
+                BuildTerrain();
+            }
+            else
+            {
+                if (strictPreflight == null)
+                    strictRealContentFailure = externalVisualProvider == null || externalVisualStatus == null || !externalVisualStatus.IsStrictRealContentReady
+                        ? "StrictRealContent requires complete external role presentation; no synthetic visual fallback is permitted."
+                        : string.Empty;
+            }
             IsInitialized = true;
         }
 
@@ -111,15 +132,25 @@ namespace RA2YR.UnityIntegration
                     "SyntheticFallback",
                     "Local external content configuration is not present.",
                     new ExternalVisualRouteDiagnostics(ExternalVisualRouteGateStatus.SourceNotConfigured));
+                if (!syntheticMode && strictRealContent)
+                {
+                    strictPreflight = StrictOriginalContentPreflight.Run(configurationPath, projectRoot, externalVisualStatus, false, false);
+                    strictRealContentFailure = strictPreflight.Message;
+                }
                 return;
             }
 
             HumanPlaytestVisualProfile profile = new HumanPlaytestVisualProfile(
-                HumanPlaytestVisualMode.ExternalLegacyPreferred,
+                syntheticMode ? HumanPlaytestVisualMode.SyntheticOnly : (strictRealContent ? HumanPlaytestVisualMode.StrictRealContent : HumanPlaytestVisualMode.ExternalLegacyPreferred),
                 configurationPath,
                 artImagePolicy: HumanPlaytestArtImagePolicy.ExplicitOrSectionIdentifier);
             externalVisualProvider = ExternalLegacyVisualProvider.Create(profile, projectRoot);
             externalVisualStatus = externalVisualProvider.Status;
+            if (!syntheticMode && strictRealContent)
+            {
+                strictPreflight = StrictOriginalContentPreflight.Run(configurationPath, projectRoot, externalVisualStatus, false, false);
+                strictRealContentFailure = strictPreflight.IsReady ? string.Empty : strictPreflight.Message;
+            }
         }
 
         public void RestartMatch()
@@ -139,7 +170,7 @@ namespace RA2YR.UnityIntegration
 
         public bool SelectSingle(EntityId entity, bool additive = false)
         {
-            if (!Runtime.World.Registry.IsAlive(entity) || !Runtime.HumanUnits.Contains(entity)) return false;
+            if (!Runtime.IsSelectable(entity, Runtime.HumanPlayer)) return false;
             var ids = additive ? Client.Selection.Entities.Concat(new[] { entity }) : new[] { entity };
             SelectionResult result = SelectionService.Replace(ids, new SelectionPolicy(256));
             if (!result.IsSuccess) return false;
@@ -155,12 +186,19 @@ namespace RA2YR.UnityIntegration
 
         public ClientCommandResult IssueAttack(EntityId target)
         {
+            attackMoveMode = false;
             return Client.SubmitCommand(CommandKind.Attack, null, target, Runtime.Tick);
         }
 
         public ClientCommandResult IssueAttackMove(CellCoordinate cell)
         {
+            attackMoveMode = false;
             return Client.SubmitCommand(CommandKind.AttackMove, cell, null, Runtime.Tick);
+        }
+
+        public ClientCommandResult IssueHarvest(CellCoordinate cell)
+        {
+            return Client.SubmitCommand(CommandKind.Harvest, cell, null, Runtime.Tick);
         }
 
         public bool SetSelectedAutonomy(AutonomyMode mode) => Runtime.SetAutonomy(Client.Selection.Entities, mode);
@@ -241,44 +279,81 @@ namespace RA2YR.UnityIntegration
 
         private void HandleCameraInput()
         {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
-            if (horizontal == 0f)
-                horizontal = (Input.GetKey(KeyCode.LeftArrow) ? -1f : 0f) + (Input.GetKey(KeyCode.RightArrow) ? 1f : 0f);
-            if (vertical == 0f)
-                vertical = (Input.GetKey(KeyCode.DownArrow) ? -1f : 0f) + (Input.GetKey(KeyCode.UpArrow) ? 1f : 0f);
+            Vector2 mouse = Input.mousePosition;
+            float horizontal = mouse.x <= 18f ? -1f : mouse.x >= Screen.width - 18f ? 1f : 0f;
+            float vertical = mouse.y <= 18f ? -1f : mouse.y >= Screen.height - 18f ? 1f : 0f;
+            if (horizontal == 0f) horizontal = (Input.GetKey(KeyCode.LeftArrow) ? -1f : 0f) + (Input.GetKey(KeyCode.RightArrow) ? 1f : 0f);
+            if (vertical == 0f) vertical = (Input.GetKey(KeyCode.DownArrow) ? -1f : 0f) + (Input.GetKey(KeyCode.UpArrow) ? 1f : 0f);
             float wheel = Input.GetAxisRaw("Mouse ScrollWheel");
             if (Mathf.Abs(wheel) <= 0.0001f) wheel = Input.mouseScrollDelta.y;
             cameraController.Apply(playCamera, horizontal, vertical, wheel, Time.unscaledDeltaTime);
+            if (inputController != null && inputController.State == UnityRtsInputState.CameraRightDrag && Input.GetMouseButton(1))
+            {
+                Vector2 delta = inputController.UpdateRightDrag(Input.mousePosition);
+                cameraController.Apply(playCamera, -delta.x / 64f, -delta.y / 64f, 0f, Time.unscaledDeltaTime);
+            }
         }
 
         private void HandleHumanInput()
         {
             if (Input.GetKeyDown(KeyCode.Escape)) paused = !paused;
             if (Input.GetKeyDown(KeyCode.R)) RestartMatch();
-            if (Input.GetKeyDown(KeyCode.A)) attackMoveMode = true;
             if (Input.GetKeyDown(KeyCode.M)) SetSelectedAutonomy(AutonomyMode.Manual);
             if (Input.GetKeyDown(KeyCode.T)) SetSelectedAutonomy(AutonomyMode.Assisted);
             if (Input.GetKeyDown(KeyCode.O)) SetSelectedAutonomy(AutonomyMode.Automatic);
             if (Input.GetKeyDown(KeyCode.S)) Client.SubmitCommand(CommandKind.Stop, null, null, Runtime.Tick);
             if (Input.GetKeyDown(KeyCode.H)) Client.SubmitCommand(CommandKind.Hold, null, null, Runtime.Tick);
             if (Input.GetKeyDown(KeyCode.P)) QueueProduction();
-            if (Input.GetMouseButtonDown(0)) { dragging = true; dragStart = MouseWorld(); }
+            if (Input.GetMouseButtonDown(0) && !IsPointerOverUi()) { dragging = true; dragStart = MouseWorld(); inputController.BeginLeft(Input.mousePosition); }
+            if (dragging && Input.GetMouseButton(0)) inputController.UpdateLeft(Input.mousePosition);
             if (Input.GetMouseButtonUp(0) && dragging)
             {
                 Vector3 end = MouseWorld();
                 dragging = false;
-                if (Vector2.Distance(new Vector2(dragStart.x, dragStart.z), new Vector2(end.x, end.z)) > 0.4f) SelectBox(dragStart, end, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
-                else SelectAtCell(ToCell(end), Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+                bool wasDrag;
+                inputController.EndLeft(Input.mousePosition, out wasDrag);
+                bool additive = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                if (wasDrag) SelectBox(dragStart, end, additive);
+                else HandleLeftClick(ToCell(end), additive);
             }
             if (Input.GetMouseButtonDown(1))
             {
-                CellCoordinate cell = ToCell(MouseWorld());
-                EntityId enemy = FindEnemyAt(cell);
-                if (enemy.IsValid) IssueAttack(enemy);
-                else if (attackMoveMode) { IssueAttackMove(cell); attackMoveMode = false; }
-                else IssueMove(cell);
+                if (IsPointerOverUi()) return;
+                inputController.BeginRightDrag(Input.mousePosition);
             }
+            if (Input.GetMouseButtonUp(1) && inputController.State == UnityRtsInputState.CameraRightDrag)
+            {
+                bool click = Vector2.Distance(inputController.DragStartScreen, Input.mousePosition) < inputController.DragThresholdPixels;
+                inputController.EndRightDrag();
+                if (click)
+                {
+                    Client.SetSelection(new SelectionState(System.Array.Empty<EntityId>()));
+                    attackMoveMode = false;
+                    inputController.Cancel();
+                }
+            }
+        }
+
+        private void HandleLeftClick(CellCoordinate cell, bool additive)
+        {
+            HumanPlaytestSnapshot snapshot = Runtime.CaptureSnapshot();
+            HumanPlaytestEntitySnapshot candidate = snapshot.Entities.Where(x => x.Owner.Value == Runtime.HumanPlayer.Value && x.IsSelectable && x.X == cell.X && x.Y == cell.Y).OrderBy(x => x.Entity).FirstOrDefault();
+            if (candidate.Entity.IsValid)
+            {
+                SelectSingle(candidate.Entity, additive);
+                return;
+            }
+            if (Client.Selection.Entities.Count == 0) return;
+            EntityId enemy = FindEnemyAt(cell);
+            if (enemy.IsValid) IssueAttack(enemy);
+            else if (Runtime.IsResourceCell(cell) && Client.Selection.Entities.Any(entity => Runtime.IsControllable(entity, Runtime.HumanPlayer))) IssueHarvest(cell);
+                    else if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) IssueAttackMove(cell);
+            else IssueMove(cell);
+        }
+
+        private bool IsPointerOverUi()
+        {
+            return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
         }
 
         private Vector3 MouseWorld()
@@ -301,13 +376,13 @@ namespace RA2YR.UnityIntegration
         private EntityId FindEnemyAt(CellCoordinate cell)
         {
             HumanPlaytestSnapshot snapshot = Runtime.CaptureSnapshot();
-            return snapshot.Entities.Where(x => x.Owner.Value != Runtime.HumanPlayer.Value && x.Kind == HumanPlaytestEntityKind.Unit && x.X == cell.X && x.Y == cell.Y).Select(x => x.Entity).FirstOrDefault();
+            return snapshot.Entities.Where(x => x.Owner.Value != Runtime.HumanPlayer.Value && x.IsEnemy && x.X == cell.X && x.Y == cell.Y).Select(x => x.Entity).FirstOrDefault();
         }
 
         private void SelectAtCell(CellCoordinate cell, bool additive)
         {
             HumanPlaytestSnapshot snapshot = Runtime.CaptureSnapshot();
-            HumanPlaytestEntitySnapshot candidate = snapshot.Entities.Where(x => x.Owner.Value == Runtime.HumanPlayer.Value && x.Kind == HumanPlaytestEntityKind.Unit && x.X == cell.X && x.Y == cell.Y).OrderBy(x => x.Entity).FirstOrDefault();
+            HumanPlaytestEntitySnapshot candidate = snapshot.Entities.Where(x => x.Owner.Value == Runtime.HumanPlayer.Value && x.IsSelectable && x.X == cell.X && x.Y == cell.Y).OrderBy(x => x.Entity).FirstOrDefault();
             if (candidate.Entity.IsValid) SelectSingle(candidate.Entity, additive);
             else if (!additive) Client.SetSelection(new SelectionState(Array.Empty<EntityId>()));
         }
@@ -318,7 +393,7 @@ namespace RA2YR.UnityIntegration
             CellCoordinate endCell = ToCell(end);
             float minX = Mathf.Min(startCell.X, endCell.X); float maxX = Mathf.Max(startCell.X, endCell.X); float minY = Mathf.Min(startCell.Y, endCell.Y); float maxY = Mathf.Max(startCell.Y, endCell.Y);
             HumanPlaytestSnapshot snapshot = Runtime.CaptureSnapshot();
-            IEnumerable<EntityId> hits = snapshot.Entities.Where(x => x.Owner.Value == Runtime.HumanPlayer.Value && x.Kind == HumanPlaytestEntityKind.Unit && x.X >= minX && x.X <= maxX && x.Y >= minY && x.Y <= maxY).Select(x => x.Entity);
+            IEnumerable<EntityId> hits = snapshot.Entities.Where(x => x.Owner.Value == Runtime.HumanPlayer.Value && x.IsSelectable && x.X >= minX && x.X <= maxX && x.Y >= minY && x.Y <= maxY).Select(x => x.Entity);
             IEnumerable<EntityId> ids = additive ? Client.Selection.Entities.Concat(hits) : hits;
             SelectionResult result = SelectionService.Replace(ids, new SelectionPolicy(256));
             if (result.IsSuccess) Client.SetSelection(result.Selection);
@@ -440,13 +515,16 @@ namespace RA2YR.UnityIntegration
                     target = new GameObject("Entity_" + entity.Entity.Index + "_" + entity.Entity.Generation);
                     target.transform.SetParent(transform, false);
                     bool external = TryApplyExternalVisual(target, entity);
-                    if (!external)
+                    if (!external && syntheticMode)
                     {
                         SpriteRenderer renderer = target.AddComponent<SpriteRenderer>();
                         renderer.sprite = unitSprite;
                         syntheticObjectFallbackCount = checked(syntheticObjectFallbackCount + 1);
                     }
-                    else externalObjectCount = checked(externalObjectCount + 1);
+                    else if (external)
+                    {
+                        externalObjectCount = checked(externalObjectCount + 1);
+                    }
                     entityObjects[entity.Entity] = target;
                     Client.RegisterPickTarget(new UnityPickTarget(entity.Entity, new CellCoordinate(entity.X, entity.Y), target.name, entity.Entity.Index));
                 }
@@ -475,7 +553,10 @@ namespace RA2YR.UnityIntegration
                 bool visible = snapshot.Entities.Any(x => x.Owner.Value == Runtime.HumanPlayer.Value && Math.Abs(x.X - tile.Key.X) + Math.Abs(x.Y - tile.Key.Y) <= 9);
                 tile.Value.GetComponent<SpriteRenderer>().color = visible ? tile.Value.GetComponent<SpriteRenderer>().color.WithAlpha(1f) : tile.Value.GetComponent<SpriteRenderer>().color.WithAlpha(0.35f);
             }
-            bool useExternal = externalVisualProvider != null && externalVisualProvider.IsAvailable;
+            bool useExternal = externalVisualProvider != null &&
+                (syntheticMode || !strictRealContent
+                    ? externalVisualProvider.IsAvailable
+                    : externalVisualStatus != null && externalVisualStatus.IsStrictRealContentReady);
             var descriptors = snapshot.Entities.Select(x =>
             {
                 bool enemy = x.Owner.Value != Runtime.HumanPlayer.Value;
@@ -486,9 +567,9 @@ namespace RA2YR.UnityIntegration
                     : "synthetic/playtest/" + role;
                 return new PresentationEntityDescriptor(x.Entity, new VisualAssetId(visualId), x.Kind == HumanPlaytestEntityKind.Unit ? PresentationRenderPass.Vehicle : PresentationRenderPass.Structure, new PresentationPosition(x.X, x.Y), x.Entity.Index);
             });
-            IVisualAssetProvider[] providers = useExternal
-                ? new IVisualAssetProvider[] { externalVisualProvider, new SyntheticProvider() }
-                : new IVisualAssetProvider[] { new SyntheticProvider() };
+            IVisualAssetProvider[] providers = syntheticMode
+                ? (useExternal ? new IVisualAssetProvider[] { externalVisualProvider, new SyntheticProvider() } : new IVisualAssetProvider[] { new SyntheticProvider() })
+                : (useExternal ? new IVisualAssetProvider[] { externalVisualProvider } : Array.Empty<IVisualAssetProvider>());
             LastPresentation = PresentationSnapshotAssembler.Assemble(Runtime.World.CaptureSnapshot(), descriptors, previousPresentation, providers, new PresentationAssemblyPolicy(4096));
             previousPresentation = LastPresentation;
             Client.SetVisibility(BuildVisibility(snapshot));
@@ -529,8 +610,53 @@ namespace RA2YR.UnityIntegration
             if (GUILayout.Button(paused ? "Resume (Esc)" : "Pause (Esc)")) paused = !paused;
             if (GUILayout.Button("Restart (R)")) RestartMatch();
             GUILayout.EndHorizontal();
-            GUILayout.Label("LMB select/drag, Shift add, RMB move/attack, A attack-move, S stop, H hold, WASD/arrows pan, wheel zoom.");
+            GUILayout.Label((syntheticMode ? "Synthetic mode" : "StrictRealContent") + (string.IsNullOrEmpty(strictRealContentFailure) ? "" : " FAILED"));
+            if (!string.IsNullOrEmpty(strictRealContentFailure)) GUILayout.Label(strictRealContentFailure);
+            GUILayout.Label("LMB select/drag, Shift add, LMB ground move/attack/harvest, RMB deselect/cancel, Alt attack-move, S stop, H hold, edge/arrows pan, wheel zoom.");
             GUILayout.EndArea();
+            DrawSelectionOverlay(snapshot);
+        }
+
+        private void DrawSelectionOverlay(HumanPlaytestSnapshot snapshot)
+        {
+            if (inputController != null && inputController.IsDragging)
+            {
+                Rect dragRect = ScreenRect(inputController.DragStartScreen, inputController.DragCurrentScreen);
+                Color old = GUI.color;
+                GUI.color = new Color(0.25f, 0.85f, 1f, 0.28f);
+                GUI.Box(dragRect, GUIContent.none);
+                GUI.color = old;
+            }
+            foreach (HumanPlaytestEntitySnapshot entity in snapshot.Entities.Where(x => Client.Selection.Contains(x.Entity)))
+            {
+                GameObject target;
+                if (!entityObjects.TryGetValue(entity.Entity, out target) || target == null) continue;
+                Vector3 screen = playCamera.WorldToScreenPoint(target.transform.position + Vector3.up * 0.55f);
+                if (screen.z <= 0f) continue;
+                float width = entity.IsStructure ? 42f : 30f;
+                Rect marker = new Rect(screen.x - width * 0.5f, Screen.height - screen.y - width * 0.25f, width, 5f);
+                Color old = GUI.color;
+                GUI.color = new Color(0.2f, 0.95f, 1f, 0.95f);
+                GUI.Box(marker, GUIContent.none);
+                Rect health = new Rect(marker.x, marker.y - 7f, marker.width * Mathf.Clamp01(entity.MaximumHealth == 0 ? 0f : (float)entity.Health / entity.MaximumHealth), 3f);
+                GUI.color = entity.Health * 2 < entity.MaximumHealth ? new Color(1f, 0.25f, 0.15f, 0.95f) : new Color(0.25f, 1f, 0.35f, 0.95f);
+                GUI.Box(health, GUIContent.none);
+                if (entity.Kind == HumanPlaytestEntityKind.Harvester && entity.Cargo > 0)
+                {
+                    GUI.color = new Color(1f, 0.8f, 0.15f, 0.95f);
+                    GUI.Box(new Rect(marker.x, marker.y + 7f, marker.width * Mathf.Clamp01((float)entity.Cargo / 100f), 3f), GUIContent.none);
+                }
+                GUI.color = old;
+            }
+        }
+
+        private static Rect ScreenRect(Vector2 a, Vector2 b)
+        {
+            float minX = Mathf.Min(a.x, b.x);
+            float maxX = Mathf.Max(a.x, b.x);
+            float minY = Screen.height - Mathf.Max(a.y, b.y);
+            float maxY = Screen.height - Mathf.Min(a.y, b.y);
+            return Rect.MinMaxRect(minX, minY, maxX, maxY);
         }
 
         private int SelectedHealth(HumanPlaytestSnapshot snapshot) => snapshot.Entities.Where(x => Client.Selection.Contains(x.Entity)).Sum(x => x.Health);

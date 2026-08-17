@@ -6,7 +6,7 @@ using System.Linq;
 namespace RA2YR.Simulation
 {
     public enum CommandSource { Human, ComputerAI, Script, Trigger, Internal }
-    public enum CommandKind { Move, Attack, AttackMove, Stop, Hold, Guard, Patrol }
+    public enum CommandKind { Move, Attack, AttackMove, Stop, Hold, Guard, Patrol, Harvest }
     public enum QueueMode { Replace, Append }
     public enum CommandAcceptance { Accepted, Rejected, QueueFull, Invalid }
     public enum CommandDiagnosticCode { InvalidCommand, QueueFull, DuplicateCommand, ForcedPlayerOverride, InvalidTarget, UnknownMission, InvalidPolicy, BudgetExceeded }

@@ -157,7 +157,7 @@ namespace RA2YR.Simulation
         public int Maximum { get; }
     }
 
-    public enum MissionKind { Idle, Move, Attack, AttackMove, Stop, Hold, Guard }
+    public enum MissionKind { Idle, Move, Attack, AttackMove, Stop, Hold, Guard, Harvest, ReturnToRefinery, Unload }
 
     public readonly struct MissionStateComponent
     {

@@ -24,7 +24,8 @@ namespace RA2YR.UnityIntegration
     public enum HumanPlaytestVisualMode
     {
         SyntheticOnly,
-        ExternalLegacyPreferred
+        ExternalLegacyPreferred,
+        StrictRealContent
     }
 
     public enum ExternalVisualRouteGateStatus
@@ -249,6 +250,13 @@ namespace RA2YR.UnityIntegration
               RouteDiagnostics.VehicleMeshRoles > 0 &&
               RouteDiagnostics.SectionAwareRoles >= RouteDiagnostics.VehicleMeshRoles &&
               RouteDiagnostics.PaletteColoredRoles >= RouteDiagnostics.VehicleMeshRoles));
+
+        public bool IsStrictRealContentReady =>
+            IsLocalExternalVisualReady &&
+            VisualRolesFallback == 0 &&
+            RouteDiagnostics.ShpDecodeFailed == 0 &&
+            RouteDiagnostics.VxlDecodeFailed == 0 &&
+            RouteDiagnostics.HvaBindFailed == 0;
     }
 
     /// <summary>
@@ -917,12 +925,17 @@ namespace RA2YR.UnityIntegration
                             new ShpTsSourceProvenance(sourceId, new[] { LogicalContentPath.Parse(binding.ImageLogicalName) }));
                         if (!parsed.IsSuccess || parsed.Document == null || parsed.Document.Frames.Count == 0)
                         {
+                            LogShpFailure(binding, "reader", parsed.Diagnostics);
                             route.ShpDecodeFailed = checked(route.ShpDecodeFailed + 1);
                             continue;
                         }
-                        ShpTsDecodeResult decoded = WestwoodShpTsDecoder.DecodeFrame(imageBytes, parsed.Document, parsed.Document.Frames[0].Index);
+                        ShpTsRleRowPolicy rowPolicy = profile.Mode == HumanPlaytestVisualMode.StrictRealContent
+                            ? ShpTsRleRowPolicy.ValidatedTrailingTransparentGuard
+                            : ShpTsRleRowPolicy.StrictDeclaredWidth;
+                        ShpTsDecodeResult decoded = WestwoodShpTsDecoder.DecodeFrame(imageBytes, parsed.Document, parsed.Document.Frames[0].Index, null, rowPolicy);
                         if (!decoded.IsSuccess || decoded.Frame == null)
                         {
+                            LogShpFailure(binding, "decoder", decoded.Diagnostics);
                             route.ShpDecodeFailed = checked(route.ShpDecodeFailed + 1);
                             continue;
                         }
@@ -934,6 +947,7 @@ namespace RA2YR.UnityIntegration
                         VxlReadResult parsed = WestwoodVxlReader.Read(imageBytes);
                         if (!parsed.IsSuccess || parsed.Document == null)
                         {
+                            Debug.Log("M6_VXL_ROUTE_FAILURE;role=" + binding.Role + ";stage=reader");
                             route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
                             continue;
                         }
@@ -948,6 +962,7 @@ namespace RA2YR.UnityIntegration
                             MixVirtualEntry hvaEntry = FindEntry(entries, baseName + ".hva");
                             if (hvaEntry == null)
                             {
+                                Debug.Log("M6_VXL_ROUTE_FAILURE;role=" + binding.Role + ";stage=hva-missing");
                                 route.HvaBindFailed = checked(route.HvaBindFailed + 1);
                                 route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
                                 continue;
@@ -958,10 +973,16 @@ namespace RA2YR.UnityIntegration
                                 profile.MaxAssetBytes);
                             parsedHva = WestwoodHvaReader.Read(hvaBytes);
                             bound = parsedHva.IsSuccess && parsedHva.Document != null
-                                ? VxlHvaBinder.Bind(parsed.Document, parsedHva.Document)
+                                ? VxlHvaBinder.Bind(parsed.Document, parsedHva.Document, 256, profile.Mode == HumanPlaytestVisualMode.StrictRealContent)
                                 : null;
                             if (bound == null || !bound.IsSuccess)
                             {
+                                string bindCodes = bound == null ? "null" : string.Join(",", bound.Diagnostics.Select(value => value == null ? "null" : value.Code.ToString()).Distinct().OrderBy(value => value));
+                                string bindStatus = bound == null ? "null" : bound.Status.ToString();
+                                string hvaState = parsedHva == null ? "null" : parsedHva.Execution.CompletionStatus.ToString();
+                                string vxlSections = string.Join("|", parsed.Document.Sections.Select(value => value.Header.NameCandidate ?? string.Empty));
+                                string hvaSections = parsedHva == null || parsedHva.Document == null ? string.Empty : string.Join("|", parsedHva.Document.SectionNames.Select(value => value.NameCandidate ?? string.Empty));
+                                Debug.Log("M6_VXL_ROUTE_FAILURE;role=" + binding.Role + ";stage=hva-bind;status=" + bindStatus + ";hva=" + hvaState + ";codes=" + bindCodes + ";unboundVxl=" + (bound == null ? 0 : bound.UnboundVxlSections.Count) + ";unboundHva=" + (bound == null ? 0 : bound.UnboundHvaSections.Count) + ";vxlSections=" + vxlSections + ";hvaSections=" + hvaSections);
                                 route.HvaBindFailed = checked(route.HvaBindFailed + 1);
                                 route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
                                 continue;
@@ -981,6 +1002,7 @@ namespace RA2YR.UnityIntegration
                         if (!presentation.IsSuccess || presentation.Asset == null ||
                             !presentation.Asset.Metrics.IsFiniteAndBounded(VxlPresentationTransformProfile.Default))
                         {
+                            Debug.Log("M6_VXL_ROUTE_FAILURE;role=" + binding.Role + ";stage=presentation");
                             route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
                             continue;
                         }
@@ -998,12 +1020,31 @@ namespace RA2YR.UnityIntegration
                 catch (Exception exception) when (exception is BinaryReadException || exception is IOException || exception is ArgumentException || exception is InvalidOperationException || exception is OverflowException)
                 {
                     if (binding.Format == HumanPlaytestVisualFormat.Shp)
+                        Debug.Log("M6_SHP_ROUTE_FAILURE;role=" + binding.Role + ";stage=exception;type=" + exception.GetType().Name);
+                    if (binding.Format == HumanPlaytestVisualFormat.Shp)
                         route.ShpDecodeFailed = checked(route.ShpDecodeFailed + 1);
                     else
                         route.VxlDecodeFailed = checked(route.VxlDecodeFailed + 1);
                 }
             }
             return values;
+        }
+
+        private static void LogShpFailure(
+            ResolvedLegacyVisual binding,
+            string stage,
+            IEnumerable<ShpTsDiagnostic> diagnostics)
+        {
+            string codes = string.Join(",", (diagnostics ?? Enumerable.Empty<ShpTsDiagnostic>())
+                .Select(value => value == null ? "null" : value.Code.ToString())
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(value => value, StringComparer.Ordinal));
+            string details = string.Join(",", (diagnostics ?? Enumerable.Empty<ShpTsDiagnostic>())
+                .Where(value => value != null)
+                .Select(value => value.Code + "@" + value.FrameIndex + ":" + value.RowIndex + ":" + value.RequestedLength + ":" + value.RemainingLength + ":" + value.Message)
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(value => value, StringComparer.Ordinal));
+            Debug.Log("M6_SHP_ROUTE_FAILURE;role=" + binding.Role + ";stage=" + stage + ";codes=" + codes + ";details=" + details);
         }
 
         private static ExternalLegacyVisualStatus CreateStatus(

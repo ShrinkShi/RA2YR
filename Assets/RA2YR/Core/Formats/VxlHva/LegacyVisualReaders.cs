@@ -263,6 +263,11 @@ namespace RA2YR.Core.Formats.VxlHva
     {
         internal static VxlHvaBindingResult Bind(VxlDocumentRaw vxl, HvaDocumentRaw hva, long maxDiagnostics = 256)
         {
+            return Bind(vxl, hva, maxDiagnostics, false);
+        }
+
+        internal static VxlHvaBindingResult Bind(VxlDocumentRaw vxl, HvaDocumentRaw hva, long maxDiagnostics, bool allowUnboundVxlSections)
+        {
             var c = new LegacyVisualDiagnosticCollector((int)Math.Min(Math.Max(0, maxDiagnostics), int.MaxValue));
             if (vxl == null || hva == null) { c.Add(new LegacyVisualDiagnostic(LegacyVisualDiagnosticCode.WrongInput, LegacyVisualDiagnosticSeverity.Error, 0, "binding", "Both VXL and HVA documents are required.")); return new VxlHvaBindingResult(VxlHvaBindingStatus.NotAttempted, null, null, null, c.Diagnostics, c.Complete()); }
             var bindings = new List<VxlHvaBinding>(); var unboundVxl = new List<int>(); var usedHva = new HashSet<int>();
@@ -274,7 +279,7 @@ namespace RA2YR.Core.Formats.VxlHva
                 else { unboundVxl.Add(vi); c.Add(new LegacyVisualDiagnostic(LegacyVisualDiagnosticCode.MissingBinding, LegacyVisualDiagnosticSeverity.Warning, 0, "binding", "A VXL section has no unique HVA name match.", vi)); }
             }
             for (int hi = 0; hi < hva.SectionNames.Count; hi++) if (!usedHva.Contains(hi)) { c.Add(new LegacyVisualDiagnostic(LegacyVisualDiagnosticCode.UnboundSection, LegacyVisualDiagnosticSeverity.Warning, 0, "binding", "An HVA section is not bound to a VXL section.", hi)); }
-            VxlHvaBindingStatus status = c.Fatal ? VxlHvaBindingStatus.Ambiguous : (unboundVxl.Count == 0 && usedHva.Count == hva.SectionNames.Count ? VxlHvaBindingStatus.Complete : VxlHvaBindingStatus.Incomplete);
+            VxlHvaBindingStatus status = c.Fatal ? VxlHvaBindingStatus.Ambiguous : ((unboundVxl.Count == 0 || allowUnboundVxlSections) && usedHva.Count == hva.SectionNames.Count ? VxlHvaBindingStatus.Complete : VxlHvaBindingStatus.Incomplete);
             return new VxlHvaBindingResult(status, bindings, unboundVxl, Enumerable.Range(0, hva.SectionNames.Count).Where(i => !usedHva.Contains(i)), c.Diagnostics, c.Complete());
         }
     }
