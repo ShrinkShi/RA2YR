@@ -1064,3 +1064,13 @@ payload or path is published.
   wheel zoom. UI/audio and real TMP/theater terrain remain deferred.
 - Recorded the future MIX-first logical content architecture requirement
   without changing production content lookup or copyright policy.
+## 2026-08-17 - M6 client rescue strict boundary
+
+- Added explicit RA2 mouse input state handling, capability-based selection,
+  visible selection/health/cargo feedback, and Harvester command precedence.
+- Reused the managed RawLzo1X, SHP, VXL/HVA, and PAL routes with an explicit
+  strict SHP row guard and no new codec or writer.
+- StrictRealContent now excludes the synthetic provider and reports missing
+  TMP/theater/ore routes instead of showing placeholders.
+- Added sanitized evidence only; no original MIX payload, path, pixel, or
+  per-asset record is committed.

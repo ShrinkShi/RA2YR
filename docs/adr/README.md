@@ -62,4 +62,5 @@ that supersedes the old one instead of silently rewriting history.
 | 0055 | M6 Human Playtest Delivery scene and centralized bootstrap | Accepted for synthetic/project-enhancement delivery |
 | 0056 | M6 human playtest prefers bounded external legacy visuals with explicit fallback | Accepted for configured project-enhancement delivery |
 | 0057 | M6 human visual failure closure: fixed isometric terrain and derived VXL lighting | Accepted for M6 project-enhancement presentation |
+| 0058 | M6 strict real-content client rescue remains fail-closed | Accepted for bounded rescue implementation; human playability and original-runtime confirmation remain unresolved |
 | 0043 | M5-C4 structures and placement foundation | Accepted for project-enhancement implementation |

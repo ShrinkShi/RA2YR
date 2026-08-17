@@ -300,6 +300,17 @@ VXL preserves raw normal fields and uses the explicit
 `RA2YR/ExternalLegacyVxlLit` vertex-color shader. Westwood normal/light parity
 remains unconfirmed, and a new human visual recheck is still required.
 
+The current M6 client-rescue tree separates `SyntheticOnly`,
+`ExternalLegacyPreferred`, and `StrictRealContent`. Strict mode never creates
+procedural blue sprites or green terrain when the configured original-content
+route is incomplete. The shared PAL conversion and managed RawLzo1X backend
+are reused; the explicit SHP terminal-transparent-guard profile is
+evidence-gated and leaves the default strict decoder unchanged. RA2 mouse
+semantics, visible drag selection, health/cargo feedback, and Harvester
+player-command precedence are now explicit. Real TMP/theater terrain and
+ore/resource presentation remain a delivery blocker; no M6 human-playable or
+original-runtime claim is made.
+
 ## 本地验证
 
 运行 Unity 测试前必须关闭 Unity Editor：

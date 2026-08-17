@@ -819,3 +819,13 @@ repository, lighting uses the explicitly named
 `DerivedGeometryNormalPresentation` profile and a stable vertex-color lit
 shader. Original normal and lighting semantics remain unconfirmed. A new
 human visual inspection is still required after the final exact-head gates.
+## 2026-08-17 - M6 strict real-content rescue remains blocked
+
+The client rescue closed the input, selection, Harvester precedence, and
+external SHP/VXL/HVA route gaps without copying original payloads into the
+repository. Strict mode now fails closed and does not use the synthetic visual
+provider. The configured patched-development route observed six SHP successes,
+three VXL successes, and three HVA bindings. Real TMP/theater terrain and
+ore/resource presentation are not connected, so the strict preflight remains
+`PresentationRouteIncomplete`; no human-playable or original-runtime claim is
+made.

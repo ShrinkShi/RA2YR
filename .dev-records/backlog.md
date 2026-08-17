@@ -481,3 +481,21 @@ turn Unity presentation state into simulation authority.
   with provenance-based copyright policy and strict-original mode. This is a
   future requirement only; no production architecture or CopyrightPolicy MIX
   behavior changes are part of PR #77.
+
+## M6 client-rescue status (2026-08-17)
+
+- [x] Replace the incorrect WASD/A-toggle input path with explicit RA2-style
+  mouse semantics, a controller state seam, capability-based selection, visible
+  drag feedback, and player-priority Harvester commands.
+- [x] Route the configured external source through strict SHP/VXL/HVA/PAL
+  presentation profiles. The observed sanitized route is six SHP successes,
+  zero SHP failures, three VXL successes, zero VXL failures, and three HVA
+  bindings.
+- [x] Make StrictRealContent fail closed: it does not inject a synthetic
+  provider or procedural blue/green fallback when an external role or terrain
+  route is unavailable.
+- [ ] Bind real TMP/theater terrain and real ore/resource presentation. The
+  strict preflight currently reports PresentationRouteIncomplete, so this
+  remains a blocking human-playability item rather than a completed M6 claim.
+- [ ] Repeat the maintainer Unity Game View inspection after the final current
+  HEAD gates. No HUMAN PASS, Ready, merge, or M7 action is implied.

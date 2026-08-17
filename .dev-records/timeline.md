@@ -1065,3 +1065,11 @@ explicit `DerivedGeometryNormalPresentation` fallback plus a self-authored
 vertex-color lit shader; Westwood normal semantics remain unresolved. Added a
 small finite camera input seam and regression tests. PR #77 remains Draft and
 the required next step is a maintainer visual recheck, not M7.
+## 2026-08-17 - M6 client rescue checkpoint
+
+The third human review exposed an input/selection/Harvester gap and an
+overclaim risk from synthetic visuals. The rescue added the explicit input and
+command seams and made strict external-content presentation fail closed. The
+configured route currently resolves SHP/VXL/HVA objects, while TMP/theater
+terrain and ore/resource presentation remain the blocking next implementation;
+PR #77 stays Draft and no M7 work starts.

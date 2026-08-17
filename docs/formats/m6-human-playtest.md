@@ -58,13 +58,17 @@ binding is not part of this work package.
 
 ## Controls
 
-* LMB selects a unit; drag selects a box; Shift adds to selection.
-* RMB issues Move. Press `A` first for AttackMove; RMB on an opponent issues
-  Attack.
+* LMB selects a friendly unit or structure; drag selects a box; Shift adds to
+  selection. A Harvester is a selectable, controllable mobile entity.
+* With a selection, LMB on ground issues Move, on an opponent issues Attack,
+  and on the contextual resource cell issues Harvest. RMB deselects and
+  cancels targeting; it is not a Move command.
 * `S` Stop, `H` Hold, `M` Manual autonomy, `T` Assisted autonomy, `O`
   Automatic autonomy, `P` queue production.
-* `Esc` pauses/resumes; `R` restarts the synthetic match.
-* WASD or arrow keys pan the camera; the mouse wheel zooms.
+* `Esc` pauses/resumes; `R` restarts the synthetic match. `Alt` modifies a
+  ground order into AttackMove.
+* Mouse-edge scrolling is primary camera pan; arrow keys are auxiliary and
+  the mouse wheel zooms. WASD is not camera input.
 
 ## Boundary and limitations
 
@@ -127,3 +131,30 @@ content architecture requirement is recorded separately: MIX-first logical
 lookup across project, external, MOD, and modern sources, with legacy/modern
 providers and provenance-based policy. That architecture is not implemented
 by this PR.
+
+## 2026-08-17 client-rescue status
+
+The current rescue work separates `SyntheticOnly`, `ExternalLegacyPreferred`,
+and `StrictRealContent`. Strict mode never creates the blue procedural sprite
+or green procedural terrain when the configured original-content route is
+incomplete. It reports a fail-closed preflight result instead.
+
+The configured patched-development corpus now passes the explicit SHP
+`ValidatedTrailingTransparentGuard` profile for six structure frames and the
+managed VXL/HVA route resolves three roles. The default SHP decoder remains
+strict; this profile accepts only a terminal zero-run producing exactly one
+transparent guard byte and is not a general flags-3 compatibility claim.
+VXL/HVA partial section binding is also an explicit strict-content policy: an
+unbound VXL section is allowed only when every HVA section still binds and the
+unbound section remains raw/visible without an invented transform.
+
+The real terrain/TMP/theater and real ore/resource presentation bindings are
+not yet connected to the runtime. `StrictOriginalContentPreflight` therefore
+returns `PresentationRouteIncomplete` and the human scene is not reported as
+playable-ready. The new RA2 input seam removes WASD camera ownership, uses
+edge-scroll plus arrow fallback, treats right-click as cancel/deselect, shows
+the drag rectangle and selection health/cargo bars, and gives the Harvester an
+explicit player-command precedence over synthetic economy automation. These
+changes are automated readiness evidence only; a maintainer must still launch
+Unity and perform the human visual check after the real terrain/resource route
+is completed.
