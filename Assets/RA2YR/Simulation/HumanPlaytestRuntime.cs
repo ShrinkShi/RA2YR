@@ -7,6 +7,17 @@ using System.Text;
 
 namespace RA2YR.Simulation
 {
+    [Flags]
+    public enum HumanPlaytestEntityCapabilities
+    {
+        None = 0,
+        Selectable = 1,
+        Controllable = 2,
+        Mobile = 4,
+        Structure = 8,
+        Enemy = 16
+    }
+
     public enum HumanPlaytestEntityKind { Unit, Harvester, Refinery, Factory, Power, MainBase }
     public enum HumanPlaytestMatchStatus { Running, Victory, Defeat }
 
@@ -32,11 +43,12 @@ namespace RA2YR.Simulation
 
     public readonly struct HumanPlaytestEntitySnapshot : IComparable<HumanPlaytestEntitySnapshot>
     {
-        internal HumanPlaytestEntitySnapshot(EntityId entity, PlayerId owner, HumanPlaytestEntityKind kind, int x, int y, int health, int maximumHealth, MissionKind mission, AutonomyMode autonomy, long cargo)
+        internal HumanPlaytestEntitySnapshot(EntityId entity, PlayerId owner, HumanPlaytestEntityKind kind, HumanPlaytestEntityCapabilities capabilities, int x, int y, int health, int maximumHealth, MissionKind mission, AutonomyMode autonomy, long cargo)
         {
             Entity = entity;
             Owner = owner;
             Kind = kind;
+            Capabilities = capabilities;
             X = x;
             Y = y;
             Health = health;
@@ -49,6 +61,12 @@ namespace RA2YR.Simulation
         public EntityId Entity { get; }
         public PlayerId Owner { get; }
         public HumanPlaytestEntityKind Kind { get; }
+        public HumanPlaytestEntityCapabilities Capabilities { get; }
+        public bool IsSelectable => (Capabilities & HumanPlaytestEntityCapabilities.Selectable) != 0;
+        public bool IsControllable => (Capabilities & HumanPlaytestEntityCapabilities.Controllable) != 0;
+        public bool IsMobile => (Capabilities & HumanPlaytestEntityCapabilities.Mobile) != 0;
+        public bool IsStructure => (Capabilities & HumanPlaytestEntityCapabilities.Structure) != 0;
+        public bool IsEnemy => (Capabilities & HumanPlaytestEntityCapabilities.Enemy) != 0;
         public int X { get; }
         public int Y { get; }
         public int Health { get; }
@@ -130,6 +148,9 @@ namespace RA2YR.Simulation
         private EntityId harvester;
         private EntityId humanFactory;
         private EntityId aiUnit;
+        private bool harvesterPlayerOverride;
+        private CellCoordinate harvesterCommandTarget;
+        private int resourceQuantity;
         private readonly CellCoordinate resourceCell = new CellCoordinate(9, 3);
         private readonly CellCoordinate refineryCell = new CellCoordinate(3, 3);
 
@@ -165,6 +186,10 @@ namespace RA2YR.Simulation
         public EntityId AiUnit => aiUnit;
 
         public IReadOnlyList<EntityId> HumanUnits => OrderedEntities().Where(x => owners[x].Equals(HumanPlayer) && kinds[x] == HumanPlaytestEntityKind.Unit).ToList().AsReadOnly();
+        public IReadOnlyList<EntityId> HumanSelectableEntities => OrderedEntities().Where(x => IsSelectable(x, HumanPlayer)).ToList().AsReadOnly();
+        public CellCoordinate SyntheticResourceCell => resourceCell;
+        public CellCoordinate SyntheticRefineryCell => refineryCell;
+        public int ResourceQuantity => resourceQuantity;
 
         public void Reset()
         {
@@ -180,6 +205,9 @@ namespace RA2YR.Simulation
             nextCommandId = 1;
             nextQueueId = 1;
             harvesterCargo = 0;
+            harvesterPlayerOverride = false;
+            harvesterCommandTarget = resourceCell;
+            resourceQuantity = 100;
             harvestEvents = 0;
             productionEvents = 0;
             combatEvents = 0;
@@ -230,7 +258,17 @@ namespace RA2YR.Simulation
             if (!Enum.IsDefined(typeof(AutonomyMode), mode)) return false;
             bool changed = false;
             foreach (EntityId entity in (entities ?? Enumerable.Empty<EntityId>()).OrderBy(x => x))
-                if (IsOwnedAlive(entity, HumanPlayer) && kinds[entity] == HumanPlaytestEntityKind.Unit) { World.Autonomy.Set(entity, new AutonomyComponent(mode, AutonomyCapabilities.AutoAcquire | AutonomyCapabilities.AutoKite | AutonomyCapabilities.AutoRetreat)); changed = true; }
+                if (IsOwnedAlive(entity, HumanPlayer) && (kinds[entity] == HumanPlaytestEntityKind.Unit || kinds[entity] == HumanPlaytestEntityKind.Harvester))
+                {
+                    World.Autonomy.Set(entity, new AutonomyComponent(mode, AutonomyCapabilities.AutoAcquire | AutonomyCapabilities.AutoKite | AutonomyCapabilities.AutoRetreat));
+                    if (entity.Equals(harvester) && mode != AutonomyMode.Manual)
+                    {
+                        harvesterPlayerOverride = false;
+                        moveDestinations.Remove(entity);
+                        World.Missions.Set(entity, new MissionStateComponent(MissionKind.Idle, checked((int)Math.Min(Tick, int.MaxValue))));
+                    }
+                    changed = true;
+                }
             return changed;
         }
 
@@ -277,7 +315,7 @@ namespace RA2YR.Simulation
                 if (!World.Positions.TryGet(entity, out position) || !World.Health.TryGet(entity, out health)) continue;
                 World.Missions.TryGet(entity, out mission);
                 World.Autonomy.TryGet(entity, out autonomy);
-                entities.Add(new HumanPlaytestEntitySnapshot(entity, owners[entity], kinds[entity], position.X, position.Y, health.Current, health.Maximum, mission.Kind, autonomy.Mode, entity == harvester ? harvesterCargo : 0));
+                entities.Add(new HumanPlaytestEntitySnapshot(entity, owners[entity], kinds[entity], CapabilitiesFor(kinds[entity], owners[entity]), position.X, position.Y, health.Current, health.Maximum, mission.Kind, autonomy.Mode, entity == harvester ? harvesterCargo : 0));
             }
             return new HumanPlaytestSnapshot(Tick, status, winner, Economy.Get(HumanPlayer).Balance, harvesterCargo, harvestEvents, productionEvents, combatEvents, spawnedUnits, destroyedUnits, selectedSet.Count(x => IsOwnedAlive(x, HumanPlayer)), Production.Entries.Count, entities, ComputeStateHash());
         }
@@ -343,11 +381,18 @@ namespace RA2YR.Simulation
             foreach (CommandRequest request in CommandQueue.SnapshotCanonical().Where(x => x.IssuedTick <= Tick).OrderBy(x => x))
             {
                 if (!processedCommands.Add(request.CommandId) || !World.Registry.IsAlive(request.Actor)) continue;
-                MissionKind mission = request.Kind == CommandKind.Move ? MissionKind.Move : request.Kind == CommandKind.Attack ? MissionKind.Attack : request.Kind == CommandKind.AttackMove ? MissionKind.AttackMove : request.Kind == CommandKind.Stop ? MissionKind.Stop : request.Kind == CommandKind.Hold ? MissionKind.Hold : MissionKind.Guard;
+                MissionKind mission = request.Kind == CommandKind.Move ? MissionKind.Move : request.Kind == CommandKind.Attack ? MissionKind.Attack : request.Kind == CommandKind.AttackMove ? MissionKind.AttackMove : request.Kind == CommandKind.Stop ? MissionKind.Stop : request.Kind == CommandKind.Hold ? MissionKind.Hold : request.Kind == CommandKind.Harvest ? MissionKind.Harvest : MissionKind.Guard;
                 World.Missions.Set(request.Actor, new MissionStateComponent(mission, checked((int)Math.Min(request.CommandId, int.MaxValue))));
                 if (request.Target.Entity.HasValue) World.Targets.Set(request.Actor, new TargetMemoryComponent(request.Target.Entity.Value, 1));
                 if (request.Target.Cell.HasValue) moveDestinations[request.Actor] = request.Target.Cell.Value;
                 else if (mission == MissionKind.Stop || mission == MissionKind.Hold) moveDestinations.Remove(request.Actor);
+                if (request.Actor.Equals(harvester) && request.Source == CommandSource.Human)
+                {
+                    harvesterPlayerOverride = true;
+                    if (request.Target.Cell.HasValue) harvesterCommandTarget = request.Target.Cell.Value;
+                    if (mission == MissionKind.Stop || mission == MissionKind.Hold)
+                        moveDestinations.Remove(request.Actor);
+                }
             }
         }
 
@@ -368,7 +413,47 @@ namespace RA2YR.Simulation
         private void ProcessEconomy()
         {
             if (!IsOwnedAlive(harvester, HumanPlayer)) return;
+            MissionStateComponent currentMission;
+            World.Missions.TryGet(harvester, out currentMission);
+            if (harvesterPlayerOverride && currentMission.Kind != MissionKind.Idle && currentMission.Kind != MissionKind.Harvest && currentMission.Kind != MissionKind.ReturnToRefinery && currentMission.Kind != MissionKind.Unload)
+                return;
             PositionComponent position; World.Positions.TryGet(harvester, out position);
+            if (harvesterPlayerOverride && currentMission.Kind == MissionKind.Harvest)
+            {
+                if (position.X != harvesterCommandTarget.X || position.Y != harvesterCommandTarget.Y)
+                {
+                    MoveOneStep(harvester, harvesterCommandTarget);
+                    return;
+                }
+                if (resourceQuantity > 0 && harvesterCargo < 100)
+                {
+                    int amount = Math.Min(25, Math.Min(resourceQuantity, 100 - (int)harvesterCargo));
+                    harvesterCargo += amount;
+                    resourceQuantity -= amount;
+                    moveDestinations[harvester] = refineryCell;
+                    World.Missions.Set(harvester, new MissionStateComponent(MissionKind.ReturnToRefinery, checked((int)Math.Min(Tick, int.MaxValue))));
+                }
+                return;
+            }
+            if (harvesterPlayerOverride && (currentMission.Kind == MissionKind.ReturnToRefinery || currentMission.Kind == MissionKind.Unload))
+            {
+                if (position.X != refineryCell.X || position.Y != refineryCell.Y)
+                {
+                    MoveOneStep(harvester, refineryCell);
+                    return;
+                }
+                if (harvesterCargo > 0)
+                {
+                    EconomyTransaction transaction;
+                    if (Economy.TryApply(EconomyTransactionSource.HarvestIncome, HumanPlayer, Tick, harvesterCargo, "player-harvester-unload", out transaction))
+                    {
+                        harvesterCargo = 0;
+                        harvestEvents++;
+                        World.Missions.Set(harvester, new MissionStateComponent(MissionKind.Idle, checked((int)Math.Min(Tick, int.MaxValue))));
+                    }
+                }
+                return;
+            }
             if (harvesterCargo == 0)
             {
                 if (position.X != resourceCell.X || position.Y != resourceCell.Y) MoveOneStep(harvester, resourceCell);
@@ -376,7 +461,11 @@ namespace RA2YR.Simulation
                 {
                     HarvesterCargoSnapshot cargo;
                     IReadOnlyList<ResourceEconomyDiagnostic> diagnostics;
-                    if (HarvesterCargoSnapshot.TryCreate(100, new[] { new HarvesterCargoEntry(ResourceFamily.Ore, 25, checked((int)Tick)) }, ResourceEconomyReadLimits.Default, out cargo, out diagnostics)) harvesterCargo = cargo.TotalQuantity;
+                    if (resourceQuantity > 0 && HarvesterCargoSnapshot.TryCreate(100, new[] { new HarvesterCargoEntry(ResourceFamily.Ore, Math.Min(25, resourceQuantity), checked((int)Tick)) }, ResourceEconomyReadLimits.Default, out cargo, out diagnostics))
+                    {
+                        harvesterCargo = cargo.TotalQuantity;
+                        resourceQuantity = Math.Max(0, resourceQuantity - (int)harvesterCargo);
+                    }
                 }
             }
             else if (position.X != refineryCell.X || position.Y != refineryCell.Y) MoveOneStep(harvester, refineryCell);
@@ -404,10 +493,12 @@ namespace RA2YR.Simulation
 
         private void ProcessMovement()
         {
-            foreach (EntityId entity in OrderedEntities().Where(x => kinds[x] == HumanPlaytestEntityKind.Unit))
+            foreach (EntityId entity in OrderedEntities().Where(x => IsMobile(x)))
             {
                 MissionStateComponent mission;
-                if (!World.Missions.TryGet(entity, out mission) || (mission.Kind != MissionKind.Move && mission.Kind != MissionKind.AttackMove)) continue;
+                if (!World.Missions.TryGet(entity, out mission) || (mission.Kind != MissionKind.Move && mission.Kind != MissionKind.AttackMove && mission.Kind != MissionKind.Harvest && mission.Kind != MissionKind.ReturnToRefinery)) continue;
+                if (entity.Equals(harvester) && harvesterPlayerOverride &&
+                    (mission.Kind == MissionKind.Harvest || mission.Kind == MissionKind.ReturnToRefinery || mission.Kind == MissionKind.Unload)) continue;
                 TargetMemoryComponent target;
                 if (World.Targets.TryGet(entity, out target) && target.CurrentTarget.IsValid && World.Registry.IsAlive(target.CurrentTarget))
                 {
@@ -468,6 +559,42 @@ namespace RA2YR.Simulation
             x = Math.Max(0, Math.Min(config.Width - 1, x));
             y = Math.Max(0, Math.Min(config.Height - 1, y));
             World.Positions.Set(entity, new PositionComponent(x, y, position.Layer));
+        }
+
+        public bool IsSelectable(EntityId entity, PlayerId perspective)
+        {
+            if (!owners.ContainsKey(entity) || !World.Registry.IsAlive(entity)) return false;
+            HumanPlaytestEntityCapabilities capabilities = CapabilitiesFor(kinds[entity], owners[entity]);
+            return (capabilities & HumanPlaytestEntityCapabilities.Selectable) != 0 && (owners[entity].Equals(perspective) || (capabilities & HumanPlaytestEntityCapabilities.Enemy) != 0);
+        }
+
+        public bool IsControllable(EntityId entity, PlayerId perspective)
+        {
+            return owners.ContainsKey(entity) && World.Registry.IsAlive(entity) && owners[entity].Equals(perspective) && (CapabilitiesFor(kinds[entity], owners[entity]) & HumanPlaytestEntityCapabilities.Controllable) != 0;
+        }
+
+        public bool IsMobile(EntityId entity)
+        {
+            return owners.ContainsKey(entity) && (CapabilitiesFor(kinds[entity], owners[entity]) & HumanPlaytestEntityCapabilities.Mobile) != 0;
+        }
+
+        public bool IsResourceCell(CellCoordinate cell) => cell.Equals(resourceCell) && resourceQuantity > 0;
+
+        private static HumanPlaytestEntityCapabilities CapabilitiesFor(HumanPlaytestEntityKind kind, PlayerId owner)
+        {
+            bool enemy = owner.Value != 0;
+            HumanPlaytestEntityCapabilities result = HumanPlaytestEntityCapabilities.Selectable;
+            if (enemy)
+            {
+                result |= HumanPlaytestEntityCapabilities.Enemy;
+                if (kind == HumanPlaytestEntityKind.Unit || kind == HumanPlaytestEntityKind.Harvester) result |= HumanPlaytestEntityCapabilities.Mobile;
+                else result |= HumanPlaytestEntityCapabilities.Structure;
+                return result;
+            }
+            if (kind == HumanPlaytestEntityKind.Unit || kind == HumanPlaytestEntityKind.Harvester)
+                result |= HumanPlaytestEntityCapabilities.Controllable | HumanPlaytestEntityCapabilities.Mobile;
+            else result |= HumanPlaytestEntityCapabilities.Structure;
+            return result;
         }
 
     }

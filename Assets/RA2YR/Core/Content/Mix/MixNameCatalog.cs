@@ -5,6 +5,29 @@ using RA2YR.Core.Formats.Mix;
 
 namespace RA2YR.Core.Content.Mix
 {
+    internal static class MixLegacyVisualArchiveProfile
+    {
+        private static readonly IReadOnlyList<LogicalContentPath> visualChildren = Array.AsReadOnly(new[]
+        {
+            LogicalContentPath.Parse("cache.mix"),
+            LogicalContentPath.Parse("cachemd.mix"),
+            LogicalContentPath.Parse("conquer.mix"),
+            LogicalContentPath.Parse("conqmd.mix"),
+            LogicalContentPath.Parse("generic.mix"),
+            LogicalContentPath.Parse("genericmd.mix"),
+            LogicalContentPath.Parse("temperat.mix"),
+            LogicalContentPath.Parse("snow.mix"),
+            LogicalContentPath.Parse("temmd.mix"),
+            LogicalContentPath.Parse("snowmd.mix"),
+            LogicalContentPath.Parse("urbmd.mix"),
+            LogicalContentPath.Parse("ubnmd.mix"),
+            LogicalContentPath.Parse("desmd.mix"),
+            LogicalContentPath.Parse("lunmd.mix")
+        });
+
+        public static IReadOnlyList<LogicalContentPath> VisualChildren => visualChildren;
+    }
+
     internal sealed class MixNameCatalogCandidate
     {
         public MixNameCatalogCandidate(LogicalContentPath logicalName)

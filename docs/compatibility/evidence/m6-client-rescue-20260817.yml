@@ -1,0 +1,48 @@
+schema_version: 1
+work_package: M6-CLIENT-RESCUE
+evidence_kind: sanitized-local-real-content-route
+date_utc: "2026-08-17"
+source_role: "configured patched-development YR1001_ProjectBaseline"
+project_baseline_payload_published: false
+source_payload_committed: false
+strict_mode:
+  status: "PresentationRouteIncomplete"
+  synthetic_visual_fallback: false
+  configured_source_required: true
+  terrain_presentation_bound: false
+  resource_presentation_bound: false
+  human_playability_claim: "NotConfirmed"
+external_visual_route:
+  root_mix_mount: true
+  nested_mix_mount: true
+  sanitized_mount_counts: true
+  shp_decode_success: 6
+  shp_decode_failed: 0
+  vxl_decode_success: 3
+  vxl_decode_failed: 0
+  hva_bind_success: 3
+  hva_bind_failed: 0
+  palette_display_conversion: "shared PAL display profile, exactly once"
+  route_identity: "typed Rules-to-Art logical lookup"
+presentation:
+  real_structure_visual: "resolved by external SHP route"
+  real_harvester_visual: "resolved by external VXL/HVA route"
+  real_combat_visual: "resolved by external VXL/HVA route"
+  real_tmp_theater_terrain: "not bound"
+  real_ore_resource_visual: "not bound"
+  procedural_blue_fallback_in_strict_mode: false
+  procedural_green_terrain_in_strict_mode: false
+input:
+  camera: "mouse-edge-scroll plus arrow-key auxiliary and right-drag pan"
+  selection: "left click and visible left drag rectangle"
+  command: "left contextual order; right click cancels or deselects"
+  harvester: "selectable, controllable, explicit harvest/return/unload precedence"
+verification_boundary:
+  synthetic_editmode: "final code/test tree; 1709/1709 passed; Unity exit 0; forced_post_result_shutdown false; docs-only closeout does not change assemblies"
+  playmode: "final code/test tree; 7/7 passed; Unity exit 0; forced_post_result_shutdown false; docs-only closeout does not change assemblies"
+  original_content_visual_acceptance: "maintainer human Unity playtest required"
+  original_runtime_compatibility: "NotConfirmed"
+limitations:
+  - "TMP/theater terrain and ore/resource presentation are intentionally fail-closed and block a playable claim."
+  - "This aggregate contains no names, paths, payload bytes, decoded bytes, pixels, or per-asset records."
+  - "The patched development corpus is not a clean stock YR 1.001 comparison."

@@ -117,5 +117,58 @@ namespace RA2YR.Tests.EditMode
 
             Assert.That(runtime.ComputeStateHash(), Is.Not.EqualTo(before));
         }
+
+        [Test]
+        public void HarvesterIsSelectableControllableAndMobile()
+        {
+            var runtime = new HumanPlaytestRuntime(HumanPlaytestRuntimeConfig.Default);
+            HumanPlaytestEntitySnapshot harvester = runtime.CaptureSnapshot().Entities.Single(x => x.Entity.Equals(runtime.Harvester));
+
+            Assert.That(harvester.IsSelectable, Is.True);
+            Assert.That(harvester.IsControllable, Is.True);
+            Assert.That(harvester.IsMobile, Is.True);
+            Assert.That(runtime.HumanSelectableEntities, Does.Contain(runtime.Harvester));
+        }
+
+        [Test]
+        public void PlayerMoveOverridesAutomaticHarvesterEconomy()
+        {
+            var runtime = new HumanPlaytestRuntime(HumanPlaytestRuntimeConfig.Default);
+            CellCoordinate destination = new CellCoordinate(12, 8);
+            runtime.EnqueueHumanCommands(new[] { runtime.Harvester }, CommandKind.Move, new CommandTarget(destination, null));
+            for (int i = 0; i < 5; i++) runtime.Step();
+
+            HumanPlaytestEntitySnapshot harvester = runtime.CaptureSnapshot().Entities.Single(x => x.Entity.Equals(runtime.Harvester));
+            Assert.That(harvester.Mission, Is.EqualTo(MissionKind.Move));
+            Assert.That(harvester.X != runtime.SyntheticResourceCell.X || harvester.Y != runtime.SyntheticResourceCell.Y, Is.True);
+        }
+
+        [Test]
+        public void ExplicitHarvestTransitionsToReturnAndUnloads()
+        {
+            var runtime = new HumanPlaytestRuntime(HumanPlaytestRuntimeConfig.Default);
+            long initialCredits = runtime.CaptureSnapshot().Credits;
+            runtime.EnqueueHumanCommands(new[] { runtime.Harvester }, CommandKind.Harvest, new CommandTarget(runtime.SyntheticResourceCell, null));
+            for (int i = 0; i < 32; i++) runtime.Step();
+
+            HumanPlaytestSnapshot snapshot = runtime.CaptureSnapshot();
+            Assert.That(snapshot.HarvestEvents, Is.GreaterThan(0));
+            Assert.That(snapshot.Credits, Is.GreaterThan(initialCredits));
+            Assert.That(runtime.ResourceQuantity, Is.LessThan(100));
+        }
+
+        [Test]
+        public void HarvesterCanExplicitlyResumeAutomaticHarvesting()
+        {
+            var runtime = new HumanPlaytestRuntime(HumanPlaytestRuntimeConfig.Default);
+            runtime.EnqueueHumanCommands(new[] { runtime.Harvester }, CommandKind.Move, new CommandTarget(new CellCoordinate(12, 7), null));
+            runtime.Step();
+
+            Assert.That(runtime.SetAutonomy(new[] { runtime.Harvester }, AutonomyMode.Automatic), Is.True);
+            for (int i = 0; i < 32; i++) runtime.Step();
+
+            HumanPlaytestEntitySnapshot harvester = runtime.CaptureSnapshot().Entities.Single(x => x.Entity.Equals(runtime.Harvester));
+            Assert.That(harvester.Mission, Is.Not.EqualTo(MissionKind.Move));
+        }
     }
 }

@@ -994,3 +994,82 @@ skirmish bootstrap, enabled scene, deterministic runtime harness, controls
 documentation, and current-head runtime/scene smoke tests. This is the M6
 manual delivery seam only; no ProjectBaseline packed data or M7 work was
 started.
+
+## 2026-08-15 - M6 real-content visual integration
+
+Created `feature/m6-human-playtest-real-visuals` from exact main
+`06c579ec0204899b69b86d9c8ba8859d5f3b0732`. Added the configured external
+legacy visual adapter, explicit synthetic fallback, status counters, and
+sanitized aggregate evidence. Local external preflight resolved indexed legacy
+visuals; map packed sections remain unread. No M7 work was started.
+
+## 2026-08-15 - M6 real-content visual finding closure
+
+The provider was revised to use typed Rules registry to Art routing and bounded
+logical Content/MIX lookup rather than a physical visual filename catalog.
+SHP/VXL/HVA/palette assets and Unity caches are separated by stable role
+identity, and `SourcePaletteOnly` is the explicit remap default. Current local
+configured-source traversal produced the sanitized aggregate `9 roles,
+0 resolved, 9 fallback`; the configured source has no available visual
+candidates in this checkout. Current EditMode evidence is 1678/1678 passed;
+the external aggregate test does not publish payload or per-role records.
+
+## 2026-08-15 - M6 external visual route recovery
+
+Recovered the actual configured visual path without changing PR #77 scope.
+The first zero stages were fixed in order: child MIX topology, typed Art
+identity, logical asset lookup, strict VXL inclusive-end parsing, HVA binding,
+and Unit/Harvester scene mesh application. Synthetic nested MIX fixtures cover
+explicit/missing Image policy, VXL/HVA, SHP, child palette, distinct identities,
+and unsupported-role fallback. The reproducible configured-source aggregate is
+two distinct external VXL/HVA roles and seven fallbacks (six strict SHP plus one
+strict VXL/HVA); terrain stays synthetic, PR #77 stays Draft, and M7 was not
+started.
+
+## 2026-08-16 - M6 VXL visual presentation finding repair
+
+Repaired the visual presentation path without changing PR #77 scope. Raw VXL
+coordinates now use an explicit presentation basis and bounds-center
+normalization; HVA frame 0 is applied to actual section meshes, PAL indices are
+preserved as vertex colors, and owner rings are separate from source colors.
+Terrain, camera, entity positions, and pointer inverse conversion share one
+centered isometric basis. Current focused Unity coverage is green and the
+configured aggregate is two external VXL/HVA roles with section-aware,
+HVA-applied, palette-colored presentation. The updated scene is ready for a
+new human visual check; PR #77 remains Draft and M7 was not started.
+
+## 2026-08-16 - M6 PAL display-conversion finding closure
+
+Closed the VXL palette correctness blocker without changing the visual scope.
+Raw PAL channels remain 0..63 in the asset model; one shared presentation
+adapter delegates to the existing PAL display profile and is applied exactly
+once for both SHP texture colors and VXL mesh vertex colors. Invalid 255/220
+raw test values were replaced with legal raw fixtures. Current focused evidence
+is 40/40 renderer and 17/17 external-route executions, including exact
+`Color32(130,65,255,255)` SHP/VXL equivalence. PR #77 remains Draft and the
+next step is maintainer human visual recheck, not M7.
+
+The final wrapper runs on documentation head `97d990a74d5dfb8b55e6754857489fc7c40daee0`
+passed 1693/1693 EditMode and 7/7 PlayMode under both PS5.1 and PS7 without
+forced post-result shutdown. Automated status is ready for human visual
+recheck; PR #77 remains Open/Draft/Unmerged.
+
+## 2026-08-17 - M6 second human visual failure closure
+
+The maintainer's Game View review of `1767cc7` was recorded as HUMAN VISUAL
+FAIL: synthetic terrain showed regular diamond gaps and VXL units lacked
+readable lighting. Replaced odd-height projection rounding with a checked
+doubled-unit contract shared by terrain, entity centers, pointer inverse, and
+camera centering. Preserved VXL `NormalIndex`/`NormalTypeRaw` and added the
+explicit `DerivedGeometryNormalPresentation` fallback plus a self-authored
+vertex-color lit shader; Westwood normal semantics remain unresolved. Added a
+small finite camera input seam and regression tests. PR #77 remains Draft and
+the required next step is a maintainer visual recheck, not M7.
+## 2026-08-17 - M6 client rescue checkpoint
+
+The third human review exposed an input/selection/Harvester gap and an
+overclaim risk from synthetic visuals. The rescue added the explicit input and
+command seams and made strict external-content presentation fail closed. The
+configured route currently resolves SHP/VXL/HVA objects, while TMP/theater
+terrain and ore/resource presentation remain the blocking next implementation;
+PR #77 stays Draft and no M7 work starts.

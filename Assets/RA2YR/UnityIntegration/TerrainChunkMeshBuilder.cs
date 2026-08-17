@@ -93,11 +93,14 @@ namespace RA2YR.UnityIntegration
                 for (int i = 0; i < chunk.Cells.Count; i++)
                 {
                     TerrainTilePresentationDescriptor cell = chunk.Cells[i];
-                    IsometricScreenPoint center = projection.Project(cell.GridX, cell.GridY, cell.LevelRaw, cell.TmpHeightRaw ?? 0);
-                    float x = checked((float)center.X);
-                    float y = checked((float)center.Y);
-                    float halfWidth = checked((float)projection.TileWidth) * 0.5f;
-                    float halfHeight = checked((float)projection.TileHeight) * 0.5f;
+                    IsometricFixedPoint center = projection.ProjectFixed(cell.GridX, cell.GridY, cell.LevelRaw, cell.TmpHeightRaw ?? 0);
+                    float x = checked((float)center.X) / IsometricFixedPoint.UnitsPerLogicalUnit;
+                    float y = checked((float)center.Y) / IsometricFixedPoint.UnitsPerLogicalUnit;
+                    // The fixed projection and these half-extents share the
+                    // same doubled-unit contract, so adjacent diamonds meet
+                    // on the exact same edge even when TileHeight is odd.
+                    float halfWidth = checked((float)projection.TileWidth) / IsometricFixedPoint.UnitsPerLogicalUnit;
+                    float halfHeight = checked((float)projection.TileHeight) / IsometricFixedPoint.UnitsPerLogicalUnit;
                     int vertex = checked(i * 4);
                     vertices[vertex] = new Vector3(x - halfWidth, 0f, y);
                     vertices[vertex + 1] = new Vector3(x, 0f, y + halfHeight);

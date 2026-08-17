@@ -697,3 +697,67 @@ central Unity presentation world, and the Human command gateway. Procedural
 placeholder sprites are permitted for this seam only; no packed ProjectBaseline
 content, map loader, stock YR UI, original-runtime claim, writer, replay,
 pathfinding, or M7 behavior is implied.
+
+## M6 external visual source boundary decision
+
+Prefer the explicitly configured patched-development source for bounded,
+read-only indexed SHP/PAL object visuals in interactive Unity launches. Keep
+the provider Unity-only, reuse managed RawLzo1X and existing bounded readers,
+and retain synthetic terrain/fallback behavior. Do not publish external
+payload, decoded bytes, pixels, or per-asset identities. This is configured
+project-enhancement evidence only and does not confirm original runtime
+palette semantics, TMP/theater terrain binding, map loading, or visual parity.
+
+## M6 external visual route recovery decision
+
+Keep legal child-archive topology in a bounded Core Content profile and keep
+the Unity provider free of a concrete SHP/VXL/HVA catalog. Require both typed
+Rules membership and an active typed Art record. `ExplicitOnly` and
+`ExplicitOrSectionIdentifier` are distinct policies; the latter is configured
+community-convention evidence and still requires explicit `Voxel=yes` for VXL.
+Do not relax SHP flags-3 or VXL span contracts to make a corpus pass. A partial
+external result composes with the synthetic provider per role and never changes
+Simulation authority.
+
+## M6 VXL presentation-space decision
+
+Keep raw VXL coordinates separate from Unity world coordinates. The adapter
+uses the explicit `RawXToWorldX_RawYToWorldZ_RawZToWorldY` basis, a
+bounds-center pivot, and a bounded normalized footprint. HVA frame 0 is applied
+to each section before mesh emission; section identity and ordinal remain
+available in the hierarchy. Source palette indices become vertex colors through
+the configured PAL, while human/enemy identity is a separate marker ring.
+SHP-only external routes do not require the VXL presentation gate, but any
+requested VXL role must satisfy section, HVA, palette-color, finite-bounds, and
+footprint sanity checks. This remains project-enhancement evidence only.
+
+## M6 PAL display-conversion finding decision
+
+Keep PAL bytes raw and authoritative at the format boundary. The Unity adapter
+maps `PaletteDisplayProfile` to the existing PAL core conversion strategies in
+one shared `PaletteDisplayProfileConversion` boundary. SHP texture creation and
+VXL mesh creation both consume the same converted display values exactly once;
+the VXL builder accepts display-space bytes and never interprets raw 0..63 bytes
+as Unity `Color32` values. This is a project presentation contract, not proof of
+original-runtime palette behavior.
+
+## M6 second human visual failure closure decision
+
+The maintainer's Game View review of `1767cc7` is recorded as a human visual
+FAIL. The repair uses a doubled-unit, checked isometric projection as the
+single presentation contract so odd tile heights cannot be rounded before
+diamond geometry is emitted. The same contract feeds entity centers, pointer
+inverse conversion, and camera centering.
+
+VXL raw `NormalIndex` and section `NormalTypeRaw` are preserved in presentation
+inputs. The repository evidence does not include a complete Westwood normal
+vector table, so the supported lighting profile is explicitly named
+`DerivedGeometryNormalPresentation`, not a compatibility claim. Face normals
+are finite and normalized, and the self-authored lit shader uses vertex color
+as albedo with stable ambient and directional terms. Original Westwood normal
+and lighting semantics remain unresolved.
+
+Future content architecture is recorded as a requirement only: MIX-first
+logical lookup across project, external YR, MOD, and modern sources, shared
+legacy/modern asset identity, provenance-based policy, and strict-original
+failure behavior. Production implementation is deferred to M7-C0.

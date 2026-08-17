@@ -696,3 +696,136 @@ between project-enhancement playability and original YR compatibility.
 The current local PlayMode wrapper produced a complete 7/7 result XML but needed
 forced post-result shutdown. The complete XML and wrapper state are recorded as
 observed evidence; no incomplete run is promoted to a pass claim.
+
+## 2026-08-15 - M6 visual integration findings
+
+- The initial external probe traversed too many unnamed MIX entries and could
+  fault a shared bounded window; the provider now uses a fixed candidate-name
+  and extension budget and skips isolated read failures fail-closed.
+- Headless scene loading can advance the live simulation while Unity integrates
+  assets; batch mode now starts paused, while interactive Editor/Player mode
+  remains unpaused.
+- These are implementation/environment findings, not compatibility evidence;
+  the configured source remains a patched-development corpus.
+
+## 2026-08-15 - M6 real-content visual finding closure
+
+- Closed the provider architecture findings: role selection now consumes typed
+  Rules registry and Art records, and physical SHP/VXL names are not embedded
+  in the renderer/provider.
+- Closed global-cache and implicit-fallback findings by keying decoded SHP,
+  VXL, HVA, palette, Sprite, and Mesh state by stable role asset identity.
+- Closed remap ambiguity by making `SourcePaletteOnly` the default explicit
+  profile; configured offsets remain implementation-specific and are not
+  presented as original YR behavior.
+- Current configured local source traversal is truthful `roles=9,
+  resolved=0, fallback=9`; the local source path has no available visual
+  candidates in this checkout. This is an environment/content availability
+  result, not a compatibility claim or a reason to fabricate payload evidence.
+
+## 2026-08-15 - M6 external route false-positive and strict VXL boundary
+
+### Phenomenon
+
+The configured source mounted successfully but the original local gate passed
+with zero external roles, and the scene showed only procedural rectangles.
+
+### Root cause
+
+The provider did not expose stage status, required an explicit Art `Image`,
+omitted legal nested archive topology, and the VXL reader treated an inclusive
+range with exactly three remaining bytes as truncated. After decode recovery,
+the bootstrap also excluded Unit/Harvester roles from VXL mesh application.
+
+### Resolution
+
+Add stage counters and a final external-role gate, explicit Art identity policy,
+Core-owned archive topology, exact HVA parse/bind, the strict inclusive-end
+off-by-one correction, and per-role mixed-provider scene routing. Keep strict
+SHP flags-3 failures as explicit fallback.
+
+### Verification
+
+The current compiled code tree passes EditMode 1683/1683 and PlayMode 7/7. The
+reproducible sanitized local result resolves two distinct VXL/HVA roles, retains
+six strict SHP fallbacks plus one strict VXL/HVA fallback, and publishes no
+names, paths, payload, pixels, or per-asset hashes.
+
+## 2026-08-16 - M6 VXL visual presentation finding repair
+
+### Finding
+
+The previous human screenshot showed raw VXL-derived geometry at an
+unbounded/mismatched scale, without section-aware presentation or source
+palette variation. Terrain and entity placement also used different implicit
+coordinate bases.
+
+### Resolution
+
+The Unity adapter now validates and normalizes VXL presentation bounds, keeps
+sections as separate meshes, applies bound HVA frame 0 transforms, carries PAL
+colors to mesh vertices, and uses owner marker rings. Camera, terrain, entity,
+and pointer conversion share the centered isometric basis. A malformed raw
+dimension or palette/section/HVA sanity failure is fail-closed; no fallback
+profile is guessed.
+
+### Verification boundary
+
+Current configured aggregate is `vehicleMeshRoles=2,
+sectionAwareRoles=2,hvaAppliedRoles=2,paletteColoredRoles=2,maxWidth=0.85,
+maxHeight=0.372`. Focused Unity tests pass on the current working tree. Human
+visual inspection is still a separate acceptance step; no original-runtime or
+visual-parity claim is made.
+
+## 2026-08-16 - M6 VXL raw/display palette contract blocker
+
+### Finding
+
+The VXL presentation path passed PAL raw 0..63 channels directly into Unity
+`Color32`, while SHP applied the configured display profile. Distinct-color
+sanity therefore passed without proving correct display brightness or SHP/VXL
+equivalence.
+
+### Resolution
+
+`DecodedVisualAsset.PaletteRaw` remains raw. A shared adapter delegates to the
+existing PAL conversion strategies and is called exactly once by both SHP and
+VXL presentation paths. The VXL builder now names its input as a display-space
+palette table. Legal raw fixtures assert `63 -> 255`, `32 -> 130` under
+`ScaleToFullRangeRounded`, and a synthetic SHP/VXL test compares exact
+`Color32(130,65,255,255)` output. No fixed multiplier, clamping, decoder
+fallback, or compatibility claim was introduced.
+
+### Verification boundary
+
+Focused renderer coverage is 40/40 and external-route coverage is 17/17 on
+code commit `8589706c5b30a5d16d8b5c00f815e579f47b0b2b`. Full gates must be
+rerun for the final pushed HEAD; the final PS5.1/PS7 wrappers now report
+1693/1693 EditMode and 7/7 PlayMode with no forced post-result shutdown.
+Human visual inspection remains pending.
+
+## 2026-08-17 - M6 second human visual review failure and closure
+
+The maintainer's Game View inspection of `1767cc7` failed despite green
+automated gates. Regular blue gaps were visible between the synthetic
+isometric diamonds, and VXL vehicles still read as an unlit/debug voxel view.
+The issue was presentation geometry/lighting, not a TMP/theater implementation
+request. Sidebar/HUD fidelity and audio/EVA remain deferred.
+
+The closure adds a checked doubled-unit projection used by terrain, entities,
+pointer inverse, and camera centering. VXL retains raw `NormalIndex` and
+`NormalTypeRaw`; because no complete Westwood normal table is published in the
+repository, lighting uses the explicitly named
+`DerivedGeometryNormalPresentation` profile and a stable vertex-color lit
+shader. Original normal and lighting semantics remain unconfirmed. A new
+human visual inspection is still required after the final exact-head gates.
+## 2026-08-17 - M6 strict real-content rescue remains blocked
+
+The client rescue closed the input, selection, Harvester precedence, and
+external SHP/VXL/HVA route gaps without copying original payloads into the
+repository. Strict mode now fails closed and does not use the synthetic visual
+provider. The configured patched-development route observed six SHP successes,
+three VXL successes, and three HVA bindings. Real TMP/theater terrain and
+ore/resource presentation are not connected, so the strict preflight remains
+`PresentationRouteIncomplete`; no human-playable or original-runtime claim is
+made.

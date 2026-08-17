@@ -396,7 +396,115 @@ turn Unity presentation state into simulation authority.
   autonomy, production, economy, rule-based opponent, combat, fog visibility,
   and HUD behavior through the existing Simulation/Presentation/client seams.
 - [x] Add headless runtime and actual scene-load PlayMode smoke coverage.
-- [x] Keep procedural art synthetic and preserve the no-ProjectBaseline,
-  no-map-loader, no-writer, no-replay, no-pathfinding, and no-M7 boundary.
+- [x] Keep an explicit synthetic fallback and preserve the no-map-packed-loader,
+  no-writer, no-replay, no-pathfinding, and no-M7 boundary.
 - [ ] Manual user playtest remains the next human-facing check after the Draft
   delivery; it is not represented as an automated or original-runtime claim.
+
+## M6 Human Playtest real-content visual integration (current delivery)
+
+- [x] Add bounded, read-only external legacy SHP/VXL/HVA/PAL preference for the
+  configured `YR1001_ProjectBaseline` source, with status separate from
+  Simulation.
+- [x] Preserve an explicit synthetic fallback and synthetic terrain chunk;
+  no map packed section, writer, or M7 work was added.
+- [x] Execute the sanitized PreviewPack aggregate audit: 184 candidates,
+  184 exact decoded streams, one mount-level failure, no published payload.
+- [ ] Manual user playtest remains the next human-facing check after the Draft
+  delivery; it is not represented as an automated or original-runtime claim.
+- [x] Draft PR #77 exact-head Repository safety run 31881276900 completed
+  successfully for `acf48969773f0b5a397e26f6583aa2a6a6adab17`.
+- [x] M6 real-content visual finding closure: typed Rules-to-Art routing,
+  bounded logical Content/MIX lookup, per-role SHP/VXL/HVA/palette caches, and
+  explicit `SourcePaletteOnly` remap profile.
+- [x] Close the false-positive local gate with bounded stage counters. Current
+  compiled code-tree EditMode evidence is 1683/1683 passed; the sanitized local
+  aggregate is 9 configured roles, 2 distinct external VXL/HVA roles, and 7
+  fallbacks (6 strict SHP plus 1 strict VXL/HVA). No payload or per-role record
+  is published.
+- [x] Correct the strict VXL inclusive-end command byte check, parse and bind HVA
+  before reporting success, and route resolved VXL roles into actual scene Mesh
+  objects. Current compiled code-tree PlayMode evidence is 7/7 passed.
+- [ ] Push the additive closeout commits and obtain Repository safety success
+  for the new exact PR #77 HEAD.
+- [ ] Repeat the human visual inspection against the updated scene; PR #77
+  remains Draft and no Ready, merge, or M7 action is implied.
+
+## M6 VXL visual presentation finding repair (current delivery)
+
+- [x] Replace raw VXL world placement with an explicit axis basis,
+  bounds-center pivot, checked raw-dimension budget, and bounded presentation
+  normalization.
+- [x] Preserve VXL section identity and apply bound HVA frame 0 transforms to
+  each section mesh; carry source palette indices to mesh vertex colors.
+- [x] Keep owner distinction in a separate marker ring and use the same
+  centered isometric basis for terrain, camera, and logical cell input.
+- [x] Add automated presentation sanity checks and current-head focused
+  coverage for normalization, section/HVA state, palette variation, malformed
+  dimensions, and the configured two-role aggregate.
+- [x] Add a shared PAL display conversion boundary: raw 0..63 channels remain
+  authoritative, while the configured profile is applied exactly once for both
+  SHP display colors and VXL mesh vertex colors. Regression coverage uses legal
+  raw channels and asserts exact converted Color32 values.
+- [x] Push the additive repair commit and obtain exact-head Repository safety.
+- [x] Final PS5.1 and PS7 wrappers pass on the corrected tree: EditMode
+  1693/1693 and PlayMode 7/7, with no forced post-result shutdown.
+- [ ] Human visual inspection of the updated scene remains required; no Ready,
+  merge, or M7 action is implied.
+
+### M6 human visual failure closure (2026-08-17)
+
+- [x] Record the maintainer HUMAN VISUAL REVIEW result for `1767cc7` as
+  **FAIL**: regular synthetic-terrain diamond gaps and insufficient VXL
+  lighting/intelligibility were observed even though automated gates passed.
+- [x] Repair the terrain with a checked doubled-unit projection shared by
+  terrain geometry, entity centers, pointer inverse, and camera centering;
+  no overlap epsilon, filler geometry, or fixture-specific correction was
+  introduced.
+- [x] Preserve VXL `NormalIndex` and `NormalTypeRaw`, and add the explicit
+  `DerivedGeometryNormalPresentation` mode plus finite normalized mesh normals
+  and `RA2YR/ExternalLegacyVxlLit` vertex-color lighting. Westwood normal-table
+  semantics remain unconfirmed.
+- [x] Add a small camera controller seam for WASD/arrows and wheel zoom with
+  finite position and bounded zoom behavior.
+- [ ] Repeat the maintainer visual inspection against the repaired exact HEAD;
+  this remains a human acceptance gate and is not represented by automated
+  green metrics.
+- [ ] Deferred observations remain outside this closure: RA2 sidebar/HUD,
+  audio/EVA, full SHP animation, and TMP/theater terrain.
+
+### Future content architecture requirement (record only)
+
+- [ ] M7-C0 must define MIX as a first-class runtime container and provide
+  logical lookup across project, external YR, MOD, and modern loose/native
+  sources. Legacy and modern providers must share logical asset identity,
+  with provenance-based copyright policy and strict-original mode. This is a
+  future requirement only; no production architecture or CopyrightPolicy MIX
+  behavior changes are part of PR #77.
+
+## M6 client-rescue status (2026-08-17)
+
+- [x] Replace the incorrect WASD/A-toggle input path with explicit RA2-style
+  mouse semantics, a controller state seam, capability-based selection, visible
+  drag feedback, and player-priority Harvester commands.
+- [x] Route the configured external source through strict SHP/VXL/HVA/PAL
+  presentation profiles. The observed sanitized route is six SHP successes,
+  zero SHP failures, three VXL successes, zero VXL failures, and three HVA
+  bindings.
+- [x] Make StrictRealContent fail closed: it does not inject a synthetic
+  provider or procedural blue/green fallback when an external role or terrain
+  route is unavailable.
+- [ ] Bind real TMP/theater terrain and real ore/resource presentation. The
+  strict preflight currently reports PresentationRouteIncomplete, so this
+  remains a blocking human-playability item rather than a completed M6 claim.
+- [ ] Repeat the maintainer Unity Game View inspection after the final current
+  HEAD gates. No HUMAN PASS, Ready, merge, or M7 action is implied.
+
+### M6 rescue final current-head rerun (2026-08-17)
+
+- [x] Reran EditMode on the final code/test tree:
+  1709/1709 passed, Unity exit 0, no forced post-result shutdown.
+- [x] Reran PlayMode on the same final commit: 7/7 passed, Unity exit 0, no
+  forced post-result shutdown.
+- [ ] Real TMP/theater terrain and ore/resource presentation remain blocking;
+  these automated reruns do not constitute a human visual pass.

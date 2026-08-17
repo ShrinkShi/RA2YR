@@ -60,6 +60,65 @@ namespace RA2YR.Tests.EditMode.Formats.MapTerrain
         }
 
         [Test]
+        public void FixedProjectionPreservesOddTileHalfUnits()
+        {
+            var profile = new IsometricProjectionProfile(0, 0, 2, 1, 0);
+            Assert.AreEqual(new IsometricFixedPoint(0, 0), profile.ProjectFixed(0, 0, 0, 0));
+            Assert.AreEqual(new IsometricFixedPoint(2, 1), profile.ProjectFixed(1, 0, 0, 0));
+            Assert.AreEqual(new IsometricFixedPoint(-2, 1), profile.ProjectFixed(0, 1, 0, 0));
+        }
+
+        [Test]
+        public void AdjacentOddHeightDiamondsShareExactEdges()
+        {
+            var profile = new IsometricProjectionProfile(0, 0, 2, 1, 0);
+            TerrainPresentationBuildResult composed = TerrainPresentationComposer.Build(new[] { Cell(0, 0, 0), Cell(1, 0, 1), Cell(0, 1, 2) });
+            TerrainChunkMeshBuildResult result = TerrainChunkMeshBuilder.Build(composed.Chunks[0], profile);
+            try
+            {
+                Assert.IsTrue(result.IsSuccess, result.Diagnostics.Count == 0 ? string.Empty : result.Diagnostics[0].Message);
+                Vector3[] vertices = result.Mesh.vertices;
+                Assert.AreEqual(vertices[1], vertices[4]);
+                Assert.AreEqual(vertices[2], vertices[7]);
+                Assert.AreEqual(vertices[0], vertices[11]);
+                Assert.AreEqual(vertices[1], vertices[10]);
+            }
+            finally { if (result.Mesh != null) UnityEngine.Object.DestroyImmediate(result.Mesh); }
+        }
+
+        [Test]
+        public void FourByFourOddHeightTerrainHasAllCellsAndNoAdjacencyGaps()
+        {
+            var cells = new System.Collections.Generic.List<TerrainTilePresentationDescriptor>();
+            for (int y = 0; y < 4; y++)
+                for (int x = 0; x < 4; x++)
+                    cells.Add(Cell(x, y, y * 4 + x));
+            TerrainPresentationBuildResult composed = TerrainPresentationComposer.Build(cells);
+            TerrainChunkMeshBuildResult result = TerrainChunkMeshBuilder.Build(composed.Chunks[0], new IsometricProjectionProfile(0, 0, 2, 1, 0));
+            try
+            {
+                Assert.IsTrue(result.IsSuccess);
+                Assert.AreEqual(16 * 4, result.Mesh.vertexCount);
+                Assert.IsTrue(result.Mesh.bounds.size.x > 0f && result.Mesh.bounds.size.z > 0f);
+                Vector3[] vertices = result.Mesh.vertices;
+                for (int index = 0; index < vertices.Length; index++)
+                    Assert.IsFalse(float.IsNaN(vertices[index].x) || float.IsInfinity(vertices[index].x) || float.IsNaN(vertices[index].z) || float.IsInfinity(vertices[index].z));
+            }
+            finally { if (result.Mesh != null) UnityEngine.Object.DestroyImmediate(result.Mesh); }
+        }
+
+        [Test]
+        public void NearestInverseUsesTheSameFixedProjectionContract()
+        {
+            var profile = new IsometricProjectionProfile(8, 9, 2, 1, 0);
+            IsometricFixedPoint fixedPoint = profile.ProjectFixed(3, 2, 0, 0);
+            IsometricGridPoint candidate;
+            Assert.IsTrue(profile.TryInverseNearest(fixedPoint.LogicalX + 0.12, fixedPoint.LogicalY - 0.12, 0, 0, out candidate));
+            Assert.AreEqual(3, candidate.X);
+            Assert.AreEqual(2, candidate.Y);
+        }
+
+        [Test]
         public void DescriptorRetainsRawTmpAndTileFields()
         {
             TerrainTilePresentationDescriptor descriptor = new TerrainTilePresentationDescriptor(4, 5, 0x10203040, 0xab, 0xcd, 0xef, 0x11, 0x22, 3, 9, null, 17);

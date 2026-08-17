@@ -971,3 +971,106 @@ payload or path is published.
   local results are recorded in the synthetic evidence file; the PlayMode
   wrapper reported a forced post-result shutdown after complete 7/7 XML.
 - No ProjectBaseline packed content was read. No M7 work was started.
+
+## 2026-08-15 - M6 real-content visual integration
+
+- Added the Unity-only `ExternalLegacyVisualProvider`, reusing bounded MIX,
+  SHP(TS), PAL, VXL/HVA, and the existing managed RawLzo1X contracts.
+- The provider probes a fixed candidate-name set from the explicitly configured
+  `YR1001_ProjectBaseline` source and keeps raw external content outside the
+  repository. Local preflight resolved an indexed visual/palette pair; terrain
+  remains an explicit synthetic fallback because TMP/theater binding is not in
+  scope.
+- Headless PlayMode starts paused to avoid asynchronous scene-load advancement;
+  direct simulation-driving tests remain deterministic. The sanitized
+  PreviewPack audit remains aggregate-only and `NotConfirmed` for original
+  runtime behavior.
+
+## 2026-08-15 - M6 real-content visual finding closure
+
+- Replaced the physical visual filename probe with typed Rules registry to Art
+  record routing and bounded logical Content/MIX lookup.
+- Separated SHP frames, VXL cell sets, HVA binding state, palettes, and Unity
+  caches by stable visual role identity. A missing VXL role cannot fall back to
+  an unrelated SHP asset; SHP buildings are not rendered through VXL meshes.
+- Made `SourcePaletteOnly` the explicit default remap profile and retained any
+  implementation-specific offsets as opt-in configuration only.
+- Added sanitized role aggregate logging/evidence. The configured local source
+  traversal currently has no available visual candidates in this checkout, so
+  all nine configured roles remain fallback; no payload or per-role record is
+  published.
+
+## 2026-08-15 - M6 real-content visual route recovery
+
+- Added fail-closed stage status and sanitized aggregate counters from source
+  mount through typed Rules/Art, logical VFS lookup, strict decode, and final
+  external role resolution.
+- Moved child archive topology knowledge into Core Content and kept concrete
+  visual filenames out of the Unity provider.
+- Corrected the strict VXL inclusive-end three-byte command check and added an
+  independent synthetic regression; all other span validation remains strict.
+- Added real HVA parse/bind verification, explicit Art identity policy, nested
+  MIX full-pipeline tests, and mixed external/synthetic scene routing.
+- The reproducible sanitized configured-source result is 2 distinct external
+  VXL/HVA roles and 7 fallbacks (6 strict SHP plus 1 strict VXL/HVA); terrain
+  remains synthetic and compatibility status is not promoted.
+
+## 2026-08-16 - M6 VXL visual presentation finding repair
+
+- Added explicit VXL raw-axis to presentation-space conversion, bounds-center
+  pivoting, checked dimension/mesh budgets, and normalized bounded footprints.
+- Kept VXL sections independent, applied HVA frame 0 to the section hierarchy,
+  and preserved source palette indices as mesh vertex colors. Owner identity is
+  rendered by a separate marker ring instead of recoloring external meshes.
+- Aligned entity placement, terrain projection, camera centering, and pointer
+  inverse conversion to one centered isometric basis. Current configured
+  aggregate remains sanitized: 2 vehicle mesh roles, 2 section-aware, 2 HVA
+  applied, 2 palette-colored, maximum width 0.85 cells, maximum height 0.372
+  cells.
+- The updated automated result is a readiness signal for human inspection,
+  not a claim of original-runtime visual parity.
+
+## 2026-08-16 - M6 PAL display-conversion finding closure
+
+- Kept `DecodedVisualAsset.PaletteRaw` and the format-layer PAL representation
+  as validated Westwood 0..63 channels; added one Unity presentation adapter that
+  delegates to the existing PAL display-conversion strategies.
+- Routed both SHP texture colors and VXL mesh vertex colors through the same
+  configured `PaletteDisplayProfile` exactly once. VXL presentation now consumes
+  an explicitly named display-space table rather than raw PAL bytes.
+- Replaced the invalid 255/220 raw-palette test fixture with legal raw channels,
+  added exact 63->255 and 32->130 assertions for the rounded profile, and added
+  a synthetic SHP/VXL equivalence regression. Focused results are 40/40 renderer
+  and 17/17 external-route executions on code commit
+  `8589706c5b30a5d16d8b5c00f815e579f47b0b2b`.
+- Final PS5.1 and PS7 wrappers on documentation head `97d990a74d5dfb8b55e6754857489fc7c40daee0`
+  passed with 1693/1693 EditMode and 7/7 PlayMode, both without forced
+  post-result shutdown.
+
+## 2026-08-17 - M6 second human visual failure closure
+
+- Recorded the maintainer's human Game View result for `1767cc7` as FAIL.
+  Automated gates were green, but synthetic terrain had regular diamond gaps
+  and VXL remained visually close to an unlit/debug voxel viewer.
+- Replaced the odd-height terrain rounding path with a checked doubled-unit
+  projection shared by tile geometry, entity placement, pointer inverse, and
+  camera centering. Added adjacency, 4x4 finite-geometry, and inverse tests.
+- Carried VXL `NormalIndex` and section `NormalTypeRaw` into the presentation
+  model. Because the repository has no complete published Westwood normal
+  table, the only supported explicit mode is
+  `DerivedGeometryNormalPresentation`; emitted meshes now carry normalized
+  face normals and use a stable vertex-color ambient/directional shader.
+- Added a bounded human-playtest camera controller seam for WASD/arrows and
+  wheel zoom. UI/audio and real TMP/theater terrain remain deferred.
+- Recorded the future MIX-first logical content architecture requirement
+  without changing production content lookup or copyright policy.
+## 2026-08-17 - M6 client rescue strict boundary
+
+- Added explicit RA2 mouse input state handling, capability-based selection,
+  visible selection/health/cargo feedback, and Harvester command precedence.
+- Reused the managed RawLzo1X, SHP, VXL/HVA, and PAL routes with an explicit
+  strict SHP row guard and no new codec or writer.
+- StrictRealContent now excludes the synthetic provider and reports missing
+  TMP/theater/ore routes instead of showing placeholders.
+- Added sanitized evidence only; no original MIX payload, path, pixel, or
+  per-asset record is committed.

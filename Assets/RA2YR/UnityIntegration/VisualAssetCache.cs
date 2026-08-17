@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using RA2YR.Core.Formats.Pal;
 using RA2YR.Presentation;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -77,6 +78,46 @@ namespace RA2YR.UnityIntegration
 
     public enum PaletteDisplayProfile { Unresolved, ShiftLeftTwo, ReplicateHighBits, ScaleToFullRangeRounded, XccScaleToFullRangeFloor }
 
+    /// <summary>
+    /// Bridges the Unity presentation profile to the authoritative PAL raw/display
+    /// conversion. Raw palette bytes remain 0..63 until this boundary.
+    /// </summary>
+    public static class PaletteDisplayProfileConversion
+    {
+        public static byte ConvertChannel(byte raw, PaletteDisplayProfile profile)
+        {
+            return PaletteDisplayConversion.ConvertChannel(raw, ToCoreStrategy(profile));
+        }
+
+        public static byte[] ToDisplayBytes(byte[] rawPalette, PaletteDisplayProfile profile)
+        {
+            if (rawPalette == null) throw new ArgumentNullException(nameof(rawPalette));
+            if (rawPalette.Length != 256 * 3)
+                throw new ArgumentException("A complete 256-color raw palette is required.", nameof(rawPalette));
+            var display = new byte[rawPalette.Length];
+            for (int index = 0; index < rawPalette.Length; index++)
+                display[index] = ConvertChannel(rawPalette[index], profile);
+            return display;
+        }
+
+        private static PaletteDisplayConversionStrategy ToCoreStrategy(PaletteDisplayProfile profile)
+        {
+            switch (profile)
+            {
+                case PaletteDisplayProfile.ShiftLeftTwo:
+                    return PaletteDisplayConversionStrategy.ShiftLeftTwo;
+                case PaletteDisplayProfile.ReplicateHighBits:
+                    return PaletteDisplayConversionStrategy.ReplicateHighBits;
+                case PaletteDisplayProfile.ScaleToFullRangeRounded:
+                    return PaletteDisplayConversionStrategy.ScaleToFullRangeRounded;
+                case PaletteDisplayProfile.XccScaleToFullRangeFloor:
+                    return PaletteDisplayConversionStrategy.XccScaleToFullRangeFloor;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(profile));
+            }
+        }
+    }
+
     public sealed class IndexedTextureUploadPolicy
     {
         public IndexedTextureUploadPolicy(int maxWidth = 4096, int maxHeight = 4096, long maxPixels = 16 * 1024 * 1024)
@@ -110,25 +151,17 @@ namespace RA2YR.UnityIntegration
                 {
                     if (paletteRaw == null || paletteRaw.Length != 256 * 3) throw new ArgumentException("A 256-color palette is required for a resolved lookup profile.", nameof(paletteRaw));
                     Color32[] colors = new Color32[256];
-                    for (int i = 0; i < colors.Length; i++) colors[i] = new Color32(Convert(paletteRaw[i * 3], profile), Convert(paletteRaw[i * 3 + 1], profile), Convert(paletteRaw[i * 3 + 2], profile), 255);
+                    for (int i = 0; i < colors.Length; i++) colors[i] = new Color32(
+                        PaletteDisplayProfileConversion.ConvertChannel(paletteRaw[i * 3], profile),
+                        PaletteDisplayProfileConversion.ConvertChannel(paletteRaw[i * 3 + 1], profile),
+                        PaletteDisplayProfileConversion.ConvertChannel(paletteRaw[i * 3 + 2], profile),
+                        255);
                     palette = new Texture2D(256, 1, TextureFormat.RGBA32, false, true) { name = "SyntheticPaletteLookup", filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
                     palette.SetPixels32(colors); palette.Apply(false, false);
                 }
                 return new IndexedTextureResource(indexed, palette);
             }
             catch { if (indexed != null) UnityEngine.Object.DestroyImmediate(indexed); if (palette != null) UnityEngine.Object.DestroyImmediate(palette); throw; }
-        }
-        private static byte Convert(byte raw, PaletteDisplayProfile profile)
-        {
-            if (raw > 63) throw new ArgumentOutOfRangeException(nameof(raw));
-            switch (profile)
-            {
-                case PaletteDisplayProfile.ShiftLeftTwo: return checked((byte)(raw << 2));
-                case PaletteDisplayProfile.ReplicateHighBits: return checked((byte)((raw << 2) | (raw >> 4)));
-                case PaletteDisplayProfile.ScaleToFullRangeRounded: return checked((byte)((raw * 255 + 31) / 63));
-                case PaletteDisplayProfile.XccScaleToFullRangeFloor: return checked((byte)(raw * 255 / 63));
-                default: throw new ArgumentOutOfRangeException(nameof(profile));
-            }
         }
     }
 

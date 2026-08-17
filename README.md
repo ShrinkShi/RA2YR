@@ -268,15 +268,48 @@ play、writer 或 M7。
 `Assets/Scenes/RA2YRSyntheticSkirmish.unity` 是 M6 的集中式人工试玩入口。
 `UnitySyntheticSkirmishBootstrap` 组合现有 Simulation、Presentation、
 `UnityPresentationWorld` 和 interactive client seam，在一个有界的 28x22
-synthetic skirmish 中提供选中、移动/攻击、AttackMove、Stop/Hold、Manual/
+skirmish 中提供选中、移动/攻击、AttackMove、Stop/Hold、Manual/
 Assisted/Automatic autonomy、harvester/refinery settlement、生产、规则型
 对手、战斗、雾化可见性和 HUD。输入只提交 Human `CommandRequest`，不直接
-修改 Simulation transform；程序化 Sprite 仅是占位显示资源。
+修改 Simulation transform。若本地 `ExternalContent.local.xml` 启用
+`YR1001_ProjectBaseline`，Unity adapter 会以只读、有界方式优先使用外部
+SHP/VXL/HVA indexed assets 与 PAL。角色通过 typed Rules registry→Art→
+logical Content/VFS 路由，每个角色拥有独立 asset/cache identity；不存在
+物理 visual filename catalog，缺失 VXL 不回退到无关 SHP，默认使用显式
+`SourcePaletteOnly` remap profile。当前脱敏本机 aggregate 已解析 2 个
+VXL/HVA battlefield roles；6 个 SHP roles 和 1 个 VXL/HVA role 因既有
+strict reader 边界明确回退到程序化视觉。两个 VXL role 均通过显式
+raw-axis→presentation basis、bounds-center normalization、section-aware
+HVA frame-0 hierarchy 和 PAL vertex-color sanity gate；最大展示宽度为
+0.85 cells、高度为 0.372 cells。reader 没有 clamp、padding 或宽松 fallback。
+地形仍是 synthetic 等距 chunk，TMP/theater 绑定不在本轮范围。
 
 试玩说明、控制和边界见 [M6 Human Playtest Delivery](docs/formats/m6-human-playtest.md)。
-该场景不读取 ProjectBaseline packed content，不加载真实 `.map`，不提供
-原版 UI/network/map semantics、palette/TMP/theater binding、writer、replay、
-pathfinding 或 M7；人工可玩性不提升 compatibility matrix 的原版确认状态。
+该场景不读取 ProjectBaseline 地图 packed section，不加载真实 `.map`，不
+提供原版 UI/network/map semantics、TMP/theater binding、writer、replay、
+pathfinding 或 M7。外部视觉探测不会把 payload 或像素写入仓库；人工可玩性
+和外部视觉可用性都不提升 compatibility matrix 的原版确认状态。详见
+[M6 Human Playtest Delivery](docs/formats/m6-human-playtest.md)。
+
+2026-08-17 maintainer Game View review of the prior automated-green tree was
+recorded as HUMAN VISUAL FAIL: synthetic terrain had regular diamond gaps and
+VXL units lacked readable lighting. The closure uses a checked doubled-unit
+isometric contract shared by terrain, entities, pointer inverse, and camera;
+VXL preserves raw normal fields and uses the explicit
+`DerivedGeometryNormalPresentation` profile with the self-authored
+`RA2YR/ExternalLegacyVxlLit` vertex-color shader. Westwood normal/light parity
+remains unconfirmed, and a new human visual recheck is still required.
+
+The current M6 client-rescue tree separates `SyntheticOnly`,
+`ExternalLegacyPreferred`, and `StrictRealContent`. Strict mode never creates
+procedural blue sprites or green terrain when the configured original-content
+route is incomplete. The shared PAL conversion and managed RawLzo1X backend
+are reused; the explicit SHP terminal-transparent-guard profile is
+evidence-gated and leaves the default strict decoder unchanged. RA2 mouse
+semantics, visible drag selection, health/cargo feedback, and Harvester
+player-command precedence are now explicit. Real TMP/theater terrain and
+ore/resource presentation remain a delivery blocker; no M6 human-playable or
+original-runtime claim is made.
 
 ## 本地验证
 

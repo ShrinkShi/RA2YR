@@ -1,0 +1,115 @@
+schema_version: 1
+evidence_id: m6-human-playtest-vxl-presentation-20260816
+status: configured-read-only-aggregate
+scope: "M6 human visual failure closure: isometric terrain continuity, VXL/HVA presentation lighting, PAL display conversion, and basic camera seam"
+source:
+  id: "YR1001_ProjectBaseline"
+  role: "patched-development-content-source"
+  read_only: true
+  payload_committed: false
+  original_runtime_confirmation: false
+aggregate:
+  configured_roles: 9
+  external_vxl_hva_roles: 2
+  fallback_roles: 7
+  vehicle_mesh_roles: 2
+  section_aware_roles: 2
+  hva_frame0_applied_roles: 2
+  palette_colored_roles: 2
+  normal_presentation_mode: "DerivedGeometryNormalPresentation"
+  vxl_normal_table_compatibility: "Unresolved"
+  vxl_shader: "RA2YR/ExternalLegacyVxlLit"
+  terrain_projection_contract: "Checked doubled-unit projection shared by terrain diamonds, entity centers, pointer inverse, and camera centering"
+  camera_contract: "UnityHumanPlaytestCameraController; WASD/arrow fallback and Mouse ScrollWheel with finite position and bounded zoom"
+  maximum_presentation_width_cells: 0.85
+  maximum_presentation_height_cells: 0.372
+  presentation_sanity_passed: true
+  terrain: "SyntheticFallback"
+  owner_identity: "Separate marker ring; source palette colors preserved"
+  axis_basis: "RawXToWorldX_RawYToWorldZ_RawZToWorldY"
+  pivot_policy: "BoundsCenter"
+  palette_representation:
+    format_storage: "Westwood PAL raw RGB channels, 0..63"
+    presentation_profile: "HumanPlaytestVisualProfile.PaletteProfile"
+    conversion_boundary: "PaletteDisplayProfileConversion delegates to PAL core conversion"
+    conversion_count: "Exactly once for SHP display colors and VXL mesh colors"
+    raw_63_scale_to_full_range_rounded: 255
+    raw_32_scale_to_full_range_rounded: 130
+    shp_vxl_color_equivalence: true
+verification_current_head:
+  code_tree_commit: "f5ce988f9db6a4f69dbf1bc11b84d45fa0e4a4df"
+  human_visual_review:
+    reviewed_commit: "1767cc708f79535c9fcd0ddd9f7fa757f7706f9d"
+    result: "FAIL"
+    observations: "Regular synthetic terrain diamond gaps; VXL units read as insufficiently lit/debug voxel presentation"
+    deferred: "RA2 sidebar/HUD, audio/EVA, full SHP animation, TMP/theater terrain"
+    automated_green_does_not_override_human_result: true
+  focused_vxl_renderer:
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml (UnityRendererIntegrationTests fixture)"
+    total: 43
+    passed: 43
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+  focused_external_route:
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml (M6HumanPlaytestVisualIntegrationTests fixture)"
+    total: 17
+    passed: 17
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+  focused_terrain_projection:
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml (TerrainPresentationTests fixture)"
+    total: 22
+    passed: 22
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+  palette_equivalence_regression:
+    test: "ShpAndVxlUseTheSameConvertedRawPaletteColor"
+    result: "passed"
+  full_edit_mode:
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml"
+    total: 1700
+    passed: 1700
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+  full_play_mode:
+    xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/PlayMode/results.xml"
+    total: 7
+    passed: 7
+    failed: 0
+    skipped: 0
+    inconclusive: 0
+  official_wrapper_ps51:
+    summary: "TestResults/m6-palette-final-wrapper-ps51.txt"
+    edit_mode_xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml"
+    play_mode_xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/PlayMode/results.xml"
+    edit_mode_total: 1700
+    edit_mode_passed: 1700
+    play_mode_total: 7
+    play_mode_passed: 7
+    forced_post_result_shutdown: false
+  official_wrapper_ps7:
+    summary: "TestResults/m6-palette-final-wrapper-ps7.txt"
+    edit_mode_xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/EditMode/results.xml"
+    play_mode_xml: "TestResults/20260816T170421886Z-9073227dc19942fd8b7b3c5ae17f4550/PlayMode/results.xml"
+    edit_mode_total: 1700
+    edit_mode_passed: 1700
+    play_mode_total: 7
+    play_mode_passed: 7
+    forced_post_result_shutdown: false
+sanitization:
+  filenames_published: false
+  paths_published: false
+  payload_published: false
+  compressed_bytes_published: false
+  decoded_bytes_published: false
+  pixels_published: false
+  per_asset_records_published: false
+compatibility:
+  project_enhancement_only: true
+  original_runtime: "NotConfirmed"
+  visual_parity: "NotClaimed"
+  map_packed_sections_read: false

@@ -537,6 +537,26 @@ sources:
     repository_use: "reference-only; no source, translation, mechanical rewrite, data, or binary imported"
     approval_status: "approved-reference-only-no-reuse"
 
+  - id: modenc-rules-art-image-default
+    name: "ModEnc Rules/Art Image field references"
+    source:
+      type: "public-community-reference"
+      canonical_upstream: "https://modenc.renegadeprojects.com/Image"
+      observed_location: "public community reference; no repository-local copy"
+    version_or_hash:
+      observed_date: "2026-08-15"
+    license:
+      spdx: "LicenseRef-Unverified-ModEnc"
+      verification: "No compatible code-import license was established"
+    purpose: "Community convention cross-check for using an Art section identifier when an explicit Image value is absent"
+    contains_code: false
+    reference_only: true
+    code_imported: false
+    repository_use: "factual behavior reference only; no prose, examples, data, or code imported"
+    approval_status: "approved-reference-only-no-reuse"
+    notes:
+      - "This supports only ConfirmedCommunityConvention and ConfiguredProjectPolicy evidence; it is not original-runtime source proof."
+
   - id: ra2-diy-2025-tutorial-bundle-local
     name: "RA2 DIY 2025 Chinese tutorial and code-dictionary bundle"
     source:

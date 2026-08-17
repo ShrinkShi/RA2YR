@@ -15,13 +15,24 @@ namespace RA2YR.Core.Formats.ShpTs
             int frameIndex,
             ShpTsReadLimits limits = null)
         {
+            return DecodeFrame(input, document, frameIndex, limits, ShpTsRleRowPolicy.StrictDeclaredWidth);
+        }
+
+        internal static ShpTsDecodeResult DecodeFrame(
+            ReadOnlyMemory<byte> input,
+            ShpTsDocument document,
+            int frameIndex,
+            ShpTsReadLimits limits,
+            ShpTsRleRowPolicy rowPolicy)
+        {
             ValidateDocument(document, input.Length, frameIndex);
             return DecodeMemoryCore(
                 input,
                 document,
                 frameIndex,
                 limits ?? ShpTsReadLimits.Default,
-                0);
+                0,
+                rowPolicy);
         }
 
         public static ShpTsDecodeResult DecodeFrame(
@@ -49,7 +60,7 @@ namespace RA2YR.Core.Formats.ShpTs
                     effective.ToBinaryLimits(),
                     leaveOpen,
                     document.AbsoluteStartOffset);
-                return DecodeSession(session, document, frameIndex, effective);
+                return DecodeSession(session, document, frameIndex, effective, ShpTsRleRowPolicy.StrictDeclaredWidth);
             }
             catch (ShpTsReadException exception)
             {
@@ -124,7 +135,7 @@ namespace RA2YR.Core.Formats.ShpTs
                     -1));
             }
 
-            return DecodeMemoryCore(snapshot, document, frameIndex, effective, snapshot.LongLength);
+            return DecodeMemoryCore(snapshot, document, frameIndex, effective, snapshot.LongLength, ShpTsRleRowPolicy.StrictDeclaredWidth);
         }
 
         public static ShpTsDecodeDocumentResult DecodeAll(
@@ -192,7 +203,8 @@ namespace RA2YR.Core.Formats.ShpTs
             ShpTsDocument document,
             int frameIndex,
             ShpTsReadLimits limits,
-            long initialAllocation)
+            long initialAllocation,
+            ShpTsRleRowPolicy rowPolicy)
         {
             BinaryReadSession session = null;
             try
@@ -211,7 +223,7 @@ namespace RA2YR.Core.Formats.ShpTs
                         "shp-window-snapshot");
                 }
 
-                return DecodeSession(session, document, frameIndex, limits);
+                return DecodeSession(session, document, frameIndex, limits, rowPolicy);
             }
             catch (ShpTsReadException exception)
             {
@@ -236,7 +248,8 @@ namespace RA2YR.Core.Formats.ShpTs
             BinaryReadSession session,
             ShpTsDocument document,
             int frameIndex,
-            ShpTsReadLimits limits)
+            ShpTsReadLimits limits,
+            ShpTsRleRowPolicy rowPolicy)
         {
             ShpTsFrameDescriptor descriptor = document.Frames[frameIndex];
             if (descriptor.IsCanonicalEmpty)
@@ -278,7 +291,7 @@ namespace RA2YR.Core.Formats.ShpTs
                 return DecodeRaw(frameReader, document, descriptor);
             }
 
-            return DecodeRle(frameReader, session, document, descriptor, limits);
+            return DecodeRle(frameReader, session, document, descriptor, limits, rowPolicy);
         }
 
         private static ShpTsDecodeResult DecodeRaw(
@@ -318,7 +331,8 @@ namespace RA2YR.Core.Formats.ShpTs
             BinaryReadSession session,
             ShpTsDocument document,
             ShpTsFrameDescriptor descriptor,
-            ShpTsReadLimits limits)
+            ShpTsReadLimits limits,
+            ShpTsRleRowPolicy rowPolicy)
         {
             long area = checked((long)descriptor.WidthRaw * descriptor.HeightRaw);
             session.ReserveAllocation(
@@ -392,6 +406,7 @@ namespace RA2YR.Core.Formats.ShpTs
                     payloadLength,
                     "shp-rle-line-payload");
                 int rowOutput = 0;
+                bool validatedTrailingGuard = false;
                 int rowCommands = 0;
                 while (!rowReader.IsEndOfInput)
                 {
@@ -449,8 +464,17 @@ namespace RA2YR.Core.Formats.ShpTs
                             "The 00 00 command was consumed but its acceptance semantics remain unresolved."));
                     }
 
-                    if (checked(rowOutput + count) > descriptor.WidthRaw)
+                    int nextOutput = checked(rowOutput + count);
+                    if (nextOutput > descriptor.WidthRaw)
                     {
+                        if (rowPolicy == ShpTsRleRowPolicy.ValidatedTrailingTransparentGuard &&
+                            !validatedTrailingGuard && nextOutput == descriptor.WidthRaw + 1 &&
+                            rowReader.IsEndOfInput)
+                        {
+                            rowOutput = nextOutput;
+                            validatedTrailingGuard = true;
+                            continue;
+                        }
                         return ShpTsDecodeResult.Failure(DirectError(
                             document, descriptor.Index, row,
                             ShpTsDiagnosticCode.RleOutputOverflow,
@@ -467,6 +491,7 @@ namespace RA2YR.Core.Formats.ShpTs
                 }
 
                 rowReader.Complete(TrailingDataPolicy.RequireFullyConsumed, "shp-rle-line-payload");
+                if (validatedTrailingGuard) rowOutput = descriptor.WidthRaw;
                 if (rowOutput != descriptor.WidthRaw)
                 {
                     return ShpTsDecodeResult.Failure(DirectError(
