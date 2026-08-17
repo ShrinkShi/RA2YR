@@ -38,8 +38,8 @@ input:
   command: "left contextual order; right click cancels or deselects"
   harvester: "selectable, controllable, explicit harvest/return/unload precedence"
 verification_boundary:
-  synthetic_editmode: "current final HEAD 89960bf2df6a87853ed21178e47e6cd02fbd350c; 1709/1709 passed; Unity exit 0; forced_post_result_shutdown false"
-  playmode: "current final HEAD 89960bf2df6a87853ed21178e47e6cd02fbd350c; 7/7 passed; Unity exit 0; forced_post_result_shutdown false"
+  synthetic_editmode: "current final HEAD b865d1c; 1709/1709 passed; Unity exit 0; forced_post_result_shutdown false"
+  playmode: "current final HEAD b865d1c; 7/7 passed; Unity exit 0; forced_post_result_shutdown false"
   original_content_visual_acceptance: "maintainer human Unity playtest required"
   original_runtime_compatibility: "NotConfirmed"
 limitations:

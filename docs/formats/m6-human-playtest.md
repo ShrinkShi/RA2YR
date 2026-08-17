@@ -160,7 +160,7 @@ Unity and perform the human visual check after the real terrain/resource route
 is completed.
 
 The final committed rescue tree was rerun after commit
-`89960bf2df6a87853ed21178e47e6cd02fbd350c`: EditMode `1709/1709` passed
+`b865d1c`: EditMode `1709/1709` passed
 (Unity exit 0, no forced post-result shutdown) and PlayMode `7/7` passed
 (Unity exit 0, no forced post-result shutdown). These are current-head
 automated results only; they do not close the real TMP/theater or ore/resource
