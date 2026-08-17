@@ -304,6 +304,53 @@ namespace RA2YR.Tests.EditMode
         }
 
         [Test]
+        public void StrictRealContentUsesValidatedShpRowProfile()
+        {
+            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            string configurationPath = Path.Combine(projectRoot, "Config", "ExternalContent.local.xml");
+            if (!File.Exists(configurationPath)) Assert.Ignore("Configured external source is not present on this host.");
+            ExternalLegacyVisualProvider provider = ExternalLegacyVisualProvider.Create(
+                new HumanPlaytestVisualProfile(
+                    HumanPlaytestVisualMode.StrictRealContent,
+                    configurationPath,
+                    artImagePolicy: HumanPlaytestArtImagePolicy.ExplicitOrSectionIdentifier),
+                projectRoot);
+            try
+            {
+                UnityEngine.Debug.Log("M6_STRICT_REAL_ROUTE;shpDecoded=" + provider.Status.RouteDiagnostics.ShpDecodeSuccess + ";shpFailed=" + provider.Status.RouteDiagnostics.ShpDecodeFailed + ";vxlDecoded=" + provider.Status.RouteDiagnostics.VxlDecodeSuccess + ";vxlFailed=" + provider.Status.RouteDiagnostics.VxlDecodeFailed + ";hvaBound=" + provider.Status.RouteDiagnostics.HvaBindSuccess + ";hvaFailed=" + provider.Status.RouteDiagnostics.HvaBindFailed + ";strictReady=" + provider.Status.IsStrictRealContentReady);
+                Assert.That(provider.Status.RouteDiagnostics.ShpDecodeSuccess, Is.GreaterThan(0));
+                Assert.That(provider.Status.RouteDiagnostics.ShpDecodeFailed, Is.LessThan(6));
+            }
+            finally
+            {
+                provider.Dispose();
+            }
+        }
+
+        [Test]
+        public void StrictOriginalContentPreflightDoesNotDeclareUnboundTerrainReady()
+        {
+            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            string configurationPath = Path.Combine(projectRoot, "Config", "ExternalContent.local.xml");
+            if (!File.Exists(configurationPath)) Assert.Ignore("Configured external source is not present on this host.");
+            ExternalLegacyVisualProvider provider = ExternalLegacyVisualProvider.Create(
+                new HumanPlaytestVisualProfile(HumanPlaytestVisualMode.StrictRealContent, configurationPath, artImagePolicy: HumanPlaytestArtImagePolicy.ExplicitOrSectionIdentifier), projectRoot);
+            try
+            {
+                StrictOriginalContentPreflightResult result = StrictOriginalContentPreflight.Run(configurationPath, projectRoot, provider.Status, false, false);
+                Assert.That(result.IsReady, Is.False);
+                Assert.That(result.Status, Is.EqualTo(StrictOriginalContentPreflightStatus.PresentationRouteIncomplete));
+                Assert.That(result.ProviderReady, Is.True);
+                Assert.That(result.TerrainPresentationBound, Is.False);
+                Assert.That(result.ResourcePresentationBound, Is.False);
+            }
+            finally
+            {
+                provider.Dispose();
+            }
+        }
+
+        [Test]
         public void VisualProviderResolutionDoesNotMutateSimulationHash()
         {
             HumanPlaytestRuntime runtime = new HumanPlaytestRuntime(HumanPlaytestRuntimeConfig.Default);
